@@ -46,7 +46,8 @@ export const benchmarks: BenchmarkMeta[] = [
     summary:
       "A laminar incompressible Navier-Stokes benchmark comparing drag and lift around a cylindrical obstacle.",
     tabs: ["Introduction", "Definition", "Results", "Reference Data", "Conclusion and Bibliography"],
-    status: "planned"
+    comparisonAxis: "code",
+    status: "active"
   },
   {
     id: "sedimentation",

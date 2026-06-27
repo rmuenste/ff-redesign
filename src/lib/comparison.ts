@@ -38,7 +38,6 @@ export interface ComparisonSelection {
   selectedGroupIds: string[];
   selectedVariantIds: string[];
   compareMode: CompareMode;
-  selectedLevelId?: string;
 }
 
 const VARIANT_DASHES = ["solid", "dot", "dash", "dashdot"] as const;

@@ -113,7 +113,7 @@ export function ComparisonPanel({
     if (!groups.length) return { traces: [], buildError: null };
     try {
       return {
-        traces: buildComparisonTraces(spec, groups, { selectedGroupIds, selectedVariantIds, compareMode, selectedLevelId }),
+        traces: buildComparisonTraces(spec, groups, { selectedGroupIds, selectedVariantIds, compareMode }),
         buildError: null
       };
     } catch (err) {
@@ -122,7 +122,7 @@ export function ComparisonPanel({
         buildError: err instanceof Error ? err.message : "Failed to build comparison traces."
       };
     }
-  }, [spec, groups, selectedGroupIds, selectedVariantIds, compareMode, selectedLevelId]);
+  }, [spec, groups, selectedGroupIds, selectedVariantIds, compareMode]);
   const { traces, buildError } = traceResult;
 
   const toggle = (setter: React.Dispatch<React.SetStateAction<string[]>>) => (id: string) =>

@@ -28,6 +28,12 @@ describe("rb2 plot specs", () => {
     ]);
   });
 
+  it("uses the primary highlight token for FeatFloWer when it is available", () => {
+    const featflower = rb2PlotSpecs["case-2"].mass.seriesGroups.find(group => group.id === "featflower");
+    expect(featflower?.highlight).toBe(true);
+    expect(featflower?.color).toBe("var(--primary)");
+  });
+
   it("uses segmented all-trace sources for shapes and sampled marker companions for quantities", () => {
     const shape = rb2PlotSpecs["case-2"].shape;
     expect(shape.seriesGroups.every(group => group.variantStrategy.kind === "all-traces")).toBe(true);

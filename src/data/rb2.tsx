@@ -30,7 +30,7 @@ const rb2CodeMeta: Record<Rb2CodeId, { label: string; color: string; markerSymbo
   tp2d: { label: "TP2D", color: "var(--tu-petrol-400)", markerSymbol: "circle" },
   freelife: { label: "FreeLIFE", color: "var(--tu-green-400)", markerSymbol: "square" },
   moonmd: { label: "MooNMD", color: "var(--tu-red-300)", markerSymbol: "x" },
-  featflower: { label: "FeatFloWer", color: "var(--tu-orange-500)", markerSymbol: "diamond" }
+  featflower: { label: "FeatFloWer", color: "var(--primary)", markerSymbol: "diamond" }
 };
 
 const baseCodes: Rb2CodeId[] = ["tp2d", "freelife", "moonmd"];
@@ -74,6 +74,7 @@ function rb2SeriesGroups(caseId: Rb2CaseId, metric: Rb2MetricId): SeriesGroup[] 
     kind: "code",
     color: rb2CodeMeta[code].color,
     markerSymbol: rb2CodeMeta[code].markerSymbol,
+    highlight: code === "featflower",
     variantStrategy: rb2VariantStrategy(metric),
     levelSources: Object.fromEntries(
       rb2Levels.map(level => [level.id, rb2Source(caseId, metric, code, level.id)])

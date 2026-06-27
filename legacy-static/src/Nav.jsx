@@ -1,7 +1,6 @@
 // ===== Global nav =====
-import { Btn, Icon } from "./Primitives.jsx";
 
-export const Nav = ({ route, setRoute, onToggleTweaks, tweaksAvailable }) => {
+const Nav = ({ route, setRoute, onToggleTweaks, tweaksAvailable }) => {
   const items = [
     { id: "home", label: "Home" },
     { id: "benchmarks", label: "Benchmarks" },

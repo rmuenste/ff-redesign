@@ -1,6 +1,4 @@
 // ===== Benchmark Detail — novel comparison UI with interactive plot =====
-import React from "react";
-import { Btn, Chip, Icon, Overline } from "./Primitives.jsx";
 
 const CODES = [
   { id: "ff",   name: "FeatFloWer", color: "var(--tu-green-500)",  type: "FEM · Q2/P1",   us: true },
@@ -29,7 +27,7 @@ const CODE_DATA = CODES.reduce((acc, c, i) => {
   return acc;
 }, {});
 
-export const BenchmarkDetail = ({ setRoute }) => {
+const BenchmarkDetail = ({ setRoute }) => {
   const [tab, setTab] = React.useState("Results");
   const [level, setLevel] = React.useState("L3");
   const [activeCodes, setActiveCodes] = React.useState(CODES.map(c => c.id));

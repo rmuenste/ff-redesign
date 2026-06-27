@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>FeatFloWer — Redesign</title>
+<link rel="stylesheet" href="assets/tokens.css"/>
+<link rel="stylesheet" href="src/styles.css"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons&display=block" rel="stylesheet"/>
+<style>
+  /* Any remaining head-level design notes could go here */
+  .mode-sheet {
+    position: fixed; inset: 0; background: var(--bg); z-index: 2000;
+    padding: 64px 80px; overflow: auto;
+  }
+</style>
+</head>
+<body data-theme="dark" data-primary="green" data-density="comfortable">
+
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="./src/Primitives.jsx"></script>
+<script type="text/babel" src="./src/Nav.jsx"></script>
+<script type="text/babel" src="./src/Home.jsx"></script>
+<script type="text/babel" src="./src/BenchmarksIndex.jsx"></script>
+<script type="text/babel" src="./src/BenchmarkDetail.jsx"></script>
+<script type="text/babel" src="./src/Gallery.jsx"></script>
+<script type="text/babel" src="./src/Footer.jsx"></script>
+
+<script type="text/babel">
+  const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+    "theme": "dark",
+    "primary": "green",
+    "density": "compact",
+    "heroStyle": "flow",
+    "chartTheme": "plotly"
+  }/*EDITMODE-END*/;
+
+  const App = () => {
+    const [route, setRoute] = React.useState(() => localStorage.getItem("ff_route") || "home");
+    const [tweaks, setTweaks] = React.useState(TWEAK_DEFAULTS);
+    const [editMode, setEditMode] = React.useState(false);
+
+    // Persist route so refresh keeps position
+    React.useEffect(() => { localStorage.setItem("ff_route", route); }, [route]);
+
+    // Scroll top on route change
+    React.useEffect(() => { window.scrollTo({ top: 0, behavior: "instant" }); }, [route]);
+
+    // Apply tweaks to body
+    React.useEffect(() => {
+      document.body.dataset.theme = tweaks.theme;
+      document.body.dataset.primary = tweaks.primary;
+      document.body.dataset.density = tweaks.density;
+    }, [tweaks]);
+
+    // Edit mode bridge
+    React.useEffect(() => {
+      const onMsg = e => {
+        if (e.data?.type === "__activate_edit_mode") setEditMode(true);
+        if (e.data?.type === "__deactivate_edit_mode") setEditMode(false);
+      };
+      window.addEventListener("message", onMsg);
+      window.parent.postMessage({ type: "__edit_mode_available" }, "*");
+      return () => window.removeEventListener("message", onMsg);
+    }, []);
+
+    const setTweak = (k, v) => {
+      setTweaks(t => {
+        const next = { ...t, [k]: v };
+        window.parent.postMessage({ type: "__edit_mode_set_keys", edits: { [k]: v } }, "*");
+        return next;
+      });
+    };
+
+    return (
+      <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+        <Nav route={route} setRoute={setRoute}/>
+        <div style={{ flex: 1 }} data-screen-label={
+          route === "home" ? "01 Home" :
+          route === "benchmarks" ? "02 Benchmarks Index" :
+          route === "detail" ? "03 Benchmark Detail" :
+          route === "gallery" ? "04 Gallery" : route
+        }>
+          {route === "home" && <Home setRoute={setRoute}/>}
+          {route === "benchmarks" && <BenchmarksIndex setRoute={setRoute}/>}
+          {route === "detail" && <BenchmarkDetail setRoute={setRoute}/>}
+          {route === "gallery" && <Gallery/>}
+        </div>
+        <Footer/>
+        {editMode && <TweaksPanel tweaks={tweaks} setTweak={setTweak}/>}
+      </div>
+    );
+  };
+
+  const TweaksPanel = ({ tweaks, setTweak }) => (
+    <div className="tweaks-panel">
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+        <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--fg1)", fontWeight: 600 }}>Tweaks</div>
+        <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--fg3)" }}>FF / v0.4</div>
+      </div>
+      <TweakGroup label="Theme" value={tweaks.theme} options={["dark", "light"]} onChange={v => setTweak("theme", v)}/>
+      <TweakGroup label="Primary color" value={tweaks.primary} options={["green", "petrol", "orange"]} onChange={v => setTweak("primary", v)}/>
+      <TweakGroup label="Density" value={tweaks.density} options={["comfortable", "compact"]} onChange={v => setTweak("density", v)}/>
+      <TweakGroup label="Hero style" value={tweaks.heroStyle} options={["flow", "editorial", "split"]} onChange={v => setTweak("heroStyle", v)}/>
+      <TweakGroup label="Chart theme" value={tweaks.chartTheme} options={["tu", "plotly"]} onChange={v => setTweak("chartTheme", v)}/>
+      <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--fg3)", marginTop: 8, paddingTop: 12, borderTop: "1px solid var(--divider)" }}>
+        Changes persist to disk.
+      </div>
+    </div>
+  );
+
+  const TweakGroup = ({ label, value, options, onChange }) => (
+    <div className="group">
+      <h4>{label}</h4>
+      <div className="options" style={{ gridTemplateColumns: `repeat(${options.length}, 1fr)` }}>
+        {options.map(o => (
+          <button key={o} data-active={value === o} onClick={() => onChange(o)}>{o}</button>
+        ))}
+      </div>
+    </div>
+  );
+
+  ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>

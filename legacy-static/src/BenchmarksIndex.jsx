@@ -1,6 +1,4 @@
 // ===== Benchmarks index =====
-import React from "react";
-import { Btn, Chip, FlowCanvas, Icon, MeshThumb, Overline } from "./Primitives.jsx";
 
 const BENCHMARKS = [
   { id: "rb3",  tag: "RB3", title: "Rising Bubble 3D",           model: "Two-Phase",  dim: "3D", re: 35,   levels: 3, codes: 6, variant: 1, delta: -0.01, status: "passing" },
@@ -17,7 +15,7 @@ const BENCHMARKS = [
   { id: "led",  tag: "LED", title: "Lid-Driven Cavity 3D",       model: "Newtonian",  dim: "3D", re: 1000, levels: 3, codes: 6, variant: 0, delta: 0.01,  status: "passing" },
 ];
 
-export const BenchmarksIndex = ({ setRoute }) => {
+const BenchmarksIndex = ({ setRoute }) => {
   const [model, setModel] = React.useState("All");
   const [dim, setDim] = React.useState("All");
   const [reRange, setReRange] = React.useState([0, 1000]);

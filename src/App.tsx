@@ -1,0 +1,81 @@
+import { useEffect } from "react";
+import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { BenchmarkDetail } from "./BenchmarkDetail.jsx";
+import { BenchmarksIndex } from "./BenchmarksIndex.jsx";
+import { Footer } from "./Footer.jsx";
+import { Gallery } from "./Gallery.jsx";
+import { Home } from "./Home.jsx";
+import { Nav } from "./Nav.jsx";
+
+type LegacyRoute = "home" | "benchmarks" | "detail" | "gallery";
+
+const routeLabels: Record<string, string> = {
+  "/": "01 Home",
+  "/benchmarks": "02 Benchmarks Index",
+  "/benchmarks/bubble3": "03 Benchmark Detail",
+  "/gallery": "04 Gallery"
+};
+
+function useLegacyRouteAdapter() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const setRoute = (route: LegacyRoute) => {
+    const path =
+      route === "home" ? "/" :
+      route === "benchmarks" ? "/benchmarks" :
+      route === "detail" ? "/benchmarks/bubble3" :
+      "/gallery";
+    navigate(path);
+  };
+
+  const route =
+    location.pathname === "/" ? "home" :
+    location.pathname.startsWith("/benchmarks/bubble3") ? "detail" :
+    location.pathname.startsWith("/benchmarks") ? "benchmarks" :
+    location.pathname.startsWith("/gallery") ? "gallery" :
+    "home";
+
+  return { route, setRoute };
+}
+
+function AppShell({ children }: { children: React.ReactNode }) {
+  const { route, setRoute } = useLegacyRouteAdapter();
+  const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+  }, [location.pathname]);
+
+  useEffect(() => {
+    document.body.dataset.theme ||= "dark";
+    document.body.dataset.primary ||= "green";
+    document.body.dataset.density ||= "compact";
+  }, []);
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+      <Nav route={route} setRoute={setRoute} onToggleTweaks={() => undefined} tweaksAvailable={false} />
+      <div style={{ flex: 1 }} data-screen-label={routeLabels[location.pathname] ?? location.pathname}>
+        {children}
+      </div>
+      <Footer />
+    </div>
+  );
+}
+
+export function App() {
+  const { setRoute } = useLegacyRouteAdapter();
+
+  return (
+    <AppShell>
+      <Routes>
+        <Route path="/" element={<Home setRoute={setRoute} />} />
+        <Route path="/benchmarks" element={<BenchmarksIndex setRoute={setRoute} />} />
+        <Route path="/benchmarks/bubble3" element={<BenchmarkDetail setRoute={setRoute} />} />
+        <Route path="/gallery" element={<Gallery />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </AppShell>
+  );
+}

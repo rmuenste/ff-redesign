@@ -1,7 +1,6 @@
 // ===== Home / landing =====
-import { Btn, Chip, FlowCanvas, Icon, MeshThumb, Overline } from "./Primitives.jsx";
 
-export const Home = ({ setRoute }) => {
+const Home = ({ setRoute }) => {
   return (
     <div>
       <Hero setRoute={setRoute} />

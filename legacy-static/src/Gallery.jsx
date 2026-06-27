@@ -1,6 +1,4 @@
 // ===== Gallery of simulation results =====
-import React from "react";
-import { Btn, Chip, FlowCanvas, Icon, MeshThumb, Overline } from "./Primitives.jsx";
 
 const GALLERY_ITEMS = [
   { id: "g1", title: "Rising Bubble · t=1.8s", benchmark: "RB3", code: "FeatFloWer", meta: "L3 · Q2/P1", variant: 1, accent: "var(--tu-green-500)" },
@@ -13,7 +11,7 @@ const GALLERY_ITEMS = [
   { id: "g8", title: "Two-phase jet breakup", benchmark: "RB2", code: "FeatFloWer", meta: "L3 · CLSVOF", variant: 1, accent: "var(--tu-green-500)" },
 ];
 
-export const Gallery = () => {
+const Gallery = () => {
   const [filter, setFilter] = React.useState("All");
   const [active, setActive] = React.useState(null);
   const tags = ["All", "RB3", "RB2", "FAC", "SED", "CHN", "VES", "BFS", "LED"];

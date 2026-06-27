@@ -1,5 +1,5 @@
 // ===== Footer =====
-export const Footer = () => (
+const Footer = () => (
   <footer style={{ borderTop: "1px solid var(--divider)", padding: "48px 0 32px", background: "var(--surface)" }}>
     <div className="section" style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 40, marginBottom: 32 }}>
       <div>

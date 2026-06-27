@@ -1,12 +1,10 @@
-import React from "react";
-
 // ===== Shared primitives =====
 
-export const Icon = ({ name, size = 20, style }) => (
+const Icon = ({ name, size = 20, style }) => (
   <span className="material-icons" style={{ fontSize: size, lineHeight: 1, ...style }}>{name}</span>
 );
 
-export const Chip = ({ children, tone = "default", style }) => {
+const Chip = ({ children, tone = "default", style }) => {
   const tones = {
     default: { background: "var(--surface-alt)", color: "var(--fg2)", borderColor: "var(--divider)" },
     solid:   { background: "var(--primary)",     color: "var(--on-primary)", borderColor: "transparent" },
@@ -26,7 +24,7 @@ export const Chip = ({ children, tone = "default", style }) => {
   );
 };
 
-export const Overline = ({ children, style }) => (
+const Overline = ({ children, style }) => (
   <div style={{
     fontFamily: "var(--font-mono)",
     fontSize: 10, letterSpacing: ".16em", textTransform: "uppercase",
@@ -34,7 +32,7 @@ export const Overline = ({ children, style }) => (
   }}>{children}</div>
 );
 
-export const Btn = ({ children, variant = "primary", onClick, size = "md", style, leading, trailing }) => {
+const Btn = ({ children, variant = "primary", onClick, size = "md", style, leading, trailing }) => {
   const base = {
     fontFamily: "inherit", fontWeight: 500, letterSpacing: ".01em",
     border: 0, cursor: "pointer",
@@ -72,7 +70,7 @@ export const Btn = ({ children, variant = "primary", onClick, size = "md", style
 
 // Animated flow-field streamline background (used in the hero)
 // Uses canvas for fluidity; streamlines drift based on a static vector field.
-export const FlowCanvas = ({ palette = "green", density = 80, speed = 1.0 }) => {
+const FlowCanvas = ({ palette = "green", density = 80, speed = 1.0 }) => {
   const canvasRef = React.useRef(null);
   const rafRef = React.useRef(0);
   React.useEffect(() => {
@@ -158,7 +156,7 @@ export const FlowCanvas = ({ palette = "green", density = 80, speed = 1.0 }) => 
 };
 
 // Mesh thumbnail — SVG abstraction of a triangulated mesh, cool and technical
-export const MeshThumb = ({ variant = 0, style }) => {
+const MeshThumb = ({ variant = 0, style }) => {
   const seeds = [
     { shape: "cylinder", color: "var(--tu-petrol-500)" },
     { shape: "bubble", color: "var(--tu-green-500)" },

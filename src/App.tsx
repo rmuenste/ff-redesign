@@ -1,11 +1,11 @@
 import { useEffect } from "react";
 import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
-import { BenchmarkDetail } from "./BenchmarkDetail.jsx";
 import { BenchmarksIndex } from "./BenchmarksIndex.jsx";
 import { Footer } from "./Footer.jsx";
 import { Gallery } from "./Gallery.jsx";
 import { Home } from "./Home.jsx";
 import { Nav } from "./Nav.jsx";
+import { RisingBubble3DPage } from "./pages/RisingBubble3DPage";
 
 type LegacyRoute = "home" | "benchmarks" | "detail" | "gallery";
 
@@ -72,7 +72,7 @@ export function App() {
       <Routes>
         <Route path="/" element={<Home setRoute={setRoute} />} />
         <Route path="/benchmarks" element={<BenchmarksIndex setRoute={setRoute} />} />
-        <Route path="/benchmarks/bubble3" element={<BenchmarkDetail setRoute={setRoute} />} />
+        <Route path="/benchmarks/bubble3" element={<RisingBubble3DPage />} />
         <Route path="/gallery" element={<Gallery />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

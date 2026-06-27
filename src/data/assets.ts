@@ -1,6 +1,8 @@
 import type { AssetManifest } from "./types";
 
-export const benchmarkAssetRoot = "/benchmark-assets";
+const basePath = import.meta.env.BASE_URL === "/" ? "" : import.meta.env.BASE_URL.replace(/\/$/, "");
+
+export const benchmarkAssetRoot = `${basePath}/benchmark-assets`;
 
 export function benchmarkAssetPath(benchmarkId: string, path: string) {
   return `${benchmarkAssetRoot}/${benchmarkId}/${path}`;

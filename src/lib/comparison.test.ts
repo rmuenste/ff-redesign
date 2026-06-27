@@ -201,10 +201,13 @@ describe("comparisonLayout", () => {
       defaultSeriesGroupIds: [],
       compareModes: ["overlay"],
       defaultCompareMode: "overlay",
-      axisLabels: { x: "Time [s]", y: "Sphericity" }
+      axisLabels: { x: "Time [s]", y: "Sphericity" },
+      axisRanges: { x: [0, 8], y: [-0.5, 3.5] }
     });
     expect(layout.paper_bgcolor).toBe("rgba(0,0,0,0)");
     expect(layout.xaxis.title.text).toBe("Time [s]");
     expect(layout.yaxis.title.text).toBe("Sphericity");
+    expect(layout.xaxis.range).toEqual([0, 8]);
+    expect(layout.yaxis.range).toEqual([-0.5, 3.5]);
   });
 });

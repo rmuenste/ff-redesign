@@ -225,11 +225,13 @@ export function comparisonLayout(spec: PlotSpec) {
     margin: { l: 54, r: 20, t: 48, b: 48 },
     xaxis: {
       title: { text: axis.x },
+      range: spec.axisRanges?.x,
       gridcolor: "rgba(255,255,255,0.10)",
       zerolinecolor: "rgba(255,255,255,0.10)"
     },
     yaxis: {
       title: { text: axis.y },
+      range: spec.axisRanges?.y,
       gridcolor: "rgba(255,255,255,0.10)",
       zerolinecolor: "rgba(255,255,255,0.10)"
     }

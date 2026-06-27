@@ -159,18 +159,20 @@ export function ComparisonPanel({
           </Group>
         )}
 
-        <Group label={spec.comparisonAxis === "level" ? "Refinement levels" : "Codes"}>
-          {spec.seriesGroups.map(group => (
-            <CheckRow
-              key={group.id}
-              checked={selectedGroupIds.includes(group.id)}
-              onChange={() => toggleGroup(group.id)}
-            >
-              <span aria-hidden style={{ width: 10, height: 10, borderRadius: 2, background: group.color, display: "inline-block" }} />
-              <span>{group.label}</span>
-            </CheckRow>
-          ))}
-        </Group>
+        {spec.seriesGroups.length > 1 && (
+          <Group label={spec.comparisonAxis === "level" ? "Refinement levels" : "Codes"}>
+            {spec.seriesGroups.map(group => (
+              <CheckRow
+                key={group.id}
+                checked={selectedGroupIds.includes(group.id)}
+                onChange={() => toggleGroup(group.id)}
+              >
+                <span aria-hidden style={{ width: 10, height: 10, borderRadius: 2, background: group.color, display: "inline-block" }} />
+                <span>{group.label}</span>
+              </CheckRow>
+            ))}
+          </Group>
+        )}
 
         {variantOptions.length > 1 && (
           <Group label="Trace variants">

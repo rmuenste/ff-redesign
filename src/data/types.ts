@@ -111,6 +111,7 @@ export interface PlotSpec {
   /** Reserved for `diff` mode (not implemented yet). */
   defaultBaselineGroupId?: string;
   axisLabels?: { x: string; y: string };
+  axisRanges?: { x?: [number, number]; y?: [number, number] };
 }
 
 export interface AssetManifestEntry {
@@ -118,9 +119,10 @@ export interface AssetManifestEntry {
   newPath: string;
   metric?: string;
   seriesGroupId?: string;
-  kind?: SeriesKind;
+  kind?: SeriesKind | "media" | "download";
   label?: string;
   sourceShape?: PlotSourceKind;
+  derived?: boolean;
 }
 
 export interface AssetManifest {

@@ -31,7 +31,7 @@ export const benchmarks: BenchmarkMeta[] = [
       "A quantitative two-dimensional bubble dynamics benchmark with case-based cross-code comparisons.",
     tabs: ["Introduction", "Definition", "Results", "Reference Data"],
     comparisonAxis: "code",
-    status: "planned"
+    status: "active"
   },
   {
     id: "fac3",

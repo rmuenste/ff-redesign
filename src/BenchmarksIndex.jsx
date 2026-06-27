@@ -24,6 +24,7 @@ export const BenchmarksIndex = ({ setRoute }) => {
 
   const openBenchmark = benchmark => {
     if (benchmark.slug === "bubble3") setRoute("detail");
+    if (benchmark.slug === "2d-rising-bubble") setRoute("rb2");
   };
 
   return (

@@ -5,11 +5,10 @@ import { Footer } from "./Footer.jsx";
 import { Gallery } from "./Gallery.jsx";
 import { Home } from "./Home.jsx";
 import { Nav } from "./Nav.jsx";
+import { legacyRouteForPath, pathForLegacyRoute, type LegacyRoute } from "./navigation";
 import { FlowAroundCylinderPage } from "./pages/FlowAroundCylinderPage";
 import { RisingBubble2DPage } from "./pages/RisingBubble2DPage";
 import { RisingBubble3DPage } from "./pages/RisingBubble3DPage";
-
-type LegacyRoute = "home" | "benchmarks" | "detail" | "rb2" | "fac3" | "gallery";
 
 const routeLabels: Record<string, string> = {
   "/": "01 Home",
@@ -25,24 +24,10 @@ function useLegacyRouteAdapter() {
   const location = useLocation();
 
   const setRoute = (route: LegacyRoute) => {
-    const path =
-      route === "home" ? "/" :
-      route === "benchmarks" ? "/benchmarks" :
-      route === "detail" ? "/benchmarks/bubble3" :
-      route === "rb2" ? "/benchmarks/2d-rising-bubble" :
-      route === "fac3" ? "/benchmarks/fac3" :
-      "/gallery";
-    navigate(path);
+    navigate(pathForLegacyRoute(route));
   };
 
-  const route =
-    location.pathname === "/" ? "home" :
-    location.pathname.startsWith("/benchmarks/bubble3") ? "detail" :
-    location.pathname.startsWith("/benchmarks/2d-rising-bubble") ? "rb2" :
-    location.pathname.startsWith("/benchmarks/fac3") ? "fac3" :
-    location.pathname.startsWith("/benchmarks") ? "benchmarks" :
-    location.pathname.startsWith("/gallery") ? "gallery" :
-    "home";
+  const route = legacyRouteForPath(location.pathname);
 
   return { route, setRoute };
 }

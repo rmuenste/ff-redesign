@@ -1,6 +1,7 @@
 // ===== Benchmarks index =====
 import React from "react";
 import { benchmarks } from "./data/benchmarks";
+import { legacyRouteForBenchmarkSlug } from "./navigation";
 import { Chip, FlowCanvas, Icon, MeshThumb, Overline } from "./Primitives.jsx";
 
 const dims = ["All", "2D", "3D"];
@@ -23,9 +24,8 @@ export const BenchmarksIndex = ({ setRoute }) => {
   ));
 
   const openBenchmark = benchmark => {
-    if (benchmark.slug === "bubble3") setRoute("detail");
-    if (benchmark.slug === "2d-rising-bubble") setRoute("rb2");
-    if (benchmark.slug === "fac3") setRoute("fac3");
+    const route = legacyRouteForBenchmarkSlug(benchmark.slug);
+    if (route) setRoute(route);
   };
 
   return (

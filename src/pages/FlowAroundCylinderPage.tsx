@@ -130,6 +130,16 @@ function IntroductionTab() {
           }
         ]}
       />
+      <div style={{ marginTop: 28, display: "grid", gap: 12 }}>
+        <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
+          Because the codes employ different numerical techniques, the benchmark is also used to investigate three practical solver questions:
+        </p>
+        <ul style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0, paddingLeft: 22 }}>
+          <li>Can incompressible flow be solved efficiently without multigrid components, especially for the pressure Poisson problem?</li>
+          <li>Which time stepping strategy is preferable: a fully coupled iteration or an operator-splitting pressure-correction scheme?</li>
+          <li>Does higher order discretization in space or time justify its added algebraic cost?</li>
+        </ul>
+      </div>
       <VideoBlock src={fac3VideoAsset} title="Flow around a cylinder 3D" />
     </Section>
   );
@@ -159,7 +169,10 @@ function DefinitionTab() {
       <Figure src={fac3GeometryAsset} alt="FAC3D geometry and boundary conditions" caption="Initial configuration and boundary conditions for the benchmark." />
       <Figure src={fac3MeshAsset} alt="FAC3D base mesh" caption="Base mesh for the benchmark." />
       <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-        The 3D mesh is obtained by extruding the 2D mesh in the z direction. The table lists degrees of freedom with respect to cell counts for the corresponding mesh levels.
+        The 3D mesh is obtained by extruding the 2D mesh in the z direction. The first computational level is produced by two successive refinements of the coarsest mesh and contains 6144 cells, which the source page describes as a balance between accuracy and cost.
+      </p>
+      <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
+        The software tools use different spatial discretizations, so equal cell counts do not imply equal degrees of freedom. OpenFOAM and CFX have comparable DOF counts, while FeatFlow has more DOF on the same mesh because it uses a higher order finite element approximation. The table lists degrees of freedom with respect to cell counts for the corresponding mesh levels.
       </p>
       <DofTable />
       <div style={{ marginTop: 32, display: "grid", gap: 18 }}>
@@ -169,6 +182,9 @@ function DefinitionTab() {
         <Equation block>{"$$\\begin{aligned}\\mathbf{U}(0,y,z)&=16U_m yz(H-y)(H-z)/H^4,\\quad V=W=0\\\\\\mathbf{U}(0,y,z)&=16U_m yz\\sin(\\pi t/8)(H-y)(H-z)/H^4,\\quad V=W=0\\end{aligned}$$"}</Equation>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>The drag and lift forces on the cylinder are evaluated by integrating stresses over the cylinder surface.</p>
         <Equation block>{"$$\\begin{aligned}\\mathbf{F}_D &= \\int_S \\left(\\rho\\nu\\frac{\\partial v_t}{\\partial n}n_y - pn_x\\right)\\,dS\\\\\\mathbf{F}_L &=-\\int_S \\left(\\rho\\nu\\frac{\\partial v_t}{\\partial n}n_x - pn_y\\right)\\,dS\\end{aligned}$$"}</Equation>
+        <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
+          The first benchmark problem at Re = 20 is simulated toward a steady state. The second benchmark is unsteady with a fixed simulation time of T = 8s: the inflow starts from zero, reaches a transient state, and returns to zero at the end of the half period.
+        </p>
       </div>
     </Section>
   );
@@ -187,7 +203,21 @@ function ResultsTab() {
         </div>
         <div>
           <h3>Steady test case (Re = 20)</h3>
+          <p style={{ color: "var(--fg2)", lineHeight: 1.65, maxWidth: 900 }}>
+            The Re = 20 case is used first to establish accuracy. The qualitative results were indistinguishable even on the coarsest level, and the table preserves the original comparison of drag and lift values for CFX, OpenFOAM, and FeatFlow across mesh levels.
+          </p>
           <SteadyComparisonTable />
+        </div>
+        <div style={{ color: "var(--fg2)", lineHeight: 1.65, maxWidth: 980 }}>
+          <p>
+            The second benchmark is the challenging unsteady case. It runs for 8 seconds with a time-varying inflow profile and fixed time steps. The source page notes that adaptive time stepping produced oscillations in sensitive quantities, especially lift, for some solver configurations.
+          </p>
+          <p>
+            The comparison criteria are the maximum drag coefficient, the minimum lift coefficient, and normalized L2 and Linf errors against the reference solution. The reference and comparison solutions are linearly interpolated to a common discrete time grid before the error norms are evaluated.
+          </p>
+          <p>
+            FeatFlow shows the expected convergence behavior with mesh refinement; levels 3 and 4 are effectively identical in the reported study, so the finest FeatFlow result is used as the reference time series for the live Drag/Lift plots above.
+          </p>
         </div>
         <DragTimeTable title="FeatFloWer results" rows={fac3DragTimeRows.featflow} />
         <ErrorTable title="Error calculations for FeatFloWer results" rows={fac3ErrorRows.featflow} />
@@ -244,6 +274,16 @@ function ConclusionTab() {
             type: "paragraph",
             text:
               "The comparison shows that FeatFloWer level 2 on 4 nodes has a similar accuracy to other codes at level 4 on 24 nodes. The benchmark remains a motivation for CFD software developers to compare computational performance and accuracy."
+          },
+          {
+            type: "paragraph",
+            text:
+              "The study concludes that efficient laminar incompressible-flow solvers still depend strongly on suitable multigrid techniques, especially for coupled solvers and pressure-Poisson solves. Fully coupled implicit solvers allow larger time steps, but the extra nonlinear iterations can offset that advantage."
+          },
+          {
+            type: "paragraph",
+            text:
+              "The higher order discretization used by FeatFlow leads to denser systems, but the reported accuracy and efficiency indicate that higher order methods in space and time are worthwhile for these benchmark cases."
           },
           { type: "heading", level: 3, text: "Acknowledgements" },
           {

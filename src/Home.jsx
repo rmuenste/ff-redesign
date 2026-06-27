@@ -1,10 +1,15 @@
 // ===== Home / landing =====
 import { benchmarks } from "./data/benchmarks";
+import { legacyRouteForBenchmarkSlug } from "./navigation";
 import { Btn, Chip, FlowCanvas, Icon, MeshThumb, Overline } from "./Primitives.jsx";
 
 export const Home = ({ setRoute }) => {
   const activeBenchmarks = benchmarks.filter(benchmark => benchmark.status === "active");
   const plannedBenchmarks = benchmarks.filter(benchmark => benchmark.status === "planned");
+  const openBenchmark = benchmark => {
+    const route = legacyRouteForBenchmarkSlug(benchmark.slug);
+    if (route) setRoute(route);
+  };
 
   return (
     <div>
@@ -108,7 +113,7 @@ export const Home = ({ setRoute }) => {
           <div className="section-marker">II · Benchmarks</div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 20 }}>
             {benchmarks.map((benchmark, index) => (
-              <div key={benchmark.id} className={"card" + (benchmark.status === "active" ? " card-interactive" : "")} onClick={() => benchmark.status === "active" && setRoute("detail")} style={{ overflow: "hidden", opacity: benchmark.status === "active" ? 1 : 0.62 }}>
+              <div key={benchmark.id} className={"card" + (benchmark.status === "active" ? " card-interactive" : "")} onClick={() => benchmark.status === "active" && openBenchmark(benchmark)} style={{ overflow: "hidden", opacity: benchmark.status === "active" ? 1 : 0.62 }}>
                 <div style={{ aspectRatio: "1.5/1", background: "var(--bg)" }}>
                   <MeshThumb variant={index}/>
                 </div>
@@ -128,4 +133,3 @@ export const Home = ({ setRoute }) => {
     </div>
   );
 };
-

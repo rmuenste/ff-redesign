@@ -5,6 +5,7 @@ import type { AssetManifest } from "./types";
 
 const RB3_DIR = resolve(process.cwd(), "public/benchmark-assets/rb3");
 const RB2_DIR = resolve(process.cwd(), "public/benchmark-assets/rb2");
+const FAC3_DIR = resolve(process.cwd(), "public/benchmark-assets/fac3");
 const CANONICAL_METRICS = new Set(["sphericity", "mass", "size", "surface"]);
 const RB2_METRICS = new Set(["shape", "center-of-mass", "circularity", "rise-velocity", "mass"]);
 const RB2_CASES = new Set(["case-1", "case-2"]);
@@ -12,6 +13,7 @@ const RB2_CODES = new Set(["tp2d", "freelife", "moonmd", "featflower"]);
 
 const manifest = JSON.parse(readFileSync(resolve(RB3_DIR, "manifest.json"), "utf-8")) as AssetManifest;
 const rb2Manifest = JSON.parse(readFileSync(resolve(RB2_DIR, "manifest.json"), "utf-8")) as AssetManifest;
+const fac3Manifest = JSON.parse(readFileSync(resolve(FAC3_DIR, "manifest.json"), "utf-8")) as AssetManifest;
 
 function listPlotFiles(): string[] {
   const plotsDir = resolve(RB3_DIR, "plots");
@@ -57,6 +59,43 @@ describe("rb3 asset manifest (public/benchmark-assets/rb3/manifest.json)", () =>
   it("uses only the canonical metric vocabulary", () => {
     for (const entry of manifest.entries) {
       if (entry.metric) expect(CANONICAL_METRICS.has(entry.metric), entry.metric).toBe(true);
+    }
+  });
+});
+
+describe("fac3 asset manifest (public/benchmark-assets/fac3/manifest.json)", () => {
+  it("covers copied and derived FAC assets", () => {
+    expect(fac3Manifest.benchmarkId).toBe("fac3");
+    expect(fac3Manifest.entries).toHaveLength(6);
+    for (const entry of fac3Manifest.entries) {
+      expect(existsSync(resolve(FAC3_DIR, entry.newPath)), entry.newPath).toBe(true);
+    }
+  });
+
+  it("marks live plot JSON as derived from BenchValues.txt", () => {
+    const derived = fac3Manifest.entries.filter(entry => entry.derived);
+    expect(derived.map(entry => entry.newPath).sort()).toEqual(["plots/drag.json", "plots/lift.json"]);
+    expect(derived.every(entry => entry.oldPath === "files/fac3d/BenchValues.txt")).toBe(true);
+  });
+
+  it("keeps BenchValues.txt as a non-derived download", () => {
+    const download = fac3Manifest.entries.find(entry => entry.newPath === "downloads/BenchValues.txt");
+    expect(download?.kind).toBe("download");
+    expect(download?.derived).toBeUndefined();
+  });
+
+  it("does not copy or reference dropped static result images", () => {
+    const forbidden = [
+      "Fd_Q2P1_paper.png",
+      "Fl_Q2P1_paper.png",
+      "zoom_Fd_Q2P1_paper.png",
+      "zoom_Fl_Q2P1_paper.png"
+    ];
+    const copied = listFiles(FAC3_DIR);
+    const mapped = fac3Manifest.entries.flatMap(entry => [entry.oldPath, entry.newPath]);
+    for (const name of forbidden) {
+      expect(copied.some(file => file.endsWith(name)), name).toBe(false);
+      expect(mapped.some(file => file.endsWith(name)), name).toBe(false);
     }
   });
 });

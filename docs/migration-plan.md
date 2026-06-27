@@ -30,7 +30,7 @@ Decisions locked for v1:
 
 Implementation status as of the RB2 pass:
 
-- Stage 0 through Stage 4 are complete.
+- Stage 0 through the FAC migration pass are complete.
 - The shared comparison engine now supports RB3 trace variants and RB2's explicit
   single-select level axis with multi-toggle code series.
 - RB2 uses canonical copied assets under `public/benchmark-assets/rb2`, with the
@@ -39,6 +39,9 @@ Implementation status as of the RB2 pass:
   circularity, and mass, matching the available Angular data.
 - RB2 has no video asset or video block; Angular's `risingbubble2.mp4` belongs to
   the existing RB3 page and is not propagated to RB2.
+- FAC is active at `/benchmarks/fac3`; its Drag/Lift result images were replaced
+  by live Plotly plots derived from `BenchValues.txt`, while Z-Force remains
+  download-only.
 
 ## Ground Truth About The Current Code (verified)
 

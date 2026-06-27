@@ -48,4 +48,3 @@ export const Gallery = () => {
   );
 };
 
-window.Gallery = Gallery;

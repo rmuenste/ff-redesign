@@ -175,5 +175,3 @@ const BenchmarkTable = ({ rows, onOpen }) => (
     </tbody>
   </table>
 );
-
-Object.assign(window, { BenchmarksIndex });

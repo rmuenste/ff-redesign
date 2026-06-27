@@ -78,4 +78,3 @@ export const Nav = ({ route, setRoute, onToggleTweaks, tweaksAvailable }) => {
   );
 };
 
-window.Nav = Nav;

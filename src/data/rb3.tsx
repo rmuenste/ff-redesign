@@ -1,5 +1,6 @@
 import type { DownloadItem } from "../components";
 import { benchmarkAssetPath } from "./assets";
+import type { PlotSpec, SeriesGroup, TraceVariantStrategy } from "./types";
 
 export type Rb3MetricId = "sphericity" | "mass" | "size" | "surface";
 export type Rb3LevelId = "l1" | "l2" | "l3";
@@ -68,3 +69,50 @@ export function rb3PlotPath(metric: Rb3MetricId, level: Rb3LevelId) {
 
 export const rb3GeometryAsset = benchmarkAssetPath("rb3", "media/geometry-3d.png");
 export const rb3VideoAsset = benchmarkAssetPath("rb3", "media/rising-bubble.mp4");
+
+// ---- Comparison plot specs (level axis; all real RB3 JSON) --------------------
+
+const rb3LevelColors: Record<Rb3LevelId, string> = {
+  l1: "var(--tu-petrol-400)",
+  l2: "var(--tu-orange-500)",
+  l3: "var(--tu-green-400)"
+};
+
+function rb3SeriesGroups(metric: Rb3MetricId): SeriesGroup[] {
+  // RB3 size files are trace-arrays whose consecutive traces are Rz/Rxy pairs;
+  // every other metric is one trace per time-step.
+  const variantStrategy: TraceVariantStrategy =
+    metric === "size" ? { kind: "paired-traces", pairSize: 2 } : { kind: "single-trace" };
+
+  return rb3Levels.map(level => ({
+    id: level.id,
+    label: level.label,
+    kind: "level",
+    color: rb3LevelColors[level.id],
+    source: { kind: "trace-array", asset: { path: rb3PlotPath(metric, level.id) } },
+    variantStrategy,
+    highlight: level.id === "l3"
+  }));
+}
+
+function rb3AxisLabels(metric: Rb3MetricId): { x: string; y: string } {
+  if (metric === "surface") return { x: "X-coordinate", y: "Z-coordinate" };
+  return { x: "Time [s]", y: rb3Metrics.find(item => item.id === metric)!.yAxis };
+}
+
+export const rb3PlotSpecs: Record<Rb3MetricId, PlotSpec> = Object.fromEntries(
+  rb3Metrics.map(metric => [
+    metric.id,
+    {
+      id: `rb3-${metric.id}`,
+      title: metric.label,
+      metric: metric.id,
+      comparisonAxis: "level",
+      seriesGroups: rb3SeriesGroups(metric.id),
+      defaultSeriesGroupIds: ["l1"],
+      compareModes: ["overlay"],
+      defaultCompareMode: "overlay",
+      axisLabels: rb3AxisLabels(metric.id)
+    } satisfies PlotSpec
+  ])
+) as Record<Rb3MetricId, PlotSpec>;

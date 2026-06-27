@@ -223,5 +223,3 @@ export const MeshThumb = ({ variant = 0, style }) => {
     </svg>
   );
 };
-
-Object.assign(window, { Icon, Chip, Overline, Btn, FlowCanvas, MeshThumb });

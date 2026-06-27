@@ -32,4 +32,3 @@ export const Footer = () => (
     </div>
   </footer>
 );
-window.Footer = Footer;

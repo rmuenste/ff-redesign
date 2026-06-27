@@ -129,4 +129,3 @@ export const Home = ({ setRoute }) => {
   );
 };
 
-window.Home = Home;

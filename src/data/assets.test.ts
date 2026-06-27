@@ -4,9 +4,14 @@ import { describe, expect, it } from "vitest";
 import type { AssetManifest } from "./types";
 
 const RB3_DIR = resolve(process.cwd(), "public/benchmark-assets/rb3");
+const RB2_DIR = resolve(process.cwd(), "public/benchmark-assets/rb2");
 const CANONICAL_METRICS = new Set(["sphericity", "mass", "size", "surface"]);
+const RB2_METRICS = new Set(["shape", "center-of-mass", "circularity", "rise-velocity", "mass"]);
+const RB2_CASES = new Set(["case-1", "case-2"]);
+const RB2_CODES = new Set(["tp2d", "freelife", "moonmd", "featflower"]);
 
 const manifest = JSON.parse(readFileSync(resolve(RB3_DIR, "manifest.json"), "utf-8")) as AssetManifest;
+const rb2Manifest = JSON.parse(readFileSync(resolve(RB2_DIR, "manifest.json"), "utf-8")) as AssetManifest;
 
 function listPlotFiles(): string[] {
   const plotsDir = resolve(RB3_DIR, "plots");
@@ -15,6 +20,14 @@ function listPlotFiles(): string[] {
       ? readdirSync(resolve(plotsDir, metricDir.name)).map(file => `plots/${metricDir.name}/${file}`)
       : []
   );
+}
+
+function listFiles(dir: string, prefix = ""): string[] {
+  return readdirSync(dir, { withFileTypes: true }).flatMap(entry => {
+    const rel = prefix ? `${prefix}/${entry.name}` : entry.name;
+    const abs = resolve(dir, entry.name);
+    return entry.isDirectory() ? listFiles(abs, rel) : [rel];
+  });
 }
 
 describe("rb3 asset manifest (public/benchmark-assets/rb3/manifest.json)", () => {
@@ -44,6 +57,38 @@ describe("rb3 asset manifest (public/benchmark-assets/rb3/manifest.json)", () =>
   it("uses only the canonical metric vocabulary", () => {
     for (const entry of manifest.entries) {
       if (entry.metric) expect(CANONICAL_METRICS.has(entry.metric), entry.metric).toBe(true);
+    }
+  });
+});
+
+describe("rb2 asset manifest (public/benchmark-assets/rb2/manifest.json)", () => {
+  it("has canonical, curated entries and no video asset", () => {
+    expect(rb2Manifest.benchmarkId).toBe("rb2");
+    expect(rb2Manifest.entries).toHaveLength(103);
+    expect(rb2Manifest.entries.some(entry => /mp4|video|risingbubble/i.test(entry.newPath))).toBe(false);
+  });
+
+  it("every manifest newPath exists on disk", () => {
+    for (const entry of rb2Manifest.entries) {
+      expect(existsSync(resolve(RB2_DIR, entry.newPath)), entry.newPath).toBe(true);
+    }
+  });
+
+  it("every copied plot file is covered by the manifest (no orphans)", () => {
+    const mapped = new Set(rb2Manifest.entries.map(entry => entry.newPath));
+    for (const file of listFiles(resolve(RB2_DIR, "plots")).map(file => `plots/${file}`)) {
+      expect(mapped.has(file), file).toBe(true);
+    }
+  });
+
+  it("uses canonical case/metric/code-level plot paths", () => {
+    for (const entry of rb2Manifest.entries.filter(entry => entry.newPath.startsWith("plots/"))) {
+      const match = /^plots\/([^/]+)\/([^/]+)\/([^-]+)-(l[1-3])\.json$/.exec(entry.newPath);
+      expect(match, entry.newPath).not.toBeNull();
+      if (!match) continue;
+      expect(RB2_CASES.has(match[1]), entry.newPath).toBe(true);
+      expect(RB2_METRICS.has(match[2]), entry.newPath).toBe(true);
+      expect(RB2_CODES.has(match[3]), entry.newPath).toBe(true);
     }
   });
 });

@@ -28,6 +28,18 @@ Decisions locked for v1:
 - Existing prototype: archive a runnable copy before replacing it as the active app.
 - **No synthetic series.** Every plotted trace comes from a real Angular JSON asset.
 
+Implementation status as of the RB2 pass:
+
+- Stage 0 through Stage 4 are complete.
+- The shared comparison engine now supports RB3 trace variants and RB2's explicit
+  single-select level axis with multi-toggle code series.
+- RB2 uses canonical copied assets under `public/benchmark-assets/rb2`, with the
+  public manifest preserving Angular `oldPath` provenance.
+- FeatFloWer is intentionally sparse in RB2: it appears only for Case 2 shape,
+  circularity, and mass, matching the available Angular data.
+- RB2 has no video asset or video block; Angular's `risingbubble2.mp4` belongs to
+  the existing RB3 page and is not propagated to RB2.
+
 ## Ground Truth About The Current Code (verified)
 
 These facts shaped the revision and correct earlier assumptions:

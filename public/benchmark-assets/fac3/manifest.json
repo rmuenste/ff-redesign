@@ -1,0 +1,49 @@
+{
+  "benchmarkId": "fac3",
+  "entries": [
+    {
+      "oldPath": "fac_geo_3d.png",
+      "newPath": "media/fac-geometry.png",
+      "kind": "media",
+      "label": "FAC geometry"
+    },
+    {
+      "oldPath": "meshV3_side_new.png",
+      "newPath": "media/base-mesh.png",
+      "kind": "media",
+      "label": "Base mesh"
+    },
+    {
+      "oldPath": "fac3d.mp4",
+      "newPath": "media/fac3d.mp4",
+      "kind": "media",
+      "label": "FAC video"
+    },
+    {
+      "oldPath": "files/fac3d/BenchValues.txt",
+      "newPath": "downloads/BenchValues.txt",
+      "kind": "download",
+      "label": "BenchValues reference data"
+    },
+    {
+      "oldPath": "files/fac3d/BenchValues.txt",
+      "newPath": "plots/drag.json",
+      "metric": "drag",
+      "seriesGroupId": "featflower",
+      "kind": "reference",
+      "label": "Drag coefficient",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "files/fac3d/BenchValues.txt",
+      "newPath": "plots/lift.json",
+      "metric": "lift",
+      "seriesGroupId": "featflower",
+      "kind": "reference",
+      "label": "Lift coefficient",
+      "sourceShape": "single-trace",
+      "derived": true
+    }
+  ]
+}

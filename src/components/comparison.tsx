@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useMemo, useState } from "react";
-import type { CompareMode, PlotSpec, TraceVariant } from "../data/types";
+import type { CompareMode, PlotSource, PlotSpec, SeriesGroup, TraceVariant } from "../data/types";
 import {
   buildComparisonTraces,
   comparisonLayout,
@@ -29,7 +29,12 @@ function resolveCssVar(value: string): string {
   return resolved || value;
 }
 
-function useComparisonData(spec: PlotSpec) {
+function resolveSource(group: SeriesGroup, selectedLevelId?: string): PlotSource | null {
+  if (selectedLevelId && group.levelSources) return group.levelSources[selectedLevelId] ?? null;
+  return group.source ?? null;
+}
+
+function useComparisonData(spec: PlotSpec, selectedLevelId?: string) {
   const [groups, setGroups] = useState<LoadedGroup[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -42,12 +47,14 @@ function useComparisonData(spec: PlotSpec) {
 
     Promise.all(
       spec.seriesGroups.map(async group => {
-        const response = await fetch(group.source.asset.path, { signal: controller.signal });
+        const source = resolveSource(group, selectedLevelId);
+        if (!source) throw new Error(`Missing source for ${group.label}.`);
+        const response = await fetch(source.asset.path, { signal: controller.signal });
         if (!response.ok) throw new Error(`Failed to load ${response.url}`);
         const raw = await response.json();
-        const rawTraces = expandSource(raw, group.source);
+        const rawTraces = expandSource(raw, source);
         const variants = deriveTraceVariants(rawTraces, group.variantStrategy);
-        return { group: { ...group, color: resolveCssVar(group.color) }, rawTraces, variants };
+        return { group: { ...group, color: resolveCssVar(group.color) }, source, rawTraces, variants };
       })
     )
       .then(nextGroups => {
@@ -61,7 +68,7 @@ function useComparisonData(spec: PlotSpec) {
       });
 
     return () => controller.abort();
-  }, [spec]);
+  }, [spec, selectedLevelId]);
 
   return { groups, loading, error };
 }
@@ -77,11 +84,12 @@ export function ComparisonPanel({
   const [metric, setMetric] = useState(defaultMetric);
   const spec = specs[metric];
 
-  const { groups, loading, error } = useComparisonData(spec);
-
   const [selectedGroupIds, setSelectedGroupIds] = useState<string[]>(spec.defaultSeriesGroupIds);
   const [compareMode, setCompareMode] = useState<CompareMode>(spec.defaultCompareMode);
   const [selectedVariantIds, setSelectedVariantIds] = useState<string[]>([]);
+  const [selectedLevelId, setSelectedLevelId] = useState<string | undefined>(spec.levelAxis?.defaultLevelId);
+
+  const { groups, loading, error } = useComparisonData(spec, selectedLevelId);
 
   // Variant options come from whichever loaded group exposes the most variants.
   const variantOptions = useMemo<TraceVariant[]>(
@@ -93,6 +101,7 @@ export function ComparisonPanel({
   useEffect(() => {
     setSelectedGroupIds(spec.defaultSeriesGroupIds);
     setCompareMode(spec.defaultCompareMode);
+    setSelectedLevelId(spec.levelAxis?.defaultLevelId);
   }, [spec]);
 
   // Default to all variants visible whenever the option set changes.
@@ -104,7 +113,7 @@ export function ComparisonPanel({
     if (!groups.length) return { traces: [], buildError: null };
     try {
       return {
-        traces: buildComparisonTraces(spec, groups, { selectedGroupIds, selectedVariantIds, compareMode }),
+        traces: buildComparisonTraces(spec, groups, { selectedGroupIds, selectedVariantIds, compareMode, selectedLevelId }),
         buildError: null
       };
     } catch (err) {
@@ -113,7 +122,7 @@ export function ComparisonPanel({
         buildError: err instanceof Error ? err.message : "Failed to build comparison traces."
       };
     }
-  }, [spec, groups, selectedGroupIds, selectedVariantIds, compareMode]);
+  }, [spec, groups, selectedGroupIds, selectedVariantIds, compareMode, selectedLevelId]);
   const { traces, buildError } = traceResult;
 
   const toggle = (setter: React.Dispatch<React.SetStateAction<string[]>>) => (id: string) =>
@@ -132,6 +141,23 @@ export function ComparisonPanel({
             </OptionButton>
           ))}
         </Group>
+
+        {spec.levelAxis && (
+          <Group label={spec.levelAxis.label}>
+            {spec.levelAxis.options.map(option => (
+              <OptionButton key={option.id} active={selectedLevelId === option.id} onClick={() => setSelectedLevelId(option.id)}>
+                <span>
+                  <span>{option.label}</span>
+                  {option.detail && (
+                    <span style={{ display: "block", color: "var(--fg3)", fontFamily: "var(--font-mono)", fontSize: 10, marginTop: 2 }}>
+                      {option.detail}
+                    </span>
+                  )}
+                </span>
+              </OptionButton>
+            ))}
+          </Group>
+        )}
 
         <Group label={spec.comparisonAxis === "level" ? "Refinement levels" : "Codes"}>
           {spec.seriesGroups.map(group => (

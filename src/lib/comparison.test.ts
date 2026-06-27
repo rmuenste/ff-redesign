@@ -60,6 +60,15 @@ describe("deriveTraceVariants", () => {
     expect(variants[0].traceIndexes).toEqual([0, 1]);
     expect(variants.every(v => /dt/i.test(v.label))).toBe(true);
   });
+
+  it("can group all expanded traces into one UI variant", () => {
+    const raw: RawTrace[] = [
+      { x: [0, 1], y: [0, 1], name: "segment" },
+      { x: [1, 2], y: [1, 2], name: "segment" }
+    ];
+    const variants = deriveTraceVariants(raw, { kind: "all-traces", label: "Outline" });
+    expect(variants).toEqual([{ id: "all", label: "Outline", traceIndexes: [0, 1] }]);
+  });
 });
 
 describe("buildComparisonTraces (overlay)", () => {
@@ -70,8 +79,8 @@ describe("buildComparisonTraces (overlay)", () => {
   const groupL2 = levelGroup("l2", "#ff7700", "single");
 
   const loaded: LoadedGroup[] = [
-    { group: groupL1, rawTraces: sphericityL1, variants: deriveTraceVariants(sphericityL1, groupL1.variantStrategy) },
-    { group: groupL2, rawTraces: sphericityL2, variants: deriveTraceVariants(sphericityL2, groupL2.variantStrategy) }
+    { group: groupL1, source: groupL1.source!, rawTraces: sphericityL1, variants: deriveTraceVariants(sphericityL1, groupL1.variantStrategy) },
+    { group: groupL2, source: groupL2.source!, rawTraces: sphericityL2, variants: deriveTraceVariants(sphericityL2, groupL2.variantStrategy) }
   ];
 
   const spec: PlotSpec = {
@@ -120,7 +129,7 @@ describe("buildComparisonTraces (overlay)", () => {
     const sizeSpec: PlotSpec = { ...spec, id: "rb3-size", title: "Bubble size", metric: "size", seriesGroups: [sizeGroup] };
     const traces = buildComparisonTraces(
       sizeSpec,
-      [{ group: sizeGroup, rawTraces: sizeL1, variants: deriveTraceVariants(sizeL1, sizeGroup.variantStrategy) }],
+      [{ group: sizeGroup, source: sizeGroup.source!, rawTraces: sizeL1, variants: deriveTraceVariants(sizeL1, sizeGroup.variantStrategy) }],
       { selectedGroupIds: ["l1"], selectedVariantIds: ["0", "1", "2", "3"], compareMode: "overlay" }
     );
 
@@ -137,6 +146,34 @@ describe("buildComparisonTraces (overlay)", () => {
     expect(traces).toHaveLength(1);
     expect(traces[0].x).toEqual(sphericityL2[0].x);
     expect(traces[0].line.color).toBe("dodgerblue");
+  });
+
+  it("uses group colours when source-colour preservation is disabled", () => {
+    const traces = buildComparisonTraces(
+      { ...spec, preserveSourceColorsWhenSingleGroup: false },
+      loaded,
+      { selectedGroupIds: ["l2"], selectedVariantIds: ["0"], compareMode: "overlay" }
+    );
+    expect(traces).toHaveLength(1);
+    expect(traces[0].line.color).toBe("#ff7700");
+  });
+
+  it("adds sampled marker companions for dense quantity sources", () => {
+    const source = { ...groupL1.source!, markerSampleEvery: 2 };
+    const group: SeriesGroup = { ...groupL1, markerSymbol: "circle" };
+    const raw: RawTrace[] = [{ x: [0, 1, 2, 3], y: [10, 11, 12, 13], name: "TP2D" }];
+    const traces = buildComparisonTraces(
+      { ...spec, preserveSourceColorsWhenSingleGroup: false, seriesGroups: [group] },
+      [{ group, source, rawTraces: raw, variants: deriveTraceVariants(raw, group.variantStrategy) }],
+      { selectedGroupIds: ["l1"], selectedVariantIds: ["0"], compareMode: "overlay" }
+    );
+
+    expect(traces).toHaveLength(2);
+    expect(traces[0].mode).toBe("lines");
+    expect(traces[1].mode).toBe("markers");
+    expect(traces[1].x).toEqual([0, 2]);
+    expect(traces[1].marker.symbol).toBe("circle");
+    expect(traces[1].showlegend).toBe(false);
   });
 
   it("throws for a mode not enabled on the spec", () => {

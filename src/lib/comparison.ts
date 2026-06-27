@@ -14,7 +14,7 @@ export interface RawTrace {
   type?: string;
   mode?: string;
   name?: string | null;
-  marker?: { color?: string };
+  marker?: { color?: string; symbol?: string };
   line?: { color?: string; dash?: string };
   showlegend?: boolean;
 }
@@ -23,12 +23,13 @@ export interface RawTrace {
 export interface PlotlyTrace extends RawTrace {
   name: string;
   line: { color: string; dash?: string };
-  marker: { color: string };
+  marker: { color: string; symbol?: string };
   showlegend: boolean;
 }
 
 export interface LoadedGroup {
   group: SeriesGroup;
+  source: PlotSource;
   rawTraces: RawTrace[];
   variants: TraceVariant[];
 }
@@ -37,6 +38,7 @@ export interface ComparisonSelection {
   selectedGroupIds: string[];
   selectedVariantIds: string[];
   compareMode: CompareMode;
+  selectedLevelId?: string;
 }
 
 const VARIANT_DASHES = ["solid", "dot", "dash", "dashdot"] as const;
@@ -95,6 +97,14 @@ export function deriveTraceVariants(
     return variants;
   }
 
+  if (strategy.kind === "all-traces") {
+    return [{
+      id: "all",
+      label: strategy.label ?? "All traces",
+      traceIndexes: rawTraces.map((_, index) => index)
+    }];
+  }
+
   return rawTraces.map((trace, index) => ({
     id: String(index),
     label: trace.name ?? `trace ${index + 1}`,
@@ -123,6 +133,7 @@ export function buildComparisonTraces(
 
   const selectedVariantIds = new Set(selection.selectedVariantIds);
   const onlyOneGroup = selection.selectedGroupIds.length <= 1;
+  const preserveSourceColors = spec.preserveSourceColorsWhenSingleGroup ?? true;
 
   return loaded
     .filter(entry => selection.selectedGroupIds.includes(entry.group.id))
@@ -134,10 +145,11 @@ export function buildComparisonTraces(
         variant.traceIndexes
           .map(index => entry.rawTraces[index])
           .filter((trace): trace is RawTrace => Boolean(trace))
-          .map((trace, memberOrdinal) =>
-            styleTrace(trace, entry.group, variant, ordinal, memberOrdinal, activeVariants.length, {
+          .flatMap((trace, memberOrdinal) =>
+            styleTrace(trace, entry.group, entry.source, variant, ordinal, memberOrdinal, activeVariants.length, {
               onlyOneGroup,
-              onlyOneVariant
+              onlyOneVariant,
+              preserveSourceColors
             })
           )
       );
@@ -147,19 +159,23 @@ export function buildComparisonTraces(
 function styleTrace(
   trace: RawTrace,
   group: SeriesGroup,
+  source: PlotSource,
   variant: TraceVariant,
   variantOrdinal: number,
   memberOrdinal: number,
   variantCount: number,
-  context: { onlyOneGroup: boolean; onlyOneVariant: boolean }
-): PlotlyTrace {
+  context: { onlyOneGroup: boolean; onlyOneVariant: boolean; preserveSourceColors: boolean }
+): PlotlyTrace[] {
   // With a single level/code selected, preserve the curated trace colours from
   // the JSON files. With multiple groups selected, colour by group so levels/codes
   // remain distinguishable and use dash to separate variants within each group.
   const dash =
-    group.dash ?? (variantCount > 1 ? VARIANT_DASHES[variantOrdinal % VARIANT_DASHES.length] : undefined);
+    source.dash ?? group.dash ?? (variantCount > 1 ? VARIANT_DASHES[variantOrdinal % VARIANT_DASHES.length] : undefined);
   const sourceColor = trace.line?.color ?? trace.marker?.color;
-  const color = context.onlyOneGroup ? sourceColor ?? VARIANT_COLORS[variantOrdinal % VARIANT_COLORS.length] : group.color;
+  const color =
+    context.onlyOneGroup && context.preserveSourceColors
+      ? sourceColor ?? VARIANT_COLORS[variantOrdinal % VARIANT_COLORS.length]
+      : group.color;
   const showlegend = trace.showlegend === false ? false : memberOrdinal === 0;
 
   const labelParts: string[] = [];
@@ -167,13 +183,34 @@ function styleTrace(
   if (!context.onlyOneVariant || context.onlyOneGroup) labelParts.push(variant.label);
   const name = labelParts.join(" · ") || group.label;
 
-  return {
+  const lineTrace: PlotlyTrace = {
     ...trace,
     name,
+    mode: source.markerSampleEvery ? "lines" : trace.mode,
     line: { ...trace.line, color, dash },
     marker: { ...trace.marker, color },
     showlegend
   };
+
+  if (!source.markerSampleEvery || source.markerSampleEvery <= 0) return [lineTrace];
+
+  return [
+    lineTrace,
+    {
+      ...trace,
+      x: sample(trace.x, source.markerSampleEvery),
+      y: sample(trace.y, source.markerSampleEvery),
+      name,
+      mode: "markers",
+      line: { ...trace.line, color, dash },
+      marker: { ...trace.marker, color, symbol: group.markerSymbol },
+      showlegend: false
+    }
+  ];
+}
+
+function sample(values: number[], every: number) {
+  return values.filter((_, index) => index % every === 0);
 }
 
 /** Themed, token-driven Plotly layout shared by every comparison plot. */

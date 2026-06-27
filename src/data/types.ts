@@ -15,7 +15,8 @@ export type CompareMode = "overlay" | "diff" | "small-multiples";
  */
 export type TraceVariantStrategy =
   | { kind: "single-trace" }
-  | { kind: "paired-traces"; pairSize: 2 };
+  | { kind: "paired-traces"; pairSize: 2 }
+  | { kind: "all-traces"; label?: string };
 
 export interface AssetRef {
   path: string;
@@ -57,6 +58,10 @@ export interface PlotSource {
   asset: AssetRef;
   /** Only meaningful for `segmented-shape`: number of points per emitted segment. */
   segmentSize?: number;
+  /** Optional line style applied after loading. */
+  dash?: string;
+  /** Optional sampled marker companion for dense quantity traces. */
+  markerSampleEvery?: number;
 }
 
 /**
@@ -76,10 +81,19 @@ export interface SeriesGroup {
   label: string;
   kind: SeriesKind;
   color: string;
-  source: PlotSource;
+  source?: PlotSource;
+  levelSources?: Record<string, PlotSource>;
   variantStrategy: TraceVariantStrategy;
   dash?: string;
+  markerSymbol?: string;
   highlight?: boolean;
+}
+
+export interface LevelAxis {
+  id: string;
+  label: string;
+  options: Array<{ id: string; label: string; detail?: string }>;
+  defaultLevelId: string;
 }
 
 export interface PlotSpec {
@@ -89,8 +103,11 @@ export interface PlotSpec {
   comparisonAxis: ComparisonAxis;
   seriesGroups: SeriesGroup[];
   defaultSeriesGroupIds: string[];
+  levelAxis?: LevelAxis;
   compareModes: CompareMode[];
   defaultCompareMode: CompareMode;
+  /** RB3 keeps curated source colours in single-group views; RB2 uses code tokens. */
+  preserveSourceColorsWhenSingleGroup?: boolean;
   /** Reserved for `diff` mode (not implemented yet). */
   defaultBaselineGroupId?: string;
   axisLabels?: { x: string; y: string };

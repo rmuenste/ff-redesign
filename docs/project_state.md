@@ -1,6 +1,6 @@
 # Project State
 
-Last updated: 2026-06-28
+Last updated: 2026-06-29
 
 ## Current Migration Status
 
@@ -8,23 +8,17 @@ Last updated: 2026-06-28
   - Rising Bubble 3D: `/benchmarks/bubble3`
   - Rising Bubble 2D: `/benchmarks/2d-rising-bubble`
   - Flow Around Cylinder 3D: `/benchmarks/fac3`
-- Still planned:
   - Particle Sedimentation: `/benchmarks/particle-sedimentation`
+- Still planned: none
 
 The app foundation, shared comparison engine, MathJax setup, curated asset layout,
-and active benchmark routes are in place. Tests and build were green after the FAC
-review-fix pass.
+and active benchmark routes are in place. Tests and build were green after the
+particle sedimentation migration.
 
-## Particle Sedimentation Blocker
+## Particle Sedimentation Migration
 
-The old Angular particle sedimentation page uses static plot images for the result
-plots. The plot data exists separately, but it still needs postprocessing into a
-React/Plotly-friendly format before the benchmark should be migrated.
-
-Do not migrate the particle sedimentation plots from the static images alone. When
-work resumes, wait for the postprocessed plot data files and then build the page
-around real data, following the same no-synthetic-data rule used for RB3, RB2, and
-FAC.
-
-Likely next step: create a sedimentation migration plan once the processed plot
-data files are available.
+Particle Sedimentation is now the fourth migrated benchmark. The Angular static
+velocity and position result images were replaced by live Plotly plots generated
+from migrated simulation txt files and PIV reference files. The generated
+`sedimentation.zip` is built by the converter from the available migrated
+downloads, including simulation and PIV source files.

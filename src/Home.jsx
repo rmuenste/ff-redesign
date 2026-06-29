@@ -1,14 +1,14 @@
 // ===== Home / landing =====
+import { useNavigate } from "react-router-dom";
 import { benchmarks } from "./data/benchmarks";
-import { legacyRouteForBenchmarkSlug } from "./navigation";
 import { Btn, Chip, FlowCanvas, Icon, MeshThumb, Overline } from "./Primitives.jsx";
 
-export const Home = ({ setRoute }) => {
+export const Home = () => {
+  const navigate = useNavigate();
   const activeBenchmarks = benchmarks.filter(benchmark => benchmark.status === "active");
   const plannedBenchmarks = benchmarks.filter(benchmark => benchmark.status === "planned");
   const openBenchmark = benchmark => {
-    const route = legacyRouteForBenchmarkSlug(benchmark.slug);
-    if (route) setRoute(route);
+    navigate(`/benchmarks/${benchmark.slug}`);
   };
 
   return (
@@ -44,10 +44,10 @@ export const Home = ({ setRoute }) => {
                 data, MathJax formulas, and reusable comparison components.
               </p>
               <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-                <Btn variant="primary" size="lg" onClick={() => setRoute("benchmarks")} trailing={<Icon name="arrow_forward" size={16}/>}>
+                <Btn variant="primary" size="lg" onClick={() => navigate("/benchmarks")} trailing={<Icon name="arrow_forward" size={16}/>}>
                   Browse benchmarks
                 </Btn>
-                <Btn variant="stroked" size="lg" onClick={() => setRoute("detail")} leading={<Icon name="science" size={16}/>}>
+                <Btn variant="stroked" size="lg" onClick={() => navigate("/benchmarks/bubble3")} leading={<Icon name="science" size={16}/>}>
                   Open Rising Bubble 3D
                 </Btn>
               </div>

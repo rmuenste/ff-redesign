@@ -1,12 +1,14 @@
 // ===== Global nav =====
+import { useNavigate } from "react-router-dom";
 import { Btn, Icon } from "./Primitives.jsx";
 
-export const Nav = ({ route, setRoute, onToggleTweaks, tweaksAvailable }) => {
+export const Nav = ({ activePath }) => {
+  const navigate = useNavigate();
+  const activeRoute = activePath.startsWith("/benchmarks") ? "benchmarks" : activePath.startsWith("/gallery") ? "gallery" : "home";
   const items = [
-    { id: "home", label: "Home" },
-    { id: "benchmarks", label: "Benchmarks" },
-    { id: "gallery", label: "Gallery" },
-    { id: "detail", label: "Rising Bubble 3D", hidden: true },
+    { id: "home", label: "Home", path: "/" },
+    { id: "benchmarks", label: "Benchmarks", path: "/benchmarks" },
+    { id: "gallery", label: "Gallery", path: "/gallery" },
   ];
   return (
     <nav style={{
@@ -19,7 +21,7 @@ export const Nav = ({ route, setRoute, onToggleTweaks, tweaksAvailable }) => {
         maxWidth: 1440, margin: "0 auto", padding: "0 32px",
         display: "flex", alignItems: "center", gap: 28, height: 64,
       }}>
-        <div onClick={() => setRoute("home")}
+        <div onClick={() => navigate("/")}
           style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }}>
           <div style={{
             width: 28, height: 28, position: "relative",
@@ -41,16 +43,16 @@ export const Nav = ({ route, setRoute, onToggleTweaks, tweaksAvailable }) => {
 
         <div style={{ flex: 1, display: "flex", gap: 4, marginLeft: 24 }}>
           {items.filter(i => !i.hidden).map(i => (
-            <div key={i.id} onClick={() => setRoute(i.id)}
+            <div key={i.id} onClick={() => navigate(i.path)}
               style={{
                 padding: "8px 14px", fontSize: 13, cursor: "pointer", borderRadius: 4,
-                color: route === i.id ? "var(--fg1)" : "var(--fg2)",
-                background: route === i.id ? "var(--surface-alt)" : "transparent",
+                color: activeRoute === i.id ? "var(--fg1)" : "var(--fg2)",
+                background: activeRoute === i.id ? "var(--surface-alt)" : "transparent",
                 transition: "all 160ms var(--ease-std)",
-                fontWeight: route === i.id ? 500 : 400,
+                fontWeight: activeRoute === i.id ? 500 : 400,
               }}
-              onMouseEnter={e => { if (route !== i.id) e.currentTarget.style.color = "var(--fg1)"; }}
-              onMouseLeave={e => { if (route !== i.id) e.currentTarget.style.color = "var(--fg2)"; }}>
+              onMouseEnter={e => { if (activeRoute !== i.id) e.currentTarget.style.color = "var(--fg1)"; }}
+              onMouseLeave={e => { if (activeRoute !== i.id) e.currentTarget.style.color = "var(--fg2)"; }}>
               {i.label}
             </div>
           ))}
@@ -69,7 +71,7 @@ export const Nav = ({ route, setRoute, onToggleTweaks, tweaksAvailable }) => {
             }} />
             v0.4 · build 2026.04
           </div>
-          <Btn variant="stroked" size="sm" leading={<Icon name="download" size={14} />}>
+          <Btn variant="stroked" size="sm" leading={<Icon name="download" size={14} />} onClick={() => navigate("/benchmarks")}>
             Reference data
           </Btn>
         </div>
@@ -77,4 +79,3 @@ export const Nav = ({ route, setRoute, onToggleTweaks, tweaksAvailable }) => {
     </nav>
   );
 };
-

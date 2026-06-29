@@ -13,6 +13,7 @@ describe("benchmark registry", () => {
     expect(getBenchmarkBySlug("bubble3")?.id).toBe("rb3");
     expect(getBenchmarkBySlug("2d-rising-bubble")?.id).toBe("rb2");
     expect(getBenchmarkBySlug("fac3")?.id).toBe("fac3");
+    expect(getBenchmarkBySlug("particle-sedimentation")?.id).toBe("sedimentation");
     expect(getBenchmarkBySlug("does-not-exist")).toBeUndefined();
   });
 
@@ -25,7 +26,7 @@ describe("benchmark registry", () => {
   });
 
   it("keeps migrated benchmarks active and future pages planned", () => {
-    expect(benchmarks.filter(b => b.status === "active").map(b => b.id)).toEqual(["rb3", "rb2", "fac3"]);
-    expect(benchmarks.filter(b => b.status === "planned").map(b => b.id)).toEqual(["sedimentation"]);
+    expect(benchmarks.filter(b => b.status === "active").map(b => b.id)).toEqual(["rb3", "rb2", "fac3", "sedimentation"]);
+    expect(benchmarks.filter(b => b.status === "planned").map(b => b.id)).toEqual([]);
   });
 });

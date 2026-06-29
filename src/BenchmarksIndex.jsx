@@ -1,13 +1,14 @@
 // ===== Benchmarks index =====
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { benchmarks } from "./data/benchmarks";
-import { legacyRouteForBenchmarkSlug } from "./navigation";
 import { Chip, FlowCanvas, Icon, MeshThumb, Overline } from "./Primitives.jsx";
 
 const dims = ["All", "2D", "3D"];
 const models = ["All", "Two-Phase", "Newtonian", "Particulate"];
 
-export const BenchmarksIndex = ({ setRoute }) => {
+export const BenchmarksIndex = () => {
+  const navigate = useNavigate();
   const [dim, setDim] = React.useState("All");
   const [model, setModel] = React.useState("All");
   const [layout, setLayout] = React.useState("grid");
@@ -24,8 +25,7 @@ export const BenchmarksIndex = ({ setRoute }) => {
   ));
 
   const openBenchmark = benchmark => {
-    const route = legacyRouteForBenchmarkSlug(benchmark.slug);
-    if (route) setRoute(route);
+    navigate(`/benchmarks/${benchmark.slug}`);
   };
 
   return (
@@ -42,8 +42,8 @@ export const BenchmarksIndex = ({ setRoute }) => {
           </h1>
           <p style={{ fontSize: 17, color: "var(--fg2)", margin: 0, maxWidth: 720, lineHeight: 1.55 }}>
             The catalogue now shows the four benchmark pages backed by the Angular project.
-            Migrated pages are active; planned pages remain visibly disabled until their real
-            content and data are ported.
+            All listed benchmarks are active and backed by migrated content, curated assets,
+            and real result data.
           </p>
         </div>
       </div>

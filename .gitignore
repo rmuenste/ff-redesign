@@ -3,3 +3,11 @@ dist/
 *.tsbuildinfo
 vite.config.js
 vite.config.d.ts
+/cases/
+/velE*.txt
+/posE*.txt
+/velocities.png
+/positions.png
+/plot_velocities.py
+/plot_positions.py
+/process_and_plot.sh

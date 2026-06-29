@@ -160,7 +160,7 @@ export function ComparisonPanel({
         )}
 
         {spec.seriesGroups.length > 1 && (
-          <Group label={spec.comparisonAxis === "level" ? "Refinement levels" : "Codes"}>
+          <Group label={spec.seriesSelectorLabel ?? (spec.comparisonAxis === "level" ? "Refinement levels" : "Codes")}>
             {spec.seriesGroups.map(group => (
               <CheckRow
                 key={group.id}

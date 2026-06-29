@@ -101,6 +101,7 @@ export interface PlotSpec {
   title: string;
   metric: string;
   comparisonAxis: ComparisonAxis;
+  seriesSelectorLabel?: string;
   seriesGroups: SeriesGroup[];
   defaultSeriesGroupIds: string[];
   levelAxis?: LevelAxis;

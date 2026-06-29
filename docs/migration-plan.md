@@ -26,11 +26,12 @@ Decisions locked for v1:
 - Assets: curated copy from Angular assets into a stable redesign namespace.
 - Text policy: preserve scientific content, light-edit typos/HTML defects.
 - Existing prototype: archive a runnable copy before replacing it as the active app.
-- **No synthetic series.** Every plotted trace comes from a real Angular JSON asset.
+- **No synthetic series.** Every plotted trace comes from real migrated source
+  data: Angular JSON assets, Angular text assets, or curated reference files.
 
-Implementation status as of the RB2 pass:
+Implementation status as of the final benchmark pass:
 
-- Stage 0 through the FAC migration pass are complete.
+- Stage 0 through the final Particle Sedimentation migration pass are complete.
 - The shared comparison engine now supports RB3 trace variants and RB2's explicit
   single-select level axis with multi-toggle code series.
 - RB2 uses canonical copied assets under `public/benchmark-assets/rb2`, with the
@@ -42,6 +43,10 @@ Implementation status as of the RB2 pass:
 - FAC is active at `/benchmarks/fac3`; its Drag/Lift result images were replaced
   by live Plotly plots derived from `BenchValues.txt`, while Z-Force remains
   download-only.
+- Particle Sedimentation is active at `/benchmarks/particle-sedimentation`; its
+  Angular static Velocity/Position images were replaced by live Plotly plots from
+  converted simulation txt data and PIV references. The `sedimentation.zip`
+  download is generated from the migrated simulation and PIV download files.
 
 ## Ground Truth About The Current Code (verified)
 
@@ -395,7 +400,7 @@ Gallery:
 Goal: repeat the proven pattern, and prove the comparison component on its **second
 axis (codes)**.
 
-Migrate in this order:
+Completed in this order:
 
 1. **2D Rising Bubble** — promoted earlier in the order because it is the real
    multi-**code** comparison (Case 1 / Case 2; series from `c2g*`, `ff_`, `down_`
@@ -404,7 +409,10 @@ Migrate in this order:
    assembly, so do it with the comparison machinery already battle-tested on RB3.
 2. **Flow Around Cylinder 3D** — prose-heavy: tables, figures, reference-data table,
    conclusion/bibliography.
-3. **Particle Sedimentation** — content, tables, images, per-case downloads.
+3. **Particle Sedimentation** — content, tables, setup image, generated
+   Velocity/Position Plotly data, PIV references, per-case downloads, and a
+   converter-generated `sedimentation.zip` built from the available migrated
+   downloads.
 
 For each benchmark:
 

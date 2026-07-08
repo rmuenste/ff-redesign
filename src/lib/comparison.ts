@@ -77,6 +77,12 @@ function splitTraceIntoSegments(trace: RawTrace, segmentSize: number): RawTrace[
 /**
  * Derive the user-toggleable variants from a group's expanded traces. Labels come
  * from the JSON `name` fields, never from static config.
+ *
+ * Variant ids are positional (`"0"`, `"1"`, ...) and a selection is matched across
+ * groups by position, not label: the curated per-level/per-code files list the same
+ * variants in the same order even where the label formatting differs (e.g. RB3
+ * sphericity `dt=1.0E-3` on L1 vs `dt = 1.0000E-03` on L2). The alignment test in
+ * comparison.test.ts guards this ordering invariant against reordered asset files.
  */
 export function deriveTraceVariants(
   rawTraces: RawTrace[],
@@ -182,11 +188,15 @@ function styleTrace(
   if (!context.onlyOneVariant || context.onlyOneGroup) labelParts.push(variant.label);
   const name = labelParts.join(" · ") || group.label;
 
+  // When no dash override applies, keep the curated dash from the JSON: spreading
+  // an explicit `dash: undefined` would clobber it.
+  const line = dash ? { ...trace.line, color, dash } : { ...trace.line, color };
+
   const lineTrace: PlotlyTrace = {
     ...trace,
     name,
     mode: source.markerSampleEvery ? "lines" : trace.mode,
-    line: { ...trace.line, color, dash },
+    line,
     marker: { ...trace.marker, color },
     showlegend
   };
@@ -201,8 +211,8 @@ function styleTrace(
       y: sample(trace.y, source.markerSampleEvery),
       name,
       mode: "markers",
-      line: { ...trace.line, color, dash },
-      marker: { ...trace.marker, color, symbol: group.markerSymbol },
+      line: { ...line },
+      marker: { ...trace.marker, color, symbol: group.markerSymbol ?? trace.marker?.symbol },
       showlegend: false
     }
   ];
@@ -212,28 +222,39 @@ function sample(values: number[], every: number) {
   return values.filter((_, index) => index % every === 0);
 }
 
+/** Resolved theme tokens for the plot chrome; callers pass values read from the
+ * active CSS theme (`--fg1` / `--fg2` / `--divider`). Defaults match the dark theme. */
+export interface ComparisonLayoutColors {
+  text?: string;
+  mutedText?: string;
+  grid?: string;
+}
+
 /** Themed, token-driven Plotly layout shared by every comparison plot. */
-export function comparisonLayout(spec: PlotSpec) {
+export function comparisonLayout(spec: PlotSpec, colors: ComparisonLayoutColors = {}) {
   const axis = spec.axisLabels ?? { x: "", y: "" };
+  const text = colors.text ?? "rgba(255,255,255,0.82)";
+  const mutedText = colors.mutedText ?? "rgba(255,255,255,0.72)";
+  const grid = colors.grid ?? "rgba(255,255,255,0.10)";
   return {
     title: { text: spec.title },
     autosize: true,
     paper_bgcolor: "rgba(0,0,0,0)",
     plot_bgcolor: "rgba(0,0,0,0)",
-    font: { color: "rgba(255,255,255,0.82)" },
-    legend: { font: { color: "rgba(255,255,255,0.72)" } },
+    font: { color: text },
+    legend: { font: { color: mutedText } },
     margin: { l: 54, r: 20, t: 48, b: 48 },
     xaxis: {
       title: { text: axis.x },
       range: spec.axisRanges?.x,
-      gridcolor: "rgba(255,255,255,0.10)",
-      zerolinecolor: "rgba(255,255,255,0.10)"
+      gridcolor: grid,
+      zerolinecolor: grid
     },
     yaxis: {
       title: { text: axis.y },
       range: spec.axisRanges?.y,
-      gridcolor: "rgba(255,255,255,0.10)",
-      zerolinecolor: "rgba(255,255,255,0.10)"
+      gridcolor: grid,
+      zerolinecolor: grid
     }
   };
 }

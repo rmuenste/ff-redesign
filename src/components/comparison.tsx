@@ -5,6 +5,7 @@ import {
   comparisonLayout,
   deriveTraceVariants,
   expandSource,
+  type ComparisonLayoutColors,
   type LoadedGroup
 } from "../lib/comparison";
 import { PlotPanel } from "./science";
@@ -27,6 +28,20 @@ function resolveCssVar(value: string): string {
   const rootResolved = getComputedStyle(document.documentElement).getPropertyValue(match[1]).trim();
   const resolved = bodyResolved || rootResolved;
   return resolved || value;
+}
+
+/** Plot chrome colours from the active theme tokens; `undefined` (→ lib defaults)
+ * when a token cannot be resolved, e.g. outside the DOM. */
+function layoutColors(): ComparisonLayoutColors {
+  const resolve = (varExpr: string) => {
+    const resolved = resolveCssVar(varExpr);
+    return resolved.startsWith("var(") ? undefined : resolved;
+  };
+  return {
+    text: resolve("var(--fg1)"),
+    mutedText: resolve("var(--fg2)"),
+    grid: resolve("var(--divider)")
+  };
 }
 
 function resolveSource(group: SeriesGroup, selectedLevelId?: string): PlotSource | null {
@@ -54,7 +69,7 @@ function useComparisonData(spec: PlotSpec, selectedLevelId?: string) {
         const raw = await response.json();
         const rawTraces = expandSource(raw, source);
         const variants = deriveTraceVariants(rawTraces, group.variantStrategy);
-        return { group: { ...group, color: resolveCssVar(group.color) }, source, rawTraces, variants };
+        return { group, source, rawTraces, variants };
       })
     )
       .then(nextGroups => {
@@ -89,7 +104,16 @@ export function ComparisonPanel({
   const [selectedVariantIds, setSelectedVariantIds] = useState<string[]>([]);
   const [selectedLevelId, setSelectedLevelId] = useState<string | undefined>(spec.levelAxis?.defaultLevelId);
 
-  const { groups, loading, error } = useComparisonData(spec, selectedLevelId);
+  // Validate the stored level against the active spec during render so a metric
+  // switch never fetches with the previous metric's level id (or double-fetches
+  // once an effect resets it).
+  const activeLevelId = spec.levelAxis
+    ? spec.levelAxis.options.some(option => option.id === selectedLevelId)
+      ? selectedLevelId
+      : spec.levelAxis.defaultLevelId
+    : undefined;
+
+  const { groups, loading, error } = useComparisonData(spec, activeLevelId);
 
   // Variant options come from whichever loaded group exposes the most variants.
   const variantOptions = useMemo<TraceVariant[]>(
@@ -101,19 +125,29 @@ export function ComparisonPanel({
   useEffect(() => {
     setSelectedGroupIds(spec.defaultSeriesGroupIds);
     setCompareMode(spec.defaultCompareMode);
-    setSelectedLevelId(spec.levelAxis?.defaultLevelId);
   }, [spec]);
 
-  // Default to all variants visible whenever the option set changes.
+  // Keep the user's variant selection across reloads (e.g. level switches) as long
+  // as the selected ids still exist; otherwise default to all variants visible.
   useEffect(() => {
-    setSelectedVariantIds(variantOptions.map(variant => variant.id));
+    setSelectedVariantIds(current => {
+      const available = new Set(variantOptions.map(variant => variant.id));
+      const kept = current.filter(id => available.has(id));
+      return kept.length ? kept : variantOptions.map(variant => variant.id);
+    });
   }, [variantOptions]);
 
   const traceResult = useMemo(() => {
     if (!groups.length) return { traces: [], buildError: null };
+    // Resolve group colour tokens at build time (not fetch time) so re-renders pick
+    // up the active theme without refetching.
+    const themedGroups = groups.map(entry => ({
+      ...entry,
+      group: { ...entry.group, color: resolveCssVar(entry.group.color) }
+    }));
     try {
       return {
-        traces: buildComparisonTraces(spec, groups, { selectedGroupIds, selectedVariantIds, compareMode }),
+        traces: buildComparisonTraces(spec, themedGroups, { selectedGroupIds, selectedVariantIds, compareMode }),
         buildError: null
       };
     } catch (err) {
@@ -145,7 +179,7 @@ export function ComparisonPanel({
         {spec.levelAxis && (
           <Group label={spec.levelAxis.label}>
             {spec.levelAxis.options.map(option => (
-              <OptionButton key={option.id} active={selectedLevelId === option.id} onClick={() => setSelectedLevelId(option.id)}>
+              <OptionButton key={option.id} active={activeLevelId === option.id} onClick={() => setSelectedLevelId(option.id)}>
                 <span>
                   <span>{option.label}</span>
                   {option.detail && (
@@ -208,7 +242,7 @@ export function ComparisonPanel({
             <Suspense fallback={<div style={{ color: "var(--fg2)" }}>Loading Plotly...</div>}>
               <Plot
                 data={traces}
-                layout={comparisonLayout(spec)}
+                layout={comparisonLayout(spec, layoutColors())}
                 config={{ responsive: true, displaylogo: false }}
                 useResizeHandler
                 style={{ width: "100%", height: 520 }}

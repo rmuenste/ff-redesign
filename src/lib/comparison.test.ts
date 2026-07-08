@@ -9,7 +9,7 @@ import {
   type LoadedGroup,
   type RawTrace
 } from "./comparison";
-import type { PlotSpec, SeriesGroup } from "../data/types";
+import type { PlotSpec, SeriesGroup, TraceVariantStrategy } from "../data/types";
 
 const RB3 = resolve(process.cwd(), "public/benchmark-assets/rb3");
 
@@ -158,6 +158,30 @@ describe("buildComparisonTraces (overlay)", () => {
     expect(traces[0].line.color).toBe("#ff7700");
   });
 
+  it("preserves a curated line dash when no dash override applies", () => {
+    const raw: RawTrace[] = [{ x: [0, 1], y: [0, 1], name: "ref", line: { color: "black", dash: "dashdot" } }];
+    const group = levelGroup("l1", "#11aabb", "single");
+    const traces = buildComparisonTraces(
+      { ...spec, seriesGroups: [group] },
+      [{ group, source: group.source!, rawTraces: raw, variants: deriveTraceVariants(raw, group.variantStrategy) }],
+      { selectedGroupIds: ["l1"], selectedVariantIds: ["0"], compareMode: "overlay" }
+    );
+    expect(traces).toHaveLength(1);
+    expect(traces[0].line.dash).toBe("dashdot");
+    expect(traces[0].line.color).toBe("black");
+  });
+
+  it("lets a source dash override the curated dash", () => {
+    const raw: RawTrace[] = [{ x: [0, 1], y: [0, 1], name: "ref", line: { color: "black", dash: "dashdot" } }];
+    const group: SeriesGroup = { ...levelGroup("l1", "#11aabb", "single"), source: { kind: "trace-array", asset: { path: "" }, dash: "dot" } };
+    const traces = buildComparisonTraces(
+      { ...spec, seriesGroups: [group] },
+      [{ group, source: group.source!, rawTraces: raw, variants: deriveTraceVariants(raw, group.variantStrategy) }],
+      { selectedGroupIds: ["l1"], selectedVariantIds: ["0"], compareMode: "overlay" }
+    );
+    expect(traces[0].line.dash).toBe("dot");
+  });
+
   it("adds sampled marker companions for dense quantity sources", () => {
     const source = { ...groupL1.source!, markerSampleEvery: 2 };
     const group: SeriesGroup = { ...groupL1, markerSymbol: "circle" };
@@ -210,4 +234,59 @@ describe("comparisonLayout", () => {
     expect(layout.xaxis.range).toEqual([0, 8]);
     expect(layout.yaxis.range).toEqual([-0.5, 3.5]);
   });
+
+  it("themes the plot chrome from resolved token colours", () => {
+    const spec: PlotSpec = {
+      id: "x",
+      title: "Sphericity",
+      metric: "sphericity",
+      comparisonAxis: "level",
+      seriesGroups: [],
+      defaultSeriesGroupIds: [],
+      compareModes: ["overlay"],
+      defaultCompareMode: "overlay"
+    };
+    const light = comparisonLayout(spec, {
+      text: "rgba(0,0,0,0.87)",
+      mutedText: "rgba(0,0,0,0.60)",
+      grid: "rgba(0,0,0,0.12)"
+    });
+    expect(light.font.color).toBe("rgba(0,0,0,0.87)");
+    expect(light.legend.font.color).toBe("rgba(0,0,0,0.60)");
+    expect(light.xaxis.gridcolor).toBe("rgba(0,0,0,0.12)");
+    expect(light.yaxis.zerolinecolor).toBe("rgba(0,0,0,0.12)");
+
+    // Without resolved tokens the layout falls back to the dark theme.
+    const fallback = comparisonLayout(spec);
+    expect(fallback.font.color).toBe("rgba(255,255,255,0.82)");
+    expect(fallback.xaxis.gridcolor).toBe("rgba(255,255,255,0.10)");
+  });
+});
+
+describe("RB3 variant alignment across levels", () => {
+  // Variant selection is matched across groups by position (ids "0", "1", ...), so
+  // every level's file must list the same variants in the same order. Labels may
+  // differ in formatting (l1 sphericity uses "dt=1.0E-3", l2 "dt = 1.0000E-03"),
+  // so compare the numeric values they contain instead of the raw strings.
+  const numbersIn = (label: string) =>
+    (label.match(/-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?/g) ?? []).map(Number);
+
+  it.each(["mass", "size", "sphericity", "surface"] as const)(
+    "lists %s variants in the same order on every level",
+    metric => {
+      const strategy: TraceVariantStrategy =
+        metric === "size" ? { kind: "paired-traces", pairSize: 2 } : { kind: "single-trace" };
+      const perLevel = (["l1", "l2", "l3"] as const).map(level =>
+        deriveTraceVariants(loadTraces(`plots/${metric}/${level}.json`), strategy)
+      );
+      const [first, ...rest] = perLevel;
+      expect(first.length).toBeGreaterThan(0);
+      for (const variants of rest) {
+        expect(variants).toHaveLength(first.length);
+        variants.forEach((variant, index) => {
+          expect(numbersIn(variant.label)).toEqual(numbersIn(first[index].label));
+        });
+      }
+    }
+  );
 });

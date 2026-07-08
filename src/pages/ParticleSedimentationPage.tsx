@@ -37,7 +37,7 @@ function IntroductionTab() {
           {
             type: "paragraph",
             text:
-              "The experiment uses Particle Image Velocimetry (PIV), so the migrated page compares simulation position and velocity curves directly with measured particle-motion references. The live plots replace the static result images from the Angular page."
+              "The experiment uses Particle Image Velocimetry (PIV), so the page compares simulation position and velocity curves directly with measured particle-motion references in interactive plots."
           },
           {
             type: "paragraph",

@@ -36,14 +36,15 @@ export const BenchmarksIndex = () => {
         </div>
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 0%, var(--bg) 90%)" }} />
         <div className="section" style={{ position: "relative" }}>
-          <Overline style={{ marginBottom: 16 }}>Catalogue · migrated from FF-Angular source data</Overline>
+          <Overline style={{ marginBottom: 16 }}>Catalogue · {benchmarks.length} benchmarks</Overline>
           <h1 className="display" style={{ fontSize: "clamp(52px, 6vw, 84px)", margin: "0 0 16px", color: "var(--fg1)" }}>
             Benchmarks<span style={{ color: "var(--primary)" }}>.</span>
           </h1>
           <p style={{ fontSize: 17, color: "var(--fg2)", margin: 0, maxWidth: 720, lineHeight: 1.55 }}>
-            The catalogue now shows the four benchmark pages backed by the Angular project.
-            All listed benchmarks are active and backed by migrated content, curated assets,
-            and real result data.
+            Validated flow-simulation benchmarks: two-phase bubble dynamics, laminar
+            flow around a cylinder, and particulate sedimentation. Each page provides
+            the problem definition, interactive result comparisons, and downloadable
+            reference data.
           </p>
         </div>
       </div>
@@ -132,9 +133,11 @@ const BenchmarkCard = ({ benchmark, variant, onOpen }) => {
           <Chip tone="solid">{benchmark.tag}</Chip>
           <Chip>{benchmark.dimension}</Chip>
         </div>
-        <div style={{ position: "absolute", top: 10, right: 10 }}>
-          <Chip tone={active ? "default" : "ghost"}>{active ? "Migrated" : "Planned"}</Chip>
-        </div>
+        {!active && (
+          <div style={{ position: "absolute", top: 10, right: 10 }}>
+            <Chip tone="ghost">Coming soon</Chip>
+          </div>
+        )}
       </div>
       <div style={{ padding: 16 }}>
         <div style={{ fontSize: 15, fontWeight: 500, marginBottom: 4 }}>{benchmark.shortTitle}</div>

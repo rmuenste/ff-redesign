@@ -197,7 +197,7 @@ function ResultsTab() {
         <div>
           <h3>Live reference curves</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65, maxWidth: 820 }}>
-            The original Angular page displayed static Drag and Lift images. Here the same reference file is rendered live with Plotly, so the previous zoom figures are replaced by interactive zooming.
+            Drag and lift are rendered live from the reference time series with Plotly, so fixed zoom figures are replaced by interactive zooming and panning.
           </p>
           <ComparisonPanel specs={fac3PlotSpecs} defaultMetric="drag" />
         </div>
@@ -240,7 +240,7 @@ function ReferenceDataTab() {
           {
             type: "paragraph",
             text:
-              "BenchValues.txt contains the reference time series used by the live plots in the Results tab. The fourth column, Z-Force, is preserved in the download and is not plotted on the migrated page."
+              "BenchValues.txt contains the reference time series used by the live plots in the Results tab. The fourth column, Z-Force, is preserved in the download and is not plotted here."
           }
         ]}
       />

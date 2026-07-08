@@ -5,8 +5,6 @@ import { Btn, Chip, FlowCanvas, Icon, MeshThumb, Overline } from "./Primitives.j
 
 export const Home = () => {
   const navigate = useNavigate();
-  const activeBenchmarks = benchmarks.filter(benchmark => benchmark.status === "active");
-  const plannedBenchmarks = benchmarks.filter(benchmark => benchmark.status === "planned");
   const openBenchmark = benchmark => {
     navigate(`/benchmarks/${benchmark.slug}`);
   };
@@ -20,9 +18,9 @@ export const Home = () => {
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 0%, transparent 45%, var(--bg) 100%)", pointerEvents: "none" }} />
         <div className="section" style={{ position: "relative", paddingTop: 96, paddingBottom: 80 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 72 }}>
-            <Overline>FF-Angular · React migration</Overline>
+            <Overline>FeatFloWer · CFD benchmark suite</Overline>
             <div style={{ display: "flex", gap: 20, fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--fg3)" }}>
-              <span>{activeBenchmarks.length} migrated</span><span>·</span><span>{plannedBenchmarks.length} planned</span>
+              <span>{benchmarks.length} benchmarks</span><span>·</span><span>2D & 3D</span>
             </div>
           </div>
 
@@ -39,9 +37,10 @@ export const Home = () => {
                 <span style={{ color: "var(--primary)", fontStyle: "italic", fontFamily: "var(--font-serif)", fontWeight: 400 }}>compared</span>.
               </h1>
               <p style={{ fontSize: 19, lineHeight: 1.55, color: "var(--fg2)", maxWidth: 600, margin: "0 0 36px", textWrap: "pretty" }}>
-                FeatFloWer benchmark content is being migrated from the Angular source
-                into a React interface built around structured content, real Plotly
-                data, MathJax formulas, and reusable comparison components.
+                FeatFloWer benchmarks document validated flow simulations — rising
+                bubbles, flow around a cylinder, particle sedimentation — with precise
+                problem definitions, interactive result plots, and downloadable
+                reference data.
               </p>
               <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
                 <Btn variant="primary" size="lg" onClick={() => navigate("/benchmarks")} trailing={<Icon name="arrow_forward" size={16}/>}>
@@ -55,22 +54,26 @@ export const Home = () => {
 
             <div className="card" style={{ padding: 20, background: "color-mix(in oklab, var(--surface) 75%, transparent)", backdropFilter: "blur(10px)" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                <Overline>Migration status</Overline>
+                <Overline>Benchmark overview</Overline>
                 <Chip tone="default">
                   <span style={{ display: "inline-block", width: 6, height: 6, borderRadius: 999, background: "var(--tu-green-400)" }} />
-                  in progress
+                  results online
                 </Chip>
               </div>
               <div style={{ display: "grid", gap: 14 }}>
                 {benchmarks.map(benchmark => (
-                  <div key={benchmark.id} style={{ display: "grid", gridTemplateColumns: "48px 1fr auto", gap: 12, alignItems: "center", padding: "10px 0", borderBottom: "1px solid var(--divider)" }}>
+                  <div
+                    key={benchmark.id}
+                    onClick={() => benchmark.status === "active" && openBenchmark(benchmark)}
+                    style={{ display: "grid", gridTemplateColumns: "48px 1fr auto", gap: 12, alignItems: "center", padding: "10px 0", borderBottom: "1px solid var(--divider)", cursor: benchmark.status === "active" ? "pointer" : "default" }}
+                  >
                     <Chip tone={benchmark.status === "active" ? "solid" : "ghost"}>{benchmark.tag}</Chip>
                     <div>
                       <div style={{ fontSize: 14, fontWeight: 500 }}>{benchmark.shortTitle}</div>
                       <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--fg3)", marginTop: 2 }}>{benchmark.model} · {benchmark.dimension}</div>
                     </div>
-                    <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: benchmark.status === "active" ? "var(--tu-green-400)" : "var(--fg3)", textTransform: "uppercase" }}>
-                      {benchmark.status}
+                    <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: benchmark.status === "active" ? "var(--tu-green-400)" : "var(--fg3)" }}>
+                      Re = {benchmark.reynolds ?? "—"}
                     </div>
                   </div>
                 ))}
@@ -87,16 +90,16 @@ export const Home = () => {
             A benchmark site built around <em style={{ color: "var(--primary)" }}>traceable</em> data.
           </h2>
           <p style={{ fontSize: 17, lineHeight: 1.6, color: "var(--fg2)", alignSelf: "end", margin: 0, textWrap: "pretty" }}>
-            The React redesign keeps the visual system from the prototype, while the
-            implementation now prioritizes source-backed benchmark pages: canonical
-            registry metadata, curated assets, structured content, and real Plotly traces.
+            Every benchmark page is source-backed: precise problem definitions,
+            structured content, and interactive Plotly views computed from the
+            published reference data.
           </p>
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 1, background: "var(--divider)", border: "1px solid var(--divider)" }}>
           {[
             ["Structured content", "Benchmark pages are modeled as typed tabs, blocks, tables, figures, downloads, and references."],
-            ["Real plots", "Migrated result views load Plotly traces from Angular JSON assets instead of synthetic curves."],
+            ["Interactive plots", "Result views render the benchmark reference data as live Plotly traces with zoom, series toggles, and comparisons."],
             ["Comparison first", "The detail-page pattern supports level, code, and reference comparisons as reusable UI."],
           ].map(([title, desc], index) => (
             <div key={title} style={{ background: "var(--bg)", padding: 32, minHeight: 260 }}>

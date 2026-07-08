@@ -127,7 +127,7 @@ const BenchmarkCard = ({ benchmark, variant, onOpen }) => {
   return (
     <div className={"card" + (active ? " card-interactive" : "")} style={{ padding: 0, overflow: "hidden", opacity: active ? 1 : 0.62 }} onClick={active ? onOpen : undefined}>
       <div style={{ aspectRatio: "1.6/1", position: "relative", background: "var(--bg)" }}>
-        <MeshThumb variant={variant}/>
+        <MeshThumb variant={variant} shape={benchmark.thumb}/>
         <div style={{ position: "absolute", top: 10, left: 10, display: "flex", gap: 6 }}>
           <Chip tone="solid">{benchmark.tag}</Chip>
           <Chip>{benchmark.dimension}</Chip>

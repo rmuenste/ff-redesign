@@ -115,7 +115,7 @@ export const Home = ({ setRoute }) => {
             {benchmarks.map((benchmark, index) => (
               <div key={benchmark.id} className={"card" + (benchmark.status === "active" ? " card-interactive" : "")} onClick={() => benchmark.status === "active" && openBenchmark(benchmark)} style={{ overflow: "hidden", opacity: benchmark.status === "active" ? 1 : 0.62 }}>
                 <div style={{ aspectRatio: "1.5/1", background: "var(--bg)" }}>
-                  <MeshThumb variant={index}/>
+                  <MeshThumb variant={index} shape={benchmark.thumb}/>
                 </div>
                 <div style={{ padding: 18 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", gap: 8, marginBottom: 10 }}>

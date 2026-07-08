@@ -13,6 +13,7 @@ export const benchmarks: BenchmarkMeta[] = [
     levels: 3,
     summary:
       "A buoyancy-driven two-phase benchmark for a single bubble rising through a viscous medium in a cuboid domain.",
+    thumb: "bubble",
     tabs: ["Introduction", "Definition", "Results", "Reference Data"],
     comparisonAxis: "level",
     status: "active"
@@ -29,6 +30,7 @@ export const benchmarks: BenchmarkMeta[] = [
     levels: 3,
     summary:
       "A quantitative two-dimensional bubble dynamics benchmark with case-based cross-code comparisons.",
+    thumb: "bubble-2d",
     tabs: ["Introduction", "Definition", "Results", "Reference Data"],
     comparisonAxis: "code",
     status: "active"
@@ -45,6 +47,7 @@ export const benchmarks: BenchmarkMeta[] = [
     levels: 4,
     summary:
       "A laminar incompressible Navier-Stokes benchmark comparing drag and lift around a cylindrical obstacle.",
+    thumb: "cylinder",
     tabs: ["Introduction", "Definition", "Results", "Reference Data", "Conclusion and Bibliography"],
     comparisonAxis: "code",
     status: "active"
@@ -61,6 +64,7 @@ export const benchmarks: BenchmarkMeta[] = [
     levels: 2,
     summary:
       "A particulate-flow benchmark comparing the motion of a settling sphere and induced flow field against experimental data.",
+    thumb: "sediment",
     tabs: ["Introduction", "Definition", "Results", "Reference Data"],
     status: "planned"
   }

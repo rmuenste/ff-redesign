@@ -28,7 +28,7 @@ export const Gallery = () => {
           {benchmarks.map((benchmark, index) => (
             <div key={benchmark.id} className="card" style={{ padding: 0, overflow: "hidden", opacity: 0.72 }}>
               <div style={{ aspectRatio: "1.5/1", background: "var(--bg)" }}>
-                <MeshThumb variant={index}/>
+                <MeshThumb variant={index} shape={benchmark.thumb}/>
               </div>
               <div style={{ padding: 18 }}>
                 <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>

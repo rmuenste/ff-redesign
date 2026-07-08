@@ -3,6 +3,11 @@ import type { ContentBlock } from "../components";
 
 export type BenchmarkStatus = "active" | "planned";
 export type ComparisonAxis = "code" | "level";
+/**
+ * Motif drawn by `MeshThumb`. Most are abstract; `bubble-2d` is the real RB2
+ * case-2 interface curve. Used when no full render is available.
+ */
+export type MeshShape = "cylinder" | "bubble" | "bubble-2d" | "particle" | "sediment" | "channel";
 export type SeriesKind = "code" | "level" | "reference";
 export type PlotSourceKind = "single-trace" | "trace-array" | "segmented-shape";
 export type CompareMode = "overlay" | "diff" | "small-multiples";
@@ -36,6 +41,8 @@ export interface BenchmarkMeta {
   reynolds?: number | string;
   levels?: number;
   summary: string;
+  /** Abstract thumbnail motif keyed to the benchmark's physics. */
+  thumb: MeshShape;
   heroAsset?: AssetRef;
   tabs: string[];
   comparisonAxis?: ComparisonAxis;

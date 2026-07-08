@@ -9,6 +9,11 @@ describe("benchmark registry", () => {
     expect(new Set(benchmarks.map(b => b.slug)).size).toBe(benchmarks.length);
   });
 
+  it("keys each thumbnail motif to the benchmark physics", () => {
+    const thumbs = Object.fromEntries(benchmarks.map(b => [b.id, b.thumb]));
+    expect(thumbs).toEqual({ rb3: "bubble", rb2: "bubble-2d", fac3: "cylinder", sedimentation: "sediment" });
+  });
+
   it("resolves benchmarks by slug", () => {
     expect(getBenchmarkBySlug("bubble3")?.id).toBe("rb3");
     expect(getBenchmarkBySlug("2d-rising-bubble")?.id).toBe("rb2");

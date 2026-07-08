@@ -218,6 +218,26 @@ const SED = {
   sphere: { cx: 120, cy: 146, r: 10 },
 };
 
+/**
+ * RB3 initial condition: the spherical bubble centred low in the cuboid domain,
+ * about to rise. The 3D reading comes from an isometric domain box, a wireframe
+ * of latitude/meridian ellipses, and an off-centre highlight gradient.
+ */
+const RB3 = (() => {
+  const cx = 134, cy = 98, r = 26, dx = 28, dy = -18;
+  const front = { x: 70, y: 38, w: 100, h: 104 };
+  const lats = [-54, -27, 0, 27, 54].map(deg => {
+    const phi = (deg * Math.PI) / 180;
+    return {
+      cy: cy - r * Math.sin(phi) * 0.92,
+      rx: r * Math.cos(phi),
+      ry: r * Math.cos(phi) * 0.3,
+      op: (0.55 - Math.abs(deg) / 180).toFixed(2),
+    };
+  });
+  return { cx, cy, r, dx, dy, front, lats };
+})();
+
 const MESH_SEEDS = {
   cylinder: { shape: "cylinder", color: "var(--tu-green-500)" },
   bubble: { shape: "bubble", color: "var(--tu-green-500)" },
@@ -239,6 +259,14 @@ export const MeshThumb = ({ variant = 0, shape, style }) => {
           <path d="M0 14 L8 0 L16 14 Z" fill="none" stroke="var(--divider)" strokeWidth="0.5" />
           <path d="M0 0 L8 14 L16 0" fill="none" stroke="var(--divider)" strokeWidth="0.5" />
         </pattern>
+        {s.shape === "bubble" && (
+          <radialGradient id={`sphere-${uid}`} cx="0.34" cy="0.3" r="1.05">
+            <stop offset="0%" stopColor="var(--tu-green-200)" stopOpacity="0.7" />
+            <stop offset="42%" stopColor="var(--tu-green-400)" stopOpacity="0.32" />
+            <stop offset="82%" stopColor="var(--tu-green-600)" stopOpacity="0.3" />
+            <stop offset="100%" stopColor="var(--tu-green-800)" stopOpacity="0.42" />
+          </radialGradient>
+        )}
       </defs>
       <rect width="240" height="160" fill="var(--surface-alt)" />
       <rect width="240" height="160" fill={`url(#mesh-${uid})`} opacity="0.6" />
@@ -270,12 +298,27 @@ export const MeshThumb = ({ variant = 0, shape, style }) => {
       )}
       {s.shape === "bubble" && (
         <>
-          <ellipse cx="120" cy="90" rx="26" ry="32" fill={s.color} opacity="0.15" stroke={s.color} strokeWidth="1.5" />
-          {Array.from({ length: 5 }).map((_, i) => (
-            <ellipse key={i} cx="120" cy="90" rx={26 - i * 4} ry={32 - i * 5}
-              fill="none" stroke={s.color} strokeWidth="0.5" opacity={0.5 - i * 0.09} />
-          ))}
-          <path d="M120 58 C120 40 122 30 124 20" fill="none" stroke={s.color} strokeWidth="0.8" opacity="0.5" strokeDasharray="2 2" />
+          <g fill="none" stroke="var(--fg3)" strokeWidth="1">
+            <rect x={RB3.front.x + RB3.dx} y={RB3.front.y + RB3.dy} width={RB3.front.w} height={RB3.front.h} opacity="0.4" />
+            <line x1={RB3.front.x} y1={RB3.front.y} x2={RB3.front.x + RB3.dx} y2={RB3.front.y + RB3.dy} opacity="0.4" />
+            <line x1={RB3.front.x + RB3.front.w} y1={RB3.front.y} x2={RB3.front.x + RB3.front.w + RB3.dx} y2={RB3.front.y + RB3.dy} opacity="0.4" />
+            <line x1={RB3.front.x + RB3.front.w} y1={RB3.front.y + RB3.front.h} x2={RB3.front.x + RB3.front.w + RB3.dx} y2={RB3.front.y + RB3.front.h + RB3.dy} opacity="0.4" />
+            <line x1={RB3.front.x} y1={RB3.front.y + RB3.front.h} x2={RB3.front.x + RB3.dx} y2={RB3.front.y + RB3.front.h + RB3.dy} opacity="0.25" strokeDasharray="3 3" />
+            <rect x={RB3.front.x} y={RB3.front.y} width={RB3.front.w} height={RB3.front.h} />
+          </g>
+          <line x1={RB3.cx} y1={RB3.cy - RB3.r - 4} x2={RB3.cx} y2={RB3.front.y + RB3.dy + 8} stroke="var(--tu-green-300)" strokeWidth="0.6" strokeDasharray="2 3" opacity="0.5" />
+          <circle cx={RB3.cx} cy={RB3.cy} r={RB3.r} fill={`url(#sphere-${uid})`} stroke={s.color} strokeWidth="1.6" />
+          <g fill="none" stroke="var(--tu-green-400)" strokeWidth="0.6">
+            {RB3.lats.map((l, i) => (
+              <ellipse key={i} cx={RB3.cx} cy={l.cy} rx={l.rx} ry={l.ry} opacity={l.op} />
+            ))}
+            <ellipse cx={RB3.cx} cy={RB3.cy} rx={RB3.r * 0.35} ry={RB3.r} opacity="0.35" />
+          </g>
+          <ellipse
+            cx={RB3.cx - 9} cy={RB3.cy - 11} rx="7" ry="4.5"
+            fill="var(--tu-green-100)" opacity="0.45"
+            transform={`rotate(-32 ${RB3.cx - 9} ${RB3.cy - 11})`}
+          />
         </>
       )}
       {s.shape === "particle" && (

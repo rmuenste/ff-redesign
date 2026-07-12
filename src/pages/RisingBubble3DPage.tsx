@@ -72,7 +72,7 @@ function DefinitionTab() {
           {
             type: "paragraph",
             text:
-              "The initial configuration consists of a circular bubble of radius centered at the middle of a 1 by 2 cuboid domain. The density of the bubble is smaller than that of the surrounding fluid. No-slip boundary conditions are used on all boundaries."
+              "The initial configuration consists of a circular bubble of radius 0.25 centered at the middle of a 1 by 2 cuboid domain. The density of the bubble is smaller than that of the surrounding fluid. No-slip boundary conditions are used on all boundaries."
           },
           { type: "equation", value: "$r_0 = 0.25,\\quad (x,y) = (0.5, 0.5)$", block: true },
           { type: "equation", value: "$(\\rho_1 < \\rho_2),\\quad \\mathbf{u}=0$", block: true }

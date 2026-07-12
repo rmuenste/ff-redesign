@@ -66,7 +66,7 @@ function DefinitionTab() {
           {
             type: "paragraph",
             text:
-              "The initial configuration is identical for both test cases: a circular bubble of radius centered in a 1 by 2 rectangular domain. The density of the bubble is smaller than the surrounding fluid. No-slip boundary conditions are used at the top and bottom boundaries, while free slip is imposed on the vertical walls."
+              "The initial configuration is identical for both test cases: a circular bubble of radius 0.25 centered in a 1 by 2 rectangular domain. The density of the bubble is smaller than the surrounding fluid. No-slip boundary conditions are used at the top and bottom boundaries, while free slip is imposed on the vertical walls."
           },
           { type: "equation", value: "$r_0 = 0.25,\\quad (x,y) = (0.5, 0.5)$", block: true },
           { type: "equation", value: "$(\\rho_2 < \\rho_1),\\quad \\mathbf{u}=0$", block: true }

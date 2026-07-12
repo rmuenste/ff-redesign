@@ -28,7 +28,7 @@ export const Footer = () => (
     <div className="section" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 24, borderTop: "1px solid var(--divider)", fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--fg3)", letterSpacing: ".08em", textTransform: "uppercase" }}>
       <span>© 2022–2026 · FeatFloWer team</span>
       <span>v0.4.2 · build 2026.04.22</span>
-      <span>MIT licensed · DOI 10.xxxx/ff.2026.04</span>
+      <span>MIT licensed</span>
     </div>
   </footer>
 );

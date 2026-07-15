@@ -171,8 +171,13 @@ function ReferenceDataTab() {
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
             Quantity files can be plotted with standard postprocessing tools. Columns 1 through 5 contain time, mass or area, circularity, center of mass, and rise velocity.
           </p>
-          <pre style={{ overflowX: "auto", padding: 16, background: "var(--surface-alt)", border: "1px solid var(--divider)", borderRadius: 4, color: "var(--fg2)" }}>
-            <code>{'plot "c1g1l4.txt" using 1:2 with lines title "Bubble mass/area"\\nplot "c1g1l4.txt" using 1:3 with lines title "Circularity"\\nplot "c1g1l4.txt" using 1:4 with lines title "Center of mass"\\nplot "c1g1l4.txt" using 1:5 with lines title "Rise velocity"'}</code>
+          <pre style={{ overflowX: "auto", minWidth: 0, padding: 16, background: "var(--surface-alt)", border: "1px solid var(--divider)", borderRadius: 4, color: "var(--fg2)" }}>
+            <code>{[
+              'plot "quantities/c1g1l4.txt" using 1:2 with lines title "Bubble mass/area"',
+              'plot "quantities/c1g1l4.txt" using 1:3 with lines title "Circularity"',
+              'plot "quantities/c1g1l4.txt" using 1:4 with lines title "Center of mass"',
+              'plot "quantities/c1g1l4.txt" using 1:5 with lines title "Rise velocity"'
+            ].join("\n")}</code>
           </pre>
         </div>
       </div>

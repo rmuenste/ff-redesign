@@ -62,9 +62,9 @@ export const fac3VideoAsset = benchmarkAssetPath("fac3", "media/fac3d.mp4");
 
 export const fac3Downloads: DownloadItem[] = [
   {
-    label: "BenchValues.txt",
-    href: benchmarkAssetPath("fac3", "downloads/BenchValues.txt"),
-    description: "Reference time series with Time, Drag, Lift, and Z-Force columns"
+    label: "BenchValues.zip",
+    href: benchmarkAssetPath("fac3", "downloads/BenchValues.zip"),
+    description: "Reference time series (BenchValues.txt) with Time, Drag, Lift, and Z-Force columns"
   }
 ];
 

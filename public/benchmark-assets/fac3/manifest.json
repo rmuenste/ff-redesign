@@ -26,6 +26,12 @@
       "label": "BenchValues reference data"
     },
     {
+      "oldPath": "downloads/BenchValues.txt",
+      "newPath": "downloads/BenchValues.zip",
+      "kind": "download",
+      "label": "BenchValues reference data (zip)"
+    },
+    {
       "oldPath": "files/fac3d/BenchValues.txt",
       "newPath": "plots/drag.json",
       "metric": "drag",

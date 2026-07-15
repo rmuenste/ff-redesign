@@ -68,7 +68,7 @@ describe("rb3 asset manifest (public/benchmark-assets/rb3/manifest.json)", () =>
 describe("fac3 asset manifest (public/benchmark-assets/fac3/manifest.json)", () => {
   it("covers copied and derived FAC assets", () => {
     expect(fac3Manifest.benchmarkId).toBe("fac3");
-    expect(fac3Manifest.entries).toHaveLength(6);
+    expect(fac3Manifest.entries).toHaveLength(7);
     for (const entry of fac3Manifest.entries) {
       expect(existsSync(resolve(FAC3_DIR, entry.newPath)), entry.newPath).toBe(true);
     }

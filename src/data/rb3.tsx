@@ -57,10 +57,11 @@ export const rb3PhysicalRows: Rb3PhysicalRow[] = [
 ];
 
 export const rb3Downloads: DownloadItem[] = [
-  { label: "sphericity.json", href: benchmarkAssetPath("rb3", "downloads/sphericity.json"), description: "Sphericity reference data" },
-  { label: "mass.json", href: benchmarkAssetPath("rb3", "downloads/mass.json"), description: "Mass conservation reference data" },
-  { label: "size.json", href: benchmarkAssetPath("rb3", "downloads/size.json"), description: "Bubble size reference data" },
-  { label: "surface.json", href: benchmarkAssetPath("rb3", "downloads/surface.json"), description: "Bubble surface reference data" }
+  {
+    label: "rb3-reference-data.zip",
+    href: benchmarkAssetPath("rb3", "downloads/rb3-reference-data.zip"),
+    description: "All-in-one bundle: sphericity, mass conservation, bubble size, and bubble surface reference data (JSON)"
+  }
 ];
 
 export function rb3PlotPath(metric: Rb3MetricId, level: Rb3LevelId) {

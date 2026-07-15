@@ -41,8 +41,8 @@ describe("rb3 asset manifest (public/benchmark-assets/rb3/manifest.json)", () =>
     expect(assetsSrc).not.toMatch(/rb3AssetManifest/);
   });
 
-  it("has 18 entries", () => {
-    expect(manifest.entries).toHaveLength(18);
+  it("has 19 entries", () => {
+    expect(manifest.entries).toHaveLength(19);
   });
 
   it("every manifest newPath exists on disk", () => {

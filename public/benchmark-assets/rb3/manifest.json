@@ -17,6 +17,7 @@
     { "oldPath": "files/bubble3/mass_conservation.json", "newPath": "downloads/mass.json" },
     { "oldPath": "files/bubble3/size.json", "newPath": "downloads/size.json" },
     { "oldPath": "files/bubble3/surface.json", "newPath": "downloads/surface.json" },
+    { "oldPath": "downloads/*.json", "newPath": "downloads/rb3-reference-data.zip", "kind": "download", "derived": true },
     { "oldPath": "geometry3D.png", "newPath": "media/geometry-3d.png" },
     { "oldPath": "risingbubble2.mp4", "newPath": "media/rising-bubble.mp4" }
   ]

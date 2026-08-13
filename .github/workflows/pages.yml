@@ -1,0 +1,84 @@
+# Builds the Vite site and publishes it to GitHub Pages.
+#
+# The base path is NOT hard-coded: actions/configure-pages reports the correct
+# one for however Pages is configured, so this same workflow is right for a
+# project site (/ff-redesign/), a user site (/), and a custom domain (/).
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+# Least privilege: read the repo, mint an OIDC token, publish to Pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deployment at a time. Do not cancel a run mid-publish, or Pages can be
+# left serving a half-uploaded artifact.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Deploying a red build is worse than not deploying. The suite is fast.
+      - name: Test
+        run: npm test
+
+      # Reports the URL and base path Pages will actually serve from.
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Build
+        env:
+          # configure-pages gives "/ff-redesign" (project site) or "" (user site
+          # or custom domain). Vite wants a trailing slash; "/" is correct for
+          # a root-served site.
+          VITE_BASE_PATH: ${{ steps.pages.outputs.base_path }}/
+        run: npm run build
+
+      # GitHub Pages has no rewrite rules, so a direct hit on
+      # /benchmarks/drafting-kissing-tumbling would 404 before React Router ever
+      # runs. Serving the app shell as 404.html makes every unknown path boot the
+      # SPA, which then renders the right route from location.pathname.
+      - name: Add SPA fallback
+        run: cp dist/index.html dist/404.html
+
+      # Upgrades the known routes from "404 status, correct content" to a real
+      # 200. src/data/routes.test.ts guards the route list against drift.
+      - name: Prerender known routes
+        run: node scripts/prerender-routes.mjs dist
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

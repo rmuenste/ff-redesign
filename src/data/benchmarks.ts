@@ -69,7 +69,7 @@ export const benchmarks: BenchmarkMeta[] = [
     summary:
       "A particulate-flow benchmark comparing the motion of a settling sphere and induced flow field against experimental data.",
     thumb: "sediment",
-    tabs: ["Introduction", "Definition", "Results", "Reference Data"],
+    tabs: ["Introduction", "Definition", "Results", "Validation", "Reference Data"],
     comparisonAxis: "code",
     status: "active"
   },

@@ -46,10 +46,25 @@ rather than a code or a level. Only the frictional run exists at both rungs of
 the resolution ladder; the others are declared level-independent with a plain
 `source`, the same idiom the sedimentation page uses for PIV references.
 
+## Particle Sedimentation Convergence Material
+
+Particle Sedimentation gained a Validation tab carrying the campaign's ten Cate
+metrology: the spatial ladder across three levels and four cases, the reference
+audit, and the comparison against ten Cate's own simulations, all as generated
+ledger rows plus a short visitor-facing reading.
+
+The converter deliberately withholds the earlier timestep-ladder points and the
+temporal term fitted from them. Those runs were measured while the rigid-body
+solver integrated at its own configured stepsize rather than the CFD timestep, so
+they measured a coupling artifact; the "added-mass stability floor" read from
+them was refuted. The datasheet rows that found and refuted the defect are
+published in their place. See the selection policy comment in
+`scripts/convert-sedimentation-validation.mjs`.
+
 ## Next
 
-- Extend Particle Sedimentation with the campaign's convergence material
-  (spatial ladder, timestep study, error budget), distilled for visitors.
+- Refit the combined spatial/temporal error budget once the synced timestep
+  ladder is complete, then publish it on the sedimentation Validation tab.
 - Remaining DNS candidates: sphere-wall lubrication crossover, Hasimoto periodic
   array drag (blocked on an open solver issue), Beetstra drag correlation (needs
   surface-plot support).

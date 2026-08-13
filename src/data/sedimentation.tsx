@@ -1,5 +1,6 @@
-import type { DownloadItem } from "../components";
+import type { DownloadItem, ValidationRow } from "../components";
 import { benchmarkAssetPath } from "./assets";
+import generatedValidation from "./generated/sedimentation-validation.json";
 import type { PlotSource, PlotSpec, SeriesGroup } from "./types";
 
 export type SedimentationMetricId = "velocity" | "position";
@@ -148,6 +149,14 @@ export const sedimentationReferenceRows = [
     column2: "Normalized gap height h/d_p [-]"
   }
 ];
+
+/**
+ * Generated from the DNS validation datasheet by
+ * scripts/convert-sedimentation-validation.mjs. Never edit by hand — correct the
+ * datasheet and re-run the converter.
+ */
+export const sedimentationValidationRows = generatedValidation.rows as ValidationRow[];
+export const sedimentationValidationSource = generatedValidation.source;
 
 export const sedimentationReferences = [
   {

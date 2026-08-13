@@ -1,7 +1,7 @@
 import { readFileSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
-import { sedimentationPlotSpecs } from "./sedimentation";
+import { sedimentationPlotSpecs, sedimentationValidationRows, sedimentationValidationSource } from "./sedimentation";
 
 const SEDIMENTATION_DIR = resolve(process.cwd(), "public/benchmark-assets/sedimentation");
 
@@ -82,5 +82,44 @@ describe("sedimentation plot specs", () => {
     expect(piv?.source?.asset.path).toContain("E1-piv.json");
     expect(piv?.markerSymbol).toBe("square-open");
     expect(piv?.levelSources).toBeUndefined();
+  });
+});
+
+describe("sedimentation validation ledger", () => {
+  it("is generated from the curated datasheet, not hand-written", () => {
+    expect(sedimentationValidationSource).toBe("scripts/source-data/dns/dns_validation_datasheet.csv");
+    expect(sedimentationValidationRows.length).toBeGreaterThanOrEqual(15);
+  });
+
+  it("uses the campaign verdict vocabulary and strips scheduler job ids", () => {
+    const allowed = new Set(["PASS", "RECORDED", "RESOLVED", "FAIL", "OPEN"]);
+    for (const row of sedimentationValidationRows) {
+      expect(allowed.has(row.verdict), `${row.case}: ${row.verdict}`).toBe(true);
+    }
+    expect(JSON.stringify(sedimentationValidationRows)).not.toMatch(/\bjobs?\s+\d+/i);
+  });
+
+  it("covers the spatial ladder for every case at all three levels", () => {
+    const cases = new Set(sedimentationValidationRows.map(row => row.case));
+    for (const level of ["l2", "l3", "l4"]) {
+      expect(cases.has(`e4_ladder_${level}`), `e4 ${level}`).toBe(true);
+    }
+    for (const testCase of ["e2", "e3"]) {
+      for (const level of ["l2", "l3", "l4"]) {
+        expect(cases.has(`${testCase}_${level}`), `${testCase} ${level}`).toBe(true);
+      }
+    }
+  });
+
+  it("withholds the timestep points measured under the stepsize mismatch, and publishes the resolution", () => {
+    const cases = new Set(sedimentationValidationRows.map(row => row.case));
+    // These runs integrated the rigid body at the wrong rate; they measured an artifact.
+    for (const superseded of ["e4_l3_dt0p25", "e4_l3_dt0p5", "e4_l4_dt0p5", "e1_l3_dt0p5", "dt_stability", "dt_order"]) {
+      expect(cases.has(superseded), superseded).toBe(false);
+    }
+    // The rows that found, refuted and replaced them are published instead.
+    for (const resolution of ["pe_stepsize_mismatch", "dt_stability_refuted", "e4_l3_dt_ladder_sync"]) {
+      expect(cases.has(resolution), resolution).toBe(true);
+    }
   });
 });

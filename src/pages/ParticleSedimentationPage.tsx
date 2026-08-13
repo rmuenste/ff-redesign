@@ -12,7 +12,8 @@ import {
   KpiBox,
   ReferenceList,
   Section,
-  Tabs
+  Tabs,
+  ValidationLedger
 } from "../components";
 import {
   sedimentationDownloads,
@@ -21,6 +22,7 @@ import {
   sedimentationReferenceRows,
   sedimentationReferences,
   sedimentationSetupAsset,
+  sedimentationValidationRows,
   type SedimentationPhysicalRow
 } from "../data/sedimentation";
 
@@ -128,6 +130,67 @@ function ResultsTab() {
   );
 }
 
+function ValidationTab() {
+  return (
+    <Section style={{ paddingTop: 40, paddingBottom: 100 }}>
+      <div style={{ maxWidth: 860, display: "grid", gap: 20, marginBottom: 32 }}>
+        <h3 style={{ margin: 0 }}>What convergence looks like on this benchmark</h3>
+        <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
+          The settling peak was measured across three mesh levels for all four cases. Refinement is not monotone:
+          coarse meshes overshoot the peak by three to four per cent, the finest meshes undershoot by around two, and
+          the intermediate level lands close to the reference partly because the two errors cancel. The practical
+          consequence is that agreement at one resolution is not evidence of convergence, and mesh resolution should
+          never be chosen to make a curve match.
+        </p>
+        <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
+          The step from the intermediate to the finest level shifts the peak by 2.1 to 2.4 percentage points, and it
+          does so almost identically for every case despite an eightfold range in Reynolds number. The dominant
+          spatial error therefore comes from how the sphere surface is represented on the mesh, not from the flow
+          regime — which is why the four ladders lie nearly on top of one another.
+        </p>
+        <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
+          The lowest-Reynolds case is the hard one: it sits about three per cent below the experiment at the
+          intermediate level and moves further away under refinement. That gap is not specific to this solver. The
+          same discrepancy appears in the original paper, whose own lattice-Boltzmann result is about five per cent
+          below its own experiment for that case; our finest configurations agree with those published simulations to
+          within one per cent across all four cases. A two-per-cent gate against the experiment is unreachable by
+          simulation there, so the reference band for the Stokes case has to include the paper's simulations as well
+          as its measurements.
+        </p>
+        <div
+          style={{
+            borderLeft: "3px solid var(--accent)",
+            background: "var(--surface-alt)",
+            borderRadius: 4,
+            padding: "16px 20px"
+          }}
+        >
+          <p style={{ margin: 0, color: "var(--fg1)", lineHeight: 1.65 }}>
+            Two configuration notes for anyone reproducing this case. The rigid-body solver integrates at its own
+            configured stepsize, so <span className="code-inline">stepsize_</span> must be set equal to the CFD time
+            step; a mismatch runs the coupling at the wrong rate and produces plausible-looking but wrong transients.
+            And when comparing against the two lowest-Reynolds cases, use the printed velocity ratios from the
+            paper's Table II rather than the digitised curves — the digitised peaks run three to four per cent fast.
+          </p>
+        </div>
+        <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
+          With the stepsize synchronised, the time-step study is stable at every step size tried and the peak shifts
+          sub-linearly, by roughly half a percentage point per halving. An earlier reading of these runs reported a
+          stability floor; that was the stepsize mismatch above and has been withdrawn. A full refit of the combined
+          spatial and temporal error budget is still outstanding.
+        </p>
+      </div>
+
+      <h3>Validation ledger</h3>
+      <p style={{ color: "var(--fg2)", lineHeight: 1.65, maxWidth: 860, marginBottom: 24 }}>
+        One row per quantitative claim, generated from the DNS campaign datasheet. Rows marked RECORDED were measured
+        and kept but not gated; RESOLVED rows record an issue that was investigated and closed.
+      </p>
+      <ValidationLedger rows={sedimentationValidationRows} />
+    </Section>
+  );
+}
+
 function ReferenceDataTab() {
   return (
     <Section narrow style={{ paddingTop: 40, paddingBottom: 100 }}>
@@ -164,6 +227,7 @@ export function ParticleSedimentationPage() {
     { id: "introduction", label: "Introduction" },
     { id: "definition", label: "Definition" },
     { id: "results", label: "Results" },
+    { id: "validation", label: "Validation" },
     { id: "reference-data", label: "Reference Data" }
   ];
 
@@ -215,6 +279,7 @@ export function ParticleSedimentationPage() {
       {tab === "introduction" && <IntroductionTab />}
       {tab === "definition" && <DefinitionTab />}
       {tab === "results" && <ResultsTab />}
+      {tab === "validation" && <ValidationTab />}
       {tab === "reference-data" && <ReferenceDataTab />}
     </div>
   );

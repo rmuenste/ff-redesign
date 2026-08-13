@@ -1,22 +1,25 @@
 // ===== Benchmarks index =====
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { benchmarks } from "./data/benchmarks";
+import { benchmarks, benchmarkSuites } from "./data/benchmarks";
 import { Chip, FlowCanvas, Icon, MeshThumb, Overline } from "./Primitives.jsx";
 
 const dims = ["All", "2D", "3D"];
 const models = ["All", "Two-Phase", "Newtonian", "Particulate"];
+const suites = ["All", ...benchmarkSuites];
 
 export const BenchmarksIndex = () => {
   const navigate = useNavigate();
   const [dim, setDim] = React.useState("All");
   const [model, setModel] = React.useState("All");
+  const [suite, setSuite] = React.useState("All");
   const [layout, setLayout] = React.useState("grid");
   const [search, setSearch] = React.useState("");
 
   const filtered = benchmarks.filter(benchmark => (
     (dim === "All" || benchmark.dimension === dim) &&
     (model === "All" || benchmark.model === model) &&
+    (suite === "All" || benchmark.suite === suite) &&
     (
       search === "" ||
       benchmark.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -42,9 +45,10 @@ export const BenchmarksIndex = () => {
           </h1>
           <p style={{ fontSize: 17, color: "var(--fg2)", margin: 0, maxWidth: 720, lineHeight: 1.55 }}>
             Validated flow-simulation benchmarks: two-phase bubble dynamics, laminar
-            flow around a cylinder, and particulate sedimentation. Each page provides
-            the problem definition, interactive result comparisons, and downloadable
-            reference data.
+            flow around a cylinder, particulate sedimentation, and direct numerical
+            simulation of interacting particles. Each page provides the problem
+            definition, interactive result comparisons, and downloadable reference
+            data.
           </p>
         </div>
       </div>
@@ -56,6 +60,7 @@ export const BenchmarksIndex = () => {
             <input value={search} onChange={event => setSearch(event.target.value)} placeholder="Search benchmarks..."
               style={{ background: "transparent", border: 0, outline: "none", color: "var(--fg1)", fontSize: 13, width: "100%", fontFamily: "inherit" }}/>
           </div>
+          <FilterGroup label="Suite" options={suites} value={suite} onChange={setSuite}/>
           <FilterGroup label="Model" options={models} value={model} onChange={setModel}/>
           <FilterGroup label="Dim" options={dims} value={dim} onChange={setDim}/>
           <div style={{ flex: 1 }}/>
@@ -147,7 +152,7 @@ const BenchmarkCard = ({ benchmark, variant, onOpen }) => {
         <p style={{ fontSize: 13, color: "var(--fg2)", lineHeight: 1.5, margin: 0 }}>{benchmark.summary}</p>
         <div style={{ marginTop: 14, paddingTop: 12, borderTop: "1px solid var(--divider)", display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--fg3)" }}>
           <div>{benchmark.levels ? `L1-L${benchmark.levels}` : "levels n/a"}</div>
-          <div>{benchmark.comparisonAxis ? `${benchmark.comparisonAxis} axis` : "content"}</div>
+          <div>{benchmark.suite}</div>
           <div style={{ textAlign: "right", color: active ? "var(--tu-green-400)" : "var(--fg3)" }}>{benchmark.status}</div>
         </div>
       </div>
@@ -159,7 +164,7 @@ const BenchmarkTable = ({ rows, onOpen }) => (
   <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
     <thead>
       <tr style={{ textAlign: "left" }}>
-        {["Tag", "Title", "Model", "Dim", "Re", "Levels", "Axis", "Status"].map(header => (
+        {["Tag", "Title", "Suite", "Model", "Dim", "Re", "Levels", "Status"].map(header => (
           <th key={header} style={{ padding: "12px 10px", borderBottom: "1px solid var(--divider)", fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--fg3)", fontWeight: 500 }}>{header}</th>
         ))}
       </tr>
@@ -169,11 +174,11 @@ const BenchmarkTable = ({ rows, onOpen }) => (
         <tr key={benchmark.id} style={{ borderBottom: "1px solid var(--divider)", cursor: benchmark.status === "active" ? "pointer" : "default", opacity: benchmark.status === "active" ? 1 : 0.62 }} onClick={() => benchmark.status === "active" && onOpen(benchmark)}>
           <td style={{ padding: "10px" }}><Chip tone="solid">{benchmark.tag}</Chip></td>
           <td style={{ padding: "10px", fontWeight: 500 }}>{benchmark.shortTitle}</td>
+          <td style={{ padding: "10px", color: "var(--fg2)" }}>{benchmark.suite}</td>
           <td style={{ padding: "10px", color: "var(--fg2)" }}>{benchmark.model}</td>
           <td style={{ padding: "10px", color: "var(--fg2)" }}>{benchmark.dimension}</td>
           <td style={{ padding: "10px", fontFamily: "var(--font-mono)", color: "var(--fg2)" }}>{benchmark.reynolds ?? "n/a"}</td>
           <td style={{ padding: "10px", fontFamily: "var(--font-mono)", color: "var(--fg2)" }}>{benchmark.levels ? `L1-L${benchmark.levels}` : "n/a"}</td>
-          <td style={{ padding: "10px", color: "var(--fg2)" }}>{benchmark.comparisonAxis ?? "content"}</td>
           <td style={{ padding: "10px" }}><Chip>{benchmark.status}</Chip></td>
         </tr>
       ))}

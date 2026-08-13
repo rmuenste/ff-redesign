@@ -1,5 +1,6 @@
-import type { DownloadItem } from "../components";
+import type { DownloadItem, ValidationRow } from "../components";
 import { benchmarkAssetPath } from "./assets";
+import generatedValidation from "./generated/sedimentation-validation.json";
 import type { PlotSource, PlotSpec, SeriesGroup } from "./types";
 
 export type SedimentationMetricId = "velocity" | "position";
@@ -148,6 +149,35 @@ export const sedimentationReferenceRows = [
     column2: "Normalized gap height h/d_p [-]"
   }
 ];
+
+/**
+ * Generated from the DNS validation datasheet by
+ * scripts/convert-sedimentation-validation.mjs. Never edit by hand — correct the
+ * datasheet and re-run the converter.
+ */
+export const sedimentationValidationRows = generatedValidation.rows as ValidationRow[];
+export const sedimentationValidationSource = generatedValidation.source;
+
+/** One point of the synchronised timestep ladder at the workhorse resolution. */
+export interface SedimentationDtRow {
+  level: string;
+  dtMs: number;
+  errorPct: number;
+  synced: boolean;
+}
+
+/** Fitted split of the peak error into a per-level spatial term and a temporal term. */
+export interface SedimentationDecompositionFit {
+  order: number;
+  spatialPp: Record<string, number>;
+  temporalPpAt1ms: number;
+  maxResidualPp: number;
+}
+
+export const sedimentationDtLadder = generatedValidation.dtLadder as SedimentationDtRow[];
+export const sedimentationDecomposition =
+  generatedValidation.decomposition as Record<string, SedimentationDecompositionFit[]>;
+export const sedimentationDecompositionSource = generatedValidation.decompositionSource;
 
 export const sedimentationReferences = [
   {

@@ -1,0 +1,33 @@
+=== E4 (reference peak -0.12224 m/s, Table II printed)
+    q2p1_dns_rundir_e4_l2              dt=1ms  err=+4.41%
+    q2p1_dns_rundir_e4_l3              dt=1ms  err=+0.81%
+    q2p1_dns_rundir_e4_l3_dt0p5_sync   dt=0.5ms  err=+1.41%
+    q2p1_dns_rundir_e4_l3_dt0p25_sync  dt=0.25ms  err=+1.94%
+    q2p1_dns_rundir_e4_l4              dt=1ms  err=-1.56%
+    q2p1_dns_rundir_e4_l4_dt0p5_sync   dt=0.5ms  err=-0.74%
+  p=1 fit: S(L2)=+5.92  S(L3)=+2.27  S(L4)=-0.02  T(1ms)=-1.51 pp  |res|max=0.10 pp
+  p=2 fit: S(L2)=+5.50  S(L3)=+1.86  S(L4)=-0.47  T(1ms)=-1.09 pp  |res|max=0.18 pp
+  Richardson O(h) : S_inf=-2.30 pp -> v_inf=-0.11942 m/s (ratio 0.933)
+  Richardson O(h^2): S_inf=-0.78 pp -> v_inf=-0.12129 m/s (ratio 0.948)
+
+=== E3 (reference peak -0.08727 m/s, Table II printed)
+    q2p1_dns_rundir_e3_l2              dt=1ms  err=+3.39%
+    q2p1_dns_rundir_e3_l3              dt=1ms  err=+0.30%
+    q2p1_dns_rundir_e3_l4              dt=1ms  err=-2.07%
+  single-dt dataset: S and T entangled, raw errors only
+
+=== E2 (reference peak -0.05718 m/s, Table II printed)
+    q2p1_dns_rundir_e2_l2              dt=1ms  err=+3.59%
+    q2p1_dns_rundir_e2_l3              dt=1ms  err=+0.59%
+    q2p1_dns_rundir_e2_l4              dt=1ms  err=-1.66%
+  single-dt dataset: S and T entangled, raw errors only
+
+=== E1 (reference peak -0.03599 m/s, Table II printed)
+    q2p1_dns_rundir_e1_l3              dt=1ms  err=-3.18%
+    q2p1_dns_rundir_e1_l3_dt0p5_sync   dt=0.5ms  err=-2.77%
+    q2p1_dns_rundir_e1_l4              dt=1ms  err=-5.24%
+  p=1 fit: S(L3)=-2.35  S(L4)=-4.41  T(1ms)=-0.83 pp  |res|max=0.00 pp
+  p=2 fit: S(L3)=-2.63  S(L4)=-4.69  T(1ms)=-0.56 pp  |res|max=0.00 pp
+  Richardson O(h) : S_inf=-6.46 pp -> v_inf=-0.03366 m/s (ratio 0.886)
+  Richardson O(h^2): S_inf=-5.09 pp -> v_inf=-0.03415 m/s (ratio 0.899)
+

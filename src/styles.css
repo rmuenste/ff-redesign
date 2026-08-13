@@ -143,6 +143,33 @@ body {
   border-color: transparent;
 }
 
+/* Verdict badges for validation ledgers. Each verdict keeps its literal word, so
+   colour is reinforcement rather than the only status signal. Light mode uses the
+   darker end of each ramp: the bright brand hues do not carry on white. */
+.verdict { border-color: transparent; }
+.verdict-pass     { background: rgba(132,184,24,0.16); color: var(--tu-green-300); }
+.verdict-resolved { background: rgba(61,126,152,0.20); color: var(--tu-petrol-300); }
+.verdict-recorded { background: var(--surface-alt); color: var(--fg2); border-color: var(--divider); }
+.verdict-open     { background: rgba(249,195,0,0.16); color: var(--tu-yellow-500); }
+.verdict-fail     { background: rgba(211,47,47,0.18); color: var(--tu-red-300); }
+
+[data-theme="light"] .verdict-pass     { color: var(--tu-green-800); }
+[data-theme="light"] .verdict-resolved { color: var(--tu-petrol-800); }
+[data-theme="light"] .verdict-open     { background: rgba(249,195,0,0.24); color: #7a5c00; }
+[data-theme="light"] .verdict-fail     { color: var(--tu-red-700); }
+
+/* Inline code span. Distinct from `.tt`, which is an absolutely positioned
+   tooltip and must not be used for inline text. */
+.code-inline {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  background: var(--surface-alt);
+  border: 1px solid var(--divider);
+  border-radius: var(--r-sm);
+  padding: 1px 5px;
+  white-space: nowrap;
+}
+
 /* Link underline */
 a.plain, a.plain:visited {
   color: inherit;

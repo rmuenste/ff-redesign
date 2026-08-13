@@ -1,0 +1,114 @@
+{
+  "source": "scripts/source-data/dns/dns_validation_datasheet.csv",
+  "generatedBy": "scripts/convert-dkt-data.mjs",
+  "rows": [
+    {
+      "id": "dktfloor_probe-0",
+      "suite": "d2_pairs",
+      "case": "dktfloor_probe",
+      "quantity": "dt-floor probe at DKT density ratios (E4 fluid, L2, dt=1ms): rho_p/rho_f = 1.10 and 1.02",
+      "expected": "no sawtooth at matched timesteps",
+      "expectedSource": "D2.3 prerequisite (plan); sawtooth watchdog",
+      "measured": "both ratios CLEAN at dt=1ms: 0 warnings, jitter 5e-6..4e-5 m/s, sensible settling (r1.10 -> -0.082, r1.02 -> -0.018 at t=0.6)",
+      "relError": "0",
+      "tolerance": "stability_probe",
+      "verdict": "PASS"
+    },
+    {
+      "id": "dktfloor_probe-1",
+      "suite": "d2_pairs",
+      "case": "dktfloor_probe",
+      "quantity": "ratio 1.10 at dt=0.5ms with SYNCED stepsize",
+      "expected": "agree with dt=1ms trajectory",
+      "expectedSource": "dt-invariance at matched config",
+      "measured": "agrees 0.3-0.5% through the whole transient (mismatched original was 32% off); 0 warnings -> no floor above 0.5ms at ratio 1.10",
+      "relError": "0.005",
+      "tolerance": "stability_probe",
+      "verdict": "PASS"
+    },
+    {
+      "id": "dkt_smoke-2",
+      "suite": "d2_pairs",
+      "case": "dkt_smoke",
+      "quantity": "DKT D/h=8 smoke: phase sequence (5000 steps to t=25)",
+      "expected": "drafting -> kissing -> tumbling",
+      "expectedSource": "Fortes 1987 / Glowinski 2001 mechanism",
+      "measured": "DRAFTING confirmed (t~10-18, trailer -0.499 vs leader -0.427) and KISSING confirmed (gap locks at 1.000d at t_kiss~18.1, doublet falls at common accelerating velocity); tumbling absent as expected from axisymmetric IC (lateral drift 4e-4) - offset variant seeds it; 0 sawtooth; 109 ranks ~4.4s/step",
+      "relError": "n/a",
+      "tolerance": "mechanism",
+      "verdict": "PASS"
+    },
+    {
+      "id": "dkt_offset-3",
+      "suite": "d2_pairs",
+      "case": "dkt_offset",
+      "quantity": "DKT offset variant (trailer x=+0.05d, t=25)",
+      "expected": "kissing doublet tilts and tumbles apart",
+      "expectedSource": "Fortes 1987 phase sequence",
+      "measured": "drafting + kissing reproduced (t_kiss 18.04, CORRECTED 2026-08-12: original 19.7 was a stale pre-compaction reading); tilt GROWS during kissing (dx 0.052->0.073, ~4.2deg) then STALLS t=23..25 with pair in exact contact (dist=1.0000); full tumble not reached at D/h=8 by t=25; candidates: contact friction locking, coarse wake asymmetry, time; next: extension and/or D/h=16 rung",
+      "relError": "n/a",
+      "tolerance": "mechanism",
+      "verdict": "RECORDED"
+    },
+    {
+      "id": "dkt16_offset-4",
+      "suite": "d2_pairs",
+      "case": "dkt16_offset",
+      "quantity": "DKT offset variant at D/h=16 (L4 on DKT_B_108, 109 ranks, 30h15m, dt=0.005 as D/h=8)",
+      "expected": "tilt grows past the D/h=8 4.2deg stall if wake resolution was the cause",
+      "expectedSource": "dkt_offset row (D/h=8); Fortes 1987 phase sequence",
+      "measured": "drafting + kissing reproduced (t_kiss=18.34 vs 18.04 at D/h=8 - near resolution-independent; the previously quoted 19.7 was stale); tilt locks at 4.0deg in exact contact (sep=1.0000) with residual drift 1.4e-4/t.u. (t=19-25, would need ~3000 t.u. to tumble) - STALL IS RESOLUTION-INDEPENDENT, wake-resolution hypothesis REFUTED; doublet falls rigidly at common vz (-0.55 at t=25) with slow lateral drift vx=-0.012; remaining candidates: contact-friction locking (prime, mu_s/mu_d=0.1/0.05 in HCAF material) and box confinement; frictionless probe submitted",
+      "relError": "n/a",
+      "tolerance": "mechanism",
+      "verdict": "RECORDED"
+    },
+    {
+      "id": "dkt_material_twin-5",
+      "suite": "d0_infra",
+      "case": "dkt_material_twin",
+      "quantity": "DKT contact material moved to config keys (libs/pe dcc35f2); 60-step twin with keys absent",
+      "expected": "byte-identical particle_force lines vs original dkt_offset",
+      "expectedSource": "d0_smoke_twin convention",
+      "measured": "100/100 lines BITWISE IDENTICAL - config defaults (0.0/0.1/0.05) reproduce the former hard-codes exactly",
+      "relError": "0",
+      "tolerance": "byte_identity",
+      "verdict": "PASS"
+    },
+    {
+      "id": "dkt_nofric-6",
+      "suite": "d2_pairs",
+      "case": "dkt_nofric",
+      "quantity": "frictionless-contact probe: D/h=8 offset case with staticFriction_=dynamicFriction_=0 (6h09)",
+      "expected": "doublet tumbles if friction locking caused the stall",
+      "expectedSource": "dkt16_offset row (stall resolution-independent)",
+      "measured": "TUMBLING UNLOCKED: after t_kiss=18.04 the tilt grows 4.8->22.3 deg over t=19..25 with accelerating rate (pair rolling in contact, mid-tumble at run end), versus 4.0-4.2 deg LOCKED with friction at BOTH D/h=8 and 16 -> the tumble blocker was CONTACT-FRICTION LOCKING (mu_s/mu_d=0.1/0.05 pins tangential sliding), not wake resolution, not time; physical reading: smooth spheres in liquid contact through a lubrication film - a dry frictional contact model suppresses the physical instability; GUIDELINE: DKT-class simulations need ~zero contact friction (or a lubricated-contact model); extension to full tumble-apart running (t=40)",
+      "relError": "n/a",
+      "tolerance": "mechanism",
+      "verdict": "PASS"
+    },
+    {
+      "id": "dkt_nofric_long-7",
+      "suite": "d2_pairs",
+      "case": "dkt_nofric_long",
+      "quantity": "frictionless DKT extension to t=40 (9h50, D/h=8)",
+      "expected": "full tumble-through and separation",
+      "expectedSource": "Fortes 1987 complete phase sequence",
+      "measured": "COMPLETE SEQUENCE: kiss t=18.04 -> rolling contact (tilt 22.3deg at t=25, 43.3 at t=28) -> separation onset t=29.64 (sep>1.02d, still rotating) -> pair horizontal t=32.92 -> t=40: sep=2.37d at 109deg with ROLE EXCHANGE (former trailer below, falling faster -0.419 vs -0.348); D2.3 mechanism study closed: all three DKT phases reproduced once contact friction is physical (~0)",
+      "relError": "n/a",
+      "tolerance": "mechanism",
+      "verdict": "PASS"
+    },
+    {
+      "id": "dkt_tkiss_correction-8",
+      "suite": "d2_pairs",
+      "case": "dkt_tkiss_correction",
+      "quantity": "t_kiss audit triggered by the website-integration agent re-deriving all DKT numbers from raw logs",
+      "expected": "all rows reproducible from particle_force.log at sep<=1.005d",
+      "expectedSource": "independent re-derivation (ffweb integration report 2026-08-12)",
+      "measured": "dkt_offset t_kiss = 18.04 (thresholds 1.05/1.005/1.0005 -> 17.55/18.04/18.10), NOT the 19.7 previously recorded (stale pre-compaction reading, source lost); affected rows corrected in place (dkt_offset, dkt16_offset, dkt_nofric); improved narrative: t_kiss is near resolution-independent (18.04 vs 18.34, +1.7%); bonus verification from the same audit: friction and frictionless D/h=8 logs are BITWISE IDENTICAL for 7242 records until first contact (t=18.11) - the contact model provably does nothing until touch",
+      "relError": "n/a",
+      "tolerance": "audit",
+      "verdict": "RESOLVED"
+    }
+  ]
+}

@@ -7,6 +7,7 @@ export const benchmarks: BenchmarkMeta[] = [
     title: "Three-Dimensional Rising Bubble",
     shortTitle: "Rising Bubble 3D",
     tag: "RB3",
+    suite: "Core benchmarks",
     model: "Two-Phase",
     dimension: "3D",
     reynolds: 35,
@@ -24,6 +25,7 @@ export const benchmarks: BenchmarkMeta[] = [
     title: "Two-Dimensional Rising Bubble",
     shortTitle: "Rising Bubble 2D",
     tag: "RB2",
+    suite: "Core benchmarks",
     model: "Two-Phase",
     dimension: "2D",
     reynolds: "35 / 125",
@@ -41,6 +43,7 @@ export const benchmarks: BenchmarkMeta[] = [
     title: "Flow Around A Cylinder",
     shortTitle: "Flow Around Cylinder 3D",
     tag: "FAC",
+    suite: "Core benchmarks",
     model: "Newtonian",
     dimension: "3D",
     reynolds: "20 / 100",
@@ -58,6 +61,7 @@ export const benchmarks: BenchmarkMeta[] = [
     title: "Sedimentation of a Single Spherical Particle",
     shortTitle: "Particle Sedimentation",
     tag: "SED",
+    suite: "Core benchmarks",
     model: "Particulate",
     dimension: "3D",
     reynolds: "1.5-31.9",
@@ -65,11 +69,32 @@ export const benchmarks: BenchmarkMeta[] = [
     summary:
       "A particulate-flow benchmark comparing the motion of a settling sphere and induced flow field against experimental data.",
     thumb: "sediment",
-    tabs: ["Introduction", "Definition", "Results", "Reference Data"],
+    tabs: ["Introduction", "Definition", "Results", "Validation", "Reference Data"],
+    comparisonAxis: "code",
+    status: "active"
+  },
+  {
+    id: "dkt",
+    slug: "drafting-kissing-tumbling",
+    title: "Drafting, Kissing and Tumbling of Two Spheres",
+    shortTitle: "Drafting-Kissing-Tumbling",
+    tag: "DKT",
+    suite: "DNS validation",
+    model: "Particulate",
+    dimension: "3D",
+    reynolds: 86,
+    levels: 2,
+    summary:
+      "Two settling spheres reproduce the classical Fortes sequence: the trailing sphere drafts in the leader's wake, the pair touches, tumbles, and separates with the roles exchanged.",
+    thumb: "dkt-pair",
+    tabs: ["Introduction", "Definition", "Results", "Contact Model", "Validation", "Reference Data"],
     comparisonAxis: "code",
     status: "active"
   }
 ];
+
+/** Catalogue facet values, in display order, derived from the registry. */
+export const benchmarkSuites = Array.from(new Set(benchmarks.map(benchmark => benchmark.suite)));
 
 export function getBenchmarkBySlug(slug: string) {
   return benchmarks.find(benchmark => benchmark.slug === slug);

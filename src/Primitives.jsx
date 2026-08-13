@@ -238,8 +238,29 @@ const RB3 = (() => {
   return { cx, cy, r, dx, dy, front, lats };
 })();
 
+/**
+ * DKT motif: the tumbling instant. Two spheres in contact on an axis tilted away
+ * from the vertical (dashed reference), the trailing sphere still inside the
+ * leader's wake, and a rotation arc about the contact point. Leader green /
+ * trailer orange matches the four-phase schematic on the benchmark page.
+ */
+const DKT = (() => {
+  const contact = { x: 118, y: 82 };
+  const r = 20;
+  const theta = (32 * Math.PI) / 180;
+  const ux = Math.sin(theta);
+  const uy = -Math.cos(theta);
+  return {
+    r,
+    contact,
+    trailer: { cx: contact.x + r * ux, cy: contact.y + r * uy },
+    leader: { cx: contact.x - r * ux, cy: contact.y - r * uy }
+  };
+})();
+
 const MESH_SEEDS = {
   cylinder: { shape: "cylinder", color: "var(--tu-green-500)" },
+  "dkt-pair": { shape: "dkt-pair", color: "var(--tu-green-500)" },
   bubble: { shape: "bubble", color: "var(--tu-green-500)" },
   "bubble-2d": { shape: "bubble-2d", color: "var(--tu-green-500)" },
   particle: { shape: "particle", color: "var(--tu-orange-500)" },
@@ -287,6 +308,33 @@ export const MeshThumb = ({ variant = 0, shape, style }) => {
         <>
           <line x1="120" y1="150" x2="120" y2="14" stroke="var(--tu-green-300)" strokeWidth="0.6" strokeDasharray="2 3" opacity="0.4" />
           <path d={RB2_SHAPE} fill={s.color} fillOpacity="0.16" stroke="var(--tu-green-400)" strokeWidth="1.4" strokeLinejoin="round" />
+        </>
+      )}
+      {s.shape === "dkt-pair" && (
+        <>
+          <path
+            d={`M${DKT.leader.cx - 15} ${DKT.leader.cy} L${DKT.leader.cx + 15} ${DKT.leader.cy} L${DKT.trailer.cx + 24} 18 L${DKT.trailer.cx - 24} 18 Z`}
+            fill="var(--tu-green-400)"
+            opacity="0.10"
+          />
+          <line
+            x1={DKT.contact.x} y1="16" x2={DKT.contact.x} y2="146"
+            stroke="var(--fg3)" strokeWidth="0.8" strokeDasharray="3 3" opacity="0.55"
+          />
+          <path
+            d={`M${DKT.contact.x} ${DKT.contact.y - 34} A34 34 0 0 1 ${DKT.contact.x + 20} ${DKT.contact.y - 27}`}
+            fill="none" stroke="var(--tu-yellow-500)" strokeWidth="1.1" opacity="0.85"
+          />
+          <circle
+            cx={DKT.leader.cx} cy={DKT.leader.cy} r={DKT.r}
+            fill="var(--tu-green-500)" fillOpacity="0.20"
+            stroke="var(--tu-green-400)" strokeWidth="1.6"
+          />
+          <circle
+            cx={DKT.trailer.cx} cy={DKT.trailer.cy} r={DKT.r}
+            fill="var(--tu-orange-500)" fillOpacity="0.20"
+            stroke="var(--tu-orange-500)" strokeWidth="1.6"
+          />
         </>
       )}
       {s.shape === "sediment" && (

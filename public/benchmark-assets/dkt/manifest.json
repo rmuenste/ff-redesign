@@ -1,0 +1,361 @@
+{
+  "benchmarkId": "dkt",
+  "entries": [
+    {
+      "oldPath": "scripts/source-data/dkt/fric-dh8_tilt.dat",
+      "newPath": "plots/tilt/fric-dh8.json",
+      "metric": "tilt",
+      "seriesGroupId": "fric",
+      "kind": "code",
+      "label": "Dry friction · D/h = 8 Tilt angle",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/fric-dh16_tilt.dat",
+      "newPath": "plots/tilt/fric-dh16.json",
+      "metric": "tilt",
+      "seriesGroupId": "fric",
+      "kind": "code",
+      "label": "Dry friction · D/h = 16 Tilt angle",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/nofric_tilt.dat",
+      "newPath": "plots/tilt/nofric.json",
+      "metric": "tilt",
+      "seriesGroupId": "nofric",
+      "kind": "code",
+      "label": "Frictionless Tilt angle",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/axisym_tilt.dat",
+      "newPath": "plots/tilt/axisym.json",
+      "metric": "tilt",
+      "seriesGroupId": "axisym",
+      "kind": "code",
+      "label": "Axisymmetric (no offset) Tilt angle",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/fric-dh8_separation.dat",
+      "newPath": "plots/separation/fric-dh8.json",
+      "metric": "separation",
+      "seriesGroupId": "fric",
+      "kind": "code",
+      "label": "Dry friction · D/h = 8 Centre separation",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/fric-dh16_separation.dat",
+      "newPath": "plots/separation/fric-dh16.json",
+      "metric": "separation",
+      "seriesGroupId": "fric",
+      "kind": "code",
+      "label": "Dry friction · D/h = 16 Centre separation",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/nofric_separation.dat",
+      "newPath": "plots/separation/nofric.json",
+      "metric": "separation",
+      "seriesGroupId": "nofric",
+      "kind": "code",
+      "label": "Frictionless Centre separation",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/axisym_separation.dat",
+      "newPath": "plots/separation/axisym.json",
+      "metric": "separation",
+      "seriesGroupId": "axisym",
+      "kind": "code",
+      "label": "Axisymmetric (no offset) Centre separation",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/fric-dh8_vz_leader.dat",
+      "newPath": "plots/velocity-leader/fric-dh8.json",
+      "metric": "velocity-leader",
+      "seriesGroupId": "fric",
+      "kind": "code",
+      "label": "Dry friction · D/h = 8 Leader vertical velocity",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/fric-dh16_vz_leader.dat",
+      "newPath": "plots/velocity-leader/fric-dh16.json",
+      "metric": "velocity-leader",
+      "seriesGroupId": "fric",
+      "kind": "code",
+      "label": "Dry friction · D/h = 16 Leader vertical velocity",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/nofric_vz_leader.dat",
+      "newPath": "plots/velocity-leader/nofric.json",
+      "metric": "velocity-leader",
+      "seriesGroupId": "nofric",
+      "kind": "code",
+      "label": "Frictionless Leader vertical velocity",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/axisym_vz_leader.dat",
+      "newPath": "plots/velocity-leader/axisym.json",
+      "metric": "velocity-leader",
+      "seriesGroupId": "axisym",
+      "kind": "code",
+      "label": "Axisymmetric (no offset) Leader vertical velocity",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/fric-dh8_vz_trailer.dat",
+      "newPath": "plots/velocity-trailer/fric-dh8.json",
+      "metric": "velocity-trailer",
+      "seriesGroupId": "fric",
+      "kind": "code",
+      "label": "Dry friction · D/h = 8 Trailer vertical velocity",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/fric-dh16_vz_trailer.dat",
+      "newPath": "plots/velocity-trailer/fric-dh16.json",
+      "metric": "velocity-trailer",
+      "seriesGroupId": "fric",
+      "kind": "code",
+      "label": "Dry friction · D/h = 16 Trailer vertical velocity",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/nofric_vz_trailer.dat",
+      "newPath": "plots/velocity-trailer/nofric.json",
+      "metric": "velocity-trailer",
+      "seriesGroupId": "nofric",
+      "kind": "code",
+      "label": "Frictionless Trailer vertical velocity",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/axisym_vz_trailer.dat",
+      "newPath": "plots/velocity-trailer/axisym.json",
+      "metric": "velocity-trailer",
+      "seriesGroupId": "axisym",
+      "kind": "code",
+      "label": "Axisymmetric (no offset) Trailer vertical velocity",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/fric-dh8_xz_leader.dat",
+      "newPath": "plots/trajectory/fric-dh8.json",
+      "metric": "trajectory",
+      "seriesGroupId": "fric",
+      "kind": "code",
+      "label": "Dry friction · D/h = 8 x-z trajectory",
+      "sourceShape": "trace-array",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/fric-dh16_xz_leader.dat",
+      "newPath": "plots/trajectory/fric-dh16.json",
+      "metric": "trajectory",
+      "seriesGroupId": "fric",
+      "kind": "code",
+      "label": "Dry friction · D/h = 16 x-z trajectory",
+      "sourceShape": "trace-array",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/nofric_xz_leader.dat",
+      "newPath": "plots/trajectory/nofric.json",
+      "metric": "trajectory",
+      "seriesGroupId": "nofric",
+      "kind": "code",
+      "label": "Frictionless x-z trajectory",
+      "sourceShape": "trace-array",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/axisym_xz_leader.dat",
+      "newPath": "plots/trajectory/axisym.json",
+      "metric": "trajectory",
+      "seriesGroupId": "axisym",
+      "kind": "code",
+      "label": "Axisymmetric (no offset) x-z trajectory",
+      "sourceShape": "trace-array",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/fric-dh8_tilt.dat",
+      "newPath": "downloads/fric-dh8_tilt.dat",
+      "kind": "download",
+      "label": "fric-dh8_tilt.dat"
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/fric-dh8_separation.dat",
+      "newPath": "downloads/fric-dh8_separation.dat",
+      "kind": "download",
+      "label": "fric-dh8_separation.dat"
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/fric-dh8_vz_leader.dat",
+      "newPath": "downloads/fric-dh8_vz_leader.dat",
+      "kind": "download",
+      "label": "fric-dh8_vz_leader.dat"
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/fric-dh8_vz_trailer.dat",
+      "newPath": "downloads/fric-dh8_vz_trailer.dat",
+      "kind": "download",
+      "label": "fric-dh8_vz_trailer.dat"
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/fric-dh8_xz_leader.dat",
+      "newPath": "downloads/fric-dh8_xz_leader.dat",
+      "kind": "download",
+      "label": "fric-dh8_xz_leader.dat"
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/fric-dh8_xz_trailer.dat",
+      "newPath": "downloads/fric-dh8_xz_trailer.dat",
+      "kind": "download",
+      "label": "fric-dh8_xz_trailer.dat"
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/fric-dh16_tilt.dat",
+      "newPath": "downloads/fric-dh16_tilt.dat",
+      "kind": "download",
+      "label": "fric-dh16_tilt.dat"
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/fric-dh16_separation.dat",
+      "newPath": "downloads/fric-dh16_separation.dat",
+      "kind": "download",
+      "label": "fric-dh16_separation.dat"
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/fric-dh16_vz_leader.dat",
+      "newPath": "downloads/fric-dh16_vz_leader.dat",
+      "kind": "download",
+      "label": "fric-dh16_vz_leader.dat"
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/fric-dh16_vz_trailer.dat",
+      "newPath": "downloads/fric-dh16_vz_trailer.dat",
+      "kind": "download",
+      "label": "fric-dh16_vz_trailer.dat"
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/fric-dh16_xz_leader.dat",
+      "newPath": "downloads/fric-dh16_xz_leader.dat",
+      "kind": "download",
+      "label": "fric-dh16_xz_leader.dat"
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/fric-dh16_xz_trailer.dat",
+      "newPath": "downloads/fric-dh16_xz_trailer.dat",
+      "kind": "download",
+      "label": "fric-dh16_xz_trailer.dat"
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/nofric_tilt.dat",
+      "newPath": "downloads/nofric_tilt.dat",
+      "kind": "download",
+      "label": "nofric_tilt.dat"
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/nofric_separation.dat",
+      "newPath": "downloads/nofric_separation.dat",
+      "kind": "download",
+      "label": "nofric_separation.dat"
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/nofric_vz_leader.dat",
+      "newPath": "downloads/nofric_vz_leader.dat",
+      "kind": "download",
+      "label": "nofric_vz_leader.dat"
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/nofric_vz_trailer.dat",
+      "newPath": "downloads/nofric_vz_trailer.dat",
+      "kind": "download",
+      "label": "nofric_vz_trailer.dat"
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/nofric_xz_leader.dat",
+      "newPath": "downloads/nofric_xz_leader.dat",
+      "kind": "download",
+      "label": "nofric_xz_leader.dat"
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/nofric_xz_trailer.dat",
+      "newPath": "downloads/nofric_xz_trailer.dat",
+      "kind": "download",
+      "label": "nofric_xz_trailer.dat"
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/axisym_tilt.dat",
+      "newPath": "downloads/axisym_tilt.dat",
+      "kind": "download",
+      "label": "axisym_tilt.dat"
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/axisym_separation.dat",
+      "newPath": "downloads/axisym_separation.dat",
+      "kind": "download",
+      "label": "axisym_separation.dat"
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/axisym_vz_leader.dat",
+      "newPath": "downloads/axisym_vz_leader.dat",
+      "kind": "download",
+      "label": "axisym_vz_leader.dat"
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/axisym_vz_trailer.dat",
+      "newPath": "downloads/axisym_vz_trailer.dat",
+      "kind": "download",
+      "label": "axisym_vz_trailer.dat"
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/axisym_xz_leader.dat",
+      "newPath": "downloads/axisym_xz_leader.dat",
+      "kind": "download",
+      "label": "axisym_xz_leader.dat"
+    },
+    {
+      "oldPath": "scripts/source-data/dkt/axisym_xz_trailer.dat",
+      "newPath": "downloads/axisym_xz_trailer.dat",
+      "kind": "download",
+      "label": "axisym_xz_trailer.dat"
+    },
+    {
+      "oldPath": "scripts/source-data/dns/dns_validation_datasheet.csv",
+      "newPath": "downloads/dns_validation_datasheet.csv",
+      "kind": "download",
+      "label": "dns_validation_datasheet.csv"
+    },
+    {
+      "oldPath": "generated from dkt downloads",
+      "newPath": "downloads/dkt.zip",
+      "kind": "download",
+      "label": "dkt.zip"
+    }
+  ]
+}

@@ -7,6 +7,7 @@ const RB3_DIR = resolve(process.cwd(), "public/benchmark-assets/rb3");
 const RB2_DIR = resolve(process.cwd(), "public/benchmark-assets/rb2");
 const FAC3_DIR = resolve(process.cwd(), "public/benchmark-assets/fac3");
 const SEDIMENTATION_DIR = resolve(process.cwd(), "public/benchmark-assets/sedimentation");
+const DKT_DIR = resolve(process.cwd(), "public/benchmark-assets/dkt");
 const CANONICAL_METRICS = new Set(["sphericity", "mass", "size", "surface"]);
 const RB2_METRICS = new Set(["shape", "center-of-mass", "circularity", "rise-velocity", "mass"]);
 const RB2_CASES = new Set(["case-1", "case-2"]);
@@ -16,6 +17,7 @@ const manifest = JSON.parse(readFileSync(resolve(RB3_DIR, "manifest.json"), "utf
 const rb2Manifest = JSON.parse(readFileSync(resolve(RB2_DIR, "manifest.json"), "utf-8")) as AssetManifest;
 const fac3Manifest = JSON.parse(readFileSync(resolve(FAC3_DIR, "manifest.json"), "utf-8")) as AssetManifest;
 const sedimentationManifest = JSON.parse(readFileSync(resolve(SEDIMENTATION_DIR, "manifest.json"), "utf-8")) as AssetManifest;
+const dktManifest = JSON.parse(readFileSync(resolve(DKT_DIR, "manifest.json"), "utf-8")) as AssetManifest;
 
 function listPlotFiles(): string[] {
   const plotsDir = resolve(RB3_DIR, "plots");
@@ -172,5 +174,49 @@ describe("sedimentation asset manifest (public/benchmark-assets/sedimentation/ma
     for (const rule of ["/cases/", "/velE*.txt", "/posE*.txt", "/velocities.png", "/positions.png", "/plot_velocities.py", "/plot_positions.py", "/process_and_plot.sh"]) {
       expect(gitignore).toContain(rule);
     }
+  });
+});
+
+describe("dkt asset manifest (public/benchmark-assets/dkt/manifest.json)", () => {
+  const DKT_METRICS = new Set(["tilt", "separation", "trajectory", "velocity-leader", "velocity-trailer"]);
+
+  it("covers every derived plot and copied download", () => {
+    expect(dktManifest.benchmarkId).toBe("dkt");
+    for (const entry of dktManifest.entries) {
+      expect(existsSync(resolve(DKT_DIR, entry.newPath)), entry.newPath).toBe(true);
+    }
+  });
+
+  it("leaves no orphan files on disk", () => {
+    const mapped = new Set(dktManifest.entries.map(entry => entry.newPath));
+    for (const file of listFiles(DKT_DIR)) {
+      if (file === "manifest.json") continue;
+      expect(mapped.has(file), file).toBe(true);
+    }
+  });
+
+  it("uses the canonical metric vocabulary and marks plots as derived", () => {
+    const plots = dktManifest.entries.filter(entry => entry.newPath.startsWith("plots/"));
+    expect(plots).toHaveLength(20);
+    for (const entry of plots) {
+      expect(DKT_METRICS.has(entry.metric!), entry.metric).toBe(true);
+      expect(entry.derived, entry.newPath).toBe(true);
+      expect(entry.kind).toBe("code");
+    }
+  });
+
+  it("derives every plot from a curated source, never from a rundir path", () => {
+    for (const entry of dktManifest.entries) {
+      if (entry.oldPath.startsWith("generated from")) continue;
+      expect(entry.oldPath.startsWith("scripts/source-data/"), entry.oldPath).toBe(true);
+      expect(entry.oldPath).not.toMatch(/q2p1_dns_rundir|particle_force\.log/);
+    }
+  });
+
+  it("ships the datasheet the validation ledger is generated from", () => {
+    const datasheet = dktManifest.entries.find(entry =>
+      entry.newPath === "downloads/dns_validation_datasheet.csv");
+    expect(datasheet?.kind).toBe("download");
+    expect(existsSync(resolve(DKT_DIR, "downloads/dkt.zip"))).toBe(true);
   });
 });

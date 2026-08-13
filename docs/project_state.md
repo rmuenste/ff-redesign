@@ -1,6 +1,6 @@
 # Project State
 
-Last updated: 2026-06-29
+Last updated: 2026-08-13
 
 ## Current Migration Status
 
@@ -9,6 +9,7 @@ Last updated: 2026-06-29
   - Rising Bubble 2D: `/benchmarks/2d-rising-bubble`
   - Flow Around Cylinder 3D: `/benchmarks/fac3`
   - Particle Sedimentation: `/benchmarks/particle-sedimentation`
+  - Drafting-Kissing-Tumbling: `/benchmarks/drafting-kissing-tumbling`
 - Still planned: none
 
 The app foundation, shared comparison engine, MathJax setup, curated asset layout,
@@ -22,3 +23,33 @@ velocity and position result images were replaced by live Plotly plots generated
 from migrated simulation txt files and PIV reference files. The generated
 `sedimentation.zip` is built by the converter from the available migrated
 downloads, including simulation and PIV source files.
+
+## DKT Migration (first DNS validation benchmark)
+
+Drafting-Kissing-Tumbling is the first benchmark from the DNS validation campaign
+rather than from `ff-angular`. It introduced three things the remaining DNS
+benchmarks reuse:
+
+- A `suite` facet on the benchmark registry, so DNS entries are filterable
+  alongside Model and Dim.
+- `VerdictChip` and `ValidationLedger`, plus a `Validation` tab pattern.
+- A generated validation ledger: `scripts/lib/validation-ledger.mjs` reads the
+  curated campaign datasheet (`scripts/source-data/dns/`) and emits
+  `src/data/generated/<id>-validation.json`. Ledger rows are never hand-written.
+
+Series data comes from `tools/dkt_export_series.py` in the FeatFloWer repository,
+which reduces the solver's per-step particle log to two-column series curated
+under `scripts/source-data/dkt/`.
+
+The comparison axis is the **contact model** (dry friction vs frictionless)
+rather than a code or a level. Only the frictional run exists at both rungs of
+the resolution ladder; the others are declared level-independent with a plain
+`source`, the same idiom the sedimentation page uses for PIV references.
+
+## Next
+
+- Extend Particle Sedimentation with the campaign's convergence material
+  (spatial ladder, timestep study, error budget), distilled for visitors.
+- Remaining DNS candidates: sphere-wall lubrication crossover, Hasimoto periodic
+  array drag (blocked on an open solver issue), Beetstra drag correlation (needs
+  surface-plot support).

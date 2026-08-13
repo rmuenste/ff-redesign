@@ -313,6 +313,32 @@ Use for:
 
 Do not use as a heavy decorative background behind dense content or tables.
 
+### `VerdictChip`
+
+Semantic status badge for validation ledgers.
+
+Verdicts:
+
+- `PASS`: gate met.
+- `RECORDED`: measured and kept, but not gated.
+- `RESOLVED`: issue investigated and closed.
+- `OPEN`: still under investigation.
+- `FAIL`: gate not met.
+
+Styling lives in `src/styles.css` as `.verdict-*` rather than inline, because the
+bright brand hues need darker values in light mode. The badge always renders its
+literal verdict word, so colour is never the only status signal.
+
+### `ValidationLedger`
+
+Table of validation claims: case, quantity, expected, measured, gate, verdict.
+
+Rows are **generated** from a campaign datasheet by the benchmark's converter
+(`scripts/lib/validation-ledger.mjs`) and imported as JSON from
+`src/data/generated/`. They are never hand-transcribed, so a corrected datasheet
+reaches the site by re-running the converter. Internal scheduler job ids are
+stripped during generation; everything else is kept verbatim as provenance.
+
 ### `MeshThumb`
 
 SVG mesh/result thumbnail abstraction.
@@ -337,7 +363,9 @@ Current utility classes in `src/styles.css`:
 - `.focus-ring`
 - `.bg-grid`
 - `.flow-canvas`
-- `.tt`
+- `.tt` (absolutely positioned **tooltip** — not an inline-code span)
+- `.code-inline` (inline code span)
+- `.verdict`, `.verdict-pass|recorded|resolved|open|fail`
 - `.code-row`, `.code-dot`
 - `.fade-up`
 
@@ -394,6 +422,8 @@ Use tabs for benchmark-detail sections such as:
 - Introduction
 - Definition
 - Results
+- Contact Model
+- Validation
 - Simulation
 - Reference Data
 - References
@@ -465,8 +495,13 @@ Catalogue pattern:
 - Sticky filter/search bar.
 - Grid/table view toggle.
 - Compare tray for selected benchmarks.
-- Benchmark cards with thumbnail, tags, title, model, Re, levels, code count,
-  and reference delta.
+- Benchmark cards with thumbnail, tags, title, model, Re, levels, suite, and
+  status.
+
+Catalogue facets are **Suite**, **Model** and **Dim**. `suite` groups benchmarks
+by the programme that produced them (currently `Core benchmarks` and
+`DNS validation`); its filter options are derived from the registry via
+`benchmarkSuites`, so adding a new suite requires no filter edit.
 
 During migration, only real benchmarks from `ff-angular` should appear as
 production entries.

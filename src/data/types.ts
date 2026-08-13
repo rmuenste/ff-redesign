@@ -7,7 +7,7 @@ export type ComparisonAxis = "code" | "level";
  * Motif drawn by `MeshThumb`. Most are abstract; `bubble-2d` is the real RB2
  * case-2 interface curve. Used when no full render is available.
  */
-export type MeshShape = "cylinder" | "bubble" | "bubble-2d" | "particle" | "sediment" | "channel";
+export type MeshShape = "cylinder" | "bubble" | "bubble-2d" | "particle" | "sediment" | "channel" | "dkt-pair";
 export type SeriesKind = "code" | "level" | "reference";
 export type PlotSourceKind = "single-trace" | "trace-array" | "segmented-shape";
 export type CompareMode = "overlay" | "diff" | "small-multiples";
@@ -36,6 +36,8 @@ export interface BenchmarkMeta {
   title: string;
   shortTitle: string;
   tag: string;
+  /** Catalogue facet grouping benchmarks by the programme that produced them. */
+  suite: string;
   model: string;
   dimension: "2D" | "3D";
   reynolds?: number | string;

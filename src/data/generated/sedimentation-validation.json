@@ -1,5 +1,6 @@
 {
   "source": "scripts/source-data/dns/dns_validation_datasheet.csv",
+  "decompositionSource": "scripts/source-data/dns/tencate_error_decomposition.txt",
   "generatedBy": "scripts/convert-sedimentation-validation.mjs",
   "rows": [
     {
@@ -242,5 +243,69 @@
       "tolerance": "dt_ladder",
       "verdict": "RECORDED"
     }
-  ]
+  ],
+  "dtLadder": [
+    {
+      "level": "L3",
+      "dtMs": 1,
+      "errorPct": 0.81,
+      "synced": false
+    },
+    {
+      "level": "L3",
+      "dtMs": 0.5,
+      "errorPct": 1.41,
+      "synced": true
+    },
+    {
+      "level": "L3",
+      "dtMs": 0.25,
+      "errorPct": 1.94,
+      "synced": true
+    }
+  ],
+  "decomposition": {
+    "E4": [
+      {
+        "order": 1,
+        "spatialPp": {
+          "L2": 5.92,
+          "L3": 2.27,
+          "L4": -0.02
+        },
+        "temporalPpAt1ms": -1.51,
+        "maxResidualPp": 0.1
+      },
+      {
+        "order": 2,
+        "spatialPp": {
+          "L2": 5.5,
+          "L3": 1.86,
+          "L4": -0.47
+        },
+        "temporalPpAt1ms": -1.09,
+        "maxResidualPp": 0.18
+      }
+    ],
+    "E1": [
+      {
+        "order": 1,
+        "spatialPp": {
+          "L3": -2.35,
+          "L4": -4.41
+        },
+        "temporalPpAt1ms": -0.83,
+        "maxResidualPp": 0
+      },
+      {
+        "order": 2,
+        "spatialPp": {
+          "L3": -2.63,
+          "L4": -4.69
+        },
+        "temporalPpAt1ms": -0.56,
+        "maxResidualPp": 0
+      }
+    ]
+  }
 }

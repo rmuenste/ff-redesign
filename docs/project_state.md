@@ -53,18 +53,33 @@ metrology: the spatial ladder across three levels and four cases, the reference
 audit, and the comparison against ten Cate's own simulations, all as generated
 ledger rows plus a short visitor-facing reading.
 
-The converter deliberately withholds the earlier timestep-ladder points and the
-temporal term fitted from them. Those runs were measured while the rigid-body
+The timestep study was measured twice. The first pass ran while the rigid-body
 solver integrated at its own configured stepsize rather than the CFD timestep, so
-they measured a coupling artifact; the "added-mass stability floor" read from
-them was refuted. The datasheet rows that found and refuted the defect are
-published in their place. See the selection policy comment in
-`scripts/convert-sedimentation-validation.mjs`.
+those runs measured a coupling artifact and the "added-mass stability floor" read
+from them was refuted. Every dt != 1 ms point was re-run synchronised.
+
+The converter withholds the first-pass points and publishes the synced ladder
+plus the fitted spatial/temporal split, parsed from the curated output of
+`tools/tencate_error_decomposition.py` in the FeatFloWer repository rather than
+re-implemented, so the site cannot drift from the campaign's own fit. See the
+selection policy comment in `scripts/convert-sedimentation-validation.mjs`; a
+test pins withheld-vs-published and asserts every published dt point is synced.
+
+Note for whoever next touches the datasheet: its `e4_l3_dt_ladder_sync` row still
+carries a "refit pending" note in `expected_source`, which the decomposition tool
+has since superseded.
 
 ## Next
 
-- Refit the combined spatial/temporal error budget once the synced timestep
-  ladder is complete, then publish it on the sedimentation Validation tab.
-- Remaining DNS candidates: sphere-wall lubrication crossover, Hasimoto periodic
-  array drag (blocked on an open solver issue), Beetstra drag correlation (needs
-  surface-plot support).
+Remaining DNS candidates, in rough order of readiness:
+
+- **Sphere-wall lubrication crossover** — smallest job; a single curve against
+  Brenner's analytic solution, with a committed generator already in the
+  FeatFloWer repository.
+- **Hasimoto periodic array drag** — publishable. The periodic-coupling defect
+  that blocked it was fixed on 2026-08-03 and the benchmark is closed; the
+  post-fix ladder converges to Hasimoto's analytic value within -0.4 to -0.6%.
+  The defect itself (periodic faces silently solved traction-free until the
+  campaign caught it) belongs in that page's Validation ledger.
+- **Beetstra drag correlation** — needs surface-plot support, or a decomposition
+  into per-solid-fraction line families, before it fits the comparison model.

@@ -158,6 +158,27 @@ export const sedimentationReferenceRows = [
 export const sedimentationValidationRows = generatedValidation.rows as ValidationRow[];
 export const sedimentationValidationSource = generatedValidation.source;
 
+/** One point of the synchronised timestep ladder at the workhorse resolution. */
+export interface SedimentationDtRow {
+  level: string;
+  dtMs: number;
+  errorPct: number;
+  synced: boolean;
+}
+
+/** Fitted split of the peak error into a per-level spatial term and a temporal term. */
+export interface SedimentationDecompositionFit {
+  order: number;
+  spatialPp: Record<string, number>;
+  temporalPpAt1ms: number;
+  maxResidualPp: number;
+}
+
+export const sedimentationDtLadder = generatedValidation.dtLadder as SedimentationDtRow[];
+export const sedimentationDecomposition =
+  generatedValidation.decomposition as Record<string, SedimentationDecompositionFit[]>;
+export const sedimentationDecompositionSource = generatedValidation.decompositionSource;
+
 export const sedimentationReferences = [
   {
     id: "ten-cate-2002",

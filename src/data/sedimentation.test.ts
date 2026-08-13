@@ -1,7 +1,14 @@
 import { readFileSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
-import { sedimentationPlotSpecs, sedimentationValidationRows, sedimentationValidationSource } from "./sedimentation";
+import {
+  sedimentationDecomposition,
+  sedimentationDecompositionSource,
+  sedimentationDtLadder,
+  sedimentationPlotSpecs,
+  sedimentationValidationRows,
+  sedimentationValidationSource
+} from "./sedimentation";
 
 const SEDIMENTATION_DIR = resolve(process.cwd(), "public/benchmark-assets/sedimentation");
 
@@ -111,15 +118,61 @@ describe("sedimentation validation ledger", () => {
     }
   });
 
-  it("withholds the timestep points measured under the stepsize mismatch, and publishes the resolution", () => {
+  it("withholds the desynchronised timestep rows but publishes their synced replacements", () => {
     const cases = new Set(sedimentationValidationRows.map(row => row.case));
-    // These runs integrated the rigid body at the wrong rate; they measured an artifact.
+
+    // First-pass runs: the rigid body integrated at its own stepsize rather than
+    // the CFD timestep, so these measured a coupling artifact. Superseded.
     for (const superseded of ["e4_l3_dt0p25", "e4_l3_dt0p5", "e4_l4_dt0p5", "e1_l3_dt0p5", "dt_stability", "dt_order"]) {
-      expect(cases.has(superseded), superseded).toBe(false);
+      expect(cases.has(superseded), `withheld: ${superseded}`).toBe(false);
     }
-    // The rows that found, refuted and replaced them are published instead.
-    for (const resolution of ["pe_stepsize_mismatch", "dt_stability_refuted", "e4_l3_dt_ladder_sync"]) {
-      expect(cases.has(resolution), resolution).toBe(true);
+
+    // Their synced replacements, and the rows that found and refuted the defect.
+    for (const published of ["pe_stepsize_mismatch", "dt_stability_refuted", "e4_l3_dt_ladder_sync"]) {
+      expect(cases.has(published), `published: ${published}`).toBe(true);
+    }
+
+    // The published dt numbers come from synced runs only.
+    for (const point of sedimentationDtLadder.filter(row => row.dtMs !== 1)) {
+      expect(point.synced, `dt=${point.dtMs}ms must be a synced run`).toBe(true);
+    }
+  });
+});
+
+describe("sedimentation timestep ladder and error decomposition", () => {
+  it("is parsed from the campaign's own decomposition tool", () => {
+    expect(sedimentationDecompositionSource).toBe("scripts/source-data/dns/tencate_error_decomposition.txt");
+  });
+
+  it("publishes a descending timestep ladder at the workhorse level", () => {
+    expect(sedimentationDtLadder.length).toBeGreaterThanOrEqual(3);
+    expect(sedimentationDtLadder.every(row => row.level === "L3")).toBe(true);
+    const steps = sedimentationDtLadder.map(row => row.dtMs);
+    expect(steps).toEqual([...steps].sort((a, b) => b - a));
+    expect(steps).toContain(0.25);
+  });
+
+  it("shows a sub-linear temporal response: each halving moves the peak by under one point", () => {
+    const errors = sedimentationDtLadder.map(row => row.errorPct);
+    for (let i = 1; i < errors.length; i += 1) {
+      const increment = errors[i] - errors[i - 1];
+      // Positive and shrinking: refining dt walks toward the spatial error.
+      expect(increment, `step ${i}`).toBeGreaterThan(0);
+      expect(increment, `step ${i}`).toBeLessThan(1);
+    }
+  });
+
+  it("fits both candidate temporal orders and agrees on the structure", () => {
+    const fits = sedimentationDecomposition.E4;
+    expect(fits.map(fit => fit.order)).toEqual([1, 2]);
+    for (const fit of fits) {
+      // Coarse levels overshoot, the finest is converged within uncertainty.
+      expect(fit.spatialPp.L2, `p=${fit.order} L2`).toBeGreaterThan(fit.spatialPp.L3);
+      expect(fit.spatialPp.L3, `p=${fit.order} L3`).toBeGreaterThan(fit.spatialPp.L4);
+      expect(Math.abs(fit.spatialPp.L4), `p=${fit.order} L4 converged`).toBeLessThan(1);
+      // The temporal term opposes the coarse spatial terms — hence the cancellation.
+      expect(fit.temporalPpAt1ms, `p=${fit.order} temporal`).toBeLessThan(0);
+      expect(fit.maxResidualPp, `p=${fit.order} residual`).toBeLessThan(0.5);
     }
   });
 });

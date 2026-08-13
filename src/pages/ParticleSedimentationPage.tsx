@@ -21,8 +21,12 @@ import {
   sedimentationPlotSpecs,
   sedimentationReferenceRows,
   sedimentationReferences,
+  sedimentationDecomposition,
+  sedimentationDtLadder,
   sedimentationSetupAsset,
   sedimentationValidationRows,
+  type SedimentationDecompositionFit,
+  type SedimentationDtRow,
   type SedimentationPhysicalRow
 } from "../data/sedimentation";
 
@@ -174,11 +178,73 @@ function ValidationTab() {
           </p>
         </div>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
-          With the stepsize synchronised, the time-step study is stable at every step size tried and the peak shifts
-          sub-linearly, by roughly half a percentage point per halving. An earlier reading of these runs reported a
-          stability floor; that was the stepsize mismatch above and has been withdrawn. A full refit of the combined
-          spatial and temporal error budget is still outstanding.
+          With the stepsize synchronised, the timestep study is stable at every step size tried — an earlier reading
+          of these runs reported a stability floor, and that was the mismatch above rather than a property of the
+          method. Choose the timestep against your error budget, not against stability. The remaining dependence is
+          genuine but sub-linear:
         </p>
+      </div>
+
+      <div style={{ display: "grid", gap: 32, gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))", marginBottom: 36 }}>
+        <div>
+          <h4 style={{ margin: "0 0 12px" }}>Timestep ladder, Re = 31.9 at D/h = 23.9</h4>
+          <DataTable<SedimentationDtRow>
+            columns={[
+              { id: "dt", header: "dt [ms]", render: row => <span style={{ fontFamily: "var(--font-mono)" }}>{row.dtMs}</span> },
+              {
+                id: "error",
+                header: "Peak error vs Table II",
+                align: "right",
+                render: row => (
+                  <span style={{ fontFamily: "var(--font-mono)" }}>
+                    {row.errorPct > 0 ? "+" : ""}
+                    {row.errorPct.toFixed(2)}%
+                  </span>
+                )
+              }
+            ]}
+            rows={sedimentationDtLadder}
+            getRowKey={row => `${row.level}-${row.dtMs}`}
+          />
+          <p style={{ color: "var(--fg2)", fontSize: 13, lineHeight: 1.6, marginTop: 12 }}>
+            Halving the step moves the peak by about half a percentage point each time, so the apparent order is
+            below one rather than the second order the time scheme would suggest on its own.
+          </p>
+        </div>
+
+        <div>
+          <h4 style={{ margin: "0 0 12px" }}>Fitted error split, Re = 31.9</h4>
+          <DataTable<SedimentationDecompositionFit>
+            columns={[
+              { id: "order", header: "Assumed order", render: row => <span style={{ fontFamily: "var(--font-mono)" }}>p = {row.order}</span> },
+              ...["L2", "L3", "L4"].map(level => ({
+                id: level,
+                header: `Spatial ${level}`,
+                align: "right" as const,
+                render: (row: SedimentationDecompositionFit) => (
+                  <span style={{ fontFamily: "var(--font-mono)" }}>
+                    {row.spatialPp[level] > 0 ? "+" : ""}
+                    {row.spatialPp[level]?.toFixed(2)}
+                  </span>
+                )
+              })),
+              {
+                id: "temporal",
+                header: "Temporal at 1 ms",
+                align: "right",
+                render: row => <span style={{ fontFamily: "var(--font-mono)" }}>{row.temporalPpAt1ms.toFixed(2)}</span>
+              }
+            ]}
+            rows={sedimentationDecomposition.E4 ?? []}
+            getRowKey={row => `p${row.order}`}
+          />
+          <p style={{ color: "var(--fg2)", fontSize: 13, lineHeight: 1.6, marginTop: 12 }}>
+            Percentage points, from an additive fit to the whole ladder. The temporal order is not pinned, so both
+            readings are shown; they agree on the structure. The spatial term reaches zero within its uncertainty at
+            the finest level, and the temporal term is negative while the coarse spatial terms are positive — which
+            is the cancellation that makes the intermediate mesh at 1 ms look better than it is.
+          </p>
+        </div>
       </div>
 
       <h3>Validation ledger</h3>

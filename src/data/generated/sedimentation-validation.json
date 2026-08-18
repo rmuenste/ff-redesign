@@ -237,8 +237,8 @@
       "case": "e4_l3_dt_ladder_sync",
       "quantity": "synced E4 L3 dt ladder vs Table II: dt=1.0/0.5/0.25ms",
       "expected": "monotone dt-dependence",
-      "expectedSource": "tencate_error_decomposition.py (refit pending)",
-      "measured": "+0.81/+1.40/+1.94%: stable everywhere, genuine sub-linear dt-dependence (increments +0.59/+0.54 per halving); full refit awaits synced L4+E1 points",
+      "expectedSource": "tencate_error_decomposition.py (refit LANDED)",
+      "measured": "+0.81/+1.40/+1.94%: stable everywhere, genuine sub-linear dt-dependence (increments +0.59/+0.54 per halving); refit complete with synced L4+E1 points: T(1ms) = -1.51/-1.09 pp (E4, p=1/2) and -0.83/-0.56 pp (E1); S(L4) = -0.0..-0.5 pp converged; corrected 2026-08-13 after website-converter audit (prior guide range -1.5..-2.4 was a pre-sync carryover)",
       "relError": "n/a",
       "tolerance": "dt_ladder",
       "verdict": "RECORDED"

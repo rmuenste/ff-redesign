@@ -252,8 +252,7 @@ function ValidationTab() {
           records whether the expected physical behaviour was observed, not whether a number landed inside a band.
           Rows marked RECORDED document behaviour that was measured and kept but not gated. Claims that later
           measurement superseded are not republished here; the downloadable datasheet carries the campaign's full
-          record. The trajectory result itself is stated under Introduction and Contact Model, where every figure is
-          read from the series offered under Reference Data.
+          record.
         </p>
       </div>
       <ValidationLedger rows={dktValidationRows} />

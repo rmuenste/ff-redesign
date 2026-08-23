@@ -188,9 +188,8 @@ writeJson(resolve(outDir, "manifest.json"), { benchmarkId: "dkt", entries });
 // Withheld: the pre-rotation contact rows, whose post-contact numbers no longer
 // match the curves this page plots. Their pre-contact content survives in
 // `dkt_tkiss_correction`, which carries the kissing times for both rungs. The
-// same-binary rerun rows are withheld too: they are written as corrections to the
-// superseded runs rather than as statements of the result, and the result itself
-// is on the page, derived from the series shipped under Reference Data.
+// rerun rows are withheld too: they are written as corrections to the superseded
+// runs rather than as statements of the result.
 const SUPERSEDED = new Set([
   "dkt_offset",
   "dkt16_offset",
@@ -198,11 +197,16 @@ const SUPERSEDED = new Set([
   "dkt_nofric_long"
 ]);
 
+// Published in addition to the `dkt*` family: D2.3 rows that state the contact
+// result outright rather than correcting an earlier reading. They are named after
+// the campaign task rather than the run, so the case-prefix rule alone misses them.
+const PUBLISHED_EXTRAS = new Set(["d23_result"]);
+
 const records = readDatasheet(resolve(root, datasheetSource));
-const ledger = buildLedger(
-  records,
-  record => /^dkt/i.test(record.case) && !SUPERSEDED.has(record.case.trim())
-);
+const ledger = buildLedger(records, record => {
+  const id = record.case.trim();
+  return PUBLISHED_EXTRAS.has(id) || (/^dkt/i.test(id) && !SUPERSEDED.has(id));
+});
 writeJson(resolve(generatedDir, "dkt-validation.json"), {
   source: datasheetSource,
   generatedBy: "scripts/convert-dkt-data.mjs",

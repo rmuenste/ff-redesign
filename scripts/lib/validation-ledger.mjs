@@ -24,6 +24,14 @@ export const VERDICTS = new Set(["PASS", "RECORDED", "RESOLVED", "FAIL", "OPEN",
  */
 export function sanitize(text) {
   return text
+    // Parenthetical asides that cross-reference another datasheet row by case id
+    // — "(row d32_phi_ladder)", "(design row d32_wide_design)", "(the
+    // investigation trail lives in rows a, b, c)". A page publishes a selected
+    // subset of the datasheet, so these pointers dangle on the site: they name
+    // rows the reader cannot see. The whole aside goes rather than just the
+    // reference, because a partial strip leaves broken punctuation behind, and an
+    // aside built around a row pointer is bookkeeping by construction.
+    .replace(/\s*\((?:[^()]|\([^()]*\))*\brows?\s+[a-z][a-z0-9]*_[a-z0-9_]+(?:[^()]|\([^()]*\))*\)/gi, "")
     // "job 137402", "jobs 137390+137391", "jobs 140208-140214",
     // "jobs 139196/97,139288 + 139310/11/13/14". A comma only continues the list
     // when it is followed by another job-sized number, so prose like

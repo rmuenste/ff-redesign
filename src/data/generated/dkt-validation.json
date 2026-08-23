@@ -61,6 +61,18 @@
       "relError": "n/a",
       "tolerance": "audit",
       "verdict": "RESOLVED"
+    },
+    {
+      "id": "d23_result-5",
+      "suite": "d2_pairs",
+      "case": "d23_result",
+      "quantity": "D2.3 headline result, stated clean for publication: DKT benchmark, offset sphere pair, D/h=8, frictional vs frictionless contact, both runs one binary lineage (pe f9b7115), decks differing only in the two friction coefficients",
+      "expected": "full Fortes drafting-kissing-tumbling sequence under both contact models; friction expected to modulate the tumble rate",
+      "expectedSource": "Fortes, Joseph & Lundgren 1987 (DKT); tilt convention: unfolded 0-180 pair axis (>90 = role exchange)",
+      "measured": "Both contact models complete the full drafting-kissing-tumbling sequence. Drafting is byte-identical between the two runs (all 720 shared pre-contact samples of tilt and separation, max delta 0.0); kissing at t = 18.10. Frictional (mu_s/mu_d = 0.1/0.05): tilt grows exponentially from contact, doubling every ~3 t.u., 16.2 deg at t = 25. Frictionless: 21.7 deg at t = 25, 67.1 at t = 30, past horizontal by t = 35 (101.6), 107.2 at t = 40 with roles exchanged (trailer now settling faster, vz -0.401 vs -0.337). Friction retards tumble onset by ~25 percent in tilt at matched time and does not suppress the instability; for liquid-immersed particle contacts near-zero friction or a lubricated contact model is the physical choice (practitioner's guide section 6)",
+      "relError": "n/a",
+      "tolerance": "mechanism",
+      "verdict": "PASS"
     }
   ]
 }

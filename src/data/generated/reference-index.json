@@ -171,8 +171,8 @@
           "path": "downloads/dns_validation_datasheet.csv",
           "label": "dns_validation_datasheet.csv",
           "format": "CSV",
-          "bytes": 82731,
-          "sha1": "eddbd020d69b0ca34ce8b7195794a36e544ae644",
+          "bytes": 84386,
+          "sha1": "dd61eaf1f822adf4417fe53de3b9f7bc60e1d13c",
           "shared": true
         },
         {
@@ -180,8 +180,8 @@
           "path": "downloads/dkt.zip",
           "label": "dkt.zip",
           "format": "ZIP archive",
-          "bytes": 515768,
-          "sha1": "4eaccaf89ce98b4ab74ea24cac8693ff5e2fa9e8",
+          "bytes": 517423,
+          "sha1": "c54ca24820b1bddb8b81b092ad431e117c63e017",
           "shared": false
         }
       ]
@@ -298,8 +298,8 @@
           "path": "downloads/dns_validation_datasheet.csv",
           "label": "dns_validation_datasheet.csv",
           "format": "CSV",
-          "bytes": 82731,
-          "sha1": "eddbd020d69b0ca34ce8b7195794a36e544ae644",
+          "bytes": 84386,
+          "sha1": "dd61eaf1f822adf4417fe53de3b9f7bc60e1d13c",
           "shared": true
         },
         {
@@ -307,8 +307,8 @@
           "path": "downloads/hindered-settling.zip",
           "label": "hindered-settling.zip",
           "format": "ZIP archive",
-          "bytes": 207450,
-          "sha1": "9ad0d9bb417e32a01e0d319e5c058e904e4ca217",
+          "bytes": 209105,
+          "sha1": "186ed073de029e32a52a8bbb343086192245f30d",
           "shared": false
         }
       ]
@@ -585,8 +585,8 @@
     {
       "name": "dns_validation_datasheet.csv",
       "format": "CSV",
-      "bytes": 82731,
-      "sha1": "eddbd020d69b0ca34ce8b7195794a36e544ae644",
+      "bytes": 84386,
+      "sha1": "dd61eaf1f822adf4417fe53de3b9f7bc60e1d13c",
       "benchmarkIds": [
         "dkt",
         "hindered-settling"
@@ -596,6 +596,6 @@
   "totals": {
     "benchmarks": 6,
     "files": 61,
-    "bytes": 5057602
+    "bytes": 5064222
   }
 }

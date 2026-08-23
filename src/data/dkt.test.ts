@@ -129,7 +129,8 @@ describe("dkt validation ledger", () => {
   it("selects only DKT cases and uses the campaign verdict vocabulary", () => {
     const allowed = new Set(["PASS", "RECORDED", "RESOLVED", "FAIL", "OPEN"]);
     for (const row of dktValidationRows) {
-      expect(row.case.toLowerCase().startsWith("dkt"), row.case).toBe(true);
+      const isDktCase = row.case.toLowerCase().startsWith("dkt") || row.case === "d23_result";
+      expect(isDktCase, row.case).toBe(true);
       expect(allowed.has(row.verdict), `${row.case}: ${row.verdict}`).toBe(true);
       expect(row.quantity.length, row.case).toBeGreaterThan(0);
       expect(row.measured.length, row.case).toBeGreaterThan(0);
@@ -141,6 +142,27 @@ describe("dkt validation ledger", () => {
     expect(audit?.verdict).toBe("RESOLVED");
     expect(audit?.measured).toContain("18.04");
     expect(audit?.measured).toContain("18.34");
+  });
+
+  it("carries the contact-model result as a row of its own", () => {
+    const result = dktValidationRows.find(row => row.case === "d23_result");
+    expect(result?.verdict).toBe("PASS");
+    // The figures the Introduction and Contact Model tabs state.
+    expect(result?.measured).toContain("16.2 deg at t = 25");
+    expect(result?.measured).toContain("21.7 deg at t = 25");
+    expect(result?.measured).toContain("107.2");
+    expect(result?.measured).toMatch(/does not suppress/);
+  });
+
+  it("drops datasheet cross-references to rows the page does not publish", () => {
+    // "(row d23_omegafix_rerun)" and friends would dangle: the reader cannot see
+    // the row being pointed at.
+    const published = new Set(dktValidationRows.map(row => row.case));
+    const blob = JSON.stringify(dktValidationRows);
+    for (const match of blob.match(/\brows?\s+[a-z][a-z0-9]*_[a-z0-9_]+/gi) ?? []) {
+      const referenced = match.replace(/^\brows?\s+/i, "");
+      expect(published.has(referenced), `dangling reference to ${referenced}`).toBe(true);
+    }
   });
 
   it("withholds the contact rows that later measurement superseded", () => {

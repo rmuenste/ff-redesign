@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Chip,
@@ -12,6 +11,7 @@ import {
   KpiBox,
   Section,
   Tabs,
+  useTabParam,
   VideoBlock
 } from "../components";
 import {
@@ -161,13 +161,13 @@ function ReferenceDataTab() {
 
 export function RisingBubble3DPage() {
   const navigate = useNavigate();
-  const [tab, setTab] = useState("introduction");
   const tabs = [
     { id: "introduction", label: "Introduction" },
     { id: "definition", label: "Definition" },
     { id: "results", label: "Results" },
     { id: "reference-data", label: "Reference Data" }
   ];
+  const [tab, setTab] = useTabParam(tabs.map(item => item.id), "introduction");
 
   return (
     <div>

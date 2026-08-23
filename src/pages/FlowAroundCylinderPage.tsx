@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Chip,
@@ -13,6 +12,7 @@ import {
   ReferenceList,
   Section,
   Tabs,
+  useTabParam,
   VideoBlock
 } from "../components";
 import {
@@ -303,7 +303,6 @@ function ConclusionTab() {
 
 export function FlowAroundCylinderPage() {
   const navigate = useNavigate();
-  const [tab, setTab] = useState("introduction");
   const tabs = [
     { id: "introduction", label: "Introduction" },
     { id: "definition", label: "Definition" },
@@ -311,6 +310,7 @@ export function FlowAroundCylinderPage() {
     { id: "reference-data", label: "Reference Data" },
     { id: "conclusion", label: "Conclusion and Bibliography" }
   ];
+  const [tab, setTab] = useTabParam(tabs.map(item => item.id), "introduction");
 
   return (
     <div>

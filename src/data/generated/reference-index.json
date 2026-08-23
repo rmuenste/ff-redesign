@@ -1,0 +1,601 @@
+{
+  "generatedBy": "scripts/build-reference-index.mjs",
+  "groups": [
+    {
+      "benchmarkId": "dkt",
+      "files": [
+        {
+          "name": "fric-dh8_tilt.dat",
+          "path": "downloads/fric-dh8_tilt.dat",
+          "label": "fric-dh8_tilt.dat",
+          "format": "ASCII, two columns",
+          "bytes": 19502,
+          "sha1": "9456540c80f75bf92cd4d1983edcea95605aa213",
+          "shared": false
+        },
+        {
+          "name": "fric-dh8_separation.dat",
+          "path": "downloads/fric-dh8_separation.dat",
+          "label": "fric-dh8_separation.dat",
+          "format": "ASCII, two columns",
+          "bytes": 18958,
+          "sha1": "2838876751a9c2311c69753cf67ffd4370d79f6d",
+          "shared": false
+        },
+        {
+          "name": "fric-dh8_vz_leader.dat",
+          "path": "downloads/fric-dh8_vz_leader.dat",
+          "label": "fric-dh8_vz_leader.dat",
+          "format": "ASCII, two columns",
+          "bytes": 21534,
+          "sha1": "eb537e71b940982ad4ca51901f4fa79065f882fa",
+          "shared": false
+        },
+        {
+          "name": "fric-dh8_vz_trailer.dat",
+          "path": "downloads/fric-dh8_vz_trailer.dat",
+          "label": "fric-dh8_vz_trailer.dat",
+          "format": "ASCII, two columns",
+          "bytes": 21536,
+          "sha1": "edc3a262d82c248790d9802eb04a9a1c2cb69c8f",
+          "shared": false
+        },
+        {
+          "name": "fric-dh8_xz_leader.dat",
+          "path": "downloads/fric-dh8_xz_leader.dat",
+          "label": "fric-dh8_xz_leader.dat",
+          "format": "ASCII, two columns",
+          "bytes": 19854,
+          "sha1": "841c4c7b8ef8799eadf0cc2874f0c509f5f395fb",
+          "shared": false
+        },
+        {
+          "name": "fric-dh8_xz_trailer.dat",
+          "path": "downloads/fric-dh8_xz_trailer.dat",
+          "label": "fric-dh8_xz_trailer.dat",
+          "format": "ASCII, two columns",
+          "bytes": 18887,
+          "sha1": "92c147dc3ebba9ab29ebabdde5167bc1be0ab076",
+          "shared": false
+        },
+        {
+          "name": "nofric_tilt.dat",
+          "path": "downloads/nofric_tilt.dat",
+          "label": "nofric_tilt.dat",
+          "format": "ASCII, two columns",
+          "bytes": 31422,
+          "sha1": "db7a3b265eb54a313c8a14bf05fea0bacad842ba",
+          "shared": false
+        },
+        {
+          "name": "nofric_separation.dat",
+          "path": "downloads/nofric_separation.dat",
+          "label": "nofric_separation.dat",
+          "format": "ASCII, two columns",
+          "bytes": 30535,
+          "sha1": "a3b41fda8e988006d379df8509abfc2930ce67c4",
+          "shared": false
+        },
+        {
+          "name": "nofric_vz_leader.dat",
+          "path": "downloads/nofric_vz_leader.dat",
+          "label": "nofric_vz_leader.dat",
+          "format": "ASCII, two columns",
+          "bytes": 34683,
+          "sha1": "d80c2fb9b454035530ff3037decc17316055c270",
+          "shared": false
+        },
+        {
+          "name": "nofric_vz_trailer.dat",
+          "path": "downloads/nofric_vz_trailer.dat",
+          "label": "nofric_vz_trailer.dat",
+          "format": "ASCII, two columns",
+          "bytes": 34675,
+          "sha1": "a158a777d8d8729479f208c857116737161e2c0c",
+          "shared": false
+        },
+        {
+          "name": "nofric_xz_leader.dat",
+          "path": "downloads/nofric_xz_leader.dat",
+          "label": "nofric_xz_leader.dat",
+          "format": "ASCII, two columns",
+          "bytes": 31801,
+          "sha1": "58a8a104c5766bb4eab66845ea355cfef6384d36",
+          "shared": false
+        },
+        {
+          "name": "nofric_xz_trailer.dat",
+          "path": "downloads/nofric_xz_trailer.dat",
+          "label": "nofric_xz_trailer.dat",
+          "format": "ASCII, two columns",
+          "bytes": 30599,
+          "sha1": "a03f6151a6660d7939cc34f1467cab58b83e2d24",
+          "shared": false
+        },
+        {
+          "name": "axisym_tilt.dat",
+          "path": "downloads/axisym_tilt.dat",
+          "label": "axisym_tilt.dat",
+          "format": "ASCII, two columns",
+          "bytes": 16946,
+          "sha1": "d30c1a2109f174943d792a146d5149c85d463a7f",
+          "shared": false
+        },
+        {
+          "name": "axisym_separation.dat",
+          "path": "downloads/axisym_separation.dat",
+          "label": "axisym_separation.dat",
+          "format": "ASCII, two columns",
+          "bytes": 17791,
+          "sha1": "00a72087e14d528363fd9ba3e9b6c1f668055b52",
+          "shared": false
+        },
+        {
+          "name": "axisym_vz_leader.dat",
+          "path": "downloads/axisym_vz_leader.dat",
+          "label": "axisym_vz_leader.dat",
+          "format": "ASCII, two columns",
+          "bytes": 21547,
+          "sha1": "eb1064c54978ea687ecaad63fd5f1a134b5f6707",
+          "shared": false
+        },
+        {
+          "name": "axisym_vz_trailer.dat",
+          "path": "downloads/axisym_vz_trailer.dat",
+          "label": "axisym_vz_trailer.dat",
+          "format": "ASCII, two columns",
+          "bytes": 21550,
+          "sha1": "8d575e0b349c6ea1a357ef4f7cc892e3bbcf579e",
+          "shared": false
+        },
+        {
+          "name": "axisym_xz_leader.dat",
+          "path": "downloads/axisym_xz_leader.dat",
+          "label": "axisym_xz_leader.dat",
+          "format": "ASCII, two columns",
+          "bytes": 18941,
+          "sha1": "a9c89f6c22b0e8059ebc29fdb4e44dcb2e65fea1",
+          "shared": false
+        },
+        {
+          "name": "axisym_xz_trailer.dat",
+          "path": "downloads/axisym_xz_trailer.dat",
+          "label": "axisym_xz_trailer.dat",
+          "format": "ASCII, two columns",
+          "bytes": 19503,
+          "sha1": "6ffa903572d5b6a36074015028093503e101ab77",
+          "shared": false
+        },
+        {
+          "name": "dns_validation_datasheet.csv",
+          "path": "downloads/dns_validation_datasheet.csv",
+          "label": "dns_validation_datasheet.csv",
+          "format": "CSV",
+          "bytes": 78669,
+          "sha1": "5a694929a517fbd0bbe1409991990dd9cb08dd3b",
+          "shared": true
+        },
+        {
+          "name": "dkt.zip",
+          "path": "downloads/dkt.zip",
+          "label": "dkt.zip",
+          "format": "ZIP archive",
+          "bytes": 511339,
+          "sha1": "1d88cbe4359e48ccf77ccbf4462805995498b249",
+          "shared": false
+        }
+      ]
+    },
+    {
+      "benchmarkId": "fac3",
+      "files": [
+        {
+          "name": "BenchValues.txt",
+          "path": "downloads/BenchValues.txt",
+          "label": "BenchValues reference data",
+          "format": "ASCII",
+          "bytes": 104195,
+          "sha1": "acb21a2eb8d672e43d95b6564881b74599fad76e",
+          "shared": false
+        },
+        {
+          "name": "BenchValues.zip",
+          "path": "downloads/BenchValues.zip",
+          "label": "BenchValues reference data (zip)",
+          "format": "ZIP archive",
+          "bytes": 29983,
+          "sha1": "021e94a465c4da583c387e3226359f85cd90e986",
+          "shared": false
+        }
+      ]
+    },
+    {
+      "benchmarkId": "hindered-settling",
+      "files": [
+        {
+          "name": "ladder_6d.csv",
+          "path": "downloads/ladder_6d.csv",
+          "label": "ladder_6d.csv",
+          "format": "CSV",
+          "bytes": 610,
+          "sha1": "7949d4afdd171729a4abff2b306b470e31384ba2",
+          "shared": false
+        },
+        {
+          "name": "ladder_wide.csv",
+          "path": "downloads/ladder_wide.csv",
+          "label": "ladder_wide.csv",
+          "format": "CSV",
+          "bytes": 334,
+          "sha1": "cd64628d1e4d2e80f6da5974412eb8ea9f5d6fff",
+          "shared": false
+        },
+        {
+          "name": "terminal_velocity.csv",
+          "path": "downloads/terminal_velocity.csv",
+          "label": "terminal_velocity.csv",
+          "format": "CSV",
+          "bytes": 81,
+          "sha1": "5f5505cc1463bf1832cc96233b76b3793e974907",
+          "shared": false
+        },
+        {
+          "name": "history_6d_n20.dat",
+          "path": "downloads/history_6d_n20.dat",
+          "label": "history_6d_n20.dat",
+          "format": "ASCII, two columns",
+          "bytes": 20532,
+          "sha1": "b76d5cbeef37eefa9399e93fc95ea7ebd6e1936b",
+          "shared": false
+        },
+        {
+          "name": "history_6d_n40.dat",
+          "path": "downloads/history_6d_n40.dat",
+          "label": "history_6d_n40.dat",
+          "format": "ASCII, two columns",
+          "bytes": 20516,
+          "sha1": "396a3036be2d6c2c5b6a8c077c8d1b99f22b3ea3",
+          "shared": false
+        },
+        {
+          "name": "history_6d_n80.dat",
+          "path": "downloads/history_6d_n80.dat",
+          "label": "history_6d_n80.dat",
+          "format": "ASCII, two columns",
+          "bytes": 20508,
+          "sha1": "15eb9096f4dc171aa56665542f617143f839c23f",
+          "shared": false
+        },
+        {
+          "name": "history_6d_n120.dat",
+          "path": "downloads/history_6d_n120.dat",
+          "label": "history_6d_n120.dat",
+          "format": "ASCII, two columns",
+          "bytes": 20515,
+          "sha1": "80793c1ba773456cf504717235969611d34b4034",
+          "shared": false
+        },
+        {
+          "name": "history_wide_n40.dat",
+          "path": "downloads/history_wide_n40.dat",
+          "label": "history_wide_n40.dat",
+          "format": "ASCII, two columns",
+          "bytes": 20109,
+          "sha1": "75d8e8b605721f256239720d06ac96d1790126da",
+          "shared": false
+        },
+        {
+          "name": "history_wide_n120.dat",
+          "path": "downloads/history_wide_n120.dat",
+          "label": "history_wide_n120.dat",
+          "format": "ASCII, two columns",
+          "bytes": 19990,
+          "sha1": "5ff135e1399678d3e7e34ca0df0aead42f2e8759",
+          "shared": false
+        },
+        {
+          "name": "dns_validation_datasheet.csv",
+          "path": "downloads/dns_validation_datasheet.csv",
+          "label": "dns_validation_datasheet.csv",
+          "format": "CSV",
+          "bytes": 78669,
+          "sha1": "5a694929a517fbd0bbe1409991990dd9cb08dd3b",
+          "shared": true
+        },
+        {
+          "name": "hindered-settling.zip",
+          "path": "downloads/hindered-settling.zip",
+          "label": "hindered-settling.zip",
+          "format": "ZIP archive",
+          "bytes": 203388,
+          "sha1": "78fb172f894033d1c8633857f4e716e0f76399a5",
+          "shared": false
+        }
+      ]
+    },
+    {
+      "benchmarkId": "rb2",
+      "files": [
+        {
+          "name": "quantities.zip",
+          "path": "downloads/quantities.zip",
+          "label": "Quantity reference data",
+          "format": "ZIP archive",
+          "bytes": 1598989,
+          "sha1": "46cf6bc2a004d5d313cae2dfd96e290580bdbb04",
+          "shared": false
+        },
+        {
+          "name": "shapes.zip",
+          "path": "downloads/shapes.zip",
+          "label": "Shape reference data",
+          "format": "ZIP archive",
+          "bytes": 341936,
+          "sha1": "5f9b548b24f248303b6b3ca8e43ae6a365d13b30",
+          "shared": false
+        }
+      ]
+    },
+    {
+      "benchmarkId": "rb3",
+      "files": [
+        {
+          "name": "rb3-reference-data.zip",
+          "path": "downloads/rb3-reference-data.zip",
+          "label": "Reference data bundle (zip)",
+          "format": "ZIP archive",
+          "bytes": 19479,
+          "sha1": "22f231de994a76a8fcf930e3ffb49080ad5a21c5",
+          "shared": false
+        }
+      ]
+    },
+    {
+      "benchmarkId": "sedimentation",
+      "files": [
+        {
+          "name": "velE1.txt",
+          "path": "downloads/velE1.txt",
+          "label": "velE1.txt",
+          "format": "ASCII",
+          "bytes": 76979,
+          "sha1": "c9533d887eeac68055164107923a72997974344f",
+          "shared": false
+        },
+        {
+          "name": "posE1.txt",
+          "path": "downloads/posE1.txt",
+          "label": "posE1.txt",
+          "format": "ASCII",
+          "bytes": 71003,
+          "sha1": "0820040fb6712479d247a86d964462884b34a8fc",
+          "shared": false
+        },
+        {
+          "name": "velE1_L3.txt",
+          "path": "downloads/velE1_L3.txt",
+          "label": "velE1_L3.txt",
+          "format": "ASCII",
+          "bytes": 76726,
+          "sha1": "a522d27ed1c93c7a958bd8c51e1186b40ce51e2d",
+          "shared": false
+        },
+        {
+          "name": "posE1_L3.txt",
+          "path": "downloads/posE1_L3.txt",
+          "label": "posE1_L3.txt",
+          "format": "ASCII",
+          "bytes": 70880,
+          "sha1": "81face47a101655acba944ff2f60f22820613756",
+          "shared": false
+        },
+        {
+          "name": "velE2.txt",
+          "path": "downloads/velE2.txt",
+          "label": "velE2.txt",
+          "format": "ASCII",
+          "bytes": 51664,
+          "sha1": "ac57a0dd44a774e2517bbd670b11fc41e40708c4",
+          "shared": false
+        },
+        {
+          "name": "posE2.txt",
+          "path": "downloads/posE2.txt",
+          "label": "posE2.txt",
+          "format": "ASCII",
+          "bytes": 47508,
+          "sha1": "854bc2b01f6d4ec4d74b307d10aead9704688ba3",
+          "shared": false
+        },
+        {
+          "name": "velE2_L3.txt",
+          "path": "downloads/velE2_L3.txt",
+          "label": "velE2_L3.txt",
+          "format": "ASCII",
+          "bytes": 51068,
+          "sha1": "7a1b071fbf7b30a962ab9ce1a578de98e771684b",
+          "shared": false
+        },
+        {
+          "name": "posE2_L3.txt",
+          "path": "downloads/posE2_L3.txt",
+          "label": "posE2_L3.txt",
+          "format": "ASCII",
+          "bytes": 47448,
+          "sha1": "c4bad1ee49e64d4fc5420176656cd48312336281",
+          "shared": false
+        },
+        {
+          "name": "velE3.txt",
+          "path": "downloads/velE3.txt",
+          "label": "velE3.txt",
+          "format": "ASCII",
+          "bytes": 45491,
+          "sha1": "2931baee86c0ebd5fb697ece5dd0d4c851eb844a",
+          "shared": false
+        },
+        {
+          "name": "posE3.txt",
+          "path": "downloads/posE3.txt",
+          "label": "posE3.txt",
+          "format": "ASCII",
+          "bytes": 41696,
+          "sha1": "82283de97c8ccba665c2be02900f974b7904bff0",
+          "shared": false
+        },
+        {
+          "name": "velE3_L3.txt",
+          "path": "downloads/velE3_L3.txt",
+          "label": "velE3_L3.txt",
+          "format": "ASCII",
+          "bytes": 44985,
+          "sha1": "a41e74a6e9e4cc9084ea617e50e812faf6b1018a",
+          "shared": false
+        },
+        {
+          "name": "posE3_L3.txt",
+          "path": "downloads/posE3_L3.txt",
+          "label": "posE3_L3.txt",
+          "format": "ASCII",
+          "bytes": 41602,
+          "sha1": "27db552e7e7ef3c49f84077d25da8a4e0dae9a3a",
+          "shared": false
+        },
+        {
+          "name": "velE4.txt",
+          "path": "downloads/velE4.txt",
+          "label": "velE4.txt",
+          "format": "ASCII",
+          "bytes": 21004,
+          "sha1": "116b4a58bc16c15b56b782700385e24946260480",
+          "shared": false
+        },
+        {
+          "name": "posE4.txt",
+          "path": "downloads/posE4.txt",
+          "label": "posE4.txt",
+          "format": "ASCII",
+          "bytes": 20371,
+          "sha1": "a34ef7b3c9516ad97dae5066aeb09e016da6be05",
+          "shared": false
+        },
+        {
+          "name": "velE4_L3.txt",
+          "path": "downloads/velE4_L3.txt",
+          "label": "velE4_L3.txt",
+          "format": "ASCII",
+          "bytes": 21102,
+          "sha1": "21f740ea5ae96e57df2658dcb217e1478927f580",
+          "shared": false
+        },
+        {
+          "name": "posE4_L3.txt",
+          "path": "downloads/posE4_L3.txt",
+          "label": "posE4_L3.txt",
+          "format": "ASCII",
+          "bytes": 20294,
+          "sha1": "e02ab21cee1b86bf6047f3d2e7d02cfd5af2157d",
+          "shared": false
+        },
+        {
+          "name": "ref_E1.dat",
+          "path": "downloads/ref_E1.dat",
+          "label": "ref_E1.dat",
+          "format": "ASCII, two columns",
+          "bytes": 1049,
+          "sha1": "0c6d88db7056d46913c52adf1316588227633267",
+          "shared": false
+        },
+        {
+          "name": "case_E1_h.csv",
+          "path": "downloads/case_E1_h.csv",
+          "label": "case_E1_h.csv",
+          "format": "CSV",
+          "bytes": 1826,
+          "sha1": "9b9b6ea53e70e5fbc0dc6f94a2dde84d9ed65309",
+          "shared": false
+        },
+        {
+          "name": "ref_E2.dat",
+          "path": "downloads/ref_E2.dat",
+          "label": "ref_E2.dat",
+          "format": "ASCII, two columns",
+          "bytes": 1082,
+          "sha1": "7c46dbe4decb2ac09b55e08c2d6dc2e57aa01e64",
+          "shared": false
+        },
+        {
+          "name": "case_E2_h.csv",
+          "path": "downloads/case_E2_h.csv",
+          "label": "case_E2_h.csv",
+          "format": "CSV",
+          "bytes": 1144,
+          "sha1": "1b4e0af2b887c0a733a0d7e3695afaa6e630f679",
+          "shared": false
+        },
+        {
+          "name": "ref_E3.dat",
+          "path": "downloads/ref_E3.dat",
+          "label": "ref_E3.dat",
+          "format": "ASCII, two columns",
+          "bytes": 889,
+          "sha1": "53450e4bc9f1a562c3106495a929f6e9ec4e449c",
+          "shared": false
+        },
+        {
+          "name": "case_E3_h.csv",
+          "path": "downloads/case_E3_h.csv",
+          "label": "case_E3_h.csv",
+          "format": "CSV",
+          "bytes": 1112,
+          "sha1": "228b6e059b95cf3b977fd8ad883d090fdad3acb6",
+          "shared": false
+        },
+        {
+          "name": "ref_E4.dat",
+          "path": "downloads/ref_E4.dat",
+          "label": "ref_E4.dat",
+          "format": "ASCII, two columns",
+          "bytes": 644,
+          "sha1": "5a422af8483b36211ea529f796559b41d8b75712",
+          "shared": false
+        },
+        {
+          "name": "case_E4_h.csv",
+          "path": "downloads/case_E4_h.csv",
+          "label": "case_E4_h.csv",
+          "format": "CSV",
+          "bytes": 1171,
+          "sha1": "3d608cf8d3f51ed5638126a0f91616bd55d35cb5",
+          "shared": false
+        },
+        {
+          "name": "sedimentation.zip",
+          "path": "downloads/sedimentation.zip",
+          "label": "sedimentation.zip",
+          "format": "ZIP archive",
+          "bytes": 761776,
+          "sha1": "8ac9f479a600cd77266f4836b32bfd2cc24e17ed",
+          "shared": false
+        }
+      ]
+    }
+  ],
+  "shared": [
+    {
+      "name": "dns_validation_datasheet.csv",
+      "format": "CSV",
+      "bytes": 78669,
+      "sha1": "5a694929a517fbd0bbe1409991990dd9cb08dd3b",
+      "benchmarkIds": [
+        "dkt",
+        "hindered-settling"
+      ]
+    }
+  ],
+  "totals": {
+    "benchmarks": 6,
+    "files": 61,
+    "bytes": 5040620
+  }
+}

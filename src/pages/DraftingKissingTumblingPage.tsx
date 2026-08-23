@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Chip,
@@ -12,6 +11,7 @@ import {
   ReferenceList,
   Section,
   Tabs,
+  useTabParam,
   ValidationLedger
 } from "../components";
 import { DktSchematic } from "../components/dkt-schematic";
@@ -305,7 +305,6 @@ function ReferenceDataTab() {
 
 export function DraftingKissingTumblingPage() {
   const navigate = useNavigate();
-  const [tab, setTab] = useState("introduction");
   const tabs = [
     { id: "introduction", label: "Introduction" },
     { id: "definition", label: "Definition" },
@@ -314,6 +313,7 @@ export function DraftingKissingTumblingPage() {
     { id: "validation", label: "Validation" },
     { id: "reference-data", label: "Reference Data" }
   ];
+  const [tab, setTab] = useTabParam(tabs.map(item => item.id), "introduction");
 
   return (
     <div>

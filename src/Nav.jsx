@@ -71,7 +71,7 @@ export const Nav = ({ activePath }) => {
             }} />
             v0.4 · build 2026.04
           </div>
-          <Btn variant="stroked" size="sm" leading={<Icon name="download" size={14} />} onClick={() => navigate("/benchmarks")}>
+          <Btn variant="stroked" size="sm" leading={<Icon name="download" size={14} />} onClick={() => navigate("/reference-data")}>
             Reference data
           </Btn>
         </div>

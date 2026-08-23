@@ -9,6 +9,7 @@ import { DraftingKissingTumblingPage } from "./pages/DraftingKissingTumblingPage
 import { FlowAroundCylinderPage } from "./pages/FlowAroundCylinderPage";
 import { HinderedSettlingPage } from "./pages/HinderedSettlingPage";
 import { ParticleSedimentationPage } from "./pages/ParticleSedimentationPage";
+import { ReferenceDataPage } from "./pages/ReferenceDataPage";
 import { RisingBubble2DPage } from "./pages/RisingBubble2DPage";
 import { RisingBubble3DPage } from "./pages/RisingBubble3DPage";
 
@@ -21,7 +22,8 @@ const routeLabels: Record<string, string> = {
   "/benchmarks/particle-sedimentation": "06 Particle Sedimentation",
   "/benchmarks/drafting-kissing-tumbling": "07 Drafting-Kissing-Tumbling",
   "/benchmarks/hindered-settling": "08 Hindered Settling",
-  "/gallery": "09 Gallery"
+  "/reference-data": "09 Reference Data",
+  "/gallery": "10 Gallery"
 };
 
 function AppShell({ children }: { children: React.ReactNode }) {
@@ -60,6 +62,7 @@ export function App() {
         <Route path="/benchmarks/particle-sedimentation" element={<ParticleSedimentationPage />} />
         <Route path="/benchmarks/drafting-kissing-tumbling" element={<DraftingKissingTumblingPage />} />
         <Route path="/benchmarks/hindered-settling" element={<HinderedSettlingPage />} />
+        <Route path="/reference-data" element={<ReferenceDataPage />} />
         <Route path="/gallery" element={<Gallery />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

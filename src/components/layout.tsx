@@ -1,5 +1,44 @@
 import type { ReactNode } from "react";
+import { useCallback, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Overline, Section } from "./ui";
+
+/**
+ * Tab state backed by a `?tab=` search parameter, so a tab can be linked to from
+ * outside the page — the aggregate reference-data index links straight at each
+ * benchmark's Reference Data tab.
+ *
+ * `tabIds` is the page's own tab list: an unknown or absent parameter falls back
+ * to the default rather than rendering a page with no visible tab. Switching tabs
+ * replaces the history entry instead of pushing one, so Back still leaves the
+ * page rather than walking the tabs the reader has already seen.
+ */
+export function useTabParam(tabIds: string[], defaultId: string): [string, (id: string) => void] {
+  const [searchParams, setSearchParams] = useSearchParams();
+  // Mirrored in state so a page still works when rendered outside a router with
+  // search-param support (and so the first paint does not wait on the URL).
+  const requested = searchParams.get("tab");
+  const [fallback, setFallback] = useState(defaultId);
+  const active = requested && tabIds.includes(requested) ? requested : fallback;
+
+  const setTab = useCallback(
+    (id: string) => {
+      setFallback(id);
+      setSearchParams(
+        current => {
+          const next = new URLSearchParams(current);
+          if (id === defaultId) next.delete("tab");
+          else next.set("tab", id);
+          return next;
+        },
+        { replace: true }
+      );
+    },
+    [defaultId, setSearchParams]
+  );
+
+  return [active, setTab];
+}
 
 export function PageHeader({
   overline,

@@ -17,7 +17,7 @@ import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 /** Routes that are not derived from the benchmark registry. */
-export const STATIC_ROUTES = ["benchmarks", "gallery"];
+export const STATIC_ROUTES = ["benchmarks", "gallery", "reference-data"];
 
 /** Benchmark slugs, read from the TypeScript registry rather than imported. */
 export function benchmarkSlugs(registryPath) {

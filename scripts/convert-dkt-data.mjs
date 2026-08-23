@@ -181,13 +181,22 @@ writeJson(resolve(outDir, "manifest.json"), { benchmarkId: "dkt", entries });
 // ----------------
 // The contact-model study was measured twice. The first pass ran on binaries that
 // did not integrate rigid-body rotation, so post-contact tilt was not a physical
-// measurement; those runs were repeated once rotation was resolved. The site
-// publishes the current reading only — the campaign datasheet offered under
+// measurement; both contact models were repeated once rotation was resolved. The
+// site publishes the current reading only — the campaign datasheet offered under
 // Reference Data carries every row, superseded ones included.
 //
-// Withheld: the pre-rotation contact rows. Their pre-contact content survives in
-// `dkt_tkiss_correction`, which carries the kissing times for both rungs.
-const SUPERSEDED = new Set(["dkt_offset", "dkt16_offset", "dkt_nofric"]);
+// Withheld: the pre-rotation contact rows, whose post-contact numbers no longer
+// match the curves this page plots. Their pre-contact content survives in
+// `dkt_tkiss_correction`, which carries the kissing times for both rungs. The
+// same-binary rerun rows are withheld too: they are written as corrections to the
+// superseded runs rather than as statements of the result, and the result itself
+// is on the page, derived from the series shipped under Reference Data.
+const SUPERSEDED = new Set([
+  "dkt_offset",
+  "dkt16_offset",
+  "dkt_nofric",
+  "dkt_nofric_long"
+]);
 
 const records = readDatasheet(resolve(root, datasheetSource));
 const ledger = buildLedger(

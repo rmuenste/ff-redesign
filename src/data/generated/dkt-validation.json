@@ -51,19 +51,7 @@
       "verdict": "PASS"
     },
     {
-      "id": "dkt_nofric_long-4",
-      "suite": "d2_pairs",
-      "case": "dkt_nofric_long",
-      "quantity": "frictionless DKT extension to t=40 (9h50, D/h=8)",
-      "expected": "full tumble-through and separation",
-      "expectedSource": "Fortes 1987 complete phase sequence",
-      "measured": "COMPLETE SEQUENCE: kiss t=18.04 -> rolling contact (tilt 22.3deg at t=25, 43.3 at t=28) -> separation onset t=29.64 (sep>1.02d, still rotating) -> pair horizontal t=32.92 -> t=40: sep=2.37d at 109deg with ROLE EXCHANGE (former trailer below, falling faster -0.419 vs -0.348); D2.3 mechanism study closed: all three DKT phases reproduced once contact friction is physical (~0)",
-      "relError": "n/a",
-      "tolerance": "mechanism",
-      "verdict": "PASS"
-    },
-    {
-      "id": "dkt_tkiss_correction-5",
+      "id": "dkt_tkiss_correction-4",
       "suite": "d2_pairs",
       "case": "dkt_tkiss_correction",
       "quantity": "t_kiss audit triggered by the website-integration agent re-deriving all DKT numbers from raw logs",

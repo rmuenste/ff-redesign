@@ -132,12 +132,12 @@ export interface DktPhaseRow {
 
 /** The measured sequence, frictionless contact at D/h = 8. */
 export const dktSequenceRows: DktPhaseRow[] = [
-  { phase: "Drafting", time: "t = 10 – 18", observation: "Trailing sphere enters the wake and accelerates: -0.499 against -0.427 for the leader." },
-  { phase: "Kissing", time: "t = 18.04", observation: "Centre distance reaches one diameter; the pair falls as a single doublet." },
-  { phase: "Tumbling", time: "t = 19 – 29", observation: "Rolling contact, tilt growing 4.8 deg to 22.3 deg at t = 25 and 43.3 deg at t = 28." },
-  { phase: "Separation onset", time: "t = 29.64", observation: "Centre distance passes 1.02 d while the pair is still rotating." },
-  { phase: "Pair horizontal", time: "t = 32.92", observation: "Pair axis crosses 90 deg from the vertical." },
-  { phase: "Role exchange", time: "t = 40", observation: "Separation 2.37 d at 109 deg; the former trailer now leads and falls faster, -0.419 against -0.348." }
+  { phase: "Drafting", time: "t = 10 – 18", observation: "Trailing sphere enters the wake and accelerates: -0.564 against -0.473 for the leader just before contact." },
+  { phase: "Kissing", time: "t = 18.03", observation: "Centre distance reaches one diameter; the pair falls as a single doublet." },
+  { phase: "Tumbling", time: "t = 19 – 29", observation: "Rolling contact, tilt growing 4.4 deg to 21.7 deg at t = 25 and 44.8 deg at t = 28." },
+  { phase: "Separation onset", time: "t = 29.17", observation: "Centre distance passes 1.02 d while the pair is still rotating." },
+  { phase: "Pair horizontal", time: "t = 32.45", observation: "Pair axis crosses 90 deg from the vertical." },
+  { phase: "Role exchange", time: "t = 40", observation: "Separation 2.84 d at 107 deg; the former trailer now leads and falls faster, -0.401 against -0.337." }
 ];
 
 /* ---------------- Validation ---------------- */

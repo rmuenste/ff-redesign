@@ -63,8 +63,8 @@
           "path": "downloads/nofric_tilt.dat",
           "label": "nofric_tilt.dat",
           "format": "ASCII, two columns",
-          "bytes": 31422,
-          "sha1": "db7a3b265eb54a313c8a14bf05fea0bacad842ba",
+          "bytes": 31441,
+          "sha1": "66e33b3fa66bce881a30695bc2a5ddc7547f4666",
           "shared": false
         },
         {
@@ -72,8 +72,8 @@
           "path": "downloads/nofric_separation.dat",
           "label": "nofric_separation.dat",
           "format": "ASCII, two columns",
-          "bytes": 30535,
-          "sha1": "a3b41fda8e988006d379df8509abfc2930ce67c4",
+          "bytes": 31129,
+          "sha1": "8e827ef63a294bbe8c813aa158d5cb88fbe575a2",
           "shared": false
         },
         {
@@ -81,8 +81,8 @@
           "path": "downloads/nofric_vz_leader.dat",
           "label": "nofric_vz_leader.dat",
           "format": "ASCII, two columns",
-          "bytes": 34683,
-          "sha1": "d80c2fb9b454035530ff3037decc17316055c270",
+          "bytes": 34655,
+          "sha1": "3c66dcf8d79d856df1f941b1a2cd4bfd1d0b4b80",
           "shared": false
         },
         {
@@ -90,8 +90,8 @@
           "path": "downloads/nofric_vz_trailer.dat",
           "label": "nofric_vz_trailer.dat",
           "format": "ASCII, two columns",
-          "bytes": 34675,
-          "sha1": "a158a777d8d8729479f208c857116737161e2c0c",
+          "bytes": 34663,
+          "sha1": "b074d7c422da8fb78c43ca4df40575c98331e28d",
           "shared": false
         },
         {
@@ -99,8 +99,8 @@
           "path": "downloads/nofric_xz_leader.dat",
           "label": "nofric_xz_leader.dat",
           "format": "ASCII, two columns",
-          "bytes": 31801,
-          "sha1": "58a8a104c5766bb4eab66845ea355cfef6384d36",
+          "bytes": 31797,
+          "sha1": "65fb50ecc508b57708368c9afdffdc3ac4dab1d7",
           "shared": false
         },
         {
@@ -108,8 +108,8 @@
           "path": "downloads/nofric_xz_trailer.dat",
           "label": "nofric_xz_trailer.dat",
           "format": "ASCII, two columns",
-          "bytes": 30599,
-          "sha1": "a03f6151a6660d7939cc34f1467cab58b83e2d24",
+          "bytes": 30397,
+          "sha1": "133c8653689ad9d9569e5e3533b8359e99928af9",
           "shared": false
         },
         {
@@ -171,8 +171,8 @@
           "path": "downloads/dns_validation_datasheet.csv",
           "label": "dns_validation_datasheet.csv",
           "format": "CSV",
-          "bytes": 78669,
-          "sha1": "5a694929a517fbd0bbe1409991990dd9cb08dd3b",
+          "bytes": 82731,
+          "sha1": "eddbd020d69b0ca34ce8b7195794a36e544ae644",
           "shared": true
         },
         {
@@ -180,8 +180,8 @@
           "path": "downloads/dkt.zip",
           "label": "dkt.zip",
           "format": "ZIP archive",
-          "bytes": 511339,
-          "sha1": "1d88cbe4359e48ccf77ccbf4462805995498b249",
+          "bytes": 515768,
+          "sha1": "4eaccaf89ce98b4ab74ea24cac8693ff5e2fa9e8",
           "shared": false
         }
       ]
@@ -298,8 +298,8 @@
           "path": "downloads/dns_validation_datasheet.csv",
           "label": "dns_validation_datasheet.csv",
           "format": "CSV",
-          "bytes": 78669,
-          "sha1": "5a694929a517fbd0bbe1409991990dd9cb08dd3b",
+          "bytes": 82731,
+          "sha1": "eddbd020d69b0ca34ce8b7195794a36e544ae644",
           "shared": true
         },
         {
@@ -307,8 +307,8 @@
           "path": "downloads/hindered-settling.zip",
           "label": "hindered-settling.zip",
           "format": "ZIP archive",
-          "bytes": 203388,
-          "sha1": "78fb172f894033d1c8633857f4e716e0f76399a5",
+          "bytes": 207450,
+          "sha1": "9ad0d9bb417e32a01e0d319e5c058e904e4ca217",
           "shared": false
         }
       ]
@@ -585,8 +585,8 @@
     {
       "name": "dns_validation_datasheet.csv",
       "format": "CSV",
-      "bytes": 78669,
-      "sha1": "5a694929a517fbd0bbe1409991990dd9cb08dd3b",
+      "bytes": 82731,
+      "sha1": "eddbd020d69b0ca34ce8b7195794a36e544ae644",
       "benchmarkIds": [
         "dkt",
         "hindered-settling"
@@ -596,6 +596,6 @@
   "totals": {
     "benchmarks": 6,
     "files": 61,
-    "bytes": 5040620
+    "bytes": 5057602
   }
 }

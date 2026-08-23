@@ -76,7 +76,7 @@ function IntroductionTab() {
             {
               type: "paragraph",
               text:
-                "One quantitative result does survive: the kissing time is near resolution-independent, t = 18.04 at eight elements per diameter against t = 18.34 at sixteen. Everything before contact is a pure fluid-dynamics problem and the solver converges on it."
+                "One quantitative result does survive: the kissing time is near resolution-independent, t = 18.03 at eight elements per diameter against t = 18.34 at sixteen. Everything before contact is a pure fluid-dynamics problem and the solver converges on it."
             }
           ]}
         />
@@ -217,10 +217,17 @@ function ContactModelTab() {
           tumble.
         </p>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
-          That is what the two runs measure. Both draft and kiss the same way, and past contact both break symmetry:
-          the tilt grows exponentially, doubling roughly every three time units. Under dry friction it reaches 16.2
-          degrees at t = 25, against 22.3 degrees for the frictionless contact at the same instant. Friction sets the
-          rate of the instability; it does not decide whether the instability occurs.
+          That is what the two runs measure, and they are a clean controlled pair: same mesh, same initial condition,
+          same time step, differing only in the two friction coefficients. Their recorded motion is identical through
+          the whole drafting phase — every published sample agrees to the last printed digit up to t = 18.105 — and
+          first differs at t = 18.13, the first sample after the spheres touch. The contact model demonstrably does
+          nothing before contact and everything after it.
+        </p>
+        <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
+          Past contact both runs break symmetry: the tilt grows exponentially, doubling roughly every three time
+          units. Under dry friction it reaches 16.2 degrees at t = 25, against 21.7 degrees for the frictionless
+          contact at the same instant — friction retards the tumble by about a quarter in tilt at matched time. It
+          sets the rate of the instability; it does not decide whether the instability occurs.
         </p>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
           The general lesson is that contact parameters are physics, not stabilisers. They should be chosen to match
@@ -245,7 +252,8 @@ function ValidationTab() {
           records whether the expected physical behaviour was observed, not whether a number landed inside a band.
           Rows marked RECORDED document behaviour that was measured and kept but not gated. Claims that later
           measurement superseded are not republished here; the downloadable datasheet carries the campaign's full
-          record.
+          record. The trajectory result itself is stated under Introduction and Contact Model, where every figure is
+          read from the series offered under Reference Data.
         </p>
       </div>
       <ValidationLedger rows={dktValidationRows} />
@@ -253,20 +261,20 @@ function ValidationTab() {
         <div>
           <h3>Controlled comparison</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-            The frictional and frictionless runs at D/h = 8 share an initial condition, a mesh and a time step. Their
-            centre separation agrees to within 0.001 d through the whole drafting phase and they touch within 0.01
-            time units of each other, t = 18.03 against t = 18.04. The trajectories part only after contact, which
-            isolates the contact model as the cause of the difference in tumbling rate.
+            The frictional and frictionless runs at D/h = 8 share an initial condition, a mesh and a time step, and
+            differ only in two contact coefficients. Their published tilt and separation series agree to the last
+            printed digit for all 725 samples through drafting, they touch at the same t = 18.03, and they first
+            differ at t = 18.13 — the first sample after contact. This isolates the contact model as the only cause
+            of the difference in outcome.
           </p>
         </div>
         <div>
           <h3>Reproducibility audit</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-            Every number on this page was re-derived from the raw solver output during site integration. That audit
-            corrected the recorded kissing time for the offset case from 19.7 to 18.04 — the earlier figure was a
-            stale reading whose source could not be recovered — and it changed the reading of the result: the
-            kissing time is near resolution-independent, 18.04 against 18.34 at twice the resolution. The correction
-            is itself a ledger row above.
+            Every number on this page is re-derived from the raw solver output rather than transcribed. That audit
+            corrected the recorded kissing time for the offset case from 19.7 to 18.0 — the earlier figure was a
+            stale reading whose source could not be recovered — and it changed the reading of the result, which is
+            that the kissing time is near resolution-independent. The correction is itself a ledger row above.
           </p>
         </div>
       </div>
@@ -350,8 +358,8 @@ export function DraftingKissingTumblingPage() {
               <KpiBox label="Spheres" value="2" />
               <KpiBox label="Density ratio" value="1.14" />
               <KpiBox label="D/h" value="8 / 16" />
-              <KpiBox label="Kissing" value="t = 18.04" />
-              <KpiBox label="Final tilt" value="109°" good />
+              <KpiBox label="Kissing" value="t = 18.03" />
+              <KpiBox label="Final tilt" value="107°" good />
               <KpiBox label="Runs" value="3" />
             </div>
           </div>

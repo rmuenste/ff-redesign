@@ -39,7 +39,7 @@ describe("dkt converted Plotly data", () => {
     expect(tilt.mode).toBe("lines");
     // Runs to t = 40 and ends with the pair past horizontal, roles exchanged.
     expect(tilt.x[tilt.x.length - 1]).toBeGreaterThan(39.9);
-    expect(tilt.y[tilt.y.length - 1]).toBeCloseTo(109.1, 0);
+    expect(tilt.y[tilt.y.length - 1]).toBeCloseTo(107.2, 0);
   });
 
   it("tumbles under dry friction too, more slowly than without it", () => {
@@ -51,6 +51,22 @@ describe("dkt converted Plotly data", () => {
     expect(fricFinal).toBeGreaterThan(15);
     const nofricAt25 = nofric.y[nofric.x.findIndex((t: number) => t >= 24.97)];
     expect(nofricAt25).toBeGreaterThan(fricFinal);
+  });
+
+  it("is a controlled pair: the two contact models are identical until they touch", () => {
+    // Same binary, same everything but the two friction coefficients, so the
+    // published series must agree exactly through drafting and part at contact.
+    const fric = readPlot("tilt", "fric-dh8");
+    const nofric = readPlot("tilt", "nofric");
+    const shared = fric.x.filter((t: number) => t < 18.0);
+    expect(shared.length).toBeGreaterThan(700);
+    for (let i = 0; i < shared.length; i += 1) {
+      expect(nofric.x[i], `sample ${i}`).toBe(fric.x[i]);
+      expect(nofric.y[i], `t = ${fric.x[i]}`).toBe(fric.y[i]);
+    }
+    const firstDifference = fric.x.findIndex((_: number, i: number) => nofric.y[i] !== fric.y[i]);
+    expect(fric.x[firstDifference]).toBeGreaterThan(18.1);
+    expect(fric.x[firstDifference]).toBeLessThan(18.2);
   });
 
   it("draws every contact model on the same mesh, so no run is dashed", () => {
@@ -107,7 +123,7 @@ describe("dkt plot specs", () => {
 describe("dkt validation ledger", () => {
   it("is generated from the curated datasheet, not hand-written", () => {
     expect(dktValidationSource).toBe("scripts/source-data/dns/dns_validation_datasheet.csv");
-    expect(dktValidationRows.length).toBeGreaterThanOrEqual(6);
+    expect(dktValidationRows.length).toBeGreaterThanOrEqual(5);
   });
 
   it("selects only DKT cases and uses the campaign verdict vocabulary", () => {
@@ -129,11 +145,11 @@ describe("dkt validation ledger", () => {
 
   it("withholds the contact rows that later measurement superseded", () => {
     const cases = dktValidationRows.map(row => row.case);
-    for (const superseded of ["dkt_offset", "dkt16_offset", "dkt_nofric"]) {
+    for (const superseded of ["dkt_offset", "dkt16_offset", "dkt_nofric", "dkt_nofric_long"]) {
       expect(cases, superseded).not.toContain(superseded);
     }
-    // The complete frictionless sequence is the published post-contact result.
-    expect(cases).toContain("dkt_nofric_long");
+    // The t_kiss audit is a result row and stays.
+    expect(cases).toContain("dkt_tkiss_correction");
   });
 
   it("strips internal scheduler job ids from published prose", () => {

@@ -49,7 +49,7 @@ function IntroductionTab() {
           {
             type: "paragraph",
             text:
-              "FeatFloWer reproduces all four stages. The table below is read directly from the simulated trajectories of the two spheres at a resolution of eight elements per diameter; every time is a detected event, not a fitted one."
+              "FeatFloWer reproduces all four stages. The table below is read directly from the simulated trajectories of the two spheres at a resolution of eight elements per diameter, using the frictionless contact appropriate to spheres immersed in a liquid; every time is a detected event, not a fitted one."
           }
         ]}
       />
@@ -142,8 +142,9 @@ function DefinitionTab() {
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
             D/h counts Q2 elements per sphere diameter. Velocity nodes sit at half that spacing, so nodal
             resolutions quoted in the lattice-Boltzmann and immersed-boundary literature should be halved before
-            comparison. The published results use the first two rungs; the third is prepared and awaits the compute
-            allocation it needs.
+            comparison. The published trajectories are computed on the first rung; the second was computed to check
+            that the drafting and kissing phases are resolution-independent, and the third is prepared and awaits the
+            compute allocation it needs.
           </p>
           <DataTable<DktLadderRow>
             columns={[
@@ -174,10 +175,10 @@ function ResultsTab() {
         <div style={{ maxWidth: 900 }}>
           <h3>Trajectory comparison</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-            Every curve is derived from the recorded motion of the two spheres. Tilt angle tells the clearest story;
-            the x-z trajectory shows the same tumble in the plane of motion, with the leader and trailer paths
-            selectable separately. The resolution switch applies to the dry-friction run, which is the one computed
-            at both rungs of the ladder.
+            Every curve is derived from the recorded motion of the two spheres, at eight elements per sphere
+            diameter. Tilt angle tells the clearest story; the x-z trajectory shows the same tumble in the plane of
+            motion, with the leader and trailer paths selectable separately. The series selector switches the contact
+            model, which is the axis this case is designed to resolve.
           </p>
         </div>
         {/* TODO: a rendered tumble animation belongs here once the Gallery gains
@@ -192,7 +193,7 @@ function ContactModelTab() {
   return (
     <Section style={{ paddingTop: 40, paddingBottom: 100 }}>
       <div style={{ maxWidth: 820, display: "grid", gap: 20 }}>
-        <h3 style={{ margin: 0 }}>Practical guidance: set the contact friction to zero</h3>
+        <h3 style={{ margin: 0 }}>Practical guidance: choose the contact friction as physics</h3>
         <div
           style={{
             borderLeft: "3px solid var(--accent)",
@@ -202,28 +203,24 @@ function ContactModelTab() {
           }}
         >
           <p style={{ margin: 0, color: "var(--fg1)", lineHeight: 1.65 }}>
-            If you set this case up with the default contact material, it will not tumble. The rigid-body contact
-            model ships with dry Coulomb friction enabled — a static coefficient of 0.1 and a dynamic coefficient of
-            0.05 — and that is enough to pin the doublet at a tilt of about four degrees indefinitely. For spheres
-            immersed in a liquid, set{" "}
+            The rigid-body contact model ships with dry Coulomb friction enabled — a static coefficient of 0.1 and a
+            dynamic coefficient of 0.05. For spheres immersed in a liquid that is the wrong regime: set{" "}
             <span className="code-inline">staticFriction_</span> and <span className="code-inline">dynamicFriction_</span> to zero, or
-            use a lubricated-contact model.
+            use a lubricated-contact model. The choice is quantitative — it changes how fast the doublet tumbles, not
+            whether it tumbles.
           </p>
         </div>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
           The reason is physical rather than numerical. Smooth spheres settling in a liquid never touch dry; they
           interact through a thin lubrication film that carries almost no tangential traction. A dry friction law
-          resists the sliding that the tumble requires, so it suppresses a genuine fluid-mediated instability. The
-          stall it produces is easy to mistake for a discretisation problem, which is why this page carries the
-          comparison rather than a note.
+          overstates the tangential coupling at the contact point, so it slows the rolling motion that carries the
+          tumble.
         </p>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
-          Two observations rule out the alternatives. Refining the mesh does not help: the pair locks at 4.2 degrees
-          at eight elements per diameter and at 4.0 degrees at sixteen, with a residual drift that would need some
-          three thousand time units to complete a tumble. And the two runs are otherwise identical — same mesh, same
-          initial condition, same time step, differing only in the two friction coefficients. Their recorded motion
-          agrees to the last digit for 7,242 consecutive records and first differs at t = 18.11, the first step after
-          the spheres touch. The contact model demonstrably does nothing before contact and everything after it.
+          That is what the two runs measure. Both draft and kiss the same way, and past contact both break symmetry:
+          the tilt grows exponentially, doubling roughly every three time units. Under dry friction it reaches 16.2
+          degrees at t = 25, against 22.3 degrees for the frictionless contact at the same instant. Friction sets the
+          rate of the instability; it does not decide whether the instability occurs.
         </p>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
           The general lesson is that contact parameters are physics, not stabilisers. They should be chosen to match
@@ -246,7 +243,9 @@ function ValidationTab() {
           One row per quantitative claim, generated from the campaign datasheet that is offered in full under
           Reference Data. This benchmark is gated on mechanism rather than on a numeric tolerance, so a verdict
           records whether the expected physical behaviour was observed, not whether a number landed inside a band.
-          Rows marked RECORDED document behaviour that was measured and kept but not gated.
+          Rows marked RECORDED document behaviour that was measured and kept but not gated. Claims that later
+          measurement superseded are not republished here; the downloadable datasheet carries the campaign's full
+          record.
         </p>
       </div>
       <ValidationLedger rows={dktValidationRows} />
@@ -254,10 +253,10 @@ function ValidationTab() {
         <div>
           <h3>Controlled comparison</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-            The frictional and frictionless runs at D/h = 8 share an initial condition, a mesh and a time step, and
-            differ only in two contact coefficients. Their force logs are bitwise identical for the first 7,242
-            records and diverge at t = 18.11, the first step after contact. This isolates the contact model as the
-            only cause of the difference in outcome.
+            The frictional and frictionless runs at D/h = 8 share an initial condition, a mesh and a time step. Their
+            centre separation agrees to within 0.001 d through the whole drafting phase and they touch within 0.01
+            time units of each other, t = 18.03 against t = 18.04. The trajectories part only after contact, which
+            isolates the contact model as the cause of the difference in tumbling rate.
           </p>
         </div>
         <div>
@@ -353,7 +352,7 @@ export function DraftingKissingTumblingPage() {
               <KpiBox label="D/h" value="8 / 16" />
               <KpiBox label="Kissing" value="t = 18.04" />
               <KpiBox label="Final tilt" value="109°" good />
-              <KpiBox label="Runs" value="4" />
+              <KpiBox label="Runs" value="3" />
             </div>
           </div>
         </Section>

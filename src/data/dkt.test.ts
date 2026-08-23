@@ -10,7 +10,7 @@ import {
 } from "./dkt";
 
 const DKT_DIR = resolve(process.cwd(), "public/benchmark-assets/dkt");
-const RUNS = ["fric-dh8", "fric-dh16", "nofric", "axisym"];
+const RUNS = ["fric-dh8", "nofric", "axisym"];
 const TIME_METRICS = ["tilt", "separation", "velocity-leader", "velocity-trailer"];
 
 function readPlot(metric: string, run: string) {
@@ -42,18 +42,21 @@ describe("dkt converted Plotly data", () => {
     expect(tilt.y[tilt.y.length - 1]).toBeCloseTo(109.1, 0);
   });
 
-  it("keeps both frictional runs locked near four degrees", () => {
-    for (const run of ["fric-dh8", "fric-dh16"]) {
-      const tilt = readPlot("tilt", run);
-      const final = tilt.y[tilt.y.length - 1];
-      expect(final, run).toBeGreaterThan(3.5);
-      expect(final, run).toBeLessThan(5);
-    }
+  it("tumbles under dry friction too, more slowly than without it", () => {
+    const fric = readPlot("tilt", "fric-dh8");
+    const nofric = readPlot("tilt", "nofric");
+    // Both runs end their common window at t = 25, past contact and tilting.
+    expect(fric.x[fric.x.length - 1]).toBeCloseTo(25, 0);
+    const fricFinal = fric.y[fric.y.length - 1];
+    expect(fricFinal).toBeGreaterThan(15);
+    const nofricAt25 = nofric.y[nofric.x.findIndex((t: number) => t >= 24.97)];
+    expect(nofricAt25).toBeGreaterThan(fricFinal);
   });
 
-  it("dots the finer resolution so it is distinguishable from D/h = 8", () => {
-    expect(readPlot("tilt", "fric-dh16").line.dash).toBe("dot");
-    expect(readPlot("tilt", "fric-dh8").line.dash).toBeUndefined();
+  it("draws every contact model on the same mesh, so no run is dashed", () => {
+    for (const run of RUNS) {
+      expect(readPlot("tilt", run).line.dash, run).toBeUndefined();
+    }
   });
 });
 
@@ -70,14 +73,12 @@ describe("dkt plot specs", () => {
     }
   });
 
-  it("levels only the frictional group, leaving the others level-independent", () => {
+  it("carries no resolution axis, because every published run is at D/h = 8", () => {
     for (const spec of Object.values(dktPlotSpecs)) {
-      const fric = spec.seriesGroups.find(group => group.id === "fric");
-      expect(fric?.levelSources && Object.keys(fric.levelSources).sort()).toEqual(["l3", "l4"]);
-      for (const id of ["nofric", "axisym"]) {
-        const group = spec.seriesGroups.find(entry => entry.id === id);
-        expect(group?.levelSources, id).toBeUndefined();
-        expect(group?.source, id).toBeDefined();
+      expect(spec.levelAxis).toBeUndefined();
+      for (const group of spec.seriesGroups) {
+        expect(group.levelSources, group.id).toBeUndefined();
+        expect(group.source, group.id).toBeDefined();
       }
     }
   });
@@ -119,13 +120,20 @@ describe("dkt validation ledger", () => {
     }
   });
 
-  it("carries the corrected kissing time and the audit row that produced it", () => {
+  it("carries the corrected kissing time through the audit row that produced it", () => {
     const audit = dktValidationRows.find(row => row.case === "dkt_tkiss_correction");
     expect(audit?.verdict).toBe("RESOLVED");
-    const offset = dktValidationRows.find(row => row.case === "dkt_offset");
-    expect(offset?.measured).toContain("18.04");
-    // The superseded value may only appear as an explicit correction note.
-    expect(offset?.measured).toMatch(/CORRECTED/);
+    expect(audit?.measured).toContain("18.04");
+    expect(audit?.measured).toContain("18.34");
+  });
+
+  it("withholds the contact rows that later measurement superseded", () => {
+    const cases = dktValidationRows.map(row => row.case);
+    for (const superseded of ["dkt_offset", "dkt16_offset", "dkt_nofric"]) {
+      expect(cases, superseded).not.toContain(superseded);
+    }
+    // The complete frictionless sequence is the published post-contact result.
+    expect(cases).toContain("dkt_nofric_long");
   });
 
   it("strips internal scheduler job ids from published prose", () => {
@@ -135,8 +143,8 @@ describe("dkt validation ledger", () => {
 });
 
 describe("dkt case definition", () => {
-  it("publishes the two computed rungs and marks the third as future", () => {
-    expect(dktLadderRows.map(row => row.status)).toEqual(["published", "published", "future"]);
+  it("publishes trajectories on the first rung and marks the other two", () => {
+    expect(dktLadderRows.map(row => row.status)).toEqual(["published", "pre-contact check", "future"]);
     expect(dktLadderRows.map(row => row.ratio)).toEqual(["8", "16", "32"]);
   });
 });

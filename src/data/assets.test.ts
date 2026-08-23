@@ -197,7 +197,8 @@ describe("dkt asset manifest (public/benchmark-assets/dkt/manifest.json)", () =>
 
   it("uses the canonical metric vocabulary and marks plots as derived", () => {
     const plots = dktManifest.entries.filter(entry => entry.newPath.startsWith("plots/"));
-    expect(plots).toHaveLength(20);
+    // Three contact models x five metrics.
+    expect(plots).toHaveLength(15);
     for (const entry of plots) {
       expect(DKT_METRICS.has(entry.metric!), entry.metric).toBe(true);
       expect(entry.derived, entry.newPath).toBe(true);

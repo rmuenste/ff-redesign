@@ -21,14 +21,20 @@ const srcDir = resolve(root, "scripts/source-data/dkt");
 const outDir = resolve(root, "public/benchmark-assets/dkt");
 const generatedDir = resolve(root, "src/data/generated");
 
-// A "run" is a contact-model / resolution variant of one initial condition.
-// `group` is the SeriesGroup it feeds; the frictional runs are the two rungs of
-// the resolution ladder, the others are level-independent.
+// A "run" is a contact-model variant of one initial condition, all at D/h = 8.
+// `group` is the SeriesGroup it feeds.
+//
+// Selection policy
+// ----------------
+// Post-contact trajectories are published from runs computed with resolved
+// rigid-body rotation (libs/pe >= de855b6). The D/h = 16 frictional run predates
+// that and is not republished as a curve; the resolution statement it supports is
+// the pre-contact one (kissing time, unaffected by contact kinematics), which the
+// campaign datasheet carries as a ledger row.
 const runs = {
-  "fric-dh8": { label: "Dry friction · D/h = 8", color: "#f5b84b", group: "fric", level: "l3" },
-  "fric-dh16": { label: "Dry friction · D/h = 16", color: "#f5b84b", group: "fric", level: "l4" },
-  nofric: { label: "Frictionless", color: "#7bd88f", group: "nofric", level: null },
-  axisym: { label: "Axisymmetric (no offset)", color: "#5fb8ff", group: "axisym", level: null }
+  "fric-dh8": { label: "Dry friction · D/h = 8", color: "#f5b84b", group: "fric" },
+  nofric: { label: "Frictionless", color: "#7bd88f", group: "nofric" },
+  axisym: { label: "Axisymmetric (no offset)", color: "#5fb8ff", group: "axisym" }
 };
 
 // Time-series metrics: x = time, y = quantity.
@@ -88,11 +94,7 @@ for (const [metricId, metric] of Object.entries(metrics)) {
     const newPath = `plots/${metricId}/${runId}.json`;
     writeJson(
       resolve(outDir, newPath),
-      traceFromPairs(pairs, {
-        name: run.label,
-        color: run.color,
-        dash: run.level === "l4" ? "dot" : undefined
-      })
+      traceFromPairs(pairs, { name: run.label, color: run.color })
     );
     entries.push({
       oldPath: `scripts/source-data/dkt/${sourceName}`,
@@ -174,8 +176,24 @@ writeJson(resolve(outDir, "manifest.json"), { benchmarkId: "dkt", entries });
 // ---- validation ledger ------------------------------------------------------
 // Generated from the datasheet, never hand-written. `dkt*` covers the case
 // family including the dt-floor prerequisite probes and the t_kiss audit.
+//
+// Selection policy
+// ----------------
+// The contact-model study was measured twice. The first pass ran on binaries that
+// did not integrate rigid-body rotation, so post-contact tilt was not a physical
+// measurement; those runs were repeated once rotation was resolved. The site
+// publishes the current reading only — the campaign datasheet offered under
+// Reference Data carries every row, superseded ones included.
+//
+// Withheld: the pre-rotation contact rows. Their pre-contact content survives in
+// `dkt_tkiss_correction`, which carries the kissing times for both rungs.
+const SUPERSEDED = new Set(["dkt_offset", "dkt16_offset", "dkt_nofric"]);
+
 const records = readDatasheet(resolve(root, datasheetSource));
-const ledger = buildLedger(records, record => /^dkt/i.test(record.case));
+const ledger = buildLedger(
+  records,
+  record => /^dkt/i.test(record.case) && !SUPERSEDED.has(record.case.trim())
+);
 writeJson(resolve(generatedDir, "dkt-validation.json"), {
   source: datasheetSource,
   generatedBy: "scripts/convert-dkt-data.mjs",

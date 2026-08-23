@@ -6,7 +6,6 @@ import type { PlotSource, PlotSpec, SeriesGroup } from "./types";
 export type DktMetricId = "tilt" | "separation" | "trajectory" | "velocity-leader" | "velocity-trailer";
 /** The comparison axis here is the contact model, not a code and not a level. */
 export type DktRunId = "fric" | "nofric" | "axisym";
-export type DktLevelId = "l3" | "l4";
 
 export const dktMetrics: Array<{ id: DktMetricId; label: string; x: string; y: string }> = [
   { id: "tilt", label: "Tilt angle", x: "Time t [-]", y: "Pair-axis tilt from vertical [deg]" },
@@ -16,32 +15,25 @@ export const dktMetrics: Array<{ id: DktMetricId; label: string; x: string; y: s
   { id: "velocity-trailer", label: "Trailer velocity", x: "Time t [-]", y: "Vertical velocity u_z [-]" }
 ];
 
-export const dktLevels: Array<{ id: DktLevelId; label: string; detail: string }> = [
-  { id: "l3", label: "D/h = 8", detail: "L3 · 0.44 M elem" },
-  { id: "l4", label: "D/h = 16", detail: "L4 · 3.54 M elem" }
-];
-
-const runMeta: Record<DktRunId, { label: string; color: string; levelled: boolean }> = {
-  // Only the frictional run exists at both rungs of the resolution ladder.
-  fric: { label: "Dry friction", color: "#f5b84b", levelled: true },
-  // Level-independent groups carry a plain `source`, the same idiom the
-  // sedimentation page uses for its PIV references. This is what lets groups with
-  // different level coverage share one panel.
-  nofric: { label: "Frictionless", color: "#7bd88f", levelled: false },
-  axisym: { label: "Axisymmetric (no offset)", color: "#5fb8ff", levelled: false }
+// All published runs share one mesh (D/h = 8), so the comparison axis is the
+// contact model alone and every group carries a plain `source` — the same idiom
+// the sedimentation page uses for its PIV references.
+const runMeta: Record<DktRunId, { label: string; color: string }> = {
+  fric: { label: "Dry friction", color: "#f5b84b" },
+  nofric: { label: "Frictionless", color: "#7bd88f" },
+  axisym: { label: "Axisymmetric (no offset)", color: "#5fb8ff" }
 };
 
-const runFile: Record<DktRunId, { l3: string; l4: string }> = {
-  fric: { l3: "fric-dh8", l4: "fric-dh16" },
-  nofric: { l3: "nofric", l4: "nofric" },
-  axisym: { l3: "axisym", l4: "axisym" }
+const runFile: Record<DktRunId, string> = {
+  fric: "fric-dh8",
+  nofric: "nofric",
+  axisym: "axisym"
 };
 
-function source(metric: DktMetricId, file: string, dash?: string): PlotSource {
+function source(metric: DktMetricId, file: string): PlotSource {
   return {
     kind: metric === "trajectory" ? "trace-array" : "single-trace",
-    asset: { path: benchmarkAssetPath("dkt", `plots/${metric}/${file}.json`) },
-    ...(dash ? { dash } : {})
+    asset: { path: benchmarkAssetPath("dkt", `plots/${metric}/${file}.json`) }
   };
 }
 
@@ -52,14 +44,7 @@ function group(metric: DktMetricId, runId: DktRunId): SeriesGroup {
     label: meta.label,
     kind: "code",
     color: meta.color,
-    ...(meta.levelled
-      ? {
-          levelSources: {
-            l3: source(metric, runFile[runId].l3),
-            l4: source(metric, runFile[runId].l4, "dot")
-          }
-        }
-      : { source: source(metric, runFile[runId].l3) }),
+    source: source(metric, runFile[runId]),
     // For the trajectory trace-array this makes the two traces in the file
     // (Leader, Trailer) individually toggleable, with labels read from the JSON.
     variantStrategy: { kind: "single-trace" }
@@ -80,7 +65,6 @@ function specFor(
     seriesSelectorLabel: "Contact model",
     seriesGroups: runIds.map(id => group(metric.id, id)),
     defaultSeriesGroupIds: defaults,
-    levelAxis: { id: "resolution", label: "Resolution", options: dktLevels, defaultLevelId: "l3" },
     compareModes: ["overlay"],
     defaultCompareMode: "overlay",
     preserveSourceColorsWhenSingleGroup: false,
@@ -136,7 +120,7 @@ export interface DktLadderRow {
 
 export const dktLadderRows: DktLadderRow[] = [
   { level: "L3", ratio: "8", elements: "442,368", velocityDofs: "~10.6 M", status: "published" },
-  { level: "L4", ratio: "16", elements: "3,538,944", velocityDofs: "~84.9 M", status: "published" },
+  { level: "L4", ratio: "16", elements: "3,538,944", velocityDofs: "~84.9 M", status: "pre-contact check" },
   { level: "L5", ratio: "32", elements: "28,311,552", velocityDofs: "~679.5 M", status: "future" }
 ];
 
@@ -182,7 +166,6 @@ export const dktReferences = [
 
 const runFiles: Array<{ id: string; label: string }> = [
   { id: "fric-dh8", label: "Dry friction, D/h = 8" },
-  { id: "fric-dh16", label: "Dry friction, D/h = 16" },
   { id: "nofric", label: "Frictionless, D/h = 8" },
   { id: "axisym", label: "Axisymmetric control, D/h = 8" }
 ];

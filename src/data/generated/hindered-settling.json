@@ -1,0 +1,232 @@
+{
+  "source": "scripts/source-data/hindered-settling",
+  "generatedBy": "scripts/convert-hindered-settling-data.mjs",
+  "window": [
+    15,
+    25
+  ],
+  "terminal": [
+    {
+      "column": "6d",
+      "crossSection": "6d x 6d",
+      "ut": 0.4061,
+      "utStd": null
+    },
+    {
+      "column": "wide",
+      "crossSection": "12d x 12d",
+      "ut": 0.4034,
+      "utStd": 0.0064
+    }
+  ],
+  "ladder": {
+    "confined": [
+      {
+        "n": 20,
+        "seed": 1,
+        "u": 0.3635,
+        "uStd": 0.0049,
+        "uOverUt": 0.895,
+        "phiCloud": 0.0193,
+        "phiEnvelope": 0.0258,
+        "spread": 0.0402
+      },
+      {
+        "n": 20,
+        "seed": 2,
+        "u": 0.366,
+        "uStd": 0.0244,
+        "uOverUt": 0.901,
+        "phiCloud": 0.0188,
+        "phiEnvelope": 0.0254,
+        "spread": 0.0727
+      },
+      {
+        "n": 20,
+        "seed": 3,
+        "u": 0.3571,
+        "uStd": 0.005,
+        "uOverUt": 0.879,
+        "phiCloud": 0.0205,
+        "phiEnvelope": 0.0252,
+        "spread": 0.0414
+      },
+      {
+        "n": 40,
+        "seed": 1,
+        "u": 0.3256,
+        "uStd": 0.0011,
+        "uOverUt": 0.802,
+        "phiCloud": 0.0453,
+        "phiEnvelope": 0.0533,
+        "spread": 0.0425
+      },
+      {
+        "n": 40,
+        "seed": 2,
+        "u": 0.3419,
+        "uStd": 0.0046,
+        "uOverUt": 0.842,
+        "phiCloud": 0.0378,
+        "phiEnvelope": 0.0468,
+        "spread": 0.059
+      },
+      {
+        "n": 40,
+        "seed": 3,
+        "u": 0.3386,
+        "uStd": 0.0049,
+        "uOverUt": 0.834,
+        "phiCloud": 0.0382,
+        "phiEnvelope": 0.046,
+        "spread": 0.0536
+      },
+      {
+        "n": 80,
+        "seed": 1,
+        "u": 0.2777,
+        "uStd": 0.0004,
+        "uOverUt": 0.684,
+        "phiCloud": 0.079,
+        "phiEnvelope": 0.0831,
+        "spread": 0.0692
+      },
+      {
+        "n": 80,
+        "seed": 2,
+        "u": 0.2867,
+        "uStd": 0.0017,
+        "uOverUt": 0.706,
+        "phiCloud": 0.0756,
+        "phiEnvelope": 0.0816,
+        "spread": 0.0562
+      },
+      {
+        "n": 80,
+        "seed": 3,
+        "u": 0.2752,
+        "uStd": 0.0026,
+        "uOverUt": 0.678,
+        "phiCloud": 0.0791,
+        "phiEnvelope": 0.0838,
+        "spread": 0.0569
+      },
+      {
+        "n": 120,
+        "seed": 1,
+        "u": 0.2426,
+        "uStd": 0.0014,
+        "uOverUt": 0.597,
+        "phiCloud": 0.1054,
+        "phiEnvelope": 0.1082,
+        "spread": 0.0742
+      },
+      {
+        "n": 120,
+        "seed": 2,
+        "u": 0.2277,
+        "uStd": 0.0043,
+        "uOverUt": 0.561,
+        "phiCloud": 0.1126,
+        "phiEnvelope": 0.1156,
+        "spread": 0.0644
+      },
+      {
+        "n": 120,
+        "seed": 3,
+        "u": 0.2457,
+        "uStd": 0.003,
+        "uOverUt": 0.605,
+        "phiCloud": 0.1147,
+        "phiEnvelope": 0.1193,
+        "spread": 0.0603
+      }
+    ],
+    "wide": [
+      {
+        "n": 40,
+        "seed": 1,
+        "u": 0.4218,
+        "uStd": 0.0094,
+        "uOverUt": 1.046,
+        "phiCloud": 0.0116,
+        "phiEnvelope": 0.0461,
+        "spread": 0.0373
+      },
+      {
+        "n": 40,
+        "seed": 2,
+        "u": 0.4238,
+        "uStd": 0.0095,
+        "uOverUt": 1.051,
+        "phiCloud": 0.0098,
+        "phiEnvelope": 0.0405,
+        "spread": 0.068
+      },
+      {
+        "n": 40,
+        "seed": 3,
+        "u": 0.4265,
+        "uStd": 0.0125,
+        "uOverUt": 1.057,
+        "phiCloud": 0.0099,
+        "phiEnvelope": 0.0411,
+        "spread": 0.0572
+      },
+      {
+        "n": 120,
+        "seed": 1,
+        "u": 0.4618,
+        "uStd": 0.0128,
+        "uOverUt": 1.145,
+        "phiCloud": 0.0285,
+        "phiEnvelope": 0.0768,
+        "spread": 0.1093
+      },
+      {
+        "n": 120,
+        "seed": 2,
+        "u": 0.4446,
+        "uStd": 0.0086,
+        "uOverUt": 1.102,
+        "phiCloud": 0.0297,
+        "phiEnvelope": 0.0689,
+        "spread": 0.1001
+      },
+      {
+        "n": 120,
+        "seed": 3,
+        "u": 0.4686,
+        "uStd": 0.016,
+        "uOverUt": 1.162,
+        "phiCloud": 0.0301,
+        "phiEnvelope": 0.0658,
+        "spread": 0.1012
+      }
+    ]
+  },
+  "fit": {
+    "n": 4.573964561213383,
+    "rms": 0.023036324545551875,
+    "count": 12
+  },
+  "wideSlope": {
+    "n": -2.625781161430662,
+    "rungs": [
+      {
+        "n": 40,
+        "phiEnvelope": 0.04256666666666667,
+        "uOverUt": 1.0513333333333332
+      },
+      {
+        "n": 120,
+        "phiEnvelope": 0.0705,
+        "uOverUt": 1.1363333333333332
+      }
+    ]
+  },
+  "roweBand": [
+    2.7,
+    3
+  ]
+}

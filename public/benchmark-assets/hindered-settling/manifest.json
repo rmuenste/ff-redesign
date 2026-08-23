@@ -1,0 +1,201 @@
+{
+  "benchmarkId": "hindered-settling",
+  "entries": [
+    {
+      "oldPath": "scripts/source-data/hindered-settling/ladder_*.csv",
+      "newPath": "plots/collapse/n20.json",
+      "metric": "collapse",
+      "seriesGroupId": "n20",
+      "kind": "code",
+      "label": "Confined ladder, N = 20",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/hindered-settling/ladder_*.csv",
+      "newPath": "plots/collapse/n40.json",
+      "metric": "collapse",
+      "seriesGroupId": "n40",
+      "kind": "code",
+      "label": "Confined ladder, N = 40",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/hindered-settling/ladder_*.csv",
+      "newPath": "plots/collapse/n80.json",
+      "metric": "collapse",
+      "seriesGroupId": "n80",
+      "kind": "code",
+      "label": "Confined ladder, N = 80",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/hindered-settling/ladder_*.csv",
+      "newPath": "plots/collapse/n120.json",
+      "metric": "collapse",
+      "seriesGroupId": "n120",
+      "kind": "code",
+      "label": "Confined ladder, N = 120",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/hindered-settling/ladder_*.csv",
+      "newPath": "plots/collapse/fit.json",
+      "metric": "collapse",
+      "seriesGroupId": "fit",
+      "kind": "code",
+      "label": "Richardson-Zaki fit",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/hindered-settling/ladder_*.csv",
+      "newPath": "plots/collapse/rowe.json",
+      "metric": "collapse",
+      "seriesGroupId": "rowe",
+      "kind": "code",
+      "label": "Unbounded Rowe/RZ band",
+      "sourceShape": "trace-array",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/hindered-settling/ladder_*.csv",
+      "newPath": "plots/hindrance/confined.json",
+      "metric": "hindrance",
+      "seriesGroupId": "confined",
+      "kind": "code",
+      "label": "6d column plateau",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/hindered-settling/ladder_*.csv",
+      "newPath": "plots/hindrance/wide.json",
+      "metric": "hindrance",
+      "seriesGroupId": "wide",
+      "kind": "code",
+      "label": "12d column plateau",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/hindered-settling/ladder_*.csv",
+      "newPath": "plots/hindrance/unhindered.json",
+      "metric": "hindrance",
+      "seriesGroupId": "unhindered",
+      "kind": "code",
+      "label": "Single-particle terminal velocity",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/hindered-settling/history_*.dat",
+      "newPath": "plots/history/n20.json",
+      "metric": "history",
+      "seriesGroupId": "n20",
+      "kind": "code",
+      "label": "Settling history, N = 20",
+      "sourceShape": "trace-array",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/hindered-settling/history_*.dat",
+      "newPath": "plots/history/n40.json",
+      "metric": "history",
+      "seriesGroupId": "n40",
+      "kind": "code",
+      "label": "Settling history, N = 40",
+      "sourceShape": "trace-array",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/hindered-settling/history_*.dat",
+      "newPath": "plots/history/n80.json",
+      "metric": "history",
+      "seriesGroupId": "n80",
+      "kind": "code",
+      "label": "Settling history, N = 80",
+      "sourceShape": "trace-array",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/hindered-settling/history_*.dat",
+      "newPath": "plots/history/n120.json",
+      "metric": "history",
+      "seriesGroupId": "n120",
+      "kind": "code",
+      "label": "Settling history, N = 120",
+      "sourceShape": "trace-array",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/hindered-settling/ladder_6d.csv",
+      "newPath": "downloads/ladder_6d.csv",
+      "kind": "download",
+      "label": "ladder_6d.csv"
+    },
+    {
+      "oldPath": "scripts/source-data/hindered-settling/ladder_wide.csv",
+      "newPath": "downloads/ladder_wide.csv",
+      "kind": "download",
+      "label": "ladder_wide.csv"
+    },
+    {
+      "oldPath": "scripts/source-data/hindered-settling/terminal_velocity.csv",
+      "newPath": "downloads/terminal_velocity.csv",
+      "kind": "download",
+      "label": "terminal_velocity.csv"
+    },
+    {
+      "oldPath": "scripts/source-data/hindered-settling/history_6d_n20.dat",
+      "newPath": "downloads/history_6d_n20.dat",
+      "kind": "download",
+      "label": "history_6d_n20.dat"
+    },
+    {
+      "oldPath": "scripts/source-data/hindered-settling/history_6d_n40.dat",
+      "newPath": "downloads/history_6d_n40.dat",
+      "kind": "download",
+      "label": "history_6d_n40.dat"
+    },
+    {
+      "oldPath": "scripts/source-data/hindered-settling/history_6d_n80.dat",
+      "newPath": "downloads/history_6d_n80.dat",
+      "kind": "download",
+      "label": "history_6d_n80.dat"
+    },
+    {
+      "oldPath": "scripts/source-data/hindered-settling/history_6d_n120.dat",
+      "newPath": "downloads/history_6d_n120.dat",
+      "kind": "download",
+      "label": "history_6d_n120.dat"
+    },
+    {
+      "oldPath": "scripts/source-data/hindered-settling/history_wide_n40.dat",
+      "newPath": "downloads/history_wide_n40.dat",
+      "kind": "download",
+      "label": "history_wide_n40.dat"
+    },
+    {
+      "oldPath": "scripts/source-data/hindered-settling/history_wide_n120.dat",
+      "newPath": "downloads/history_wide_n120.dat",
+      "kind": "download",
+      "label": "history_wide_n120.dat"
+    },
+    {
+      "oldPath": "scripts/source-data/dns/dns_validation_datasheet.csv",
+      "newPath": "downloads/dns_validation_datasheet.csv",
+      "kind": "download",
+      "label": "dns_validation_datasheet.csv"
+    },
+    {
+      "oldPath": "generated from hindered-settling downloads",
+      "newPath": "downloads/hindered-settling.zip",
+      "kind": "download",
+      "label": "hindered-settling.zip"
+    }
+  ]
+}

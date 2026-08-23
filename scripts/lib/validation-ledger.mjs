@@ -24,8 +24,11 @@ export const VERDICTS = new Set(["PASS", "RECORDED", "RESOLVED", "FAIL", "OPEN",
  */
 export function sanitize(text) {
   return text
-    // "job 137402", "jobs 137390+137391"
-    .replace(/\bjobs?\s+\d+(?:\s*\+\s*\d+)*/gi, "")
+    // "job 137402", "jobs 137390+137391", "jobs 140208-140214",
+    // "jobs 139196/97,139288 + 139310/11/13/14". A comma only continues the list
+    // when it is followed by another job-sized number, so prose like
+    // "job 140410, 109 ranks" keeps its rank count.
+    .replace(/\bjobs?\s+\d+(?:\s*[-+/]\s*\d+|\s*,\s*\d{5,7}\b)*/gi, "")
     // bare "(137877)" cross-references
     .replace(/\s*\(\s*\d{5,7}\s*\)/g, "")
     // tidy the punctuation the removals leave behind

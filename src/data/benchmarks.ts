@@ -90,6 +90,23 @@ export const benchmarks: BenchmarkMeta[] = [
     tabs: ["Introduction", "Definition", "Results", "Contact Model", "Validation", "Reference Data"],
     comparisonAxis: "code",
     status: "active"
+  },
+  {
+    id: "hindered-settling",
+    slug: "hindered-settling",
+    title: "Hindered Settling of a Particle Cloud",
+    shortTitle: "Hindered Settling",
+    tag: "HS",
+    suite: "DNS validation",
+    model: "Particulate",
+    dimension: "3D",
+    reynolds: "51-77",
+    summary:
+      "Clouds of 20 to 120 spheres settling in a walled column collapse onto a Richardson-Zaki power law, with an exponent that a wide-column control attributes to the confinement rather than to the suspension.",
+    thumb: "particle",
+    tabs: ["Introduction", "Definition", "Results", "Confinement", "Validation", "Reference Data"],
+    comparisonAxis: "code",
+    status: "active"
   }
 ];
 

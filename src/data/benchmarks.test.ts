@@ -16,7 +16,8 @@ describe("benchmark registry", () => {
       rb2: "bubble-2d",
       fac3: "cylinder",
       sedimentation: "sediment",
-      dkt: "dkt-pair"
+      dkt: "dkt-pair",
+      "hindered-settling": "particle"
     });
   });
 
@@ -26,6 +27,7 @@ describe("benchmark registry", () => {
     expect(getBenchmarkBySlug("fac3")?.id).toBe("fac3");
     expect(getBenchmarkBySlug("particle-sedimentation")?.id).toBe("sedimentation");
     expect(getBenchmarkBySlug("drafting-kissing-tumbling")?.id).toBe("dkt");
+    expect(getBenchmarkBySlug("hindered-settling")?.id).toBe("hindered-settling");
     expect(getBenchmarkBySlug("does-not-exist")).toBeUndefined();
   });
 
@@ -43,7 +45,8 @@ describe("benchmark registry", () => {
       "rb2",
       "fac3",
       "sedimentation",
-      "dkt"
+      "dkt",
+      "hindered-settling"
     ]);
     expect(benchmarks.filter(b => b.status === "planned").map(b => b.id)).toEqual([]);
   });

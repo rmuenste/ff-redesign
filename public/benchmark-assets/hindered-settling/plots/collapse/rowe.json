@@ -1,0 +1,42 @@
+[
+  {
+    "x": [
+      -0.12792014378339037,
+      0
+    ],
+    "y": [
+      -0.345384388215154,
+      0
+    ],
+    "type": "scatter",
+    "mode": "lines",
+    "name": "n = 2.7",
+    "line": {
+      "color": "var(--fg3)",
+      "dash": "dash"
+    },
+    "marker": {
+      "color": "var(--fg3)"
+    }
+  },
+  {
+    "x": [
+      -0.12792014378339037,
+      0
+    ],
+    "y": [
+      -0.3837604313501711,
+      0
+    ],
+    "type": "scatter",
+    "mode": "lines",
+    "name": "n = 3.0",
+    "line": {
+      "color": "var(--fg3)",
+      "dash": "dash"
+    },
+    "marker": {
+      "color": "var(--fg3)"
+    }
+  }
+]

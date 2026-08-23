@@ -7,6 +7,7 @@ import { Home } from "./Home.jsx";
 import { Nav } from "./Nav.jsx";
 import { DraftingKissingTumblingPage } from "./pages/DraftingKissingTumblingPage";
 import { FlowAroundCylinderPage } from "./pages/FlowAroundCylinderPage";
+import { HinderedSettlingPage } from "./pages/HinderedSettlingPage";
 import { ParticleSedimentationPage } from "./pages/ParticleSedimentationPage";
 import { RisingBubble2DPage } from "./pages/RisingBubble2DPage";
 import { RisingBubble3DPage } from "./pages/RisingBubble3DPage";
@@ -19,7 +20,8 @@ const routeLabels: Record<string, string> = {
   "/benchmarks/fac3": "05 Flow Around Cylinder 3D",
   "/benchmarks/particle-sedimentation": "06 Particle Sedimentation",
   "/benchmarks/drafting-kissing-tumbling": "07 Drafting-Kissing-Tumbling",
-  "/gallery": "08 Gallery"
+  "/benchmarks/hindered-settling": "08 Hindered Settling",
+  "/gallery": "09 Gallery"
 };
 
 function AppShell({ children }: { children: React.ReactNode }) {
@@ -57,6 +59,7 @@ export function App() {
         <Route path="/benchmarks/fac3" element={<FlowAroundCylinderPage />} />
         <Route path="/benchmarks/particle-sedimentation" element={<ParticleSedimentationPage />} />
         <Route path="/benchmarks/drafting-kissing-tumbling" element={<DraftingKissingTumblingPage />} />
+        <Route path="/benchmarks/hindered-settling" element={<HinderedSettlingPage />} />
         <Route path="/gallery" element={<Gallery />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

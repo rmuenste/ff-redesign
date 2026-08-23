@@ -1,0 +1,29 @@
+{
+  "x": [
+    40,
+    40,
+    40,
+    120,
+    120,
+    120
+  ],
+  "y": [
+    1.046,
+    1.051,
+    1.057,
+    1.145,
+    1.102,
+    1.162
+  ],
+  "type": "scatter",
+  "mode": "markers",
+  "name": "12d column",
+  "marker": {
+    "color": "#ef6f6c",
+    "symbol": "diamond",
+    "size": 9
+  },
+  "line": {
+    "color": "#ef6f6c"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "x": [
+    0,
+    249.999999
+  ],
+  "y": [
+    83.77580409572782,
+    83.77580409572782
+  ],
+  "type": "scatter",
+  "mode": "lines",
+  "name": "Exact analytic torque 83.78",
+  "line": {
+    "color": "var(--fg1)",
+    "dash": "dash"
+  },
+  "marker": {
+    "color": "var(--fg1)"
+  }
+}

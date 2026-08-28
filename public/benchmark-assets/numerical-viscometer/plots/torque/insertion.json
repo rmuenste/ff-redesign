@@ -1,0 +1,20 @@
+{
+  "x": [
+    200,
+    200
+  ],
+  "y": [
+    0,
+    167.55160819145564
+  ],
+  "type": "scatter",
+  "mode": "lines",
+  "name": "Particles inserted, t = 200",
+  "line": {
+    "color": "var(--fg3)",
+    "dash": "dot"
+  },
+  "marker": {
+    "color": "var(--fg3)"
+  }
+}

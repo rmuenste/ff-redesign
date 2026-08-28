@@ -107,6 +107,23 @@ export const benchmarks: BenchmarkMeta[] = [
     tabs: ["Introduction", "Definition", "Results", "Confinement", "Validation", "Reference Data"],
     comparisonAxis: "code",
     status: "active"
+  },
+  {
+    id: "numerical-viscometer",
+    slug: "numerical-viscometer",
+    title: "Numerical Viscometer: Einstein Viscosity",
+    shortTitle: "Numerical Viscometer",
+    tag: "NV",
+    suite: "DNS validation",
+    model: "Particulate",
+    dimension: "3D",
+    reynolds: "0.5",
+    summary:
+      "A Couette cell with an exact analytic torque, calibrated empty and then used to measure the effective viscosity of a resolved suspension against Einstein's dilute-limit law.",
+    thumb: "annulus",
+    tabs: ["Introduction", "Definition", "Baseline", "Einstein Gate", "Validation", "Reference Data"],
+    comparisonAxis: "code",
+    status: "active"
   }
 ];
 

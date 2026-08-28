@@ -1,0 +1,84 @@
+{
+  "source": "scripts/source-data/numerical-viscometer",
+  "generatedBy": "scripts/convert-numerical-viscometer-data.mjs",
+  "instrument": {
+    "rInner": 5,
+    "rOuter": 10,
+    "height": 10,
+    "nu": 0.2,
+    "rho": 1,
+    "omega": 0.1,
+    "mu": 0.2,
+    "bobSpeed": 0.5,
+    "torqueExact": 83.77580409572782,
+    "holeVolume": 785.3981633974483,
+    "transposeCorrection": 31.41592653589794
+  },
+  "rungs": [
+    {
+      "run": "baseline",
+      "label": "Empty instrument",
+      "phi": 0,
+      "particles": 0,
+      "window": [
+        150,
+        200
+      ],
+      "samples": 1001,
+      "torqueDna": 84.22964606073926,
+      "torqueDnaPstd": 0.00007255931196829029,
+      "torqueRes": 52.35755347302695,
+      "torqueResPstd": 0.00007192957005765734,
+      "gap": 31.87209258771231,
+      "scatter": 8.614462408635398e-7,
+      "drift": -5.3311494761082044e-8,
+      "etaComposite": 1,
+      "etaNaive": 1,
+      "eta": 1,
+      "etaPstd": 8.614462408635398e-7,
+      "etaCorrected": 1,
+      "deviationComposite": 0,
+      "deviationNaive": 0,
+      "gapDeviation": 0.014520216403394182
+    },
+    {
+      "run": "einstein",
+      "label": "Suspension at phi = 0.05",
+      "phi": 0.05,
+      "particles": 225,
+      "window": [
+        230,
+        250
+      ],
+      "samples": 4000,
+      "torqueDna": 93.17866575150005,
+      "torqueDnaPstd": 0.06303430560137818,
+      "torqueRes": 61.76343608825002,
+      "torqueResPstd": 0.06303379558154924,
+      "gap": 31.41522966325003,
+      "scatter": 0.0006764886049075394,
+      "drift": -0.000102162138203857,
+      "etaComposite": 1.0996,
+      "etaNaive": 1.125,
+      "eta": 1.1062454861119506,
+      "etaPstd": 0.0007483624655851361,
+      "etaCorrected": 1.1122775682020254,
+      "deviationComposite": 0.006043548664924181,
+      "deviationNaive": -0.016670679011599465,
+      "gapDeviation": -0.000022182145324012303
+    }
+  ],
+  "baselineGates": {
+    "torque": 0.005417339408558153,
+    "correctedTorque": 83.77348000892488,
+    "correctedDeviation": -0.000027741742714693096,
+    "gapDeviation": 0.014520216403394182,
+    "profileMeanError": 0.0034,
+    "profileMaxError": 0.025,
+    "scatter": 8.614462408635398e-7
+  },
+  "profile": {
+    "mean_rel_error": 0.0034,
+    "max_rel_error": 0.025
+  }
+}

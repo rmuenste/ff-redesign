@@ -258,6 +258,27 @@ const DKT = (() => {
   };
 })();
 
+/**
+ * Viscometer motif: the annular gap seen from above, at the true radius ratio of
+ * the case (r_i / r_a = 1/2). The bob carries a rotation arc, the gap carries
+ * spheres at their true relative size, and the outer ring is the static wall.
+ */
+const ANNULUS = (() => {
+  const cx = 120, cy = 80, unit = 6.6;
+  const spheres = [
+    { count: 7, radius: 6.3 },
+    { count: 9, radius: 7.7 },
+    { count: 11, radius: 9.1 },
+  ].flatMap(ring =>
+    Array.from({ length: ring.count }, (_, i) => {
+      const angle = (2 * Math.PI * i) / ring.count + ring.radius;
+      const r = (ring.radius + 0.3 * Math.sin(i * 2.399)) * unit;
+      return { cx: cx + r * Math.cos(angle), cy: cy + r * Math.sin(angle) };
+    })
+  );
+  return { cx, cy, rInner: 5 * unit, rOuter: 10 * unit, rSphere: 0.5 * unit, spheres };
+})();
+
 const MESH_SEEDS = {
   cylinder: { shape: "cylinder", color: "var(--tu-green-500)" },
   "dkt-pair": { shape: "dkt-pair", color: "var(--tu-green-500)" },
@@ -266,6 +287,7 @@ const MESH_SEEDS = {
   particle: { shape: "particle", color: "var(--tu-orange-500)" },
   sediment: { shape: "sediment", color: "var(--tu-green-500)" },
   channel: { shape: "channel", color: "var(--tu-petrol-400)" },
+  annulus: { shape: "annulus", color: "var(--tu-green-500)" },
 };
 const MESH_ORDER = ["cylinder", "bubble", "particle", "channel"];
 
@@ -380,6 +402,20 @@ export const MeshThumb = ({ variant = 0, shape, style }) => {
             <path key={i} d={`M${30 + i * 30} 20 Q${40 + i * 30} 80 ${30 + i * 30} 140`}
               fill="none" stroke="var(--fg3)" strokeWidth="0.4" opacity="0.4" />
           ))}
+        </>
+      )}
+      {s.shape === "annulus" && (
+        <>
+          <circle cx={ANNULUS.cx} cy={ANNULUS.cy} r={ANNULUS.rOuter} fill={s.color} fillOpacity="0.08" stroke="var(--fg3)" strokeWidth="1.4" />
+          {ANNULUS.spheres.map((sphere, i) => (
+            <circle key={i} cx={sphere.cx} cy={sphere.cy} r={ANNULUS.rSphere}
+              fill="var(--tu-orange-500)" fillOpacity="0.45" stroke="var(--tu-orange-500)" strokeWidth="0.6" />
+          ))}
+          <circle cx={ANNULUS.cx} cy={ANNULUS.cy} r={ANNULUS.rInner} fill="var(--surface-alt)" stroke={s.color} strokeWidth="1.6" />
+          <path
+            d={`M${ANNULUS.cx} ${ANNULUS.cy - ANNULUS.rInner + 8} A${ANNULUS.rInner - 8} ${ANNULUS.rInner - 8} 0 0 1 ${ANNULUS.cx + ANNULUS.rInner - 8} ${ANNULUS.cy}`}
+            fill="none" stroke="var(--tu-yellow-500)" strokeWidth="1.3"
+          />
         </>
       )}
       {s.shape === "channel" && (

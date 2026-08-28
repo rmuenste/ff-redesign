@@ -8,6 +8,7 @@ import { Nav } from "./Nav.jsx";
 import { DraftingKissingTumblingPage } from "./pages/DraftingKissingTumblingPage";
 import { FlowAroundCylinderPage } from "./pages/FlowAroundCylinderPage";
 import { HinderedSettlingPage } from "./pages/HinderedSettlingPage";
+import { NumericalViscometerPage } from "./pages/NumericalViscometerPage";
 import { ParticleSedimentationPage } from "./pages/ParticleSedimentationPage";
 import { ReferenceDataPage } from "./pages/ReferenceDataPage";
 import { RisingBubble2DPage } from "./pages/RisingBubble2DPage";
@@ -22,8 +23,9 @@ const routeLabels: Record<string, string> = {
   "/benchmarks/particle-sedimentation": "06 Particle Sedimentation",
   "/benchmarks/drafting-kissing-tumbling": "07 Drafting-Kissing-Tumbling",
   "/benchmarks/hindered-settling": "08 Hindered Settling",
-  "/reference-data": "09 Reference Data",
-  "/gallery": "10 Gallery"
+  "/benchmarks/numerical-viscometer": "09 Numerical Viscometer",
+  "/reference-data": "10 Reference Data",
+  "/gallery": "11 Gallery"
 };
 
 function AppShell({ children }: { children: React.ReactNode }) {
@@ -62,6 +64,7 @@ export function App() {
         <Route path="/benchmarks/particle-sedimentation" element={<ParticleSedimentationPage />} />
         <Route path="/benchmarks/drafting-kissing-tumbling" element={<DraftingKissingTumblingPage />} />
         <Route path="/benchmarks/hindered-settling" element={<HinderedSettlingPage />} />
+        <Route path="/benchmarks/numerical-viscometer" element={<NumericalViscometerPage />} />
         <Route path="/reference-data" element={<ReferenceDataPage />} />
         <Route path="/gallery" element={<Gallery />} />
         <Route path="*" element={<Navigate to="/" replace />} />

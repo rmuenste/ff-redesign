@@ -23,7 +23,8 @@ const PAGE_FILES: Record<string, string> = {
   fac3: "FlowAroundCylinderPage.tsx",
   sedimentation: "ParticleSedimentationPage.tsx",
   dkt: "DraftingKissingTumblingPage.tsx",
-  "hindered-settling": "HinderedSettlingPage.tsx"
+  "hindered-settling": "HinderedSettlingPage.tsx",
+  "numerical-viscometer": "NumericalViscometerPage.tsx"
 };
 
 /** Strip the Vite base path so an href can be resolved against public/. */
@@ -39,7 +40,7 @@ describe("generated reference index", () => {
   });
 
   it("derives a non-empty group for every benchmark that publishes data", () => {
-    expect(referenceGroups.length).toBeGreaterThanOrEqual(6);
+    expect(referenceGroups.length).toBeGreaterThanOrEqual(7);
     for (const group of referenceGroups) {
       expect(group.files.length, group.benchmark.id).toBeGreaterThan(0);
       expect(group.bytes, group.benchmark.id).toBeGreaterThan(0);

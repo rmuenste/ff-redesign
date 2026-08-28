@@ -1,0 +1,444 @@
+// Builds the numerical-viscometer (D5.1) benchmark assets.
+//
+// Inputs (curated under scripts/source-data/):
+//   numerical-viscometer/torque_baseline.csv   torque history, empty instrument
+//   numerical-viscometer/torque_einstein.csv   torque history, phi = 0.05 suspension
+//   numerical-viscometer/rungs.csv             one row per rung of the phi ladder
+//   numerical-viscometer/velocity_profile.csv  the profile gate, measured off the VTK frame
+//   dns/dns_validation_datasheet.csv           the campaign's claim ledger
+//
+// The two torque histories are the VISC_TORQUE_DNA and VISC_TORQUE_RES records of
+// each run's own solver protocol (_data/prot.txt in the campaign rundirs), one
+// sample per time step and neither smoothed nor trimmed, so every plateau number
+// on the site is a statistic of the published series rather than a transcription.
+// rungs.csv carries only what the series cannot yield: the plateau windows, the
+// cloud size, and the two PREDICTIONS the measurement is gated against — the
+// composite-Einstein target computed by the campaign from the measured phi(r,z)
+// field, and the naive dilute-limit value.
+//
+// Everything else is derived here: the exact analytic torque, the transpose
+// correction between the two estimators, the plateau statistics, the relative
+// viscosity and its deviation from both predictions. The instrument constants
+// below are the case definition, so the analytic reference cannot drift from the
+// geometry the page describes.
+//
+// Outputs:
+//   public/benchmark-assets/numerical-viscometer/      Plotly traces, downloads, manifest
+//   src/data/generated/numerical-viscometer.json       instrument, rungs and fits
+//   src/data/generated/numerical-viscometer-validation.json  Validation-tab rows
+//
+// Run with: node scripts/convert-numerical-viscometer-data.mjs
+import { copyFileSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { dirname, relative, resolve } from "node:path";
+import { parseCsvRecords } from "./lib/csv.mjs";
+import { buildLedger, readDatasheet } from "./lib/validation-ledger.mjs";
+import { createStoredZip } from "./lib/zip.mjs";
+
+const root = resolve(import.meta.dirname, "..");
+const srcDir = resolve(root, "scripts/source-data/numerical-viscometer");
+const outDir = resolve(root, "public/benchmark-assets/numerical-viscometer");
+const generatedDir = resolve(root, "src/data/generated");
+
+/**
+ * The instrument, in campaign units (particle diameter d = 1). A Searle-type
+ * Couette cell: the inner surface rotates, the outer one is static, and both ends
+ * are free-slip symmetry planes, which makes the flow axially uniform and gives it
+ * a closed-form torque.
+ */
+const INSTRUMENT = {
+  rInner: 5,
+  rOuter: 10,
+  height: 10,
+  nu: 0.2,
+  rho: 1,
+  omega: 0.1
+};
+
+const MU = INSTRUMENT.rho * INSTRUMENT.nu;
+
+/** Exact annular-Couette torque: T = 4 pi mu Omega H / (r_i^-2 - r_a^-2). */
+const TORQUE_EXACT =
+  (4 * Math.PI * MU * INSTRUMENT.omega * INSTRUMENT.height) /
+  (INSTRUMENT.rInner ** -2 - INSTRUMENT.rOuter ** -2);
+
+/** The bob is an un-meshed hole through the full height of the cell. */
+const HOLE_VOLUME = Math.PI * INSTRUMENT.rInner ** 2 * INSTRUMENT.height;
+
+/**
+ * Analytic offset between the two torque estimators. The volume-form estimator
+ * integrates the deformation stress and the reaction estimator does not carry the
+ * transpose term over the enclosed hole, so they differ by exactly 2 mu Omega V:
+ * a property of the geometry, independent of what is suspended in the gap.
+ */
+const TRANSPOSE_CORRECTION = 2 * MU * INSTRUMENT.omega * HOLE_VOLUME;
+
+/** Plot sampling per run, chosen so each history contributes ~1000 points. */
+const PLOT_SAMPLE = { baseline: 5, einstein: 10 };
+
+const SERIES_COLORS = {
+  dna: "#5fb8ff",
+  res: "#f5b84b",
+  "res-corrected": "#7bd88f"
+};
+
+function readTorque(name) {
+  return parseCsvRecords(readFileSync(resolve(srcDir, `torque_${name}.csv`), "utf-8")).map(record => ({
+    t: Number(record.time),
+    dna: Number(record.T_dna),
+    res: Number(record.T_res)
+  }));
+}
+
+const mean = values => values.reduce((sum, value) => sum + value, 0) / values.length;
+
+function pstdev(values) {
+  const m = mean(values);
+  return Math.sqrt(mean(values.map(value => (value - m) ** 2)));
+}
+
+/** Least-squares slope of y against t, in units of y per time unit. */
+function slope(times, values) {
+  const tBar = mean(times);
+  const yBar = mean(values);
+  const sxx = times.reduce((sum, t) => sum + (t - tBar) ** 2, 0);
+  const sxy = times.reduce((sum, t, index) => sum + (t - tBar) * (values[index] - yBar), 0);
+  return sxy / sxx;
+}
+
+function writeJson(path, value) {
+  mkdirSync(dirname(path), { recursive: true });
+  writeFileSync(path, `${JSON.stringify(value, null, 2)}\n`);
+}
+
+function lineTrace(x, y, { name, color, dash }) {
+  return { x, y, type: "scatter", mode: "lines", name, line: { color, ...(dash ? { dash } : {}) }, marker: { color } };
+}
+
+// ---- plateau statistics -----------------------------------------------------
+// Torques come out of the solver as signed about the axis of rotation; the page
+// reads magnitudes throughout, which is also how the analytic reference is quoted.
+const histories = { baseline: readTorque("baseline"), einstein: readTorque("einstein") };
+
+const rungs = parseCsvRecords(readFileSync(resolve(srcDir, "rungs.csv"), "utf-8")).map(record => {
+  const run = record.run;
+  const history = histories[run];
+  if (!history) throw new Error(`rungs.csv names a run with no torque history: ${run}`);
+
+  // The plateau runs from `plateau_start` to the end of the run, which is how the
+  // campaign quotes every plateau statistic. `run_end` is carried for the reader
+  // and checked against the series rather than used to trim it.
+  const window = [Number(record.plateau_start), Number(record.run_end)];
+  const plateau = history.filter(point => point.t >= window[0]);
+  if (plateau.length < 100) throw new Error(`${run}: only ${plateau.length} samples in the plateau window`);
+  if (Math.abs(history[history.length - 1].t - window[1]) > 1e-2) {
+    throw new Error(`${run}: history ends at ${history[history.length - 1].t}, not the declared ${window[1]}`);
+  }
+
+  const dna = plateau.map(point => Math.abs(point.dna));
+  const res = plateau.map(point => Math.abs(point.res));
+  const times = plateau.map(point => point.t);
+
+  return {
+    run,
+    label: record.label,
+    phi: Number(record.phi),
+    particles: Number(record.particles),
+    window,
+    samples: plateau.length,
+    torqueDna: mean(dna),
+    torqueDnaPstd: pstdev(dna),
+    torqueRes: mean(res),
+    torqueResPstd: pstdev(res),
+    /** DNA - RES over the plateau: the measured transpose offset. */
+    gap: mean(dna) - mean(res),
+    /** Scatter of the plateau relative to its own mean. */
+    scatter: pstdev(dna) / mean(dna),
+    /** Drift of the plateau torque, per time unit, relative to its mean. */
+    drift: slope(times, dna) / mean(dna),
+    etaComposite: Number(record.eta_composite),
+    etaNaive: Number(record.eta_naive)
+  };
+});
+
+const baseline = rungs.find(rung => rung.run === "baseline");
+const reference = baseline?.torqueDna;
+if (!baseline || !reference) throw new Error("rungs.csv carries no baseline rung");
+
+// The empty instrument defines T(0), so every rung's relative viscosity is a ratio
+// of two measurements made in the same cell with the same estimator.
+for (const rung of rungs) {
+  rung.eta = rung.torqueDna / reference;
+  rung.etaPstd = rung.torqueDnaPstd / reference;
+  /** The same ratio read off the corrected reaction estimator, as a cross-check. */
+  rung.etaCorrected =
+    (rung.torqueRes + TRANSPOSE_CORRECTION) / (baseline.torqueRes + TRANSPOSE_CORRECTION);
+  rung.deviationComposite = rung.eta / rung.etaComposite - 1;
+  rung.deviationNaive = rung.eta / rung.etaNaive - 1;
+  rung.gapDeviation = rung.gap / TRANSPOSE_CORRECTION - 1;
+}
+
+const einstein = rungs.find(rung => rung.run === "einstein");
+if (!einstein) throw new Error("rungs.csv carries no einstein rung");
+
+const profile = Object.fromEntries(
+  parseCsvRecords(readFileSync(resolve(srcDir, "velocity_profile.csv"), "utf-8")).map(record => [
+    record.quantity,
+    Number(record.value)
+  ])
+);
+
+/** The four acceptance gates of the empty instrument, as measured. */
+const baselineGates = {
+  torque: baseline.torqueDna / TORQUE_EXACT - 1,
+  correctedTorque: baseline.torqueRes + TRANSPOSE_CORRECTION,
+  correctedDeviation: (baseline.torqueRes + TRANSPOSE_CORRECTION) / TORQUE_EXACT - 1,
+  gapDeviation: baseline.gapDeviation,
+  profileMeanError: profile.mean_rel_error,
+  profileMaxError: profile.max_rel_error,
+  scatter: baseline.scatter
+};
+
+// ---- assets -----------------------------------------------------------------
+rmSync(outDir, { recursive: true, force: true });
+
+const entries = [];
+const zipEntries = [];
+
+function emitPlot(metric, id, traces, { seriesGroupId, label, shape, oldPath }) {
+  const newPath = `plots/${metric}/${id}.json`;
+  writeJson(resolve(outDir, newPath), traces);
+  entries.push({
+    oldPath,
+    newPath,
+    metric,
+    seriesGroupId,
+    kind: "code",
+    label,
+    sourceShape: shape,
+    derived: true
+  });
+}
+
+// ---- torque: the whole experiment on one time axis ---------------------------
+// The suspension run is a same-level restart from the empty instrument's own dump
+// at t = 200, so the two histories are one continuous measurement and are plotted
+// as one trace per estimator. The step at t = 200 is the particles arriving.
+const sampled = Object.fromEntries(
+  Object.entries(histories).map(([run, history]) => [
+    run,
+    history.filter((_, index) => (index + 1) % PLOT_SAMPLE[run] === 0)
+  ])
+);
+
+const timeline = [...sampled.baseline, ...sampled.einstein];
+const torqueOf = {
+  dna: point => Math.abs(point.dna),
+  res: point => Math.abs(point.res),
+  "res-corrected": point => Math.abs(point.res) + TRANSPOSE_CORRECTION
+};
+const TORQUE_LABELS = {
+  dna: "Volume-form estimator",
+  res: "Reaction estimator",
+  "res-corrected": `Reaction + ${TRANSPOSE_CORRECTION.toFixed(3)}`
+};
+
+for (const [id, value] of Object.entries(torqueOf)) {
+  emitPlot(
+    "torque",
+    id,
+    lineTrace(timeline.map(point => point.t), timeline.map(value), {
+      name: TORQUE_LABELS[id],
+      color: SERIES_COLORS[id]
+    }),
+    {
+      seriesGroupId: id,
+      label: `Torque history, ${TORQUE_LABELS[id].toLowerCase()}`,
+      shape: "single-trace",
+      oldPath: "scripts/source-data/numerical-viscometer/torque_*.csv"
+    }
+  );
+}
+
+const tEnd = timeline[timeline.length - 1].t;
+
+emitPlot(
+  "torque",
+  "exact",
+  lineTrace([0, tEnd], [TORQUE_EXACT, TORQUE_EXACT], {
+    name: `Exact analytic torque ${TORQUE_EXACT.toFixed(2)}`,
+    color: "var(--fg1)",
+    dash: "dash"
+  }),
+  {
+    seriesGroupId: "exact",
+    label: "Exact annular-Couette torque",
+    shape: "single-trace",
+    oldPath: "generated from the instrument definition"
+  }
+);
+
+// The suspension run restarts from the baseline's final dump, so the seeding
+// instant is the end of the baseline run.
+const insertion = baseline.window[1];
+emitPlot(
+  "torque",
+  "insertion",
+  lineTrace([insertion, insertion], [0, 2 * TORQUE_EXACT], {
+    name: `Particles inserted, t = ${insertion}`,
+    color: "var(--fg3)",
+    dash: "dot"
+  }),
+  {
+    seriesGroupId: "insertion",
+    label: "Instant the suspension is seeded",
+    shape: "single-trace",
+    oldPath: "generated from the instrument definition"
+  }
+);
+
+// ---- viscosity: eta against phi ---------------------------------------------
+// Two measured rungs, both predictions, in the coordinates Einstein's law is
+// stated in. The error bar is the plateau scatter of the ratio.
+emitPlot(
+  "viscosity",
+  "measured",
+  {
+    x: rungs.map(rung => rung.phi),
+    y: rungs.map(rung => rung.eta),
+    error_y: { type: "data", array: rungs.map(rung => rung.etaPstd), visible: true },
+    type: "scatter",
+    mode: "lines+markers",
+    name: "Measured, T(phi) / T(0)",
+    marker: { color: SERIES_COLORS.dna, symbol: "circle", size: 11 },
+    line: { color: SERIES_COLORS.dna }
+  },
+  {
+    seriesGroupId: "measured",
+    label: "Measured relative viscosity",
+    shape: "single-trace",
+    oldPath: "scripts/source-data/numerical-viscometer/torque_*.csv"
+  }
+);
+
+emitPlot(
+  "viscosity",
+  "composite",
+  {
+    x: rungs.map(rung => rung.phi),
+    y: rungs.map(rung => rung.etaComposite),
+    type: "scatter",
+    mode: "markers",
+    name: "Composite-Einstein target",
+    marker: { color: "var(--fg1)", symbol: "diamond-open", size: 13 },
+    line: { color: "var(--fg1)" }
+  },
+  {
+    seriesGroupId: "composite",
+    label: "Composite-Einstein target from the measured concentration field",
+    shape: "single-trace",
+    oldPath: "scripts/source-data/numerical-viscometer/rungs.csv"
+  }
+);
+
+const phiMax = Math.max(...rungs.map(rung => rung.phi)) * 1.2;
+emitPlot(
+  "viscosity",
+  "einstein",
+  lineTrace([0, phiMax], [1, 1 + 2.5 * phiMax], {
+    name: "Einstein, 1 + 2.5 phi",
+    color: "var(--fg3)",
+    dash: "dash"
+  }),
+  {
+    seriesGroupId: "einstein",
+    label: "Einstein dilute limit",
+    shape: "single-trace",
+    oldPath: "generated from the Einstein relation"
+  }
+);
+
+// ---- downloads --------------------------------------------------------------
+const downloadNames = ["torque_baseline.csv", "torque_einstein.csv", "rungs.csv", "velocity_profile.csv"];
+
+for (const name of downloadNames) {
+  const newPath = `downloads/${name}`;
+  mkdirSync(dirname(resolve(outDir, newPath)), { recursive: true });
+  copyFileSync(resolve(srcDir, name), resolve(outDir, newPath));
+  entries.push({
+    oldPath: `scripts/source-data/numerical-viscometer/${name}`,
+    newPath,
+    kind: "download",
+    label: name
+  });
+  zipEntries.push({ name: `numerical-viscometer/${name}`, data: readFileSync(resolve(outDir, newPath)) });
+}
+
+const datasheetName = "dns_validation_datasheet.csv";
+const datasheetSource = `scripts/source-data/dns/${datasheetName}`;
+copyFileSync(resolve(root, datasheetSource), resolve(outDir, `downloads/${datasheetName}`));
+entries.push({
+  oldPath: datasheetSource,
+  newPath: `downloads/${datasheetName}`,
+  kind: "download",
+  label: datasheetName
+});
+zipEntries.push({
+  name: `numerical-viscometer/${datasheetName}`,
+  data: readFileSync(resolve(outDir, `downloads/${datasheetName}`))
+});
+
+writeFileSync(resolve(outDir, "downloads/numerical-viscometer.zip"), createStoredZip(zipEntries));
+entries.push({
+  oldPath: "generated from numerical-viscometer downloads",
+  newPath: "downloads/numerical-viscometer.zip",
+  kind: "download",
+  label: "numerical-viscometer.zip"
+});
+
+writeJson(resolve(outDir, "manifest.json"), { benchmarkId: "numerical-viscometer", entries });
+
+// ---- instrument, rungs and gates --------------------------------------------
+writeJson(resolve(generatedDir, "numerical-viscometer.json"), {
+  source: "scripts/source-data/numerical-viscometer",
+  generatedBy: "scripts/convert-numerical-viscometer-data.mjs",
+  instrument: {
+    ...INSTRUMENT,
+    mu: MU,
+    bobSpeed: INSTRUMENT.omega * INSTRUMENT.rInner,
+    torqueExact: TORQUE_EXACT,
+    holeVolume: HOLE_VOLUME,
+    transposeCorrection: TRANSPOSE_CORRECTION
+  },
+  rungs,
+  baselineGates,
+  profile
+});
+
+// ---- validation ledger ------------------------------------------------------
+// Generated from the datasheet, never hand-written.
+//
+// Selection policy
+// ----------------
+// Published: both executed rungs of the instrument — the empty-cell baseline that
+// certifies it against the analytic torque, and the Einstein gate that uses it.
+// Those two rows carry the result as it stands. The datasheet download under
+// Reference Data carries every row of the campaign.
+const PUBLISHED = new Set(["d52_v20_baseline", "d52_v21_einstein"]);
+
+const records = readDatasheet(resolve(root, datasheetSource));
+const ledger = buildLedger(records, record => PUBLISHED.has(record.case.trim()));
+
+writeJson(resolve(generatedDir, "numerical-viscometer-validation.json"), {
+  source: datasheetSource,
+  generatedBy: "scripts/convert-numerical-viscometer-data.mjs",
+  rows: ledger
+});
+
+console.log(
+  `Generated ${entries.length} numerical-viscometer manifest entries in ${relative(root, outDir)}, ` +
+    `T_exact = ${TORQUE_EXACT.toFixed(4)}, transpose correction = ${TRANSPOSE_CORRECTION.toFixed(4)}, ` +
+    `baseline ${(baselineGates.torque * 100).toFixed(2)}%, ` +
+    `eta(${einstein.phi}) = ${einstein.eta.toFixed(4)} ` +
+    `(${(einstein.deviationComposite * 100).toFixed(2)}% vs composite), ` +
+    `and ${ledger.length} validation rows`
+);

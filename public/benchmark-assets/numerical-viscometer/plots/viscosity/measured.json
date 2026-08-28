@@ -1,0 +1,29 @@
+{
+  "x": [
+    0,
+    0.05
+  ],
+  "y": [
+    1,
+    1.1062454861119506
+  ],
+  "error_y": {
+    "type": "data",
+    "array": [
+      8.614462408635398e-7,
+      0.0007483624655851361
+    ],
+    "visible": true
+  },
+  "type": "scatter",
+  "mode": "lines+markers",
+  "name": "Measured, T(phi) / T(0)",
+  "marker": {
+    "color": "#5fb8ff",
+    "symbol": "circle",
+    "size": 11
+  },
+  "line": {
+    "color": "#5fb8ff"
+  }
+}

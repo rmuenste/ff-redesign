@@ -1,0 +1,21 @@
+{
+  "x": [
+    0,
+    0.05
+  ],
+  "y": [
+    1,
+    1.0996
+  ],
+  "type": "scatter",
+  "mode": "markers",
+  "name": "Composite-Einstein target",
+  "marker": {
+    "color": "var(--fg1)",
+    "symbol": "diamond-open",
+    "size": 13
+  },
+  "line": {
+    "color": "var(--fg1)"
+  }
+}

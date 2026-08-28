@@ -171,8 +171,8 @@
           "path": "downloads/dns_validation_datasheet.csv",
           "label": "dns_validation_datasheet.csv",
           "format": "CSV",
-          "bytes": 84386,
-          "sha1": "dd61eaf1f822adf4417fe53de3b9f7bc60e1d13c",
+          "bytes": 88010,
+          "sha1": "7b9db8bb4a5224aa867d28c44223756d2e21b855",
           "shared": true
         },
         {
@@ -180,8 +180,8 @@
           "path": "downloads/dkt.zip",
           "label": "dkt.zip",
           "format": "ZIP archive",
-          "bytes": 517423,
-          "sha1": "c54ca24820b1bddb8b81b092ad431e117c63e017",
+          "bytes": 521047,
+          "sha1": "ad024d39cebc65ec8076b8bb962c88fde5fbd00c",
           "shared": false
         }
       ]
@@ -298,8 +298,8 @@
           "path": "downloads/dns_validation_datasheet.csv",
           "label": "dns_validation_datasheet.csv",
           "format": "CSV",
-          "bytes": 84386,
-          "sha1": "dd61eaf1f822adf4417fe53de3b9f7bc60e1d13c",
+          "bytes": 88010,
+          "sha1": "7b9db8bb4a5224aa867d28c44223756d2e21b855",
           "shared": true
         },
         {
@@ -307,8 +307,67 @@
           "path": "downloads/hindered-settling.zip",
           "label": "hindered-settling.zip",
           "format": "ZIP archive",
-          "bytes": 209105,
-          "sha1": "186ed073de029e32a52a8bbb343086192245f30d",
+          "bytes": 212729,
+          "sha1": "5281745135ab5b037a029c8cc6d13a5495dc81fd",
+          "shared": false
+        }
+      ]
+    },
+    {
+      "benchmarkId": "numerical-viscometer",
+      "files": [
+        {
+          "name": "torque_baseline.csv",
+          "path": "downloads/torque_baseline.csv",
+          "label": "torque_baseline.csv",
+          "format": "CSV",
+          "bytes": 169819,
+          "sha1": "de591d58c42a079831866e9ecb53e8b5de72c997",
+          "shared": false
+        },
+        {
+          "name": "torque_einstein.csv",
+          "path": "downloads/torque_einstein.csv",
+          "label": "torque_einstein.csv",
+          "format": "CSV",
+          "bytes": 430017,
+          "sha1": "da1373f065ba0aefaa687110bc1fd72356b46b2c",
+          "shared": false
+        },
+        {
+          "name": "rungs.csv",
+          "path": "downloads/rungs.csv",
+          "label": "rungs.csv",
+          "format": "CSV",
+          "bytes": 194,
+          "sha1": "878f6f035644587ede9919ac732e596d0a8b7516",
+          "shared": false
+        },
+        {
+          "name": "velocity_profile.csv",
+          "path": "downloads/velocity_profile.csv",
+          "label": "velocity_profile.csv",
+          "format": "CSV",
+          "bytes": 58,
+          "sha1": "d15b461986709a84d2cff8abc51d95804cef2f70",
+          "shared": false
+        },
+        {
+          "name": "dns_validation_datasheet.csv",
+          "path": "downloads/dns_validation_datasheet.csv",
+          "label": "dns_validation_datasheet.csv",
+          "format": "CSV",
+          "bytes": 88010,
+          "sha1": "7b9db8bb4a5224aa867d28c44223756d2e21b855",
+          "shared": true
+        },
+        {
+          "name": "numerical-viscometer.zip",
+          "path": "downloads/numerical-viscometer.zip",
+          "label": "numerical-viscometer.zip",
+          "format": "ZIP archive",
+          "bytes": 688900,
+          "sha1": "1e12959488092781db6389f7d0c8079cde15741f",
           "shared": false
         }
       ]
@@ -585,17 +644,18 @@
     {
       "name": "dns_validation_datasheet.csv",
       "format": "CSV",
-      "bytes": 84386,
-      "sha1": "dd61eaf1f822adf4417fe53de3b9f7bc60e1d13c",
+      "bytes": 88010,
+      "sha1": "7b9db8bb4a5224aa867d28c44223756d2e21b855",
       "benchmarkIds": [
         "dkt",
-        "hindered-settling"
+        "hindered-settling",
+        "numerical-viscometer"
       ]
     }
   ],
   "totals": {
-    "benchmarks": 6,
-    "files": 61,
-    "bytes": 5064222
+    "benchmarks": 7,
+    "files": 67,
+    "bytes": 6455716
   }
 }

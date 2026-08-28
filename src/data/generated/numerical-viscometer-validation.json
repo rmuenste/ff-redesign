@@ -1,0 +1,30 @@
+{
+  "source": "scripts/source-data/dns/dns_validation_datasheet.csv",
+  "generatedBy": "scripts/convert-numerical-viscometer-data.mjs",
+  "rows": [
+    {
+      "id": "d52_v20_baseline-0",
+      "suite": "d5_rheology",
+      "case": "d52_v20_baseline",
+      "quantity": "D5.1 V2.0 through-hole empty baseline EXECUTED (rundir q2p1_dns_rundir_d52_v20, 109 ranks, mesh d52_mesh_v1 VISCO2_108, MaxMeshLevel 3 D/h=9.15 by dvol, dt=0.05, 4000/4000 steps to t=200=1.6 tau_nu, ~9.6h). First campaign viscometer with an exact analytic reference: axially uniform annular Couette (r_i=5 r_a=10 H=10, Symmetry001 both ends), T_exact = 4 pi mu Omega/(r_i^-2 - r_a^-2) * H = 83.78. Physical-torque protocol per row d51_torque_metrology (DNA primary, RES + transpose correction 2 mu Omega V_hole = 31.416 concordance)",
+      "expected": "four gates (CASE_SPEC_V2 section 5): analytic torque within 3 percent; u_theta(r) profile vs exact Couette; estimator concordance within 3 percent after +31.416; endpoint steadiness < 5e-3",
+      "expectedSource": "CASE_SPEC_V2.md; rows d51_torque_metrology, d51_end_dilution (redesign rationale); d52_mesh_v1/README",
+      "measured": "ALL FOUR GATES PASS, margins wide: (1) |T_DNA| plateau (t>=150) 84.2296 pstd 7.3e-5 vs 83.78 -> +0.54 percent (gate 3 percent); (2) u_theta(r) at mid-height from the final VTK frame: pointwise mean rel error 0.34 percent, max 2.5 percent, Dirichlet rings exact (0.50000 at bob = Omega r_i, 0 at outer wall); (3) concordance: measured DNA-RES gap 31.872 vs predicted 31.416 (+1.45 percent); RES + 31.416 = 83.774 vs T_exact 83.78 -> -0.008 percent - the corrected reaction estimator lands ON the analytic value, i.e. the +0.54 percent in DNA is deformation-form discretization error, cleanly separated; (4) steadiness 1.3e-6, machine-steady. T(0) reference for the V2.1 eta ratio: DNA -84.2296. Baseline certified; V2.1 (phi=0.05, N=225) unlocked pending owner look",
+      "relError": "0.0054",
+      "tolerance": "analytic_torque",
+      "verdict": "PASS"
+    },
+    {
+      "id": "d52_v21_einstein-1",
+      "suite": "d5_rheology",
+      "case": "d52_v21_einstein",
+      "quantity": "D5.1 V2.1 UNDILUTED EINSTEIN GATE EXECUTED (rundir q2p1_dns_rundir_d52_v21, 20h27m, 10000/10000 steps): 225-sphere RSA cloud (phi=0.0500, seed 52121, 0.5d surface clearances, min pair dist 1.0606) inserted into the V2.0 steady Couette field via same-level restart from the t=200 dump (hardlinked; insertion transient ~3 t.u., as the d^2/nu=5 estimate predicted - restart-from-baseline protocol certified), dt=0.005, rho_p/rho_f=1.1 g=0, PE_SERIAL_MODE, frozen build-dns-pe-lubaddon binary (pe f9b7115 lineage), t=200..250",
+      "expected": "eta = T(phi)/T(0) vs the composite-Einstein target from the MEASURED phi(r,z) (undiluted instrument); owner acceptance band ~1.10 (2026-08-27); naive 1+2.5phi=1.1250 as reference only; RES+31.416 concordance ride-along",
+      "expectedSource": "rows d52_v20_baseline (T0=-84.2296), d51_end_dilution (redesign rationale), CASE_SPEC_V2 section 5",
+      "measured": "PASS: plateau (t>=230) eta_DNA = 1.1062 pstd 7.5e-4, drift -1.1e-4/t.u. (T plateau -93.17). Composite-Einstein target from measured phi(r,z) (MC deposit, 21 plateau samples x 225 particles, global phi closes at 0.0500 exactly; local phi_max 0.18, per-slice eta 1.000-1.164): 1.0996 -> deviation +0.60 percent. Corrected-RES eta 1.1123 (+1.15 percent) - concordant. METROLOGY: DNA-RES gap -31.4152 vs predicted -31.416, five digits, WITH 225 particles in the gap - the transpose term depends only on the enclosed (particle-free) hole volume, confirmed empirically. Owner band ~1.10 met; naive 1.1250 correctly rejected by the depletion-margin composite (the +0.6 percent residual is consistent in sign with O(phi^2) effects at local phi_band=0.07, not resolved by this gate). THE D5.1 ARC CLOSES: V1's apparent FAIL was instrument dilution; the through-hole instrument validates Einstein viscosity quantitatively at phi=0.05. Next rungs (campaign decision): phi ladder 0.10/0.20 (legacy range), D/h=16 resolution rung",
+      "relError": "0.0060",
+      "tolerance": "einstein_composite",
+      "verdict": "PASS"
+    }
+  ]
+}

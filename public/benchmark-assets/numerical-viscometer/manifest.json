@@ -1,0 +1,121 @@
+{
+  "benchmarkId": "numerical-viscometer",
+  "entries": [
+    {
+      "oldPath": "scripts/source-data/numerical-viscometer/torque_*.csv",
+      "newPath": "plots/torque/dna.json",
+      "metric": "torque",
+      "seriesGroupId": "dna",
+      "kind": "code",
+      "label": "Torque history, volume-form estimator",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/numerical-viscometer/torque_*.csv",
+      "newPath": "plots/torque/res.json",
+      "metric": "torque",
+      "seriesGroupId": "res",
+      "kind": "code",
+      "label": "Torque history, reaction estimator",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/numerical-viscometer/torque_*.csv",
+      "newPath": "plots/torque/res-corrected.json",
+      "metric": "torque",
+      "seriesGroupId": "res-corrected",
+      "kind": "code",
+      "label": "Torque history, reaction + 31.416",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "generated from the instrument definition",
+      "newPath": "plots/torque/exact.json",
+      "metric": "torque",
+      "seriesGroupId": "exact",
+      "kind": "code",
+      "label": "Exact annular-Couette torque",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "generated from the instrument definition",
+      "newPath": "plots/torque/insertion.json",
+      "metric": "torque",
+      "seriesGroupId": "insertion",
+      "kind": "code",
+      "label": "Instant the suspension is seeded",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/numerical-viscometer/torque_*.csv",
+      "newPath": "plots/viscosity/measured.json",
+      "metric": "viscosity",
+      "seriesGroupId": "measured",
+      "kind": "code",
+      "label": "Measured relative viscosity",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/numerical-viscometer/rungs.csv",
+      "newPath": "plots/viscosity/composite.json",
+      "metric": "viscosity",
+      "seriesGroupId": "composite",
+      "kind": "code",
+      "label": "Composite-Einstein target from the measured concentration field",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "generated from the Einstein relation",
+      "newPath": "plots/viscosity/einstein.json",
+      "metric": "viscosity",
+      "seriesGroupId": "einstein",
+      "kind": "code",
+      "label": "Einstein dilute limit",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/numerical-viscometer/torque_baseline.csv",
+      "newPath": "downloads/torque_baseline.csv",
+      "kind": "download",
+      "label": "torque_baseline.csv"
+    },
+    {
+      "oldPath": "scripts/source-data/numerical-viscometer/torque_einstein.csv",
+      "newPath": "downloads/torque_einstein.csv",
+      "kind": "download",
+      "label": "torque_einstein.csv"
+    },
+    {
+      "oldPath": "scripts/source-data/numerical-viscometer/rungs.csv",
+      "newPath": "downloads/rungs.csv",
+      "kind": "download",
+      "label": "rungs.csv"
+    },
+    {
+      "oldPath": "scripts/source-data/numerical-viscometer/velocity_profile.csv",
+      "newPath": "downloads/velocity_profile.csv",
+      "kind": "download",
+      "label": "velocity_profile.csv"
+    },
+    {
+      "oldPath": "scripts/source-data/dns/dns_validation_datasheet.csv",
+      "newPath": "downloads/dns_validation_datasheet.csv",
+      "kind": "download",
+      "label": "dns_validation_datasheet.csv"
+    },
+    {
+      "oldPath": "generated from numerical-viscometer downloads",
+      "newPath": "downloads/numerical-viscometer.zip",
+      "kind": "download",
+      "label": "numerical-viscometer.zip"
+    }
+  ]
+}

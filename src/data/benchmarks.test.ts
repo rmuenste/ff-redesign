@@ -17,7 +17,8 @@ describe("benchmark registry", () => {
       fac3: "cylinder",
       sedimentation: "sediment",
       dkt: "dkt-pair",
-      "hindered-settling": "particle"
+      "hindered-settling": "particle",
+      "numerical-viscometer": "annulus"
     });
   });
 
@@ -28,6 +29,7 @@ describe("benchmark registry", () => {
     expect(getBenchmarkBySlug("particle-sedimentation")?.id).toBe("sedimentation");
     expect(getBenchmarkBySlug("drafting-kissing-tumbling")?.id).toBe("dkt");
     expect(getBenchmarkBySlug("hindered-settling")?.id).toBe("hindered-settling");
+    expect(getBenchmarkBySlug("numerical-viscometer")?.id).toBe("numerical-viscometer");
     expect(getBenchmarkBySlug("does-not-exist")).toBeUndefined();
   });
 
@@ -46,7 +48,8 @@ describe("benchmark registry", () => {
       "fac3",
       "sedimentation",
       "dkt",
-      "hindered-settling"
+      "hindered-settling",
+      "numerical-viscometer"
     ]);
     expect(benchmarks.filter(b => b.status === "planned").map(b => b.id)).toEqual([]);
   });

@@ -1,0 +1,20 @@
+{
+  "x": [
+    3.777,
+    3.777
+  ],
+  "y": [
+    -0.0352452135,
+    0
+  ],
+  "type": "scatter",
+  "mode": "lines",
+  "name": "Activation gap, 2 cells",
+  "line": {
+    "color": "var(--fg3)",
+    "dash": "dot"
+  },
+  "marker": {
+    "color": "var(--fg3)"
+  }
+}

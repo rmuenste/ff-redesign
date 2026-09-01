@@ -145,11 +145,40 @@ describe("rb2 asset manifest (public/benchmark-assets/rb2/manifest.json)", () =>
 });
 
 describe("sedimentation asset manifest (public/benchmark-assets/sedimentation/manifest.json)", () => {
+  // The lubrication material is built by a companion converter that merges into
+  // this manifest, so the counts are split: the core migration entries, and the
+  // ones owned by scripts/convert-sedimentation-lubrication.mjs.
+  const isLubrication = (entry: { newPath: string }) =>
+    entry.newPath.startsWith("plots/lubrication/") || entry.newPath.startsWith("downloads/lubrication/");
+  const coreEntries = sedimentationManifest.entries.filter(entry => !isLubrication(entry));
+  const lubricationEntries = sedimentationManifest.entries.filter(isLubrication);
+
   it("has exactly the derived plot and copied asset entries planned for migration", () => {
     expect(sedimentationManifest.benchmarkId).toBe("sedimentation");
-    expect(sedimentationManifest.entries).toHaveLength(50);
-    expect(sedimentationManifest.entries.filter(entry => entry.derived)).toHaveLength(24);
-    expect(sedimentationManifest.entries.filter(entry => !entry.derived)).toHaveLength(26);
+    expect(coreEntries).toHaveLength(50);
+    expect(coreEntries.filter(entry => entry.derived)).toHaveLength(24);
+    expect(coreEntries.filter(entry => !entry.derived)).toHaveLength(26);
+  });
+
+  it("carries the lubrication study the companion converter merges in", () => {
+    // Two cases x (baseline, lubricated, PIV, activation rule) plus one force
+    // trace each; two curated series and two tables per case, plus the bundle.
+    const plots = lubricationEntries.filter(entry => entry.newPath.startsWith("plots/"));
+    expect(plots).toHaveLength(10);
+    for (const entry of plots) {
+      expect(entry.metric, entry.newPath).toMatch(/^lubrication-(approach|film)$/);
+      expect(entry.derived, entry.newPath).toBe(true);
+    }
+    expect(plots.filter(entry => entry.seriesGroupId === "piv").every(entry => entry.kind === "reference")).toBe(true);
+    expect(lubricationEntries.filter(entry => entry.kind === "download")).toHaveLength(7);
+  });
+
+  it("derives the lubrication plots from curated series, never from a rundir path", () => {
+    for (const entry of lubricationEntries) {
+      if (entry.oldPath.startsWith("generated from")) continue;
+      expect(entry.oldPath.startsWith("scripts/source-data/"), entry.oldPath).toBe(true);
+      expect(entry.oldPath).not.toMatch(/q2p1_dns_rundir|run_slurm\.log/);
+    }
   });
 
   it("every manifest newPath exists on disk and every plot file is covered", () => {
@@ -163,7 +192,7 @@ describe("sedimentation asset manifest (public/benchmark-assets/sedimentation/ma
   });
 
   it("marks simulation plots as code and PIV plots as reference", () => {
-    const plotEntries = sedimentationManifest.entries.filter(entry => entry.newPath.startsWith("plots/"));
+    const plotEntries = coreEntries.filter(entry => entry.newPath.startsWith("plots/"));
     expect(plotEntries).toHaveLength(24);
     expect(plotEntries.filter(entry => /-piv\.json$/.test(entry.newPath)).every(entry => entry.kind === "reference")).toBe(true);
     expect(plotEntries.filter(entry => !/-piv\.json$/.test(entry.newPath)).every(entry => entry.kind === "code")).toBe(true);

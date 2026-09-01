@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import {
+  Button,
   Chip,
   ComparisonPanel,
   ContentRenderer,
@@ -16,7 +17,12 @@ import {
   ValidationLedger
 } from "../components";
 import {
+  sedimentationBrennerBands,
   sedimentationDownloads,
+  sedimentationLandedFraction,
+  sedimentationLubricationCases,
+  sedimentationLubricationRows,
+  sedimentationLubricationSpecs,
   sedimentationPhysicalRows,
   sedimentationPlotSpecs,
   sedimentationReferenceRows,
@@ -25,8 +31,10 @@ import {
   sedimentationDtLadder,
   sedimentationSetupAsset,
   sedimentationValidationRows,
+  type SedimentationBrennerBand,
   type SedimentationDecompositionFit,
   type SedimentationDtRow,
+  type SedimentationLubricationCase,
   type SedimentationPhysicalRow
 } from "../data/sedimentation";
 
@@ -109,9 +117,16 @@ function DefinitionTab() {
           </p>
           <Equation block>{"$Re = \\frac{\\rho_f u_\\infty d_p}{\\mu_f},\\quad St = \\frac{1}{9}\\frac{\\rho_p d_p u_\\infty}{\\rho_f \\nu}$"}</Equation>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-            The simulation accounts for near-wall lubrication through a correction force based on the wall gap height.
+            The reference paper adds a near-wall lubrication force to its lattice-Boltzmann cases, because below one
+            grid spacing its method resolves no squeeze film at all. That correction is the paper&apos;s Eq. 10, and it
+            is what distinguishes its S18/S19 runs from S16/S17:
           </p>
           <Equation block>{"$F_{lub} = -6\\pi\\mu_f d_p u_\\perp\\left(\\frac{d_p}{h}-\\frac{d_p}{D_0}\\right)$"}</Equation>
+          <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
+            The E1–E4 results on this page carry no such term. They resolve the near-wall flow directly at D/h ≈ 24,
+            with the fictitious-boundary method alone and no lubrication correction of any kind. A separate study of
+            what a sub-grid model adds on top of that resolved film, on these same fixtures, is on the Lubrication tab.
+          </p>
         </div>
       </div>
     </Section>
@@ -129,6 +144,247 @@ function ResultsTab() {
           </p>
         </div>
         <ComparisonPanel specs={sedimentationPlotSpecs} defaultMetric="velocity" />
+      </div>
+    </Section>
+  );
+}
+
+const pct = (value: number, digits = 0) => `${value >= 0 ? "+" : "−"}${Math.abs(value * 100).toFixed(digits)}%`;
+const ms = (seconds: number) => `${Math.round(seconds * 1000)} ms`;
+const mm = (metres: number) => `${(metres * 1000).toFixed(3)} mm`;
+
+function LubricationTab({ onOpenViscometer }: { onOpenViscometer: () => void }) {
+  const clamp = sedimentationLubricationCases[0];
+
+  return (
+    <Section style={{ paddingTop: 40, paddingBottom: 100 }}>
+      <div style={{ maxWidth: 900, display: "grid", gap: 20 }}>
+        <h3 style={{ margin: 0 }}>What a sub-grid model adds to an already-resolved film</h3>
+        <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
+          The rigid-body engine now carries a switchable sub-grid lubrication model — the Kroupa et al. resistance
+          set with its wall terms, Vinogradova slip and a saturation cut-off. Switching it on in a resolved
+          simulation is not as simple as adding the classical force, because the flow solver is already carrying
+          most of the squeeze film. Adding the full resistance on top of that counts the same physics twice.
+        </p>
+        <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
+          For CFD-coupled runs the model therefore runs in a <em>deficit</em> form: every resistance coefficient is
+          reduced by its own value at the gap where the model switches on, so only the part of the film the resolved
+          flow does <em>not</em> carry is added. Activation is tied to the mesh rather than to the particle — a clamp
+          sets it at {clamp.clampFactor} grid cells, {mm(clamp.activationGap)} on these fixtures, which is where the
+          mesh stops resolving the film. In its leading normal term the deficit form reduces to the paper&apos;s
+          Eq. 10.
+        </p>
+      </div>
+
+      <div style={{ marginTop: 36, maxWidth: 900 }}>
+        <h3>Why the deficit form, measured</h3>
+        <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
+          The choice is not a matter of taste. A separate wall-approach benchmark drives a sphere towards a wall at
+          constant velocity, where the drag has an exact solution, and scores each candidate against it in the two
+          bands that matter — between one and two cells of gap, and inside the last cell.
+        </p>
+        <DataTable<SedimentationBrennerBand>
+          columns={[
+            { id: "label", header: "Configuration", render: row => <span style={{ fontWeight: 500 }}>{row.label}</span> },
+            {
+              id: "band1",
+              header: "1-2 cells of gap",
+              align: "right",
+              render: row => <span style={{ fontFamily: "var(--font-mono)" }}>{pct(row.band1h2h, 1)}</span>
+            },
+            {
+              id: "band2",
+              header: "Last cell",
+              align: "right",
+              render: row => <span style={{ fontFamily: "var(--font-mono)" }}>{pct(row.bandSub1h, 1)}</span>
+            }
+          ]}
+          rows={sedimentationBrennerBands}
+          getRowKey={row => row.model}
+        />
+        <p style={{ color: "var(--fg2)", lineHeight: 1.65, marginTop: 12 }}>
+          Deviations from the exact wall-approach drag. The resolved method alone is short of it, which is the gap a
+          sub-grid model is there to close; the full resistance set overshoots by about three quarters, which is the
+          double-counting made visible; the deficit form is the one that lands closest to the exact answer in both
+          bands. It is the configuration used for everything below.
+        </p>
+      </div>
+
+      <div style={{ marginTop: 44, maxWidth: 900 }}>
+        <h3>The lubricated rerun</h3>
+        <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
+          The two lowest-Reynolds fixtures of this benchmark were rerun with the model in its production
+          configuration. The decks are identical to the published E1 and E2 runs; the single difference is that
+          lubrication is switched on. The baselines are therefore the very curves on the Results tab, which makes the
+          pair a controlled comparison rather than two similar simulations.
+        </p>
+      </div>
+
+      <div style={{ marginTop: 28 }}>
+        <ComparisonPanel specs={sedimentationLubricationSpecs} defaultMetric="approach" />
+      </div>
+
+      <div style={{ marginTop: 44, maxWidth: 900, display: "grid", gap: 32 }}>
+        <div>
+          <h3>Through the film band</h3>
+          <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
+            Above the activation gap the two runs are the same simulation — the deficit form is inert there by
+            construction. Below it the sphere decelerates more gradually, which is the behaviour the paper reports
+            for its own lubricated cases.
+          </p>
+          <DataTable<SedimentationLubricationCase>
+            columns={[
+              {
+                id: "case",
+                header: "Case",
+                render: row => (
+                  <span>
+                    <span style={{ fontWeight: 500 }}>{row.id}</span>
+                    <span style={{ color: "var(--fg3)", fontSize: 12 }}> · Re = {row.re}</span>
+                  </span>
+                )
+              },
+              {
+                id: "one",
+                header: "Speed at 1 cell",
+                align: "right",
+                render: row => (
+                  <span style={{ fontFamily: "var(--font-mono)" }}>{pct(-row.reductions[0].reduction)}</span>
+                )
+              },
+              {
+                id: "half",
+                header: "Speed at 1/2 cell",
+                align: "right",
+                render: row => (
+                  <span style={{ fontFamily: "var(--font-mono)" }}>{pct(-row.reductions[1].reduction)}</span>
+                )
+              },
+              {
+                id: "steps",
+                header: "Steps with the model active",
+                align: "right",
+                render: row => <span style={{ fontFamily: "var(--font-mono)" }}>{row.activeSteps}</span>
+              },
+              {
+                id: "force",
+                header: "Peak |F_lub| / buoyant weight",
+                align: "right",
+                render: row => <span style={{ fontFamily: "var(--font-mono)" }}>{row.peakForceRatio.toFixed(2)}</span>
+              }
+            ]}
+            rows={sedimentationLubricationCases}
+            getRowKey={row => row.id}
+          />
+        </div>
+
+        <div>
+          <h3>And it lands</h3>
+          <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
+            This is the part worth checking. The paper notes that its own lubrication force makes the approach run
+            on unrealistically long — the sphere never quite arrives. Here the descent stays finite: the time from
+            the activation gap to rest grows by roughly a tenth, and both runs settle at the same resting gap. The
+            deficit form, the saturation cut-off and the hard-contact response between them keep the film from
+            becoming an infinite cushion.
+          </p>
+          <DataTable<SedimentationLubricationCase>
+            columns={[
+              {
+                id: "case",
+                header: "Case",
+                render: row => (
+                  <span>
+                    <span style={{ fontWeight: 500 }}>{row.id}</span>
+                    <span style={{ color: "var(--fg3)", fontSize: 12 }}> · Re = {row.re}</span>
+                  </span>
+                )
+              },
+              {
+                id: "base",
+                header: "To rest, no F_lub",
+                align: "right",
+                render: row => <span style={{ fontFamily: "var(--font-mono)" }}>{ms(row.landing.base)}</span>
+              },
+              {
+                id: "lub",
+                header: "To rest, with model",
+                align: "right",
+                render: row => <span style={{ fontFamily: "var(--font-mono)" }}>{ms(row.landing.lubricated)}</span>
+              },
+              {
+                id: "delta",
+                header: "Change",
+                align: "right",
+                render: row => (
+                  <span style={{ fontFamily: "var(--font-mono)", fontWeight: 500 }}>{pct(row.landing.increase)}</span>
+                )
+              },
+              {
+                id: "gap",
+                header: "Resting gap",
+                align: "right",
+                render: row => (
+                  <span style={{ fontFamily: "var(--font-mono)" }}>
+                    {mm(row.restingGap.base)} / {mm(row.restingGap.lubricated)}
+                  </span>
+                )
+              }
+            ]}
+            rows={sedimentationLubricationCases}
+            getRowKey={row => row.id}
+          />
+          <p style={{ color: "var(--fg2)", fontSize: 13, lineHeight: 1.6, marginTop: 12 }}>
+            Time from the activation gap until the settling speed has fallen to{" "}
+            {(sedimentationLandedFraction * 100).toFixed(0)} per cent of its value there. Resting gaps are quoted
+            without and with the model.
+          </p>
+        </div>
+
+        <div>
+          <h3 style={{ marginBottom: 12 }}>Scope</h3>
+          <div
+            style={{
+              borderLeft: "3px solid var(--accent)",
+              background: "var(--surface-alt)",
+              borderRadius: 4,
+              padding: "16px 20px"
+            }}
+          >
+            <p style={{ margin: 0, color: "var(--fg1)", lineHeight: 1.65 }}>
+              At this resolution the correction is modest by construction. The resolved flow already carries most of
+              the film, so the model has little left to supply — its peak force never exceeds a quarter of the
+              sphere&apos;s buoyant weight. The paper&apos;s method had no resolved film below one grid spacing at
+              all and needed the full force. The digitised PIV cannot tell the two curves apart here either: the
+              approach window holds about a dozen samples at velocities near the measurement floor, and the
+              simulation-to-experiment differences documented on the Validation tab are larger than the effect. What
+              certifies the model quantitatively is the wall-approach benchmark above; what this rerun certifies is
+              the qualitative behaviour and the absence of the landing pathology in the production configuration.
+            </p>
+          </div>
+        </div>
+
+        <div>
+          <h3>Validation ledger</h3>
+          <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
+            The three campaign claims behind this tab: the wall-approach benchmark that scored the candidate model
+            forms, the implementation of the form it selected, and this rerun.
+          </p>
+          <div style={{ marginTop: 16 }}>
+            <ValidationLedger rows={sedimentationLubricationRows} />
+          </div>
+        </div>
+
+        <div>
+          <h3>At suspension scale</h3>
+          <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
+            What the same model does to the bulk viscosity of a sheared suspension, rather than to a single sphere
+            approaching a wall, belongs to the numerical viscometer: a concentration ladder there carries a
+            with-and-without pair at its densest rung.
+          </p>
+          <Button variant="stroked" size="sm" onClick={onOpenViscometer} trailing={<Icon name="arrow_forward" size={14} />}>
+            Numerical Viscometer
+          </Button>
+        </div>
       </div>
     </Section>
   );
@@ -292,6 +548,7 @@ export function ParticleSedimentationPage() {
     { id: "introduction", label: "Introduction" },
     { id: "definition", label: "Definition" },
     { id: "results", label: "Results" },
+    { id: "lubrication", label: "Lubrication" },
     { id: "validation", label: "Validation" },
     { id: "reference-data", label: "Reference Data" }
   ];
@@ -345,6 +602,9 @@ export function ParticleSedimentationPage() {
       {tab === "introduction" && <IntroductionTab />}
       {tab === "definition" && <DefinitionTab />}
       {tab === "results" && <ResultsTab />}
+      {tab === "lubrication" && (
+        <LubricationTab onOpenViscometer={() => navigate("/benchmarks/numerical-viscometer")} />
+      )}
       {tab === "validation" && <ValidationTab />}
       {tab === "reference-data" && <ReferenceDataTab />}
     </div>

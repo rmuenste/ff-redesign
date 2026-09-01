@@ -2,9 +2,13 @@ import { readFileSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
+  sedimentationBrennerBands,
   sedimentationDecomposition,
   sedimentationDecompositionSource,
   sedimentationDtLadder,
+  sedimentationLubricationCases,
+  sedimentationLubricationRows,
+  sedimentationLubricationSpecs,
   sedimentationPlotSpecs,
   sedimentationValidationRows,
   sedimentationValidationSource
@@ -174,5 +178,100 @@ describe("sedimentation timestep ladder and error decomposition", () => {
       expect(fit.temporalPpAt1ms, `p=${fit.order} temporal`).toBeLessThan(0);
       expect(fit.maxResidualPp, `p=${fit.order} residual`).toBeLessThan(0.5);
     }
+  });
+});
+
+describe("sub-grid lubrication study (gate D2.2 G3)", () => {
+  const byId = Object.fromEntries(sedimentationLubricationCases.map(entry => [entry.id, entry]));
+
+  it("reruns the two lowest-Reynolds fixtures of this benchmark", () => {
+    expect(sedimentationLubricationCases.map(entry => entry.id)).toEqual(["E1", "E2"]);
+    expect(byId.E1.re).toBe(1.5);
+    expect(byId.E2.re).toBe(4.1);
+  });
+
+  it("arms the model at the mesh clamp, not at a particle scale", () => {
+    for (const entry of sedimentationLubricationCases) {
+      expect(entry.activationGap).toBeCloseTo(entry.clampFactor * entry.hMin, 12);
+      expect(entry.clampFactor).toBe(2);
+      // The pair is controlled: both runs reach the activation gap at the same instant,
+      // which the converter also asserts.
+      expect(entry.activationTime).toBeGreaterThan(entry.window[0]);
+      expect(entry.activationTime).toBeLessThan(entry.window[1]);
+    }
+  });
+
+  it("decelerates more gradually inside the film band", () => {
+    for (const entry of sedimentationLubricationCases) {
+      expect(entry.reductions.map(r => r.cells)).toEqual([1, 0.5]);
+      for (const reduction of entry.reductions) {
+        // Slower with the model, by a tenth to a fifth.
+        expect(reduction.lubricated, `${entry.id} ${reduction.cells} cells`).toBeLessThan(reduction.base);
+        expect(reduction.reduction).toBeGreaterThan(0.1);
+        expect(reduction.reduction).toBeLessThan(0.2);
+      }
+    }
+    expect(byId.E1.reductions[0].reduction).toBeCloseTo(0.154, 3);
+    expect(byId.E2.reductions[0].reduction).toBeCloseTo(0.161, 3);
+  });
+
+  it("still lands: the descent stays finite and ends at the same resting gap", () => {
+    for (const entry of sedimentationLubricationCases) {
+      expect(entry.landing.lubricated).toBeGreaterThan(entry.landing.base);
+      // The paper's pathology is an unbounded tail; a tenth longer is not one.
+      expect(entry.landing.increase).toBeGreaterThan(0.05);
+      expect(entry.landing.increase).toBeLessThan(0.2);
+      const gapDelta = Math.abs(entry.restingGap.lubricated - entry.restingGap.base);
+      expect(gapDelta, `${entry.id} resting gap`).toBeLessThan(0.1 * entry.hMin);
+    }
+    expect(Math.round(byId.E1.landing.base * 1000)).toBe(301);
+    expect(Math.round(byId.E1.landing.lubricated * 1000)).toBe(334);
+    expect(Math.round(byId.E2.landing.base * 1000)).toBe(124);
+    expect(Math.round(byId.E2.landing.lubricated * 1000)).toBe(140);
+  });
+
+  it("keeps the correction modest, as the resolved film implies", () => {
+    for (const entry of sedimentationLubricationCases) {
+      expect(entry.peakForceRatio, entry.id).toBeGreaterThan(0);
+      expect(entry.peakForceRatio, entry.id).toBeLessThan(0.25);
+      expect(entry.activeSteps, entry.id).toBeGreaterThan(0);
+    }
+  });
+
+  it("scores the deficit form closest to the exact wall-approach drag", () => {
+    const by = Object.fromEntries(sedimentationBrennerBands.map(band => [band.model, band]));
+    expect(Object.keys(by).sort()).toEqual(["fbm_only", "kroupa_deficit", "kroupa_full"]);
+    // The resolved method alone is short; the full resistance set double-counts.
+    expect(by.fbm_only.band1h2h).toBeLessThan(0);
+    expect(by.kroupa_full.band1h2h).toBeGreaterThan(0.5);
+    // The published form is the one nearest zero in both bands.
+    for (const band of ["band1h2h", "bandSub1h"] as const) {
+      expect(Math.abs(by.kroupa_deficit[band]), band).toBeLessThan(Math.abs(by.fbm_only[band]));
+      expect(Math.abs(by.kroupa_deficit[band]), band).toBeLessThan(Math.abs(by.kroupa_full[band]));
+    }
+  });
+
+  it("resolves every lubrication series to a file that exists, per case", () => {
+    for (const spec of Object.values(sedimentationLubricationSpecs)) {
+      expect(spec.levelAxis?.options.map(option => option.id)).toEqual(["e1", "e2"]);
+      for (const group of spec.seriesGroups) {
+        for (const source of Object.values(group.levelSources!)) {
+          const path = source.asset.path.replace(/^.*benchmark-assets\/sedimentation\//, "");
+          expect(() => readFileSync(resolve(SEDIMENTATION_DIR, path)), source.asset.path).not.toThrow();
+        }
+      }
+    }
+  });
+
+  it("publishes the three campaign claims behind the tab, job ids stripped", () => {
+    expect(sedimentationLubricationRows.map(row => row.case)).toEqual([
+      "d22_g2_brenner",
+      "d22_g2b_deficit",
+      "d22_g3_tencate"
+    ]);
+    const blob = JSON.stringify(sedimentationLubricationRows);
+    expect(blob).not.toMatch(/\bjobs?\s+\d/i);
+    // Bare scheduler ids left behind once the keyword is gone are just as internal.
+    expect(blob).not.toMatch(/\b1[34]\d{4}\b/);
   });
 });

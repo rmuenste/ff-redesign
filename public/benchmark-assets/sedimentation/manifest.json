@@ -396,6 +396,148 @@
       "newPath": "downloads/sedimentation.zip",
       "kind": "download",
       "label": "sedimentation.zip"
+    },
+    {
+      "oldPath": "scripts/source-data/sedimentation/lubrication/approach_E1_base.csv",
+      "newPath": "plots/lubrication/approach/e1-base.json",
+      "metric": "lubrication-approach",
+      "seriesGroupId": "base",
+      "kind": "code",
+      "label": "E1 approach, FBM, no F_lub",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/sedimentation/lubrication/approach_E1_lub.csv",
+      "newPath": "plots/lubrication/approach/e1-lub.json",
+      "metric": "lubrication-approach",
+      "seriesGroupId": "lub",
+      "kind": "code",
+      "label": "E1 approach, FBM + deficit model",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/sedimentation/ref_E1.dat",
+      "newPath": "plots/lubrication/approach/e1-piv.json",
+      "metric": "lubrication-approach",
+      "seriesGroupId": "piv",
+      "kind": "reference",
+      "label": "E1 PIV, approach window",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/sedimentation/lubrication/approach_E1_base.csv",
+      "newPath": "plots/lubrication/approach/e1-activation.json",
+      "metric": "lubrication-approach",
+      "seriesGroupId": "activation",
+      "kind": "code",
+      "label": "E1 activation gap",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/sedimentation/lubrication/approach_E1_lub.csv",
+      "newPath": "plots/lubrication/film/e1-flub.json",
+      "metric": "lubrication-film",
+      "seriesGroupId": "flub",
+      "kind": "code",
+      "label": "E1 lubrication force",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/sedimentation/lubrication/approach_E2_base.csv",
+      "newPath": "plots/lubrication/approach/e2-base.json",
+      "metric": "lubrication-approach",
+      "seriesGroupId": "base",
+      "kind": "code",
+      "label": "E2 approach, FBM, no F_lub",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/sedimentation/lubrication/approach_E2_lub.csv",
+      "newPath": "plots/lubrication/approach/e2-lub.json",
+      "metric": "lubrication-approach",
+      "seriesGroupId": "lub",
+      "kind": "code",
+      "label": "E2 approach, FBM + deficit model",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/sedimentation/ref_E2.dat",
+      "newPath": "plots/lubrication/approach/e2-piv.json",
+      "metric": "lubrication-approach",
+      "seriesGroupId": "piv",
+      "kind": "reference",
+      "label": "E2 PIV, approach window",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/sedimentation/lubrication/approach_E2_base.csv",
+      "newPath": "plots/lubrication/approach/e2-activation.json",
+      "metric": "lubrication-approach",
+      "seriesGroupId": "activation",
+      "kind": "code",
+      "label": "E2 activation gap",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/sedimentation/lubrication/approach_E2_lub.csv",
+      "newPath": "plots/lubrication/film/e2-flub.json",
+      "metric": "lubrication-film",
+      "seriesGroupId": "flub",
+      "kind": "code",
+      "label": "E2 lubrication force",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/sedimentation/lubrication/approach_E1_base.csv",
+      "newPath": "downloads/lubrication/approach_E1_base.csv",
+      "kind": "download",
+      "label": "approach_E1_base.csv"
+    },
+    {
+      "oldPath": "scripts/source-data/sedimentation/lubrication/approach_E1_lub.csv",
+      "newPath": "downloads/lubrication/approach_E1_lub.csv",
+      "kind": "download",
+      "label": "approach_E1_lub.csv"
+    },
+    {
+      "oldPath": "scripts/source-data/sedimentation/lubrication/approach_E2_base.csv",
+      "newPath": "downloads/lubrication/approach_E2_base.csv",
+      "kind": "download",
+      "label": "approach_E2_base.csv"
+    },
+    {
+      "oldPath": "scripts/source-data/sedimentation/lubrication/approach_E2_lub.csv",
+      "newPath": "downloads/lubrication/approach_E2_lub.csv",
+      "kind": "download",
+      "label": "approach_E2_lub.csv"
+    },
+    {
+      "oldPath": "scripts/source-data/sedimentation/lubrication/cases.csv",
+      "newPath": "downloads/lubrication/cases.csv",
+      "kind": "download",
+      "label": "cases.csv"
+    },
+    {
+      "oldPath": "scripts/source-data/sedimentation/lubrication/brenner_bands.csv",
+      "newPath": "downloads/lubrication/brenner_bands.csv",
+      "kind": "download",
+      "label": "brenner_bands.csv"
+    },
+    {
+      "oldPath": "generated from sedimentation lubrication downloads",
+      "newPath": "downloads/lubrication/sedimentation-lubrication.zip",
+      "kind": "download",
+      "label": "sedimentation-lubrication.zip"
     }
   ]
 }

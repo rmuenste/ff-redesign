@@ -47,11 +47,22 @@ const SYNTHESIS = new Set([
   "e4_l3_dt_ladder_sync"
 ]);
 
+/**
+ * The sub-grid lubrication ladder, published on its own tab. Only the three rows
+ * that carry the result: the wall-approach benchmark that scored the candidate
+ * model forms, the implementation of the deficit form it selected, and the
+ * lubricated rerun of this benchmark's own E1/E2 fixtures. The earlier gates of
+ * that ladder record build and wiring provenance rather than physics, and stay in
+ * the campaign datasheet.
+ */
+const LUBRICATION = new Set(["d22_g2_brenner", "d22_g2b_deficit", "d22_g3_tencate"]);
+
 const records = readDatasheet(resolve(root, datasheetSource));
 const rows = buildLedger(
   records,
   record => SPATIAL_LADDER.test(record.case) || SYNTHESIS.has(record.case)
 );
+const lubricationRows = buildLedger(records, record => LUBRICATION.has(record.case.trim()));
 
 /* ---- timestep ladder and error decomposition -------------------------------
  * Parsed from the tool's printed report rather than re-implemented, so the site
@@ -124,6 +135,7 @@ writeFileSync(
       decompositionSource,
       generatedBy: "scripts/convert-sedimentation-validation.mjs",
       rows,
+      lubricationRows,
       dtLadder,
       decomposition: { E4: decomposition.E4.fits, E1: decomposition.E1?.fits ?? [] }
     },
@@ -134,5 +146,6 @@ writeFileSync(
 
 console.log(
   `Generated ${rows.length} sedimentation validation rows, ` +
+    `${lubricationRows.length} lubrication rows, ` +
     `${dtLadder.length} dt-ladder points, ${decomposition.E4.fits.length} E4 fits`
 );

@@ -32,6 +32,12 @@ export function sanitize(text) {
     // reference, because a partial strip leaves broken punctuation behind, and an
     // aside built around a row pointer is bookkeeping by construction.
     .replace(/\s*\((?:[^()]|\([^()]*\))*\brows?\s+[a-z][a-z0-9]*_[a-z0-9_]+(?:[^()]|\([^()]*\))*\)/gi, "")
+    // "jobs 141665 E1 / 141666 E2" — a job list whose entries are labelled with
+    // the case each one ran. The general rule below stops at the first label and
+    // would leave "E1 / 141666 E2" behind, so this runs first. At least one
+    // separator-and-job repetition is required, which is what keeps it off prose
+    // like "job 141389 byte-identical".
+    .replace(/\bjobs?\s+\d{5,7}\s+\w{1,4}(?:\s*[-+/]\s*\d{5,7}\s+\w{1,4})+/gi, "")
     // "job 137402", "jobs 137390+137391", "jobs 140208-140214",
     // "jobs 139196/97,139288 + 139310/11/13/14". A comma only continues the list
     // when it is followed by another job-sized number, so prose like
@@ -39,6 +45,11 @@ export function sanitize(text) {
     .replace(/\bjobs?\s+\d+(?:\s*[-+/]\s*\d+|\s*,\s*\d{5,7}\b)*/gi, "")
     // bare "(137877)" cross-references
     .replace(/\s*\(\s*\d{5,7}\s*\)/g, "")
+    // Bare scheduler ids left over once the "job" keyword is gone — "vs 141392
+    // reference", "Twin 141658 byte-identical", "synced reruns 137383-5". Scoped
+    // to the campaign's own id range so it cannot touch a measured value: every
+    // number a datasheet row quotes is either shorter or written as a decimal.
+    .replace(/\b1[34]\d{4}(?:\s*-\s*\d{1,6})?\b/g, "")
     // tidy the punctuation the removals leave behind
     .replace(/\(\s*[,;:]\s*/g, "(")
     .replace(/[,;]\s*(?=[,;])/g, "")

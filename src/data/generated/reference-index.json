@@ -171,8 +171,8 @@
           "path": "downloads/dns_validation_datasheet.csv",
           "label": "dns_validation_datasheet.csv",
           "format": "CSV",
-          "bytes": 88010,
-          "sha1": "7b9db8bb4a5224aa867d28c44223756d2e21b855",
+          "bytes": 94464,
+          "sha1": "bf01cae5d94475cde59664dbe1fa421c6f1a6569",
           "shared": true
         },
         {
@@ -180,8 +180,8 @@
           "path": "downloads/dkt.zip",
           "label": "dkt.zip",
           "format": "ZIP archive",
-          "bytes": 521047,
-          "sha1": "ad024d39cebc65ec8076b8bb962c88fde5fbd00c",
+          "bytes": 527501,
+          "sha1": "c140ede4e9a876404e055590b3ed4e8471cd7b50",
           "shared": false
         }
       ]
@@ -298,8 +298,8 @@
           "path": "downloads/dns_validation_datasheet.csv",
           "label": "dns_validation_datasheet.csv",
           "format": "CSV",
-          "bytes": 88010,
-          "sha1": "7b9db8bb4a5224aa867d28c44223756d2e21b855",
+          "bytes": 94464,
+          "sha1": "bf01cae5d94475cde59664dbe1fa421c6f1a6569",
           "shared": true
         },
         {
@@ -307,8 +307,8 @@
           "path": "downloads/hindered-settling.zip",
           "label": "hindered-settling.zip",
           "format": "ZIP archive",
-          "bytes": 212729,
-          "sha1": "5281745135ab5b037a029c8cc6d13a5495dc81fd",
+          "bytes": 219183,
+          "sha1": "10ff1f5c07605bc19cf4f4af89cce1bca96c950d",
           "shared": false
         }
       ]
@@ -357,8 +357,8 @@
           "path": "downloads/dns_validation_datasheet.csv",
           "label": "dns_validation_datasheet.csv",
           "format": "CSV",
-          "bytes": 88010,
-          "sha1": "7b9db8bb4a5224aa867d28c44223756d2e21b855",
+          "bytes": 94464,
+          "sha1": "bf01cae5d94475cde59664dbe1fa421c6f1a6569",
           "shared": true
         },
         {
@@ -366,8 +366,8 @@
           "path": "downloads/numerical-viscometer.zip",
           "label": "numerical-viscometer.zip",
           "format": "ZIP archive",
-          "bytes": 688900,
-          "sha1": "1e12959488092781db6389f7d0c8079cde15741f",
+          "bytes": 695354,
+          "sha1": "4931b9d7b17d3283a5a13a1925a4c0f457dd31f5",
           "shared": false
         }
       ]
@@ -636,6 +636,69 @@
           "bytes": 761776,
           "sha1": "8ac9f479a600cd77266f4836b32bfd2cc24e17ed",
           "shared": false
+        },
+        {
+          "name": "approach_E1_base.csv",
+          "path": "downloads/lubrication/approach_E1_base.csv",
+          "label": "approach_E1_base.csv",
+          "format": "CSV",
+          "bytes": 49449,
+          "sha1": "4f200e2433905beb3c625591cc899f251cfc6ee2",
+          "shared": false
+        },
+        {
+          "name": "approach_E1_lub.csv",
+          "path": "downloads/lubrication/approach_E1_lub.csv",
+          "label": "approach_E1_lub.csv",
+          "format": "CSV",
+          "bytes": 68978,
+          "sha1": "2ff483b6dfa8704ad099e043723a879773c7d9ad",
+          "shared": false
+        },
+        {
+          "name": "approach_E2_base.csv",
+          "path": "downloads/lubrication/approach_E2_base.csv",
+          "label": "approach_E2_base.csv",
+          "format": "CSV",
+          "bytes": 30241,
+          "sha1": "e3d1e6f15a9238e8aa386c54719af4fe19853014",
+          "shared": false
+        },
+        {
+          "name": "approach_E2_lub.csv",
+          "path": "downloads/lubrication/approach_E2_lub.csv",
+          "label": "approach_E2_lub.csv",
+          "format": "CSV",
+          "bytes": 42320,
+          "sha1": "4c71115f9f4bfa283fc52f4e0300849c00cadcc7",
+          "shared": false
+        },
+        {
+          "name": "cases.csv",
+          "path": "downloads/lubrication/cases.csv",
+          "label": "cases.csv",
+          "format": "CSV",
+          "bytes": 127,
+          "sha1": "9e4b9f6857a88640b1aab1efa6077f89865aa9a1",
+          "shared": false
+        },
+        {
+          "name": "brenner_bands.csv",
+          "path": "downloads/lubrication/brenner_bands.csv",
+          "label": "brenner_bands.csv",
+          "format": "CSV",
+          "bytes": 225,
+          "sha1": "493a7d7542cc52cd20965fc9e4da0bb47fb82401",
+          "shared": false
+        },
+        {
+          "name": "sedimentation-lubrication.zip",
+          "path": "downloads/lubrication/sedimentation-lubrication.zip",
+          "label": "sedimentation-lubrication.zip",
+          "format": "ZIP archive",
+          "bytes": 192338,
+          "sha1": "204c802532667a56f70423010a0d78cdf3843d75",
+          "shared": false
         }
       ]
     }
@@ -644,8 +707,8 @@
     {
       "name": "dns_validation_datasheet.csv",
       "format": "CSV",
-      "bytes": 88010,
-      "sha1": "7b9db8bb4a5224aa867d28c44223756d2e21b855",
+      "bytes": 94464,
+      "sha1": "bf01cae5d94475cde59664dbe1fa421c6f1a6569",
       "benchmarkIds": [
         "dkt",
         "hindered-settling",
@@ -655,7 +718,7 @@
   ],
   "totals": {
     "benchmarks": 7,
-    "files": 67,
-    "bytes": 6455716
+    "files": 74,
+    "bytes": 6878118
   }
 }

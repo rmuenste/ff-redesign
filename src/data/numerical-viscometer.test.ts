@@ -6,8 +6,15 @@ import {
   viscometerBaseline,
   viscometerEinstein,
   viscometerGateRows,
+  viscometerGatedLadder,
   viscometerGates,
   viscometerInstrument,
+  viscometerLoadedRungs,
+  viscometerPairDecay,
+  viscometerPairs,
+  viscometerPairsSpecs,
+  viscometerPhi10,
+  viscometerPhi20,
   viscometerRungs,
   viscometerTorqueSpecs,
   viscometerValidationRows,
@@ -37,11 +44,48 @@ describe("numerical-viscometer instrument", () => {
 });
 
 describe("numerical-viscometer plateau statistics", () => {
-  it("carries the two executed rungs of the concentration ladder", () => {
-    expect(viscometerRungs.map(rung => rung.run)).toEqual(["baseline", "einstein"]);
+  it("carries the whole ladder plus both lubrication twins", () => {
+    expect(viscometerRungs.map(rung => rung.run)).toEqual([
+      "baseline",
+      "einstein",
+      "phi10",
+      "phi20",
+      "phi10_lub",
+      "phi20_lub"
+    ]);
     expect(viscometerBaseline.particles).toBe(0);
-    expect(viscometerEinstein.particles).toBe(225);
-    expect(viscometerEinstein.phi).toBeCloseTo(0.05, 6);
+    expect(viscometerGatedLadder.map(rung => rung.phi)).toEqual([0.05, 0.1, 0.2]);
+    expect(viscometerGatedLadder.map(rung => rung.particles)).toEqual([225, 450, 900]);
+    // Concentration rises with sphere count at fixed cell volume, as it must.
+    expect(viscometerLoadedRungs).toHaveLength(5);
+  });
+
+  it("lands every rung on the closure that governs its concentration", () => {
+    expect(viscometerGatedLadder.map(rung => rung.closure)).toEqual([
+      "einstein",
+      "batchelor",
+      "krieger-dougherty"
+    ]);
+    expect(viscometerEinstein.eta).toBeCloseTo(1.1062, 4);
+    expect(viscometerPhi10.eta).toBeCloseTo(1.2454, 4);
+    expect(viscometerPhi20.eta).toBeCloseTo(1.7143, 4);
+    for (const rung of viscometerGatedLadder) {
+      expect(Math.abs(rung.deviationComposite), `phi = ${rung.phi}`).toBeLessThan(0.01);
+    }
+  });
+
+  it("outgrows each closure in turn, by a margin the instrument resolves", () => {
+    // The superseded closure is exceeded from above at the next rung up.
+    const outgrown = viscometerGatedLadder.flatMap(rung =>
+      rung.composites.filter(entry => !entry.gate).map(entry => ({ ...entry, phi: rung.phi }))
+    );
+    expect(outgrown.map(entry => `${entry.phi}:${entry.closure}`)).toEqual([
+      "0.1:einstein",
+      "0.2:batchelor"
+    ]);
+    for (const entry of outgrown) {
+      expect(entry.deviation, `${entry.phi} ${entry.closure}`).toBeGreaterThan(0.04);
+    }
   });
 
   it("reads the empty instrument within the three-per-cent torque gate", () => {
@@ -58,7 +102,6 @@ describe("numerical-viscometer plateau statistics", () => {
   });
 
   it("measures the Einstein rung against the composite target, not the naive law", () => {
-    expect(viscometerEinstein.eta).toBeCloseTo(1.1062, 4);
     expect(viscometerEinstein.etaPstd).toBeLessThan(1e-3);
     expect(viscometerEinstein.etaComposite).toBe(1.0996);
     expect(viscometerEinstein.etaNaive).toBe(1.125);
@@ -70,10 +113,35 @@ describe("numerical-viscometer plateau statistics", () => {
   });
 
   it("confirms the estimator offset depends only on the particle-free hole volume", () => {
-    // With 225 spheres in the gap the measured offset still matches to five digits.
-    expect(Math.abs(viscometerEinstein.gapDeviation)).toBeLessThan(1e-4);
+    // Five digits on every loaded rung, however crowded the gap and whether or not
+    // the lubrication model is running.
+    for (const rung of viscometerLoadedRungs) {
+      expect(Math.abs(rung.gapDeviation), rung.run).toBeLessThan(1e-4);
+    }
     // Empty, the offset carries the same discretisation error as the torque itself.
     expect(Math.abs(viscometerBaseline.gapDeviation)).toBeLessThan(0.03);
+  });
+
+  it("attributes the lubrication contribution to single-variable twins", () => {
+    expect(viscometerPairs.map(pair => pair.phi)).toEqual([0.1, 0.2]);
+    for (const pair of viscometerPairs) {
+      // Same cloud, same deck, same binary: only the model switch differs.
+      expect(pair.etaWith).toBeGreaterThan(pair.etaWithout);
+      expect(pair.saturatedPairs).toBeLessThan(pair.activePairs);
+      expect(pair.samples).toBeGreaterThan(1000);
+    }
+    expect(viscometerPairs[0].delta).toBeCloseTo(0.0075, 4);
+    expect(viscometerPairs[1].delta).toBeCloseTo(0.0271, 4);
+    expect(Math.round(viscometerPairs[0].activePairs)).toBe(302);
+    expect(Math.round(viscometerPairs[1].activePairs)).toBe(1065);
+  });
+
+  it("decays the lubrication contribution with the near-contact film count", () => {
+    // The headline: the correction tracks how often two surfaces are close,
+    // rather than acting everywhere like a numerical offset would.
+    expect(viscometerPairDecay.eta).toBeCloseTo(3.6, 1);
+    expect(viscometerPairDecay.pairs).toBeCloseTo(3.5, 1);
+    expect(Math.abs(viscometerPairDecay.eta - viscometerPairDecay.pairs)).toBeLessThan(0.5);
   });
 
   it("keeps every published gate row in step with the generated numbers", () => {
@@ -104,12 +172,38 @@ describe("numerical-viscometer plot assets", () => {
     }
   });
 
-  it("plots the measured viscosity with its plateau scatter as an error bar", () => {
+  it("plots the measured ladder with its plateau scatter as an error bar", () => {
     const measured = readPlot("viscosity", "measured");
-    expect(measured.x).toEqual(viscometerRungs.map(rung => rung.phi));
+    expect(measured.x).toEqual([0, 0.05, 0.1, 0.2]);
     expect(measured.y[0]).toBe(1);
     expect(measured.y[1]).toBeCloseTo(viscometerEinstein.eta, 10);
     expect(measured.error_y.array[1]).toBeCloseTo(viscometerEinstein.etaPstd, 10);
+    // The lubricated twins are a separate series at the two densest rungs.
+    const lubricated = readPlot("viscosity", "lubricated");
+    expect(lubricated.x).toEqual([0.1, 0.2]);
+    expect(lubricated.y[1]).toBeCloseTo(viscometerPairs[1].etaWith, 10);
+  });
+
+  it("draws every closure through unity and orders them by concentration term", () => {
+    const [einstein, batchelor, kd] = ["einstein", "batchelor", "krieger-dougherty"].map(id =>
+      readPlot("viscosity", id)
+    );
+    for (const curve of [einstein, batchelor, kd]) expect(curve.y[0]).toBe(1);
+    // Higher-order closures rise faster; at the top of the ladder they separate.
+    const last = einstein.y.length - 1;
+    expect(batchelor.y[last]).toBeGreaterThan(einstein.y[last]);
+    expect(kd.y[last]).toBeGreaterThan(batchelor.y[last]);
+  });
+
+  it("stores the film counts the lubrication result is attributed to", () => {
+    for (const stem of ["phi10", "phi20"]) {
+      const active = readPlot("pairs", `${stem}-active`);
+      const saturated = readPlot("pairs", `${stem}-saturated`);
+      expect(active.x.length).toBe(saturated.x.length);
+      for (let i = 0; i < active.y.length; i += 1) {
+        expect(saturated.y[i]).toBeLessThanOrEqual(active.y[i]);
+      }
+    }
   });
 
   it("draws the naive Einstein reference through unity with slope 5/2", () => {
@@ -127,11 +221,23 @@ describe("numerical-viscometer plot assets", () => {
         expect(() => readFileSync(resolve(DIR, path)), group.source!.asset.path).not.toThrow();
       }
     }
+    // The pairs panel selects by concentration, so its sources hang off the level axis.
+    for (const spec of Object.values(viscometerPairsSpecs)) {
+      for (const group of spec.seriesGroups) {
+        for (const source of Object.values(group.levelSources!)) {
+          const path = source.asset.path.replace(/^.*benchmark-assets\/numerical-viscometer\//, "");
+          expect(() => readFileSync(resolve(DIR, path)), source.asset.path).not.toThrow();
+        }
+      }
+    }
   });
 
-  it("carries no resolution axis: the ladder is in concentration, not refinement", () => {
+  it("carries no resolution axis: the ladders are in concentration, not refinement", () => {
     for (const spec of [...Object.values(viscometerTorqueSpecs), ...Object.values(viscometerViscositySpecs)]) {
       expect(spec.levelAxis, spec.id).toBeUndefined();
+    }
+    for (const spec of Object.values(viscometerPairsSpecs)) {
+      expect(spec.levelAxis?.options.map(option => option.id), spec.id).toEqual(["phi10", "phi20"]);
     }
   });
 });
@@ -139,15 +245,23 @@ describe("numerical-viscometer plot assets", () => {
 describe("numerical-viscometer validation ledger", () => {
   it("is generated from the curated datasheet, not hand-written", () => {
     expect(viscometerValidationSource).toBe("scripts/source-data/dns/dns_validation_datasheet.csv");
-    expect(viscometerValidationRows).toHaveLength(2);
+    expect(viscometerValidationRows).toHaveLength(6);
   });
 
   it("selects only the D5.1 rungs and uses the campaign verdict vocabulary", () => {
     const allowed = new Set(["PASS", "RECORDED", "RESOLVED", "FAIL", "OPEN"]);
     expect(viscometerValidationRows.map(row => row.case)).toEqual([
       "d52_v20_baseline",
-      "d52_v21_einstein"
+      "d52_v21_einstein",
+      "d52_v22_phi10",
+      "d52_v23_phi20",
+      "d52_v22L_settled",
+      "d52_v23L_settled"
     ]);
+    // The first-segment pair readings are superseded by the settled rows and are
+    // published only inside the downloadable datasheet.
+    expect(viscometerValidationRows.map(row => row.case)).not.toContain("d52_v22L_lubpair");
+    expect(viscometerValidationRows.map(row => row.case)).not.toContain("d52_v23L_lubpair");
     for (const row of viscometerValidationRows) {
       expect(row.suite).toBe("d5_rheology");
       expect(allowed.has(row.verdict), `${row.case}: ${row.verdict}`).toBe(true);
@@ -160,7 +274,6 @@ describe("numerical-viscometer validation ledger", () => {
     expect(blob).not.toMatch(/\bjobs?\s+\d/i);
     // The two runs behind this page, by scheduler id. Step counts written as
     // "10000/10000" are content, so the guard names the ids rather than a shape.
-    expect(blob).not.toContain("141372");
-    expect(blob).not.toContain("141522");
+    expect(blob).not.toMatch(/\b1[34]\d{4}\b/);
   });
 });

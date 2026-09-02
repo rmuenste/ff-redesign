@@ -1,0 +1,29 @@
+{
+  "x": [
+    0.1,
+    0.2
+  ],
+  "y": [
+    1.2548215285333637,
+    1.7607269898542965
+  ],
+  "error_y": {
+    "type": "data",
+    "array": [
+      0.003822357549526679,
+      0.017963972938020198
+    ],
+    "visible": true
+  },
+  "type": "scatter",
+  "mode": "markers",
+  "name": "With sub-grid lubrication",
+  "marker": {
+    "color": "#c9a5f5",
+    "symbol": "circle-open",
+    "size": 13
+  },
+  "line": {
+    "color": "#c9a5f5"
+  }
+}

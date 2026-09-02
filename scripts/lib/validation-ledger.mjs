@@ -51,6 +51,9 @@ export function sanitize(text) {
     // number a datasheet row quotes is either shorter or written as a decimal.
     .replace(/\b1[34]\d{4}(?:\s*-\s*\d{1,6})?\b/g, "")
     // tidy the punctuation the removals leave behind
+    // A list separator stranded between a removal and the next punctuation —
+    // "(twin-certified lineage 141389/141658 - NOT ...)" leaves "lineage / - NOT".
+    .replace(/\s+[-+/]\s+(?=[-,;.)])/g, " ")
     .replace(/\(\s*[,;:]\s*/g, "(")
     .replace(/[,;]\s*(?=[,;])/g, "")
     .replace(/\(\s*\)/g, "")

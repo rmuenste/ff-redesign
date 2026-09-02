@@ -1,15 +1,19 @@
 {
   "x": [
     0,
-    0.05
+    0.05,
+    0.1,
+    0.2
   ],
   "y": [
     1,
-    1.0996
+    1.0996,
+    1.2552,
+    1.7305
   ],
   "type": "scatter",
   "mode": "markers",
-  "name": "Composite-Einstein target",
+  "name": "Composite target from the measured field",
   "marker": {
     "color": "var(--fg1)",
     "symbol": "diamond-open",

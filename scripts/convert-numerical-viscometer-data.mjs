@@ -114,15 +114,47 @@ function lineTrace(x, y, { name, color, dash }) {
   return { x, y, type: "scatter", mode: "lines", name, line: { color, ...(dash ? { dash } : {}) }, marker: { color } };
 }
 
+/**
+ * The three closures the ladder walks through, each valid in its own concentration
+ * range. Evaluated at a single volume fraction, these are the textbook curves; the
+ * gate targets are the same closures composed over the MEASURED concentration
+ * field, which the campaign computes and composites.csv carries.
+ */
+const CLOSURES = {
+  einstein: { label: "Einstein, 1 + 2.5 phi", eta: phi => 1 + 2.5 * phi },
+  batchelor: { label: "Batchelor, + 6.2 phi^2", eta: phi => 1 + 2.5 * phi + 6.2 * phi ** 2 },
+  "krieger-dougherty": {
+    label: "Krieger-Dougherty, phi_m = 0.64",
+    eta: phi => (1 - phi / 0.64) ** -1.6
+  }
+};
+
 // ---- plateau statistics -----------------------------------------------------
 // Torques come out of the solver as signed about the axis of rotation; the page
 // reads magnitudes throughout, which is also how the analytic reference is quoted.
-const histories = { baseline: readTorque("baseline"), einstein: readTorque("einstein") };
+
+/**
+ * Composite targets from the measured concentration field, one row per closure
+ * evaluated at a rung. Exactly one is the gate at each concentration — the closure
+ * still inside its validity range there; the others are carried because a ladder
+ * that outgrows a closure is part of the result.
+ */
+const composites = parseCsvRecords(readFileSync(resolve(srcDir, "composites.csv"), "utf-8")).map(
+  record => ({
+    phi: Number(record.phi),
+    closure: record.closure,
+    eta: Number(record.eta_composite),
+    gate: record.gate === "yes"
+  })
+);
+for (const entry of composites) {
+  if (!CLOSURES[entry.closure]) throw new Error(`composites.csv names an unknown closure: ${entry.closure}`);
+}
 
 const rungs = parseCsvRecords(readFileSync(resolve(srcDir, "rungs.csv"), "utf-8")).map(record => {
   const run = record.run;
-  const history = histories[run];
-  if (!history) throw new Error(`rungs.csv names a run with no torque history: ${run}`);
+  const history = readTorque(run);
+  if (!history.length) throw new Error(`rungs.csv names a run with no torque history: ${run}`);
 
   // The plateau runs from `plateau_start` to the end of the run, which is how the
   // campaign quotes every plateau statistic. `run_end` is carried for the reader
@@ -155,8 +187,8 @@ const rungs = parseCsvRecords(readFileSync(resolve(srcDir, "rungs.csv"), "utf-8"
     scatter: pstdev(dna) / mean(dna),
     /** Drift of the plateau torque, per time unit, relative to its mean. */
     drift: slope(times, dna) / mean(dna),
-    etaComposite: Number(record.eta_composite),
-    etaNaive: Number(record.eta_naive)
+    lubrication: record.lubrication === "on",
+    closure: record.closure
   };
 });
 
@@ -172,13 +204,67 @@ for (const rung of rungs) {
   /** The same ratio read off the corrected reaction estimator, as a cross-check. */
   rung.etaCorrected =
     (rung.torqueRes + TRANSPOSE_CORRECTION) / (baseline.torqueRes + TRANSPOSE_CORRECTION);
-  rung.deviationComposite = rung.eta / rung.etaComposite - 1;
-  rung.deviationNaive = rung.eta / rung.etaNaive - 1;
   rung.gapDeviation = rung.gap / TRANSPOSE_CORRECTION - 1;
+
+  // Every composite offered at this concentration, with the gate flagged. The
+  // empty rung has none: its reference is the analytic torque, not a closure.
+  rung.composites = composites
+    .filter(entry => Math.abs(entry.phi - rung.phi) < 1e-9)
+    .map(entry => ({ ...entry, deviation: rung.eta / entry.eta - 1 }));
+  const gate = rung.composites.find(entry => entry.gate);
+  rung.etaComposite = gate?.eta ?? null;
+  rung.deviationComposite = gate ? rung.eta / gate.eta - 1 : null;
+  // The same closure read straight off the global volume fraction, with no
+  // account of the particle-free wall layers — orientation, never a gate.
+  rung.etaClosure = CLOSURES[rung.closure]?.eta(rung.phi) ?? null;
+  rung.etaNaive = CLOSURES.einstein.eta(rung.phi);
+  rung.deviationNaive = rung.eta / rung.etaNaive - 1;
 }
 
 const einstein = rungs.find(rung => rung.run === "einstein");
 if (!einstein) throw new Error("rungs.csv carries no einstein rung");
+
+/**
+ * The lubrication pairs: single-variable twins that differ only by the rigid-body
+ * engine's lubrication switch. Pair counts come from the solver's own per-step
+ * lubrication diagnostics over the same plateau window as the torque.
+ */
+const pairs = rungs
+  .filter(rung => rung.lubrication)
+  .map(rung => {
+    const twin = rungs.find(other => !other.lubrication && Math.abs(other.phi - rung.phi) < 1e-9);
+    if (!twin) throw new Error(`${rung.run}: no lubrication-off twin at phi = ${rung.phi}`);
+
+    const activity = parseCsvRecords(
+      readFileSync(resolve(srcDir, `lubpairs_${rung.run.replace("_lub", "")}.csv`), "utf-8")
+    )
+      .map(record => ({ t: Number(record.time), pairs: Number(record.n_pairs), saturated: Number(record.n_saturated) }))
+      .filter(point => point.t >= rung.window[0]);
+    if (activity.length !== rung.samples) {
+      throw new Error(`${rung.run}: ${activity.length} lubrication samples against ${rung.samples} torque samples`);
+    }
+
+    return {
+      phi: rung.phi,
+      particles: rung.particles,
+      run: rung.run,
+      twin: twin.run,
+      etaWithout: twin.eta,
+      etaWith: rung.eta,
+      delta: rung.eta / twin.eta - 1,
+      activePairs: mean(activity.map(point => point.pairs)),
+      saturatedPairs: mean(activity.map(point => point.saturated)),
+      samples: activity.length
+    };
+  })
+  .sort((a, b) => a.phi - b.phi);
+
+if (pairs.length !== 2) throw new Error(`expected two lubrication pairs, found ${pairs.length}`);
+// The headline: the contribution decays with concentration, tracking the pair count.
+const pairDecay = {
+  eta: pairs[1].delta / pairs[0].delta,
+  pairs: pairs[1].activePairs / pairs[0].activePairs
+};
 
 const profile = Object.fromEntries(
   parseCsvRecords(readFileSync(resolve(srcDir, "velocity_profile.csv"), "utf-8")).map(record => [
@@ -224,9 +310,9 @@ function emitPlot(metric, id, traces, { seriesGroupId, label, shape, oldPath }) 
 // at t = 200, so the two histories are one continuous measurement and are plotted
 // as one trace per estimator. The step at t = 200 is the particles arriving.
 const sampled = Object.fromEntries(
-  Object.entries(histories).map(([run, history]) => [
+  Object.keys(PLOT_SAMPLE).map(run => [
     run,
-    history.filter((_, index) => (index + 1) % PLOT_SAMPLE[run] === 0)
+    readTorque(run).filter((_, index) => (index + 1) % PLOT_SAMPLE[run] === 0)
   ])
 );
 
@@ -297,21 +383,36 @@ emitPlot(
 );
 
 // ---- viscosity: eta against phi ---------------------------------------------
-// Two measured rungs, both predictions, in the coordinates Einstein's law is
-// stated in. The error bar is the plateau scatter of the ratio.
+// The ladder in the coordinates the closures are stated in: four measured rungs
+// without lubrication, the two lubricated twins, the gate targets composed from
+// the measured concentration field, and the plain closure curves for orientation.
+const ladder = rungs.filter(rung => !rung.lubrication);
+const lubricated = rungs.filter(rung => rung.lubrication);
+
+function markerSeries(entries, { name, color, symbol, size, mode = "markers", errors }) {
+  return {
+    x: entries.map(entry => entry.phi),
+    y: entries.map(entry => entry.eta),
+    ...(errors ? { error_y: { type: "data", array: entries.map(errors), visible: true } } : {}),
+    type: "scatter",
+    mode,
+    name,
+    marker: { color, symbol, size },
+    line: { color }
+  };
+}
+
 emitPlot(
   "viscosity",
   "measured",
-  {
-    x: rungs.map(rung => rung.phi),
-    y: rungs.map(rung => rung.eta),
-    error_y: { type: "data", array: rungs.map(rung => rung.etaPstd), visible: true },
-    type: "scatter",
-    mode: "lines+markers",
+  markerSeries(ladder, {
     name: "Measured, T(phi) / T(0)",
-    marker: { color: SERIES_COLORS.dna, symbol: "circle", size: 11 },
-    line: { color: SERIES_COLORS.dna }
-  },
+    color: SERIES_COLORS.dna,
+    symbol: "circle",
+    size: 11,
+    mode: "lines+markers",
+    errors: rung => rung.etaPstd
+  }),
   {
     seriesGroupId: "measured",
     label: "Measured relative viscosity",
@@ -322,43 +423,107 @@ emitPlot(
 
 emitPlot(
   "viscosity",
-  "composite",
-  {
-    x: rungs.map(rung => rung.phi),
-    y: rungs.map(rung => rung.etaComposite),
-    type: "scatter",
-    mode: "markers",
-    name: "Composite-Einstein target",
-    marker: { color: "var(--fg1)", symbol: "diamond-open", size: 13 },
-    line: { color: "var(--fg1)" }
-  },
-  {
-    seriesGroupId: "composite",
-    label: "Composite-Einstein target from the measured concentration field",
-    shape: "single-trace",
-    oldPath: "scripts/source-data/numerical-viscometer/rungs.csv"
-  }
-);
-
-const phiMax = Math.max(...rungs.map(rung => rung.phi)) * 1.2;
-emitPlot(
-  "viscosity",
-  "einstein",
-  lineTrace([0, phiMax], [1, 1 + 2.5 * phiMax], {
-    name: "Einstein, 1 + 2.5 phi",
-    color: "var(--fg3)",
-    dash: "dash"
+  "lubricated",
+  markerSeries(lubricated, {
+    name: "With sub-grid lubrication",
+    color: "#c9a5f5",
+    symbol: "circle-open",
+    size: 13,
+    errors: rung => rung.etaPstd
   }),
   {
-    seriesGroupId: "einstein",
-    label: "Einstein dilute limit",
+    seriesGroupId: "lubricated",
+    label: "Relative viscosity with sub-grid lubrication",
     shape: "single-trace",
-    oldPath: "generated from the Einstein relation"
+    oldPath: "scripts/source-data/numerical-viscometer/torque_*.csv"
   }
 );
 
+// Gate targets: the valid closure at each concentration, composed over the
+// measured field. The empty rung is exact by construction and anchors the set.
+const gateTargets = [
+  { phi: 0, eta: 1 },
+  ...composites.filter(entry => entry.gate).map(entry => ({ phi: entry.phi, eta: entry.eta }))
+].sort((a, b) => a.phi - b.phi);
+
+emitPlot(
+  "viscosity",
+  "composite",
+  markerSeries(gateTargets, {
+    name: "Composite target from the measured field",
+    color: "var(--fg1)",
+    symbol: "diamond-open",
+    size: 13
+  }),
+  {
+    seriesGroupId: "composite",
+    label: "Composite targets from the measured concentration field",
+    shape: "single-trace",
+    oldPath: "scripts/source-data/numerical-viscometer/composites.csv"
+  }
+);
+
+const phiMax = Math.max(...rungs.map(rung => rung.phi)) * 1.1;
+const phiGrid = Array.from({ length: 61 }, (_, index) => (index / 60) * phiMax);
+const CLOSURE_COLORS = { einstein: "var(--fg3)", batchelor: "#f5b84b", "krieger-dougherty": "#ef6f6c" };
+
+for (const [id, closure] of Object.entries(CLOSURES)) {
+  emitPlot(
+    "viscosity",
+    id,
+    lineTrace(phiGrid, phiGrid.map(closure.eta), {
+      name: closure.label,
+      color: CLOSURE_COLORS[id],
+      dash: "dash"
+    }),
+    {
+      seriesGroupId: id,
+      label: `${closure.label} (plain closure)`,
+      shape: "single-trace",
+      oldPath: "generated from the closure relation"
+    }
+  );
+}
+
+// ---- pairs: what the lubrication model is actually doing ---------------------
+// The per-step count of near-contact films the model acts on, and how many of
+// them are saturated, over the same plateau the viscosity is read from.
+for (const pair of pairs) {
+  const stem = pair.run.replace("_lub", "");
+  const oldPath = `scripts/source-data/numerical-viscometer/lubpairs_${stem}.csv`;
+  const activity = parseCsvRecords(readFileSync(resolve(srcDir, `lubpairs_${stem}.csv`), "utf-8"))
+    .map(record => ({ t: Number(record.time), pairs: Number(record.n_pairs), saturated: Number(record.n_saturated) }))
+    .filter((_, index) => (index + 1) % 5 === 0);
+
+  for (const [id, key, label, color] of [
+    ["active", "pairs", "Active lubrication pairs", "#7bd88f"],
+    ["saturated", "saturated", "Saturated pairs", "#f5b84b"]
+  ]) {
+    emitPlot(
+      "pairs",
+      `${stem}-${id}`,
+      lineTrace(activity.map(point => point.t), activity.map(point => point[key]), {
+        name: `phi = ${pair.phi.toFixed(2)} ${label.toLowerCase()}`,
+        color
+      }),
+      {
+        seriesGroupId: id,
+        label: `${label}, phi = ${pair.phi.toFixed(2)}`,
+        shape: "single-trace",
+        oldPath
+      }
+    );
+  }
+}
+
 // ---- downloads --------------------------------------------------------------
-const downloadNames = ["torque_baseline.csv", "torque_einstein.csv", "rungs.csv", "velocity_profile.csv"];
+const downloadNames = [
+  ...rungs.map(rung => `torque_${rung.run}.csv`),
+  ...pairs.map(pair => `lubpairs_${pair.run.replace("_lub", "")}.csv`),
+  "rungs.csv",
+  "composites.csv",
+  "velocity_profile.csv"
+];
 
 for (const name of downloadNames) {
   const newPath = `downloads/${name}`;
@@ -409,7 +574,12 @@ writeJson(resolve(generatedDir, "numerical-viscometer.json"), {
     holeVolume: HOLE_VOLUME,
     transposeCorrection: TRANSPOSE_CORRECTION
   },
+  closures: Object.fromEntries(
+    Object.entries(CLOSURES).map(([id, closure]) => [id, { label: closure.label }])
+  ),
   rungs,
+  pairs,
+  pairDecay,
   baselineGates,
   profile
 });
@@ -419,11 +589,20 @@ writeJson(resolve(generatedDir, "numerical-viscometer.json"), {
 //
 // Selection policy
 // ----------------
-// Published: both executed rungs of the instrument — the empty-cell baseline that
-// certifies it against the analytic torque, and the Einstein gate that uses it.
-// Those two rows carry the result as it stands. The datasheet download under
-// Reference Data carries every row of the campaign.
-const PUBLISHED = new Set(["d52_v20_baseline", "d52_v21_einstein"]);
+// Published: the empty-cell baseline that certifies the instrument against the
+// analytic torque, the three loaded rungs of the concentration ladder, and the two
+// lubrication pairs in their settled form. Withheld: the first-segment readings of
+// both pairs, whose windows were taken before the lubricated microstructure had
+// relaxed and which the settled rows supersede. The datasheet download under
+// Reference Data carries every row of the campaign, superseded ones included.
+const PUBLISHED = new Set([
+  "d52_v20_baseline",
+  "d52_v21_einstein",
+  "d52_v22_phi10",
+  "d52_v23_phi20",
+  "d52_v22L_settled",
+  "d52_v23L_settled"
+]);
 
 const records = readDatasheet(resolve(root, datasheetSource));
 const ledger = buildLedger(records, record => PUBLISHED.has(record.case.trim()));
@@ -438,7 +617,11 @@ console.log(
   `Generated ${entries.length} numerical-viscometer manifest entries in ${relative(root, outDir)}, ` +
     `T_exact = ${TORQUE_EXACT.toFixed(4)}, transpose correction = ${TRANSPOSE_CORRECTION.toFixed(4)}, ` +
     `baseline ${(baselineGates.torque * 100).toFixed(2)}%, ` +
-    `eta(${einstein.phi}) = ${einstein.eta.toFixed(4)} ` +
-    `(${(einstein.deviationComposite * 100).toFixed(2)}% vs composite), ` +
+    `ladder ${ladder
+      .filter(rung => rung.phi > 0)
+      .map(rung => `phi=${rung.phi.toFixed(2)} eta=${rung.eta.toFixed(4)} (${(rung.deviationComposite * 100).toFixed(2)}%)`)
+      .join(", ")}, ` +
+    `lubrication delta ${pairs.map(pair => `${(pair.delta * 100).toFixed(2)}%`).join(" / ")} ` +
+    `(decay ${pairDecay.eta.toFixed(1)}x vs pair count ${pairDecay.pairs.toFixed(1)}x), ` +
     `and ${ledger.length} validation rows`
 );

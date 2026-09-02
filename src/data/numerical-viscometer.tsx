@@ -4,7 +4,10 @@ import generated from "./generated/numerical-viscometer.json";
 import generatedValidation from "./generated/numerical-viscometer-validation.json";
 import type { PlotSource, PlotSpec, SeriesGroup } from "./types";
 
-export type ViscometerMetricId = "torque" | "viscosity";
+export type ViscometerMetricId = "torque" | "viscosity" | "pairs";
+
+/** Plot-asset stems of the two lubrication pairs, in ladder order. */
+const viscometerPairStems = ["phi10", "phi20"];
 
 function source(metric: string, file: string): PlotSource {
   return {
@@ -60,22 +63,75 @@ const viscositySpec: PlotSpec = {
   title: "Relative viscosity",
   metric: "viscosity",
   comparisonAxis: "code",
-  seriesSelectorLabel: "Measurement & predictions",
+  seriesSelectorLabel: "Measurement, targets & closures",
   seriesGroups: [
     group("viscosity", "measured", "Measured, T(phi) / T(0)", "code", "#5fb8ff"),
-    group("viscosity", "composite", "Composite-Einstein target", "reference", "var(--fg1)"),
-    group("viscosity", "einstein", "Einstein, 1 + 2.5 phi", "reference", "var(--fg3)")
+    group("viscosity", "lubricated", "With sub-grid lubrication", "code", "#c9a5f5"),
+    group("viscosity", "composite", "Composite target, measured field", "reference", "var(--fg1)"),
+    group("viscosity", "einstein", "Einstein closure", "reference", "var(--fg3)"),
+    group("viscosity", "batchelor", "Batchelor closure", "reference", "#f5b84b"),
+    group("viscosity", "krieger-dougherty", "Krieger-Dougherty closure", "reference", "#ef6f6c")
   ],
-  defaultSeriesGroupIds: ["measured", "composite", "einstein"],
+  defaultSeriesGroupIds: ["measured", "composite", "einstein", "batchelor", "krieger-dougherty"],
   compareModes: ["overlay"],
   defaultCompareMode: "overlay",
   preserveSourceColorsWhenSingleGroup: false,
   axisLabels: { x: "Particle volume fraction phi", y: "Relative viscosity eta" },
-  axisRanges: { x: [0, 0.06], y: [0.99, 1.16] }
+  axisRanges: { x: [0, 0.22], y: [0.95, 2] }
+};
+
+/**
+ * What the lubrication model is acting on: the per-step count of near-contact
+ * films inside its activation gap, and how many of those are saturated, over the
+ * same plateau the viscosity is read from.
+ */
+const pairsSpec: PlotSpec = {
+  id: "viscometer-pairs",
+  title: "Near-contact films",
+  metric: "pairs",
+  comparisonAxis: "code",
+  seriesSelectorLabel: "Films",
+  seriesGroups: [
+    {
+      id: "active",
+      label: "Active lubrication pairs",
+      kind: "code",
+      color: "#7bd88f",
+      levelSources: Object.fromEntries(
+        viscometerPairStems.map(stem => [stem, source("pairs", `${stem}-active`)])
+      ),
+      variantStrategy: { kind: "single-trace" }
+    },
+    {
+      id: "saturated",
+      label: "Saturated pairs",
+      kind: "code",
+      color: "#f5b84b",
+      levelSources: Object.fromEntries(
+        viscometerPairStems.map(stem => [stem, source("pairs", `${stem}-saturated`)])
+      ),
+      variantStrategy: { kind: "single-trace" }
+    }
+  ],
+  defaultSeriesGroupIds: ["active", "saturated"],
+  levelAxis: {
+    id: "concentration",
+    label: "Concentration",
+    options: viscometerPairStems.map(stem => ({
+      id: stem,
+      label: `phi = ${(Number(stem.replace("phi", "")) / 100).toFixed(2)}`
+    })),
+    defaultLevelId: viscometerPairStems[viscometerPairStems.length - 1]
+  },
+  compareModes: ["overlay"],
+  defaultCompareMode: "overlay",
+  preserveSourceColorsWhenSingleGroup: false,
+  axisLabels: { x: "Time t [-]", y: "Films per step" }
 };
 
 export const viscometerTorqueSpecs: Record<string, PlotSpec> = { torque: torqueSpec };
 export const viscometerViscositySpecs: Record<string, PlotSpec> = { viscosity: viscositySpec };
+export const viscometerPairsSpecs: Record<string, PlotSpec> = { pairs: pairsSpec };
 
 /* ---------------- Measured numbers ---------------- */
 
@@ -88,11 +144,23 @@ export const viscometerInstrument = generated.instrument;
 export const viscometerGates = generated.baselineGates;
 export const viscometerProfile = generated.profile;
 
+export interface ViscometerComposite {
+  phi: number;
+  closure: string;
+  eta: number;
+  gate: boolean;
+  deviation: number;
+}
+
 export interface ViscometerRung {
   run: string;
   label: string;
   phi: number;
   particles: number;
+  lubrication: boolean;
+  closure: string;
+  composites: ViscometerComposite[];
+  etaClosure: number | null;
   window: number[];
   samples: number;
   torqueDna: number;
@@ -106,16 +174,59 @@ export interface ViscometerRung {
   eta: number;
   etaPstd: number;
   etaCorrected: number;
-  etaComposite: number;
+  etaComposite: number | null;
   etaNaive: number;
-  deviationComposite: number;
+  deviationComposite: number | null;
   deviationNaive: number;
+}
+
+export interface ViscometerPair {
+  phi: number;
+  particles: number;
+  run: string;
+  twin: string;
+  etaWithout: number;
+  etaWith: number;
+  delta: number;
+  activePairs: number;
+  saturatedPairs: number;
+  samples: number;
 }
 
 export const viscometerRungs = generated.rungs as ViscometerRung[];
 
+/** The concentration ladder proper: one rung per concentration, lubrication off. */
+export const viscometerLadder = viscometerRungs.filter(rung => !rung.lubrication);
+export const viscometerLoadedRungs = viscometerRungs.filter(rung => rung.phi > 0);
+
+export const viscometerPairs = generated.pairs as ViscometerPair[];
+export const viscometerPairDecay = generated.pairDecay;
+export const viscometerClosures = generated.closures as Record<string, { label: string }>;
+
+/** A loaded rung, which always carries the closure gate valid at its concentration. */
+export interface ViscometerGatedRung extends ViscometerRung {
+  etaComposite: number;
+  deviationComposite: number;
+}
+
+const isGated = (rung: ViscometerRung): rung is ViscometerGatedRung =>
+  rung.etaComposite !== null && rung.deviationComposite !== null;
+
+/** The gated ladder: every loaded rung measured without lubrication. */
+export const viscometerGatedLadder = viscometerLadder.filter(isGated);
+
 export const viscometerBaseline = viscometerRungs.find(rung => rung.run === "baseline")!;
-export const viscometerEinstein = viscometerRungs.find(rung => rung.run === "einstein")!;
+export const viscometerEinstein = viscometerGatedLadder.find(rung => rung.run === "einstein")!;
+export const viscometerPhi10 = viscometerGatedLadder.find(rung => rung.run === "phi10")!;
+export const viscometerPhi20 = viscometerGatedLadder.find(rung => rung.run === "phi20")!;
+
+/** Human label for a closure id, e.g. "krieger-dougherty" -> "Krieger-Dougherty". */
+export function closureName(id: string) {
+  return id
+    .split("-")
+    .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+    .join("-");
+}
 
 /** Signed percentage, as the page quotes deviations everywhere. */
 export function percent(value: number, digits = 2) {
@@ -202,20 +313,14 @@ export interface ViscometerLadderRow {
 export const viscometerLadderRows: ViscometerLadderRow[] = [
   {
     label: "phi = 0",
-    status: "Certified",
-    detail: "Empty instrument against the exact analytic torque"
+    status: "Exact analytic torque",
+    detail: "Empty instrument, calibrated against the closed-form annular-Couette torque"
   },
-  {
-    label: "phi = 0.05",
-    status: "Certified",
-    detail: "Einstein gate, 225 spheres, against the composite-Einstein target"
-  },
-  { label: "phi = 0.10", status: "Running", detail: "Next rung of the concentration ladder" },
-  {
-    label: "phi = 0.20",
-    status: "Planned",
-    detail: "With a sub-grid lubrication comparison pair"
-  }
+  ...viscometerGatedLadder.map(rung => ({
+    label: `phi = ${rung.phi.toFixed(2)}`,
+    status: closureName(rung.closure),
+    detail: `${rung.particles} spheres, against the ${closureName(rung.closure)} composite`
+  }))
 ];
 
 /* ---------------- Validation ---------------- */
@@ -248,10 +353,26 @@ export const viscometerReferences = [
   }
 ];
 
+const rungFileDescriptions: Record<string, string> = {
+  baseline: "empty instrument",
+  einstein: "phi = 0.05 suspension",
+  phi10: "phi = 0.10 suspension",
+  phi20: "phi = 0.20 suspension",
+  phi10_lub: "phi = 0.10 suspension with sub-grid lubrication",
+  phi20_lub: "phi = 0.20 suspension with sub-grid lubrication"
+};
+
 const dataFiles: Array<{ name: string; description: string }> = [
-  { name: "torque_baseline.csv", description: "Torque history of the empty instrument, both estimators, every time step" },
-  { name: "torque_einstein.csv", description: "Torque history of the phi = 0.05 suspension, both estimators, every time step" },
-  { name: "rungs.csv", description: "Plateau window, cloud size and the two predictions per rung" },
+  ...viscometerRungs.map(rung => ({
+    name: `torque_${rung.run}.csv`,
+    description: `Torque history of the ${rungFileDescriptions[rung.run] ?? rung.label}, both estimators, every time step`
+  })),
+  ...viscometerPairs.map(pair => ({
+    name: `lubpairs_${pair.run.replace("_lub", "")}.csv`,
+    description: `Per-step near-contact film counts at phi = ${pair.phi.toFixed(2)}`
+  })),
+  { name: "rungs.csv", description: "Plateau window, cloud size, lubrication switch and governing closure per rung" },
+  { name: "composites.csv", description: "Closure targets composed over the measured concentration field" },
   { name: "velocity_profile.csv", description: "Azimuthal velocity profile gate against the exact Couette solution" }
 ];
 
@@ -276,13 +397,23 @@ export const viscometerDownloads: DownloadItem[] = [
 export const viscometerReferenceRows = [
   {
     fileType: "Torque history",
-    pattern: "torque_baseline.csv, torque_einstein.csv",
+    pattern: "torque_*.csv",
     columns: "time, T_dna, T_res"
+  },
+  {
+    fileType: "Lubrication activity",
+    pattern: "lubpairs_*.csv",
+    columns: "time, n_pairs, n_saturated"
   },
   {
     fileType: "Run table",
     pattern: "rungs.csv",
-    columns: "run, label, phi, particles, plateau_start, run_end, eta_composite, eta_naive"
+    columns: "run, label, phi, particles, plateau_start, run_end, lubrication, closure"
+  },
+  {
+    fileType: "Closure targets",
+    pattern: "composites.csv",
+    columns: "phi, closure, eta_composite, gate"
   },
   {
     fileType: "Profile gate",

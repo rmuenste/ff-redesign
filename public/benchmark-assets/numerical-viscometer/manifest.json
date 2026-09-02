@@ -62,22 +62,92 @@
       "derived": true
     },
     {
-      "oldPath": "scripts/source-data/numerical-viscometer/rungs.csv",
-      "newPath": "plots/viscosity/composite.json",
+      "oldPath": "scripts/source-data/numerical-viscometer/torque_*.csv",
+      "newPath": "plots/viscosity/lubricated.json",
       "metric": "viscosity",
-      "seriesGroupId": "composite",
+      "seriesGroupId": "lubricated",
       "kind": "code",
-      "label": "Composite-Einstein target from the measured concentration field",
+      "label": "Relative viscosity with sub-grid lubrication",
       "sourceShape": "single-trace",
       "derived": true
     },
     {
-      "oldPath": "generated from the Einstein relation",
+      "oldPath": "scripts/source-data/numerical-viscometer/composites.csv",
+      "newPath": "plots/viscosity/composite.json",
+      "metric": "viscosity",
+      "seriesGroupId": "composite",
+      "kind": "code",
+      "label": "Composite targets from the measured concentration field",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "generated from the closure relation",
       "newPath": "plots/viscosity/einstein.json",
       "metric": "viscosity",
       "seriesGroupId": "einstein",
       "kind": "code",
-      "label": "Einstein dilute limit",
+      "label": "Einstein, 1 + 2.5 phi (plain closure)",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "generated from the closure relation",
+      "newPath": "plots/viscosity/batchelor.json",
+      "metric": "viscosity",
+      "seriesGroupId": "batchelor",
+      "kind": "code",
+      "label": "Batchelor, + 6.2 phi^2 (plain closure)",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "generated from the closure relation",
+      "newPath": "plots/viscosity/krieger-dougherty.json",
+      "metric": "viscosity",
+      "seriesGroupId": "krieger-dougherty",
+      "kind": "code",
+      "label": "Krieger-Dougherty, phi_m = 0.64 (plain closure)",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/numerical-viscometer/lubpairs_phi10.csv",
+      "newPath": "plots/pairs/phi10-active.json",
+      "metric": "pairs",
+      "seriesGroupId": "active",
+      "kind": "code",
+      "label": "Active lubrication pairs, phi = 0.10",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/numerical-viscometer/lubpairs_phi10.csv",
+      "newPath": "plots/pairs/phi10-saturated.json",
+      "metric": "pairs",
+      "seriesGroupId": "saturated",
+      "kind": "code",
+      "label": "Saturated pairs, phi = 0.10",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/numerical-viscometer/lubpairs_phi20.csv",
+      "newPath": "plots/pairs/phi20-active.json",
+      "metric": "pairs",
+      "seriesGroupId": "active",
+      "kind": "code",
+      "label": "Active lubrication pairs, phi = 0.20",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/numerical-viscometer/lubpairs_phi20.csv",
+      "newPath": "plots/pairs/phi20-saturated.json",
+      "metric": "pairs",
+      "seriesGroupId": "saturated",
+      "kind": "code",
+      "label": "Saturated pairs, phi = 0.20",
       "sourceShape": "single-trace",
       "derived": true
     },
@@ -94,10 +164,52 @@
       "label": "torque_einstein.csv"
     },
     {
+      "oldPath": "scripts/source-data/numerical-viscometer/torque_phi10.csv",
+      "newPath": "downloads/torque_phi10.csv",
+      "kind": "download",
+      "label": "torque_phi10.csv"
+    },
+    {
+      "oldPath": "scripts/source-data/numerical-viscometer/torque_phi20.csv",
+      "newPath": "downloads/torque_phi20.csv",
+      "kind": "download",
+      "label": "torque_phi20.csv"
+    },
+    {
+      "oldPath": "scripts/source-data/numerical-viscometer/torque_phi10_lub.csv",
+      "newPath": "downloads/torque_phi10_lub.csv",
+      "kind": "download",
+      "label": "torque_phi10_lub.csv"
+    },
+    {
+      "oldPath": "scripts/source-data/numerical-viscometer/torque_phi20_lub.csv",
+      "newPath": "downloads/torque_phi20_lub.csv",
+      "kind": "download",
+      "label": "torque_phi20_lub.csv"
+    },
+    {
+      "oldPath": "scripts/source-data/numerical-viscometer/lubpairs_phi10.csv",
+      "newPath": "downloads/lubpairs_phi10.csv",
+      "kind": "download",
+      "label": "lubpairs_phi10.csv"
+    },
+    {
+      "oldPath": "scripts/source-data/numerical-viscometer/lubpairs_phi20.csv",
+      "newPath": "downloads/lubpairs_phi20.csv",
+      "kind": "download",
+      "label": "lubpairs_phi20.csv"
+    },
+    {
       "oldPath": "scripts/source-data/numerical-viscometer/rungs.csv",
       "newPath": "downloads/rungs.csv",
       "kind": "download",
       "label": "rungs.csv"
+    },
+    {
+      "oldPath": "scripts/source-data/numerical-viscometer/composites.csv",
+      "newPath": "downloads/composites.csv",
+      "kind": "download",
+      "label": "composites.csv"
     },
     {
       "oldPath": "scripts/source-data/numerical-viscometer/velocity_profile.csv",

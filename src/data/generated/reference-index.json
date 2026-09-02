@@ -171,8 +171,8 @@
           "path": "downloads/dns_validation_datasheet.csv",
           "label": "dns_validation_datasheet.csv",
           "format": "CSV",
-          "bytes": 94464,
-          "sha1": "bf01cae5d94475cde59664dbe1fa421c6f1a6569",
+          "bytes": 102680,
+          "sha1": "6036319003628c5962b871038ca0f0b06da226fa",
           "shared": true
         },
         {
@@ -180,8 +180,8 @@
           "path": "downloads/dkt.zip",
           "label": "dkt.zip",
           "format": "ZIP archive",
-          "bytes": 527501,
-          "sha1": "c140ede4e9a876404e055590b3ed4e8471cd7b50",
+          "bytes": 535717,
+          "sha1": "1e2456607ed97d8bdc9ed294e53c4b11937315de",
           "shared": false
         }
       ]
@@ -298,8 +298,8 @@
           "path": "downloads/dns_validation_datasheet.csv",
           "label": "dns_validation_datasheet.csv",
           "format": "CSV",
-          "bytes": 94464,
-          "sha1": "bf01cae5d94475cde59664dbe1fa421c6f1a6569",
+          "bytes": 102680,
+          "sha1": "6036319003628c5962b871038ca0f0b06da226fa",
           "shared": true
         },
         {
@@ -307,8 +307,8 @@
           "path": "downloads/hindered-settling.zip",
           "label": "hindered-settling.zip",
           "format": "ZIP archive",
-          "bytes": 219183,
-          "sha1": "10ff1f5c07605bc19cf4f4af89cce1bca96c950d",
+          "bytes": 227399,
+          "sha1": "943d63dd0b0da7091fba3c7706217a0b50ddd012",
           "shared": false
         }
       ]
@@ -335,12 +335,75 @@
           "shared": false
         },
         {
+          "name": "torque_phi10.csv",
+          "path": "downloads/torque_phi10.csv",
+          "label": "torque_phi10.csv",
+          "format": "CSV",
+          "bytes": 387017,
+          "sha1": "42aee486ff9ffeb22a79bc67c8414100449add57",
+          "shared": false
+        },
+        {
+          "name": "torque_phi20.csv",
+          "path": "downloads/torque_phi20.csv",
+          "label": "torque_phi20.csv",
+          "format": "CSV",
+          "bytes": 344017,
+          "sha1": "c8df222f8bd62b77e3d9252040122e7174d67ca7",
+          "shared": false
+        },
+        {
+          "name": "torque_phi10_lub.csv",
+          "path": "downloads/torque_phi10_lub.csv",
+          "label": "torque_phi10_lub.csv",
+          "format": "CSV",
+          "bytes": 430017,
+          "sha1": "da0df8e25fb8579cd32e8fe398edbd413bffe8d7",
+          "shared": false
+        },
+        {
+          "name": "torque_phi20_lub.csv",
+          "path": "downloads/torque_phi20_lub.csv",
+          "label": "torque_phi20_lub.csv",
+          "format": "CSV",
+          "bytes": 393682,
+          "sha1": "89a6a46606930f9fdf1fa9d465d75dc2267348c0",
+          "shared": false
+        },
+        {
+          "name": "lubpairs_phi10.csv",
+          "path": "downloads/lubpairs_phi10.csv",
+          "label": "lubpairs_phi10.csv",
+          "format": "CSV",
+          "bytes": 180924,
+          "sha1": "a56f3479e19ec378b11ec17214712841959805e5",
+          "shared": false
+        },
+        {
+          "name": "lubpairs_phi20.csv",
+          "path": "downloads/lubpairs_phi20.csv",
+          "label": "lubpairs_phi20.csv",
+          "format": "CSV",
+          "bytes": 183083,
+          "sha1": "66be3bb6290f69a15d421a18e1fbab98a9bc9824",
+          "shared": false
+        },
+        {
           "name": "rungs.csv",
           "path": "downloads/rungs.csv",
           "label": "rungs.csv",
           "format": "CSV",
-          "bytes": 194,
-          "sha1": "878f6f035644587ede9919ac732e596d0a8b7516",
+          "bytes": 418,
+          "sha1": "738b5f70cb7e1d3d8fb7ed94f7418d3de323d3e9",
+          "shared": false
+        },
+        {
+          "name": "composites.csv",
+          "path": "downloads/composites.csv",
+          "label": "composites.csv",
+          "format": "CSV",
+          "bytes": 175,
+          "sha1": "c0650f5a58512557e2f7aa86e62d67771fb8af67",
           "shared": false
         },
         {
@@ -357,8 +420,8 @@
           "path": "downloads/dns_validation_datasheet.csv",
           "label": "dns_validation_datasheet.csv",
           "format": "CSV",
-          "bytes": 94464,
-          "sha1": "bf01cae5d94475cde59664dbe1fa421c6f1a6569",
+          "bytes": 102680,
+          "sha1": "6036319003628c5962b871038ca0f0b06da226fa",
           "shared": true
         },
         {
@@ -366,8 +429,8 @@
           "path": "downloads/numerical-viscometer.zip",
           "label": "numerical-viscometer.zip",
           "format": "ZIP archive",
-          "bytes": 695354,
-          "sha1": "4931b9d7b17d3283a5a13a1925a4c0f457dd31f5",
+          "bytes": 2623779,
+          "sha1": "e138eaf51defe74846f8fd986c9d728cbfcddc1c",
           "shared": false
         }
       ]
@@ -707,8 +770,8 @@
     {
       "name": "dns_validation_datasheet.csv",
       "format": "CSV",
-      "bytes": 94464,
-      "sha1": "bf01cae5d94475cde59664dbe1fa421c6f1a6569",
+      "bytes": 102680,
+      "sha1": "6036319003628c5962b871038ca0f0b06da226fa",
       "benchmarkIds": [
         "dkt",
         "hindered-settling",
@@ -718,7 +781,7 @@
   ],
   "totals": {
     "benchmarks": 7,
-    "files": 74,
-    "bytes": 6878118
+    "files": 81,
+    "bytes": 10766762
   }
 }

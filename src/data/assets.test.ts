@@ -298,7 +298,7 @@ describe("hindered-settling asset manifest (public/benchmark-assets/hindered-set
 });
 
 describe("numerical-viscometer asset manifest (public/benchmark-assets/numerical-viscometer/manifest.json)", () => {
-  const VISCOMETER_METRICS = new Set(["torque", "viscosity"]);
+  const VISCOMETER_METRICS = new Set(["torque", "viscosity", "pairs"]);
 
   it("every manifest newPath exists on disk", () => {
     expect(viscometerManifest.benchmarkId).toBe("numerical-viscometer");
@@ -317,8 +317,14 @@ describe("numerical-viscometer asset manifest (public/benchmark-assets/numerical
 
   it("uses the canonical metric vocabulary and marks plots as derived", () => {
     const plots = viscometerManifest.entries.filter(entry => entry.newPath.startsWith("plots/"));
-    // torque: two estimators + the corrected one + two references; viscosity: measurement + two predictions.
-    expect(plots).toHaveLength(8);
+    // torque: three estimators + two references; viscosity: two measured series,
+    // the composite targets and three closures; pairs: active and saturated films
+    // at each of the two lubrication rungs.
+    expect(plots).toHaveLength(15);
+    const byMetric = (metric: string) => plots.filter(entry => entry.metric === metric).length;
+    expect(byMetric("torque")).toBe(5);
+    expect(byMetric("viscosity")).toBe(6);
+    expect(byMetric("pairs")).toBe(4);
     for (const entry of plots) {
       expect(VISCOMETER_METRICS.has(entry.metric!), entry.metric).toBe(true);
       expect(entry.derived, entry.newPath).toBe(true);

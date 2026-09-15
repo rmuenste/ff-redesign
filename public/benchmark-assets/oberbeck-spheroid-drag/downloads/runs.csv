@@ -1,0 +1,9 @@
+run,rung,orientation,label,rundir
+v0,anchor,sphere,Sphere anchor at L3,q2p1_dns_rundir_d61_v0
+v1,l3-full,parallel,Axis parallel to the driving force,q2p1_dns_rundir_d61_v1
+v2,l3-full,perpendicular,Axis perpendicular to the driving force,q2p1_dns_rundir_d61_v2
+v3b,oblique,oblique,Axis at 45 degrees in the x-z plane,q2p1_dns_rundir_d61_v3b
+v4a,l4-full,parallel,Axis parallel to the driving force,q2p1_dns_rundir_d61_v4a
+v4b,l4-full,perpendicular,Axis perpendicular to the driving force,q2p1_dns_rundir_d61_v4b
+v5a,l4-half,parallel,Axis parallel to the driving force,q2p1_dns_rundir_d61_v5a
+v5b,l4-half,perpendicular,Axis perpendicular to the driving force,q2p1_dns_rundir_d61_v5b

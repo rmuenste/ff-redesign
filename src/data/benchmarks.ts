@@ -133,6 +133,32 @@ export const benchmarks: BenchmarkMeta[] = [
     ],
     comparisonAxis: "code",
     status: "active"
+  },
+  {
+    id: "oberbeck-spheroid-drag",
+    slug: "oberbeck-spheroid-drag",
+    title: "Oberbeck Anisotropic Drag on a Prolate Spheroid",
+    shortTitle: "Oberbeck Spheroid Drag",
+    tag: "OBK",
+    suite: "DNS validation",
+    model: "Particulate",
+    dimension: "3D",
+    reynolds: "3e-3",
+    levels: 2,
+    summary:
+      "A prolate spheroid held fixed in a periodic Stokes cell, measured end-on and broadside against Oberbeck's exact resistance functions, with a ladder that attributes the residual to the finite cell rather than to the method.",
+    thumb: "spheroid",
+    tabs: [
+      "Introduction",
+      "Definition",
+      "Ratio Ladder",
+      "Absolute Drag",
+      "Steadiness",
+      "Validation",
+      "Reference Data"
+    ],
+    comparisonAxis: "level",
+    status: "active"
   }
 ];
 

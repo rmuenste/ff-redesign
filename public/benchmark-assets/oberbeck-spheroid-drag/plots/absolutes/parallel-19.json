@@ -1,0 +1,20 @@
+{
+  "x": [
+    0.5291336839893998
+  ],
+  "y": [
+    -3.0134538409975153
+  ],
+  "type": "scatter",
+  "mode": "markers",
+  "name": "Parallel, 2b/h = 19.0",
+  "line": {
+    "color": "#5fb8ff",
+    "dash": "dot"
+  },
+  "marker": {
+    "color": "#5fb8ff",
+    "symbol": "diamond",
+    "size": 12
+  }
+}

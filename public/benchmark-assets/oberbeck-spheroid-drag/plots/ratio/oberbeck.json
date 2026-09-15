@@ -1,0 +1,20 @@
+{
+  "x": [
+    0,
+    0.6085037365878097
+  ],
+  "y": [
+    1.1453211316962821,
+    1.1453211316962821
+  ],
+  "type": "scatter",
+  "mode": "lines",
+  "name": "Oberbeck Y^A/X^A = 1.14532",
+  "line": {
+    "color": "var(--fg1)",
+    "dash": "dash"
+  },
+  "marker": {
+    "color": "var(--fg1)"
+  }
+}

@@ -1,0 +1,296 @@
+{
+  "source": "scripts/source-data/oberbeck",
+  "generatedBy": "scripts/convert-oberbeck-data.mjs",
+  "cell": {
+    "edge": 1,
+    "mu": 1,
+    "force": 0.01,
+    "sphereRadius": 0.16666666666666666,
+    "aspectRatio": 2
+  },
+  "resistance": {
+    "e": 0.8660254037844386,
+    "L": 2.633915793849633,
+    "XA": 0.6019704948941007,
+    "YA": 0.6894495284598824,
+    "ratio": 1.1453211316962821
+  },
+  "headlineWindow": 0,
+  "anchor": {
+    "run": "v0",
+    "force": 0.010012315300000003,
+    "velocity": 0.00183116141,
+    "K": 1.7404358382471738,
+    "certified": 1.7404,
+    "radiusError": -0.004269825794639637,
+    "torqueNull": 6.967110846214864e-8,
+    "deviation": 0.000020591959994264997
+  },
+  "oblique": {
+    "run": "v3b",
+    "force": 0.010065882034190924,
+    "balance": 0.006588203419092498,
+    "velocity": 0.0017782124,
+    "predictedTilt": 3.875218130899762
+  },
+  "rungs": [
+    {
+      "id": "l3-full",
+      "label": "L3, full-size body",
+      "short": "L3 full",
+      "level": "L3",
+      "h": 0.0277777778,
+      "scale": 1,
+      "a": 0.2645668419946999,
+      "b": 0.13228342099734994,
+      "thinAxisResolution": 9.52440630418967,
+      "imageParameter": 0.5291336839893998,
+      "solidFraction": 0.01939254724438143,
+      "ratio": 1.1699285457901136,
+      "ratioCorrected": 1.170050029159569,
+      "deviation": 0.02148516552504942,
+      "deviationCorrected": 0.02159123478902547,
+      "orientations": [
+        {
+          "id": "parallel",
+          "run": "v1",
+          "rh": 0.15313878453766458,
+          "rhCorrected": 0.15297720484694402,
+          "target": 0.15926143280811883,
+          "deviation": -0.038444010973020304,
+          "deviationCorrected": -0.039458567277528944,
+          "radiusError": 0.0009455989897715344,
+          "torqueNull": 1.0045059196516678e-7,
+          "force": 0.010057615400000006,
+          "balance": 0.00576154000000062,
+          "velocity": 0.00202154106,
+          "trend": 0.000005667145359211645
+        },
+        {
+          "id": "perpendicular",
+          "run": "v2",
+          "rh": 0.17916143549821545,
+          "rhCorrected": 0.1789909829919162,
+          "target": 0.18240548445936605,
+          "deviation": -0.017784821387173078,
+          "deviationCorrected": -0.01871929167903108,
+          "radiusError": 0.0009455989897715344,
+          "torqueNull": 9.39033761529389e-8,
+          "force": 0.010033067500000018,
+          "balance": 0.0033067500000019123,
+          "velocity": 0.00152958439,
+          "trend": 0.0012265982807020404
+        }
+      ],
+      "sensitivity": [
+        {
+          "window": 0,
+          "ratio": 1.1699285457901136,
+          "ratioCorrected": 1.170050029159569,
+          "deviation": 0.02148516552504942,
+          "deviationCorrected": 0.02159123478902547
+        },
+        {
+          "window": 0.25,
+          "ratio": 1.1698802258205847,
+          "ratioCorrected": 1.1700016677621699,
+          "deviation": 0.02144297651081417,
+          "deviationCorrected": 0.021549009603389235
+        },
+        {
+          "window": 0.5,
+          "ratio": 1.1698264820298652,
+          "ratioCorrected": 1.1699478779692623,
+          "deviation": 0.021396051863016963,
+          "deviationCorrected": 0.0215020447902734
+        },
+        {
+          "window": 1,
+          "ratio": 1.1696992199461604,
+          "ratioCorrected": 1.1698205072511303,
+          "deviation": 0.021284937102114876,
+          "deviationCorrected": 0.021390835178744405
+        },
+        {
+          "window": 2,
+          "ratio": 1.1693028314767353,
+          "ratioCorrected": 1.1694237837797825,
+          "deviation": 0.02093884336608287,
+          "deviationCorrected": 0.02104444894664881
+        }
+      ]
+    },
+    {
+      "id": "l4-full",
+      "label": "L4, full-size body",
+      "short": "L4 full",
+      "level": "L4",
+      "h": 0.0138888889,
+      "scale": 1,
+      "a": 0.2645668419946999,
+      "b": 0.13228342099734994,
+      "thinAxisResolution": 19.04881260837934,
+      "imageParameter": 0.5291336839893998,
+      "solidFraction": 0.01939254724438143,
+      "ratio": 1.1700009970061935,
+      "ratioCorrected": 1.1699908663305811,
+      "deviation": 0.021548423954563134,
+      "deviationCorrected": 0.021539578683719807,
+      "orientations": [
+        {
+          "id": "parallel",
+          "run": "v4a",
+          "rh": 0.1544487265231624,
+          "rhCorrected": 0.1544621630439349,
+          "target": 0.15926143280811883,
+          "deviation": -0.030218906109898303,
+          "deviationCorrected": -0.030134538409975153,
+          "radiusError": -0.0000783050148278619,
+          "torqueNull": 8.328856873751985e-9,
+          "force": 0.0100274734,
+          "balance": 0.002747339999999987,
+          "velocity": 0.00198686442,
+          "trend": 0.00023095061261524386
+        },
+        {
+          "id": "perpendicular",
+          "run": "v4b",
+          "rh": 0.18070516401843695,
+          "rhCorrected": 0.18071931995506887,
+          "target": 0.18240548445936605,
+          "deviation": -0.009321651955634502,
+          "deviationCorrected": -0.009244044987434585,
+          "radiusError": -0.0000783050148278619,
+          "torqueNull": 7.704292139190005e-9,
+          "force": 0.00998423444,
+          "balance": -0.0015765560000000622,
+          "velocity": 0.00149799862,
+          "trend": 0.001958397534632672
+        }
+      ],
+      "sensitivity": [
+        {
+          "window": 0,
+          "ratio": 1.1700009970061935,
+          "ratioCorrected": 1.1699908663305811,
+          "deviation": 0.021548423954563134,
+          "deviationCorrected": 0.021539578683719807
+        },
+        {
+          "window": 0.25,
+          "ratio": 1.1699060392071232,
+          "ratioCorrected": 1.1698959150434742,
+          "deviation": 0.02146551463206614,
+          "deviationCorrected": 0.021456675046932494
+        },
+        {
+          "window": 0.5,
+          "ratio": 1.169803271874541,
+          "ratioCorrected": 1.1697931547557217,
+          "deviation": 0.02137578666866946,
+          "deviationCorrected": 0.02136695323450044
+        },
+        {
+          "window": 1,
+          "ratio": 1.1695750652140984,
+          "ratioCorrected": 1.1695649637351575,
+          "deviation": 0.021176535424518805,
+          "deviationCorrected": 0.021167715645802332
+        },
+        {
+          "window": 2,
+          "ratio": 1.1689995900620687,
+          "ratioCorrected": 1.168989527938991,
+          "deviation": 0.020674077959879744,
+          "deviationCorrected": 0.020665292543458724
+        }
+      ]
+    },
+    {
+      "id": "l4-half",
+      "label": "L4, half-size body",
+      "short": "L4 half",
+      "level": "L4",
+      "h": 0.0138888889,
+      "scale": 0.5,
+      "a": 0.13228342099734994,
+      "b": 0.06614171049867497,
+      "thinAxisResolution": 9.52440630418967,
+      "imageParameter": 0.2645668419946999,
+      "solidFraction": 0.002424068405547679,
+      "ratio": 1.141421533819787,
+      "ratioCorrected": 1.1414805981534808,
+      "deviation": -0.0034048074104068293,
+      "deviationCorrected": -0.003353237303072687,
+      "orientations": [
+        {
+          "id": "parallel",
+          "run": "v5a",
+          "rh": 0.07884864211230083,
+          "rhCorrected": 0.07873979318400777,
+          "target": 0.07963071640405942,
+          "deviation": -0.009821264043264555,
+          "deviationCorrected": -0.01118818541743305,
+          "radiusError": 0.0009455303646781488,
+          "torqueNull": 2.664759795982293e-9,
+          "force": 0.0102324762,
+          "balance": 0.023247620000000024,
+          "velocity": 0.00535858813,
+          "trend": 0.00554923453973033
+        },
+        {
+          "id": "perpendicular",
+          "run": "v5b",
+          "rh": 0.08999953801942986,
+          "rhCorrected": 0.08987994622216255,
+          "target": 0.09120274222968303,
+          "deviation": -0.013192631941077337,
+          "deviationCorrected": -0.014503906079810336,
+          "radiusError": 0.0009455303646781488,
+          "torqueNull": 1.2734623858126103e-8,
+          "force": 0.010144290700000004,
+          "balance": 0.014429070000000488,
+          "velocity": 0.00447094901,
+          "trend": -0.0005722326236416997
+        }
+      ],
+      "sensitivity": [
+        {
+          "window": 0,
+          "ratio": 1.141421533819787,
+          "ratioCorrected": 1.1414805981534808,
+          "deviation": -0.0034048074104068293,
+          "deviationCorrected": -0.003353237303072687
+        },
+        {
+          "window": 0.25,
+          "ratio": 1.1412161848574143,
+          "ratioCorrected": 1.1412751543430566,
+          "deviation": -0.0035841011968305025,
+          "deviationCorrected": -0.0035326139029960846
+        },
+        {
+          "window": 0.5,
+          "ratio": 1.1410071242168294,
+          "ratioCorrected": 1.1410659980723847,
+          "deviation": -0.0037666357147042584,
+          "deviationCorrected": -0.0037152319171788184
+        },
+        {
+          "window": 1,
+          "ratio": 1.140613713298628,
+          "ratioCorrected": 1.1406724117954117,
+          "deviation": -0.004110129698455922,
+          "deviationCorrected": -0.004058879009754657
+        },
+        {
+          "window": 2,
+          "ratio": 1.1402372173104702,
+          "ratioCorrected": 1.1402957974461085,
+          "deviation": -0.004438854959641247,
+          "deviationCorrected": -0.004387707614135095
+        }
+      ]
+    }
+  ]
+}

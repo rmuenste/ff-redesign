@@ -1,0 +1,20 @@
+{
+  "x": [
+    0,
+    0.6085037365878097
+  ],
+  "y": [
+    0,
+    0
+  ],
+  "type": "scatter",
+  "mode": "lines",
+  "name": "a X^A / a Y^A",
+  "line": {
+    "color": "var(--fg1)",
+    "dash": "dash"
+  },
+  "marker": {
+    "color": "var(--fg1)"
+  }
+}

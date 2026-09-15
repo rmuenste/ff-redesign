@@ -49,7 +49,10 @@ export function sanitize(text) {
     // reference", "Twin 141658 byte-identical", "synced reruns 137383-5". Scoped
     // to the campaign's own id range so it cannot touch a measured value: every
     // number a datasheet row quotes is either shorter or written as a decimal.
-    .replace(/\b1[34]\d{4}(?:\s*-\s*\d{1,6})?\b/g, "")
+    // The lookbehind is what makes the decimal case hold: a word boundary sits
+    // after the decimal point too, so an unguarded match eats the fraction of a
+    // quoted semi-axis such as "a=0.132283" and leaves "a=0." behind.
+    .replace(/(?<![.\d])\b1[34]\d{4}(?:\s*-\s*\d{1,6})?\b/g, "")
     // tidy the punctuation the removals leave behind
     // A list separator stranded between a removal and the next punctuation —
     // "(twin-certified lineage 141389/141658 - NOT ...)" leaves "lineage / - NOT".

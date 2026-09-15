@@ -15,7 +15,8 @@ export type MeshShape =
   | "sediment"
   | "channel"
   | "dkt-pair"
-  | "annulus";
+  | "annulus"
+  | "spheroid";
 export type SeriesKind = "code" | "level" | "reference";
 export type PlotSourceKind = "single-trace" | "trace-array" | "segmented-shape";
 export type CompareMode = "overlay" | "diff" | "small-multiples";

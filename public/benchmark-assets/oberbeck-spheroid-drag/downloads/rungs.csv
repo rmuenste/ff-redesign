@@ -1,0 +1,4 @@
+rung,label,short,level,h,scale
+l3-full,"L3, full-size body","L3 full",L3,0.0277777778,1
+l4-full,"L4, full-size body","L4 full",L4,0.0138888889,1
+l4-half,"L4, half-size body","L4 half",L4,0.0138888889,0.5

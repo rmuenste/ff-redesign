@@ -7,6 +7,7 @@ import {
   DataTable,
   DownloadTable,
   Equation,
+  GalleryFigure,
   Icon,
   KpiBox,
   ReferenceList,
@@ -61,6 +62,7 @@ const ETA_MAX = viscometerPhi20.eta.toFixed(4);
 function IntroductionTab() {
   return (
     <Section narrow style={{ paddingTop: 40, paddingBottom: 80 }}>
+      <GalleryFigure id="numerical-viscometer" />
       <ContentRenderer
         blocks={[
           {

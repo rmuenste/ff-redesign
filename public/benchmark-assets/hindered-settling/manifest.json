@@ -196,6 +196,24 @@
       "newPath": "downloads/hindered-settling.zip",
       "kind": "download",
       "label": "hindered-settling.zip"
+    },
+    {
+      "oldPath": "generated from blender_viz/website_assets/hindered_settling/renders/hindered_gallery_600w.webp",
+      "newPath": "media/gallery/hindered_gallery_600w.webp",
+      "kind": "media",
+      "label": "Hindered settling gallery still"
+    },
+    {
+      "oldPath": "generated from blender_viz/website_assets/hindered_settling/renders/hindered_gallery_1000w.webp",
+      "newPath": "media/gallery/hindered_gallery_1000w.webp",
+      "kind": "media",
+      "label": "Hindered settling gallery still"
+    },
+    {
+      "oldPath": "generated from blender_viz/website_assets/hindered_settling/renders/hindered_gallery_1500w.webp",
+      "newPath": "media/gallery/hindered_gallery_1500w.webp",
+      "kind": "media",
+      "label": "Hindered settling gallery still"
     }
   ]
 }

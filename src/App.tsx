@@ -2,11 +2,11 @@ import { useEffect } from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { BenchmarksIndex } from "./BenchmarksIndex.jsx";
 import { Footer } from "./Footer.jsx";
-import { Gallery } from "./Gallery.jsx";
 import { Home } from "./Home.jsx";
 import { Nav } from "./Nav.jsx";
 import { DraftingKissingTumblingPage } from "./pages/DraftingKissingTumblingPage";
 import { FlowAroundCylinderPage } from "./pages/FlowAroundCylinderPage";
+import { GalleryPage } from "./pages/GalleryPage";
 import { HinderedSettlingPage } from "./pages/HinderedSettlingPage";
 import { JefferyOrbitPage } from "./pages/JefferyOrbitPage";
 import { NumericalViscometerPage } from "./pages/NumericalViscometerPage";
@@ -72,7 +72,7 @@ export function App() {
         <Route path="/benchmarks/oberbeck-spheroid-drag" element={<OberbeckSpheroidDragPage />} />
         <Route path="/benchmarks/jeffery-orbit" element={<JefferyOrbitPage />} />
         <Route path="/reference-data" element={<ReferenceDataPage />} />
-        <Route path="/gallery" element={<Gallery />} />
+        <Route path="/gallery" element={<GalleryPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AppShell>

@@ -392,3 +392,83 @@ input[type="range"].tu::-webkit-slider-thumb:hover { transform: scale(1.2); }
   color: var(--fg1);
   background: var(--surface-alt);
 }
+
+/* Gallery — uniform 3:2 cards over stills of every shape, and the lightbox */
+.gallery-card {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 1px solid var(--divider);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--surface);
+  color: inherit;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 200ms var(--ease-std);
+}
+.gallery-card:hover { border-color: var(--primary); }
+.gallery-frame {
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background: var(--surface-sunken);
+}
+.gallery-frame img { transition: transform 320ms var(--ease-std); }
+.gallery-card:hover .gallery-frame img { transform: scale(1.04); }
+
+.gallery-filter {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 999px;
+  font-family: inherit;
+}
+/* Chip paints itself with inline styles, so the hover cue lives on the wrapper. */
+.gallery-filter[aria-pressed="false"]:hover { opacity: .74; }
+
+.gallery-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  overflow-y: auto;
+  background: rgba(6, 10, 9, 0.93);
+  backdrop-filter: blur(6px);
+}
+.gallery-control {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--divider);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--fg1);
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color 160ms var(--ease-std), background 160ms var(--ease-std);
+}
+.gallery-control:hover { border-color: var(--primary); background: var(--surface-alt); }
+.gallery-link {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--primary);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+.gallery-link:hover { border-bottom-color: var(--primary); }
+
+@media (prefers-reduced-motion: reduce) {
+  .gallery-card,
+  .gallery-frame img,
+  .gallery-control { transition: none; }
+  .gallery-card:hover .gallery-frame img { transform: none; }
+  .fade-up { animation: none; }
+}

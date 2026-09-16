@@ -10,6 +10,8 @@ const SEDIMENTATION_DIR = resolve(process.cwd(), "public/benchmark-assets/sedime
 const DKT_DIR = resolve(process.cwd(), "public/benchmark-assets/dkt");
 const HINDERED_DIR = resolve(process.cwd(), "public/benchmark-assets/hindered-settling");
 const VISCOMETER_DIR = resolve(process.cwd(), "public/benchmark-assets/numerical-viscometer");
+const OBERBECK_DIR = resolve(process.cwd(), "public/benchmark-assets/oberbeck-spheroid-drag");
+const JEFFERY_DIR = resolve(process.cwd(), "public/benchmark-assets/jeffery-orbit");
 const CANONICAL_METRICS = new Set(["sphericity", "mass", "size", "surface"]);
 const RB2_METRICS = new Set(["shape", "center-of-mass", "circularity", "rise-velocity", "mass"]);
 const RB2_CASES = new Set(["case-1", "case-2"]);
@@ -25,6 +27,12 @@ const hinderedManifest = JSON.parse(
 ) as AssetManifest;
 const viscometerManifest = JSON.parse(
   readFileSync(resolve(VISCOMETER_DIR, "manifest.json"), "utf-8")
+) as AssetManifest;
+const oberbeckManifest = JSON.parse(
+  readFileSync(resolve(OBERBECK_DIR, "manifest.json"), "utf-8")
+) as AssetManifest;
+const jefferyManifest = JSON.parse(
+  readFileSync(resolve(JEFFERY_DIR, "manifest.json"), "utf-8")
 ) as AssetManifest;
 
 function listPlotFiles(): string[] {
@@ -43,6 +51,15 @@ function listFiles(dir: string, prefix = ""): string[] {
     return entry.isDirectory() ? listFiles(abs, rel) : [rel];
   });
 }
+
+/**
+ * Gallery stills live under `media/gallery/` in the benchmark that owns them.
+ * They are a separate population from the migrated plot and download material,
+ * so the per-benchmark counts below exclude them and the shared block at the
+ * bottom of this file checks them in one place. The registry that drives the
+ * gallery page is src/data/gallery.ts, tested in src/data/gallery.test.ts.
+ */
+const isGallery = (entry: { newPath: string }) => entry.newPath.startsWith("media/gallery/");
 
 describe("rb3 asset manifest (public/benchmark-assets/rb3/manifest.json)", () => {
   it("is the single source of truth: not duplicated in app code", () => {
@@ -150,7 +167,9 @@ describe("sedimentation asset manifest (public/benchmark-assets/sedimentation/ma
   // ones owned by scripts/convert-sedimentation-lubrication.mjs.
   const isLubrication = (entry: { newPath: string }) =>
     entry.newPath.startsWith("plots/lubrication/") || entry.newPath.startsWith("downloads/lubrication/");
-  const coreEntries = sedimentationManifest.entries.filter(entry => !isLubrication(entry));
+  const coreEntries = sedimentationManifest.entries.filter(
+    entry => !isLubrication(entry) && !isGallery(entry)
+  );
   const lubricationEntries = sedimentationManifest.entries.filter(isLubrication);
 
   it("has exactly the derived plot and copied asset entries planned for migration", () => {
@@ -346,5 +365,38 @@ describe("numerical-viscometer asset manifest (public/benchmark-assets/numerical
     );
     expect(datasheet?.kind).toBe("download");
     expect(existsSync(resolve(VISCOMETER_DIR, "downloads/numerical-viscometer.zip"))).toBe(true);
+  });
+});
+
+describe("gallery stills in the asset manifests", () => {
+  const manifests: [string, AssetManifest][] = [
+    ["sedimentation", sedimentationManifest],
+    ["dkt", dktManifest],
+    ["hindered-settling", hinderedManifest],
+    ["numerical-viscometer", viscometerManifest],
+    ["oberbeck-spheroid-drag", oberbeckManifest],
+    ["jeffery-orbit", jefferyManifest]
+  ];
+
+  it("records every gallery still as media, with a label and its source render", () => {
+    for (const [id, manifest] of manifests) {
+      const stills = manifest.entries.filter(isGallery);
+      expect(stills.length, id).toBeGreaterThan(0);
+      for (const entry of stills) {
+        expect(entry.kind, entry.newPath).toBe("media");
+        expect(entry.label, entry.newPath).toBeTruthy();
+        expect(entry.newPath, entry.newPath).toMatch(/\.webp$/);
+        expect(entry.oldPath, entry.newPath).toMatch(/^generated from blender_viz\/website_assets\//);
+      }
+    }
+  });
+
+  it("ships no PNG master alongside them", () => {
+    for (const [id, manifest] of manifests) {
+      for (const entry of manifest.entries.filter(isGallery)) {
+        const dir = resolve(process.cwd(), "public/benchmark-assets", id);
+        expect(existsSync(resolve(dir, entry.newPath.replace(/\.webp$/, ".png"))), entry.newPath).toBe(false);
+      }
+    }
   });
 });

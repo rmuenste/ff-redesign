@@ -6,6 +6,7 @@ import {
   ContentRenderer,
   DataTable,
   DownloadTable,
+  GalleryFigure,
   Icon,
   KpiBox,
   ReferenceList,
@@ -78,6 +79,7 @@ function Row({ children }: { children: ReactNode }) {
 function IntroductionTab() {
   return (
     <Section narrow style={{ paddingTop: 40, paddingBottom: 80 }}>
+      <GalleryFigure id="oberbeck-spheroid-drag" />
       <ContentRenderer
         blocks={[
           {

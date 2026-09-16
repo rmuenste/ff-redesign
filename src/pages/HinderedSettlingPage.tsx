@@ -6,6 +6,7 @@ import {
   DataTable,
   DownloadTable,
   Equation,
+  GalleryFigure,
   Icon,
   KpiBox,
   ReferenceList,
@@ -55,6 +56,7 @@ function wideMean(n: number) {
 function IntroductionTab() {
   return (
     <Section narrow style={{ paddingTop: 40, paddingBottom: 80 }}>
+      <GalleryFigure id="hindered-settling" />
       <ContentRenderer
         blocks={[
           {

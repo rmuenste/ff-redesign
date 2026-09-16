@@ -40,8 +40,8 @@ export function DktSchematic() {
           Four panels. In drafting, a trailing sphere inside the leading sphere&apos;s wake accelerates and
           closes the gap. In kissing, the two spheres touch and fall together as a doublet. In tumbling,
           the broadside doublet rotates about its contact point through an angle theta. In separation, the
-          spheres pull apart along a tilted axis with the leading and trailing roles exchanged. With dry
-          contact friction the sequence stops at the end of kissing, at a tilt of about four degrees.
+          spheres pull apart along a tilted axis with the leading and trailing roles exchanged. Both
+          contact models complete the sequence; dry friction slows the tumble rather than stopping it.
         </desc>
 
         <defs>
@@ -125,13 +125,18 @@ export function DktSchematic() {
           </g>
         ))}
 
-        <text x="392" y="178" fontSize="10.5" fontStyle="italic" fill="var(--tu-orange-500)">
-          with dry contact friction the sequence stops here, at θ ≈ 4°
+        <text x="392" y="178" fontSize="10.5" fontStyle="italic" fill="var(--fg2)">
+          dry friction slows this rotation; it does not stop it
         </text>
       </svg>
       <figcaption style={{ color: "var(--fg2)", fontSize: 13, marginTop: 10 }}>
-        <b>The sequence.</b> Phases 1 and 2 reproduced immediately at every resolution. Phase 3 stalled at
-        θ ≈ 4° for two weeks — at D/h = 8 and again at D/h = 16 — until the contact friction was set to zero.
+        <b>The sequence.</b> Phases 1 and 2 reproduced immediately at every resolution. Phase 3 appeared to
+        stall at θ ≈ 4°, at D/h = 8 and again at D/h = 16, until the cause was traced to a solver defect that
+        zeroed every particle&apos;s angular velocity each step (<span className="code-inline">hcaf_angvel_reset</span>):
+        rolling was kinematically impossible, so any tangential friction froze the contact. On the repaired
+        binary the same frictional run tumbles — 16.2° at t = 25, doubling every three time units
+        (<span className="code-inline">d23_omegafix_rerun</span>) — and both contact models complete the full
+        sequence (<span className="code-inline">d23_result</span>).
       </figcaption>
     </figure>
   );

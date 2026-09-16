@@ -8,6 +8,7 @@ import {
   DownloadTable,
   Equation,
   Figure,
+  GalleryFigure,
   Icon,
   KpiBox,
   ReferenceList,
@@ -41,6 +42,7 @@ import {
 function IntroductionTab() {
   return (
     <Section narrow style={{ paddingTop: 40, paddingBottom: 80 }}>
+      <GalleryFigure id="sedimentation" />
       <ContentRenderer
         blocks={[
           {

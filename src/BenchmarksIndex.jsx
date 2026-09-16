@@ -2,9 +2,13 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { benchmarks, benchmarkSuites } from "./data/benchmarks";
+import { galleryItemById, gallerySizes, gallerySrcAt, gallerySrcSet } from "./data/gallery";
 import { Chip, FlowCanvas, Icon, MeshThumb, Overline } from "./Primitives.jsx";
 
 const dims = ["All", "2D", "3D"];
+
+/** Widest a card image is drawn at in the grid — what `sizes` is hinted against. */
+const CARD_WIDTH = 480;
 const models = ["All", "Two-Phase", "Newtonian", "Particulate"];
 const suites = ["All", ...benchmarkSuites];
 
@@ -130,10 +134,25 @@ const FilterGroup = ({ label, options, value, onChange }) => (
 
 const BenchmarkCard = ({ benchmark, variant, onOpen }) => {
   const active = benchmark.status === "active";
+  // A benchmark with a rendered still in the gallery shows it here; the ones
+  // still waiting on a render keep the drawn schematic thumbnail.
+  const still = galleryItemById(benchmark.id);
   return (
     <div className={"card" + (active ? " card-interactive" : "")} style={{ padding: 0, overflow: "hidden", opacity: active ? 1 : 0.62 }} onClick={active ? onOpen : undefined}>
-      <div style={{ aspectRatio: "1.6/1", position: "relative", background: "var(--bg)" }}>
-        <MeshThumb variant={variant} shape={benchmark.thumb}/>
+      <div style={{ aspectRatio: "1.6/1", position: "relative", background: "var(--bg)", overflow: "hidden" }}>
+        {still ? (
+          <img
+            src={gallerySrcAt(still, CARD_WIDTH)}
+            srcSet={gallerySrcSet(still)}
+            sizes={gallerySizes(CARD_WIDTH)}
+            alt={still.alt}
+            loading="lazy"
+            decoding="async"
+            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: still.focal, display: "block" }}
+          />
+        ) : (
+          <MeshThumb variant={variant} shape={benchmark.thumb}/>
+        )}
         <div style={{ position: "absolute", top: 10, left: 10, display: "flex", gap: 6 }}>
           <Chip tone="solid">{benchmark.tag}</Chip>
           <Chip>{benchmark.dimension}</Chip>

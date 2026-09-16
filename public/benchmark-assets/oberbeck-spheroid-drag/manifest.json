@@ -340,6 +340,30 @@
       "newPath": "downloads/oberbeck-spheroid-drag.zip",
       "kind": "download",
       "label": "oberbeck-spheroid-drag.zip"
+    },
+    {
+      "oldPath": "generated from blender_viz/website_assets/oberbeck_spheroid/renders/oberbeck_gallery_600w.webp",
+      "newPath": "media/gallery/oberbeck_gallery_600w.webp",
+      "kind": "media",
+      "label": "Oberbeck spheroid drag gallery still"
+    },
+    {
+      "oldPath": "generated from blender_viz/website_assets/oberbeck_spheroid/renders/oberbeck_gallery_1000w.webp",
+      "newPath": "media/gallery/oberbeck_gallery_1000w.webp",
+      "kind": "media",
+      "label": "Oberbeck spheroid drag gallery still"
+    },
+    {
+      "oldPath": "generated from blender_viz/website_assets/oberbeck_spheroid/renders/oberbeck_gallery_1500w.webp",
+      "newPath": "media/gallery/oberbeck_gallery_1500w.webp",
+      "kind": "media",
+      "label": "Oberbeck spheroid drag gallery still"
+    },
+    {
+      "oldPath": "generated from blender_viz/website_assets/oberbeck_spheroid/renders/oberbeck_gallery_2000w.webp",
+      "newPath": "media/gallery/oberbeck_gallery_2000w.webp",
+      "kind": "media",
+      "label": "Oberbeck spheroid drag gallery still"
     }
   ]
 }

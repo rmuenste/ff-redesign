@@ -306,6 +306,18 @@
       "newPath": "downloads/jeffery-orbit.zip",
       "kind": "download",
       "label": "jeffery-orbit.zip"
+    },
+    {
+      "oldPath": "generated from blender_viz/website_assets/jeffery_orbit/gallery/jeffery_gallery_1200.webp",
+      "newPath": "media/gallery/jeffery_gallery_1200.webp",
+      "kind": "media",
+      "label": "Jeffery orbit gallery still"
+    },
+    {
+      "oldPath": "generated from blender_viz/website_assets/jeffery_orbit/gallery/jeffery_gallery.webp",
+      "newPath": "media/gallery/jeffery_gallery.webp",
+      "kind": "media",
+      "label": "Jeffery orbit gallery still"
     }
   ]
 }

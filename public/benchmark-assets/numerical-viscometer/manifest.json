@@ -228,6 +228,30 @@
       "newPath": "downloads/numerical-viscometer.zip",
       "kind": "download",
       "label": "numerical-viscometer.zip"
+    },
+    {
+      "oldPath": "generated from blender_viz/website_assets/numerical_viscometer/renders/viscometer_lab_600w.webp",
+      "newPath": "media/gallery/viscometer_lab_600w.webp",
+      "kind": "media",
+      "label": "Numerical viscometer gallery still"
+    },
+    {
+      "oldPath": "generated from blender_viz/website_assets/numerical_viscometer/renders/viscometer_lab_1000w.webp",
+      "newPath": "media/gallery/viscometer_lab_1000w.webp",
+      "kind": "media",
+      "label": "Numerical viscometer gallery still"
+    },
+    {
+      "oldPath": "generated from blender_viz/website_assets/numerical_viscometer/renders/viscometer_lab_1500w.webp",
+      "newPath": "media/gallery/viscometer_lab_1500w.webp",
+      "kind": "media",
+      "label": "Numerical viscometer gallery still"
+    },
+    {
+      "oldPath": "generated from blender_viz/website_assets/numerical_viscometer/renders/viscometer_lab_2000w.webp",
+      "newPath": "media/gallery/viscometer_lab_2000w.webp",
+      "kind": "media",
+      "label": "Numerical viscometer gallery still"
     }
   ]
 }

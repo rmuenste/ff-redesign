@@ -270,6 +270,24 @@
       "newPath": "downloads/dkt.zip",
       "kind": "download",
       "label": "dkt.zip"
+    },
+    {
+      "oldPath": "generated from blender_viz/website_assets/dkt_tumbling/renders/dkt_strobe_600w.webp",
+      "newPath": "media/gallery/dkt_strobe_600w.webp",
+      "kind": "media",
+      "label": "Drafting, kissing, tumbling gallery still"
+    },
+    {
+      "oldPath": "generated from blender_viz/website_assets/dkt_tumbling/renders/dkt_strobe_1000w.webp",
+      "newPath": "media/gallery/dkt_strobe_1000w.webp",
+      "kind": "media",
+      "label": "Drafting, kissing, tumbling gallery still"
+    },
+    {
+      "oldPath": "generated from blender_viz/website_assets/dkt_tumbling/renders/dkt_strobe_1500w.webp",
+      "newPath": "media/gallery/dkt_strobe_1500w.webp",
+      "kind": "media",
+      "label": "Drafting, kissing, tumbling gallery still"
     }
   ]
 }

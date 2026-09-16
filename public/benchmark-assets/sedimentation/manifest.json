@@ -538,6 +538,18 @@
       "newPath": "downloads/lubrication/sedimentation-lubrication.zip",
       "kind": "download",
       "label": "sedimentation-lubrication.zip"
+    },
+    {
+      "oldPath": "generated from blender_viz/website_assets/ten_cate_sedimentation/gallery/ten_cate_gallery_1200.webp",
+      "newPath": "media/gallery/ten_cate_gallery_1200.webp",
+      "kind": "media",
+      "label": "Sedimentation of a sphere gallery still"
+    },
+    {
+      "oldPath": "generated from blender_viz/website_assets/ten_cate_sedimentation/gallery/ten_cate_gallery.webp",
+      "newPath": "media/gallery/ten_cate_gallery.webp",
+      "kind": "media",
+      "label": "Sedimentation of a sphere gallery still"
     }
   ]
 }

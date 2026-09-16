@@ -1,0 +1,19 @@
+{
+  "x": [
+    0.5291336839893998
+  ],
+  "y": [
+    1.1700009970061935
+  ],
+  "type": "scatter",
+  "mode": "markers",
+  "name": "2b/h = 19.0",
+  "line": {
+    "color": "#f5b84b"
+  },
+  "marker": {
+    "color": "#f5b84b",
+    "symbol": "circle",
+    "size": 12
+  }
+}

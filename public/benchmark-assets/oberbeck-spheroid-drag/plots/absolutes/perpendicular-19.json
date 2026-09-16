@@ -1,0 +1,20 @@
+{
+  "x": [
+    0.5291336839893998
+  ],
+  "y": [
+    -0.9244044987434585
+  ],
+  "type": "scatter",
+  "mode": "markers",
+  "name": "Perpendicular, 2b/h = 19.0",
+  "line": {
+    "color": "#f5b84b",
+    "dash": "dot"
+  },
+  "marker": {
+    "color": "#f5b84b",
+    "symbol": "diamond",
+    "size": 12
+  }
+}

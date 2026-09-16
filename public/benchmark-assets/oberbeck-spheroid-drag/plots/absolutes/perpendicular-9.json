@@ -1,0 +1,21 @@
+{
+  "x": [
+    0.2645668419946999,
+    0.5291336839893998
+  ],
+  "y": [
+    -1.4503906079810336,
+    -1.871929167903108
+  ],
+  "type": "scatter",
+  "mode": "lines+markers",
+  "name": "Perpendicular, 2b/h = 9.5",
+  "line": {
+    "color": "#f5b84b"
+  },
+  "marker": {
+    "color": "#f5b84b",
+    "symbol": "circle",
+    "size": 12
+  }
+}

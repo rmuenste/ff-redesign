@@ -1,0 +1,20 @@
+{
+  "x": [
+    0,
+    4
+  ],
+  "y": [
+    0.01,
+    0.01
+  ],
+  "type": "scatter",
+  "mode": "lines",
+  "name": "Momentum balance, f V_cell",
+  "line": {
+    "color": "var(--fg3)",
+    "dash": "dash"
+  },
+  "marker": {
+    "color": "var(--fg3)"
+  }
+}

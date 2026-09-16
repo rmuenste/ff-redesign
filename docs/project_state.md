@@ -1,6 +1,6 @@
 # Project State
 
-Last updated: 2026-08-13
+Last updated: 2026-09-15
 
 ## Current Migration Status
 
@@ -10,6 +10,9 @@ Last updated: 2026-08-13
   - Flow Around Cylinder 3D: `/benchmarks/fac3`
   - Particle Sedimentation: `/benchmarks/particle-sedimentation`
   - Drafting-Kissing-Tumbling: `/benchmarks/drafting-kissing-tumbling`
+  - Hindered Settling: `/benchmarks/hindered-settling`
+  - Numerical Viscometer: `/benchmarks/numerical-viscometer`
+  - Oberbeck Spheroid Drag: `/benchmarks/oberbeck-spheroid-drag`
 - Still planned: none
 
 The app foundation, shared comparison engine, MathJax setup, curated asset layout,
@@ -68,6 +71,39 @@ test pins withheld-vs-published and asserts every published dt point is synced.
 Note for whoever next touches the datasheet: its `e4_l3_dt_ladder_sync` row still
 carries a "refit pending" note in `expected_source`, which the decomposition tool
 has since superseded.
+
+## Oberbeck Spheroid Drag (D6.1, first non-spherical benchmark)
+
+The campaign's first non-spherical result, published 2026-09-15 at
+`/benchmarks/oberbeck-spheroid-drag`. A prolate spheroid of aspect ratio 2 held
+fixed in the periodic Stokes cell the Hasimoto case uses, gated on the anisotropy
+ratio `R_h(perp)/R_h(par)` against Oberbeck's `Y^A/X^A = 1.14532`.
+
+`scripts/convert-oberbeck-data.mjs` re-derives the resistance functions, the
+Hasimoto fixed-point inversion, the imaged-volume correction and the window
+sensitivity in JavaScript, from per-run series curated under
+`scripts/source-data/oberbeck/` (the merge of each rundir's `particle_force.log`
+and `bulk_flow.log`). `src/data/oberbeck.test.ts` pins every derived number
+against the printed report of `tools/d61_oberbeck_analysis.py` in the FeatFloWer
+repository, so the site's own implementation cannot drift from the campaign's.
+
+The page's shape is a two-factor ladder rather than a single measurement: two
+rungs hold the body size and vary the mesh, one holds the mesh and halves the
+body. Plotting the ratio against `2a/L` — how much of the cell the body spans —
+is what makes that design legible in one frame.
+
+Two things added along the way:
+
+- A `spheroid` motif for `MeshThumb` (`src/Primitives.jsx`, `MeshShape` in
+  `src/data/types.ts`) and a matching `OberbeckSchematic`.
+- A fix in `scripts/lib/validation-ledger.mjs`: the bare-scheduler-id strip had
+  no lookbehind, and a word boundary sits after a decimal point too, so it ate
+  the fraction of a quoted semi-axis (`a=0.132283` became `a=0.`). No existing
+  ledger row changed; `src/data/oberbeck.test.ts` guards the case.
+
+D6.2 (Jeffery orbit) is deliberately not published and its datasheet rows are not
+carried in `scripts/source-data/dns/dns_validation_datasheet.csv`, which is why
+that curated copy is a subset of the campaign's rather than a mirror of it.
 
 ## Next
 

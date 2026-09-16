@@ -1,0 +1,21 @@
+{
+  "x": [
+    0.2645668419946999,
+    0.5291336839893998
+  ],
+  "y": [
+    -1.118818541743305,
+    -3.9458567277528944
+  ],
+  "type": "scatter",
+  "mode": "lines+markers",
+  "name": "Parallel, 2b/h = 9.5",
+  "line": {
+    "color": "#5fb8ff"
+  },
+  "marker": {
+    "color": "#5fb8ff",
+    "symbol": "circle",
+    "size": 12
+  }
+}

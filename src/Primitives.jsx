@@ -279,6 +279,18 @@ const ANNULUS = (() => {
   return { cx, cy, rInner: 5 * unit, rOuter: 10 * unit, rSphere: 0.5 * unit, spheres };
 })();
 
+/**
+ * Oberbeck motif: the periodic cell seen edge-on, with the prolate spheroid at
+ * its centre at the true aspect ratio of the case (a / b = 2) and the nearest
+ * axial images dashed in, which is the geometry the benchmark's residual is
+ * attributed to.
+ */
+const SPHEROID = (() => {
+  const cx = 120, cy = 80, edge = 84;
+  const b = (edge / 6) / Math.cbrt(2);
+  return { cx, cy, edge, rx: b, ry: 2 * b };
+})();
+
 const MESH_SEEDS = {
   cylinder: { shape: "cylinder", color: "var(--tu-green-500)" },
   "dkt-pair": { shape: "dkt-pair", color: "var(--tu-green-500)" },
@@ -288,6 +300,7 @@ const MESH_SEEDS = {
   sediment: { shape: "sediment", color: "var(--tu-green-500)" },
   channel: { shape: "channel", color: "var(--tu-petrol-400)" },
   annulus: { shape: "annulus", color: "var(--tu-green-500)" },
+  spheroid: { shape: "spheroid", color: "var(--tu-green-500)" },
 };
 const MESH_ORDER = ["cylinder", "bubble", "particle", "channel"];
 
@@ -415,6 +428,37 @@ export const MeshThumb = ({ variant = 0, shape, style }) => {
           <path
             d={`M${ANNULUS.cx} ${ANNULUS.cy - ANNULUS.rInner + 8} A${ANNULUS.rInner - 8} ${ANNULUS.rInner - 8} 0 0 1 ${ANNULUS.cx + ANNULUS.rInner - 8} ${ANNULUS.cy}`}
             fill="none" stroke="var(--tu-yellow-500)" strokeWidth="1.3"
+          />
+        </>
+      )}
+      {s.shape === "spheroid" && (
+        <>
+          <rect
+            x={SPHEROID.cx - SPHEROID.edge / 2} y={SPHEROID.cy - SPHEROID.edge / 2}
+            width={SPHEROID.edge} height={SPHEROID.edge}
+            fill={s.color} fillOpacity="0.06" stroke="var(--fg3)" strokeWidth="1.2" strokeDasharray="5 3"
+          />
+          {[[0, -1], [0, 1], [-1, 0], [1, 0]].map(([dx, dy]) => (
+            <ellipse
+              key={`${dx},${dy}`}
+              cx={SPHEROID.cx + dx * SPHEROID.edge} cy={SPHEROID.cy + dy * SPHEROID.edge}
+              rx={SPHEROID.rx} ry={SPHEROID.ry}
+              fill="var(--tu-orange-500)" fillOpacity="0.12"
+              stroke="var(--tu-orange-500)" strokeOpacity="0.5" strokeWidth="0.9" strokeDasharray="3 2"
+            />
+          ))}
+          <ellipse
+            cx={SPHEROID.cx} cy={SPHEROID.cy} rx={SPHEROID.rx} ry={SPHEROID.ry}
+            fill={s.color} fillOpacity="0.32" stroke={s.color} strokeWidth="1.5"
+          />
+          <line
+            x1={SPHEROID.cx - SPHEROID.edge / 2 - 14} y1={SPHEROID.cy + 22}
+            x2={SPHEROID.cx - SPHEROID.edge / 2 - 14} y2={SPHEROID.cy - 24}
+            stroke="var(--tu-yellow-500)" strokeWidth="1.4"
+          />
+          <path
+            d={`M${SPHEROID.cx - SPHEROID.edge / 2 - 18} ${SPHEROID.cy - 18} L${SPHEROID.cx - SPHEROID.edge / 2 - 14} ${SPHEROID.cy - 26} L${SPHEROID.cx - SPHEROID.edge / 2 - 10} ${SPHEROID.cy - 18} Z`}
+            fill="var(--tu-yellow-500)"
           />
         </>
       )}

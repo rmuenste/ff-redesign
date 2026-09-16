@@ -1,0 +1,345 @@
+{
+  "benchmarkId": "oberbeck-spheroid-drag",
+  "entries": [
+    {
+      "oldPath": "scripts/source-data/oberbeck/run_*.csv",
+      "newPath": "plots/ratio/res-9.json",
+      "metric": "ratio",
+      "seriesGroupId": "res-9",
+      "kind": "code",
+      "label": "Anisotropy ratio at 2b/h = 9.5",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/oberbeck/run_*.csv",
+      "newPath": "plots/ratio/res-19.json",
+      "metric": "ratio",
+      "seriesGroupId": "res-19",
+      "kind": "code",
+      "label": "Anisotropy ratio at 2b/h = 19.0",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "generated from the Oberbeck resistance functions",
+      "newPath": "plots/ratio/oberbeck.json",
+      "metric": "ratio",
+      "seriesGroupId": "oberbeck",
+      "kind": "code",
+      "label": "Unbounded Oberbeck anisotropy",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "generated from the Oberbeck resistance functions",
+      "newPath": "plots/ratio/band.json",
+      "metric": "ratio",
+      "seriesGroupId": "band",
+      "kind": "code",
+      "label": "Primary gate band, +/- 2%",
+      "sourceShape": "trace-array",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/oberbeck/run_*.csv",
+      "newPath": "plots/absolutes/parallel-9.json",
+      "metric": "absolutes",
+      "seriesGroupId": "parallel-9",
+      "kind": "code",
+      "label": "parallel absolute deviation at 2b/h = 9.5",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/oberbeck/run_*.csv",
+      "newPath": "plots/absolutes/parallel-19.json",
+      "metric": "absolutes",
+      "seriesGroupId": "parallel-19",
+      "kind": "code",
+      "label": "parallel absolute deviation at 2b/h = 19.0",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/oberbeck/run_*.csv",
+      "newPath": "plots/absolutes/perpendicular-9.json",
+      "metric": "absolutes",
+      "seriesGroupId": "perpendicular-9",
+      "kind": "code",
+      "label": "perpendicular absolute deviation at 2b/h = 9.5",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/oberbeck/run_*.csv",
+      "newPath": "plots/absolutes/perpendicular-19.json",
+      "metric": "absolutes",
+      "seriesGroupId": "perpendicular-19",
+      "kind": "code",
+      "label": "perpendicular absolute deviation at 2b/h = 19.0",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "generated from the Oberbeck resistance functions",
+      "newPath": "plots/absolutes/exact.json",
+      "metric": "absolutes",
+      "seriesGroupId": "exact",
+      "kind": "code",
+      "label": "Oberbeck absolute targets",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "generated from the Oberbeck resistance functions",
+      "newPath": "plots/absolutes/band.json",
+      "metric": "absolutes",
+      "seriesGroupId": "band",
+      "kind": "code",
+      "label": "Secondary gate band, +/- 3%",
+      "sourceShape": "trace-array",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/oberbeck/run_v1.csv",
+      "newPath": "plots/force/l3-full-parallel.json",
+      "metric": "force",
+      "seriesGroupId": "parallel",
+      "kind": "code",
+      "label": "Drag history, parallel, L3 full",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/oberbeck/run_v1.csv",
+      "newPath": "plots/velocity/l3-full-parallel.json",
+      "metric": "velocity",
+      "seriesGroupId": "parallel",
+      "kind": "code",
+      "label": "Superficial velocity history, parallel, L3 full",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/oberbeck/run_v2.csv",
+      "newPath": "plots/force/l3-full-perpendicular.json",
+      "metric": "force",
+      "seriesGroupId": "perpendicular",
+      "kind": "code",
+      "label": "Drag history, perpendicular, L3 full",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/oberbeck/run_v2.csv",
+      "newPath": "plots/velocity/l3-full-perpendicular.json",
+      "metric": "velocity",
+      "seriesGroupId": "perpendicular",
+      "kind": "code",
+      "label": "Superficial velocity history, perpendicular, L3 full",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "generated from the driving force and the cell volume",
+      "newPath": "plots/force/l3-full-balance.json",
+      "metric": "force",
+      "seriesGroupId": "balance",
+      "kind": "code",
+      "label": "Momentum-balance drag, L3 full",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/oberbeck/run_v4a.csv",
+      "newPath": "plots/force/l4-full-parallel.json",
+      "metric": "force",
+      "seriesGroupId": "parallel",
+      "kind": "code",
+      "label": "Drag history, parallel, L4 full",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/oberbeck/run_v4a.csv",
+      "newPath": "plots/velocity/l4-full-parallel.json",
+      "metric": "velocity",
+      "seriesGroupId": "parallel",
+      "kind": "code",
+      "label": "Superficial velocity history, parallel, L4 full",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/oberbeck/run_v4b.csv",
+      "newPath": "plots/force/l4-full-perpendicular.json",
+      "metric": "force",
+      "seriesGroupId": "perpendicular",
+      "kind": "code",
+      "label": "Drag history, perpendicular, L4 full",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/oberbeck/run_v4b.csv",
+      "newPath": "plots/velocity/l4-full-perpendicular.json",
+      "metric": "velocity",
+      "seriesGroupId": "perpendicular",
+      "kind": "code",
+      "label": "Superficial velocity history, perpendicular, L4 full",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "generated from the driving force and the cell volume",
+      "newPath": "plots/force/l4-full-balance.json",
+      "metric": "force",
+      "seriesGroupId": "balance",
+      "kind": "code",
+      "label": "Momentum-balance drag, L4 full",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/oberbeck/run_v5a.csv",
+      "newPath": "plots/force/l4-half-parallel.json",
+      "metric": "force",
+      "seriesGroupId": "parallel",
+      "kind": "code",
+      "label": "Drag history, parallel, L4 half",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/oberbeck/run_v5a.csv",
+      "newPath": "plots/velocity/l4-half-parallel.json",
+      "metric": "velocity",
+      "seriesGroupId": "parallel",
+      "kind": "code",
+      "label": "Superficial velocity history, parallel, L4 half",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/oberbeck/run_v5b.csv",
+      "newPath": "plots/force/l4-half-perpendicular.json",
+      "metric": "force",
+      "seriesGroupId": "perpendicular",
+      "kind": "code",
+      "label": "Drag history, perpendicular, L4 half",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/oberbeck/run_v5b.csv",
+      "newPath": "plots/velocity/l4-half-perpendicular.json",
+      "metric": "velocity",
+      "seriesGroupId": "perpendicular",
+      "kind": "code",
+      "label": "Superficial velocity history, perpendicular, L4 half",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "generated from the driving force and the cell volume",
+      "newPath": "plots/force/l4-half-balance.json",
+      "metric": "force",
+      "seriesGroupId": "balance",
+      "kind": "code",
+      "label": "Momentum-balance drag, L4 half",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/oberbeck/run_v0.csv",
+      "newPath": "downloads/run_v0.csv",
+      "kind": "download",
+      "label": "run_v0.csv"
+    },
+    {
+      "oldPath": "scripts/source-data/oberbeck/run_v1.csv",
+      "newPath": "downloads/run_v1.csv",
+      "kind": "download",
+      "label": "run_v1.csv"
+    },
+    {
+      "oldPath": "scripts/source-data/oberbeck/run_v2.csv",
+      "newPath": "downloads/run_v2.csv",
+      "kind": "download",
+      "label": "run_v2.csv"
+    },
+    {
+      "oldPath": "scripts/source-data/oberbeck/run_v3b.csv",
+      "newPath": "downloads/run_v3b.csv",
+      "kind": "download",
+      "label": "run_v3b.csv"
+    },
+    {
+      "oldPath": "scripts/source-data/oberbeck/run_v4a.csv",
+      "newPath": "downloads/run_v4a.csv",
+      "kind": "download",
+      "label": "run_v4a.csv"
+    },
+    {
+      "oldPath": "scripts/source-data/oberbeck/run_v4b.csv",
+      "newPath": "downloads/run_v4b.csv",
+      "kind": "download",
+      "label": "run_v4b.csv"
+    },
+    {
+      "oldPath": "scripts/source-data/oberbeck/run_v5a.csv",
+      "newPath": "downloads/run_v5a.csv",
+      "kind": "download",
+      "label": "run_v5a.csv"
+    },
+    {
+      "oldPath": "scripts/source-data/oberbeck/run_v5b.csv",
+      "newPath": "downloads/run_v5b.csv",
+      "kind": "download",
+      "label": "run_v5b.csv"
+    },
+    {
+      "oldPath": "scripts/source-data/oberbeck/runs.csv",
+      "newPath": "downloads/runs.csv",
+      "kind": "download",
+      "label": "runs.csv"
+    },
+    {
+      "oldPath": "scripts/source-data/oberbeck/rungs.csv",
+      "newPath": "downloads/rungs.csv",
+      "kind": "download",
+      "label": "rungs.csv"
+    },
+    {
+      "oldPath": "derived from the run series by scripts/convert-oberbeck-data.mjs",
+      "newPath": "downloads/gates.csv",
+      "kind": "download",
+      "label": "gates.csv"
+    },
+    {
+      "oldPath": "derived from the run series by scripts/convert-oberbeck-data.mjs",
+      "newPath": "downloads/window_sensitivity.csv",
+      "kind": "download",
+      "label": "window_sensitivity.csv"
+    },
+    {
+      "oldPath": "scripts/source-data/dns/dns_validation_datasheet.csv",
+      "newPath": "downloads/dns_validation_datasheet.csv",
+      "kind": "download",
+      "label": "dns_validation_datasheet.csv"
+    },
+    {
+      "oldPath": "scripts/source-data/dns/dns_validation_datasheet.csv",
+      "newPath": "downloads/oberbeck_validation_rows.csv",
+      "kind": "download",
+      "label": "oberbeck_validation_rows.csv"
+    },
+    {
+      "oldPath": "generated from oberbeck-spheroid-drag downloads",
+      "newPath": "downloads/oberbeck-spheroid-drag.zip",
+      "kind": "download",
+      "label": "oberbeck-spheroid-drag.zip"
+    }
+  ]
+}

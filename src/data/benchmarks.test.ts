@@ -19,7 +19,8 @@ describe("benchmark registry", () => {
       dkt: "dkt-pair",
       "hindered-settling": "particle",
       "numerical-viscometer": "annulus",
-      "oberbeck-spheroid-drag": "spheroid"
+      "oberbeck-spheroid-drag": "spheroid",
+      "jeffery-orbit": "spheroid-shear"
     });
   });
 
@@ -32,6 +33,7 @@ describe("benchmark registry", () => {
     expect(getBenchmarkBySlug("hindered-settling")?.id).toBe("hindered-settling");
     expect(getBenchmarkBySlug("numerical-viscometer")?.id).toBe("numerical-viscometer");
     expect(getBenchmarkBySlug("oberbeck-spheroid-drag")?.id).toBe("oberbeck-spheroid-drag");
+    expect(getBenchmarkBySlug("jeffery-orbit")?.id).toBe("jeffery-orbit");
     expect(getBenchmarkBySlug("does-not-exist")).toBeUndefined();
   });
 
@@ -52,7 +54,8 @@ describe("benchmark registry", () => {
       "dkt",
       "hindered-settling",
       "numerical-viscometer",
-      "oberbeck-spheroid-drag"
+      "oberbeck-spheroid-drag",
+      "jeffery-orbit"
     ]);
     expect(benchmarks.filter(b => b.status === "planned").map(b => b.id)).toEqual([]);
   });

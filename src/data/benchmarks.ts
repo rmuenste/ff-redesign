@@ -159,6 +159,32 @@ export const benchmarks: BenchmarkMeta[] = [
     ],
     comparisonAxis: "level",
     status: "active"
+  },
+  {
+    id: "jeffery-orbit",
+    slug: "jeffery-orbit",
+    title: "Jeffery Orbit of a Prolate Spheroid in Simple Shear",
+    shortTitle: "Jeffery Orbit",
+    tag: "JEF",
+    suite: "DNS validation",
+    model: "Particulate",
+    dimension: "3D",
+    reynolds: "0.05",
+    levels: 2,
+    summary:
+      "A prolate spheroid tumbling freely in planar Couette flow, gated on the period and the whole rate waveform of Jeffery's 1922 closed form, with a wall-clearance rung that measures the boundary systematic instead of assuming it away.",
+    thumb: "spheroid-shear",
+    tabs: [
+      "Introduction",
+      "Definition",
+      "The Orbit",
+      "Wall Clearance",
+      "Sphere Control",
+      "Validation",
+      "Reference Data"
+    ],
+    comparisonAxis: "level",
+    status: "active"
   }
 ];
 

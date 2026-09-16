@@ -1,6 +1,6 @@
 # Project State
 
-Last updated: 2026-09-15
+Last updated: 2026-09-16
 
 ## Current Migration Status
 
@@ -13,6 +13,7 @@ Last updated: 2026-09-15
   - Hindered Settling: `/benchmarks/hindered-settling`
   - Numerical Viscometer: `/benchmarks/numerical-viscometer`
   - Oberbeck Spheroid Drag: `/benchmarks/oberbeck-spheroid-drag`
+  - Jeffery Orbit: `/benchmarks/jeffery-orbit`
 - Still planned: none
 
 The app foundation, shared comparison engine, MathJax setup, curated asset layout,
@@ -101,9 +102,52 @@ Two things added along the way:
   the fraction of a quoted semi-axis (`a=0.132283` became `a=0.`). No existing
   ledger row changed; `src/data/oberbeck.test.ts` guards the case.
 
-D6.2 (Jeffery orbit) is deliberately not published and its datasheet rows are not
-carried in `scripts/source-data/dns/dns_validation_datasheet.csv`, which is why
-that curated copy is a subset of the campaign's rather than a mirror of it.
+## Jeffery Orbit (D6.2, second non-spherical benchmark)
+
+The campaign's second non-spherical family and the first live test of free
+rotation, published 2026-09-16 at `/benchmarks/jeffery-orbit`. A prolate spheroid
+of aspect ratio 2 tumbling in a planar Couette box, gated on Jeffery's (1922)
+closed-form period `T gammadot = 15.70796`, on the 4:1 rate modulation, and on
+the orientation-resolved waveform.
+
+`scripts/convert-jeffery-data.mjs` re-derives the unwrapped in-plane angle, the
+period from its pi-crossings, the rate waveform and its orientation bins, the
+in-plane residual and the two wall extrapolations in JavaScript, from the
+per-step `DNS_PART_AXIS` traces curated under `scripts/source-data/jeffery/`.
+`src/data/jeffery.test.ts` pins every derived number against the printed report
+of `tools/d62_jeffery_analysis.py` in the FeatFloWer repository — down to the
+individual pi-crossing times — so the site's own implementation cannot drift from
+the campaign's.
+
+Two structural points worth keeping:
+
+- The page's shape is the wall-clearance ladder, not a single measurement. The
+  default box (walls eight semi-major axes out) gives `+0.30%` and the
+  half-clearance rung `+0.81%`; the `+0.51 pp` shift is the wall systematic,
+  extrapolated to zero clearance as a bracket, `+0.23%` on an `(a/l)^3` image
+  law and `+0.13%` on `(a/l)^2`.
+- The analytic overlay is anchored at the first sample and then runs on the
+  THEORETICAL period rather than a refit, so a period error accumulates into a
+  visible phase lag. That is what lets the clock effect (period) be told apart
+  from a physics error (waveform), and it is the reason the rate-against-time and
+  rate-against-orientation frames are offered side by side in one panel.
+
+Also added: a `spheroid-shear` motif for `MeshThumb` (`src/Primitives.jsx`,
+`MeshShape` in `src/data/types.ts`) and a matching `JefferySchematic` drawing the
+box at both clearances to scale.
+
+Thin-axis resolution comes from each run's own `DNS_RESOLUTION` record (`2b /
+h_min`, 10.4 at H=8 and 10.2 at H=4), not from the case specification's pre-mesh
+estimate of 9.5, which the campaign corrected in row `d62_resolution_pinned`. The
+two boxes therefore differ by 1.6% rather than 7%, and in the other direction.
+That row is published in the ledger alongside the four gate rows, because the
+ledger renders the campaign's prose verbatim and the clearance row's own caveat
+still quotes the superseded figure.
+
+The five D6.2 rows were APPENDED to
+`scripts/source-data/dns/dns_validation_datasheet.csv` rather than refreshing the
+whole curated copy, which remains a subset of the campaign's datasheet rather
+than a mirror of it.
 
 ## Next
 

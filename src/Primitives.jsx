@@ -291,6 +291,18 @@ const SPHEROID = (() => {
   return { cx, cy, edge, rx: b, ry: 2 * b };
 })();
 
+/**
+ * Jeffery motif: the planar Couette box seen in the shear plane, with the same
+ * prolate spheroid drawn at four phases of one tumble. The walls move in
+ * opposite directions and the profile between them is linear, which is the whole
+ * fixture; the fan of outlines is the observable.
+ */
+const SHEAR_BOX = (() => {
+  const cx = 120, cy = 80, width = 180, height = 70;
+  const a = 17;
+  return { cx, cy, width, height, rx: a, ry: a / 2, phases: [0, 45, 90, 135] };
+})();
+
 const MESH_SEEDS = {
   cylinder: { shape: "cylinder", color: "var(--tu-green-500)" },
   "dkt-pair": { shape: "dkt-pair", color: "var(--tu-green-500)" },
@@ -301,6 +313,7 @@ const MESH_SEEDS = {
   channel: { shape: "channel", color: "var(--tu-petrol-400)" },
   annulus: { shape: "annulus", color: "var(--tu-green-500)" },
   spheroid: { shape: "spheroid", color: "var(--tu-green-500)" },
+  "spheroid-shear": { shape: "spheroid-shear", color: "var(--tu-green-500)" },
 };
 const MESH_ORDER = ["cylinder", "bubble", "particle", "channel"];
 
@@ -459,6 +472,43 @@ export const MeshThumb = ({ variant = 0, shape, style }) => {
           <path
             d={`M${SPHEROID.cx - SPHEROID.edge / 2 - 18} ${SPHEROID.cy - 18} L${SPHEROID.cx - SPHEROID.edge / 2 - 14} ${SPHEROID.cy - 26} L${SPHEROID.cx - SPHEROID.edge / 2 - 10} ${SPHEROID.cy - 18} Z`}
             fill="var(--tu-yellow-500)"
+          />
+        </>
+      )}
+      {s.shape === "spheroid-shear" && (
+        <>
+          <rect
+            x={SHEAR_BOX.cx - SHEAR_BOX.width / 2} y={SHEAR_BOX.cy - SHEAR_BOX.height / 2}
+            width={SHEAR_BOX.width} height={SHEAR_BOX.height}
+            fill={s.color} fillOpacity="0.05" stroke="var(--fg3)" strokeWidth="1" strokeDasharray="5 3"
+          />
+          {[-1, 1].map(side => (
+            <line
+              key={side}
+              x1={SHEAR_BOX.cx - SHEAR_BOX.width / 2} y1={SHEAR_BOX.cy + side * SHEAR_BOX.height / 2}
+              x2={SHEAR_BOX.cx + SHEAR_BOX.width / 2} y2={SHEAR_BOX.cy + side * SHEAR_BOX.height / 2}
+              stroke="var(--fg3)" strokeWidth="2.4"
+            />
+          ))}
+          {[-1, -0.5, 0.5, 1].map(f => (
+            <line
+              key={f}
+              x1={SHEAR_BOX.cx - SHEAR_BOX.width / 2 + 10} y1={SHEAR_BOX.cy - f * SHEAR_BOX.height / 2}
+              x2={SHEAR_BOX.cx - SHEAR_BOX.width / 2 + 10 + f * 26} y2={SHEAR_BOX.cy - f * SHEAR_BOX.height / 2}
+              stroke="var(--tu-yellow-500)" strokeWidth="1.3"
+            />
+          ))}
+          {SHEAR_BOX.phases.slice(1).map(deg => (
+            <ellipse
+              key={deg}
+              cx={SHEAR_BOX.cx} cy={SHEAR_BOX.cy} rx={SHEAR_BOX.rx} ry={SHEAR_BOX.ry}
+              transform={`rotate(${deg} ${SHEAR_BOX.cx} ${SHEAR_BOX.cy})`}
+              fill="none" stroke={s.color} strokeOpacity="0.4" strokeWidth="1" strokeDasharray="3 2"
+            />
+          ))}
+          <ellipse
+            cx={SHEAR_BOX.cx} cy={SHEAR_BOX.cy} rx={SHEAR_BOX.rx} ry={SHEAR_BOX.ry}
+            fill={s.color} fillOpacity="0.32" stroke={s.color} strokeWidth="1.5"
           />
         </>
       )}

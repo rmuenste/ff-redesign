@@ -1,0 +1,450 @@
+{
+  "source": "scripts/source-data/jeffery",
+  "generatedBy": "scripts/convert-jeffery-data.mjs",
+  "seamWindow": 0.6,
+  "orientBins": 12,
+  "markerTarget": 500,
+  "jeffery": {
+    "periodGamma": 15.707963267948966,
+    "modulation": 4,
+    "slow": 0.04,
+    "fast": 0.16
+  },
+  "control": {
+    "run": "v0b",
+    "steadyFrom": 6,
+    "samples": 400,
+    "spin": -0.5049573005604922,
+    "exact": -0.5,
+    "deviation": 0.009914601120984301,
+    "band": 0.01,
+    "modulation": 1.0023785717213909,
+    "maxAxisY": 3.84243481e-9
+  },
+  "wall": {
+    "shift": 0.005108119955178125,
+    "models": [
+      {
+        "id": "cubic",
+        "label": "Image dipole, (a/l)^3",
+        "exponent": 3,
+        "slope": 0.37362248815017146,
+        "intercept": 0.0022788754918561882
+      },
+      {
+        "id": "square",
+        "label": "Conservative, (a/l)^2",
+        "exponent": 2,
+        "slope": 0.10897322571046668,
+        "intercept": 0.0013059002622984501
+      }
+    ]
+  },
+  "runs": [
+    {
+      "id": "v0b",
+      "label": "Sphere spin control, r_e = 1",
+      "short": "Sphere control",
+      "role": "control",
+      "case": "d62_v0b_spin",
+      "a": 0.25,
+      "b": 0.25,
+      "re": 1,
+      "gammadot": 0.2,
+      "dt": 0.01,
+      "tmin": 1,
+      "seams": [],
+      "segments": 1,
+      "box": {
+        "x": 8,
+        "y": 6,
+        "h": 8
+      },
+      "clearance": 4,
+      "clearanceAxes": 16,
+      "imageParameter": 0.0625,
+      "coarseBox": "20x16x21",
+      "hMin": 0.048146,
+      "thinAxisResolution": 10.38507871889669,
+      "insideDofs": 5006,
+      "reynolds": 0.0125,
+      "wallSpeed": 0.8,
+      "analysis": {
+        "samples": 901,
+        "tStart": 1.00999998,
+        "tEnd": 10.0099998,
+        "halfTurns": 0.28952914820119063,
+        "sense": -1,
+        "senseExpected": -1,
+        "crossings": [],
+        "halfPeriods": [],
+        "period": null,
+        "periodGamma": null,
+        "periodGammaJeffery": 12.566370614359172,
+        "periodDeviation": null,
+        "rate": {
+          "min": 0.1009890676641889,
+          "max": 0.10122927740470458,
+          "tAtMin": 9.99999978,
+          "tAtMax": 1.45999997,
+          "slowJeffery": 0.1,
+          "fastJeffery": 0.1,
+          "modulation": 1.0023785717213909,
+          "modulationJeffery": 1,
+          "modulationDeviation": 0.0023785717213908875
+        },
+        "orient": {
+          "bins": [
+            {
+              "bin": 8,
+              "centre": 2.2252947962927703,
+              "measured": 0.10099029787484204,
+              "expected": 0.1,
+              "count": 221
+            },
+            {
+              "bin": 9,
+              "centre": 2.4870941840919194,
+              "measured": 0.10099500446801277,
+              "expected": 0.10000000000000003,
+              "count": 260
+            },
+            {
+              "bin": 10,
+              "centre": 2.748893571891069,
+              "measured": 0.101170519341814,
+              "expected": 0.1,
+              "count": 258
+            },
+            {
+              "bin": 11,
+              "centre": 3.010692959690218,
+              "measured": 0.1011104615437887,
+              "expected": 0.1,
+              "count": 160
+            }
+          ],
+          "placement": null,
+          "placementJeffery": 1,
+          "placementDeviation": null,
+          "rmsResidual": 0.005346707013478108
+        },
+        "maxAxisY": 3.84243481e-9
+      }
+    },
+    {
+      "id": "v1b",
+      "label": "Jeffery orbit, wall clearance 8a",
+      "short": "H = 8",
+      "role": "orbit",
+      "case": "d62_v1b_orbit",
+      "a": 0.5,
+      "b": 0.25,
+      "re": 2,
+      "gammadot": 0.2,
+      "dt": 0.01,
+      "tmin": 0.5,
+      "seams": [
+        40.01,
+        80.01
+      ],
+      "segments": 3,
+      "box": {
+        "x": 8,
+        "y": 6,
+        "h": 8
+      },
+      "clearance": 4,
+      "clearanceAxes": 8,
+      "imageParameter": 0.125,
+      "coarseBox": "20x16x21",
+      "hMin": 0.048146,
+      "thinAxisResolution": 10.38507871889669,
+      "insideDofs": 10010,
+      "reynolds": 0.05,
+      "wallSpeed": 0.8,
+      "analysis": {
+        "samples": 11833,
+        "tStart": 0.509999989,
+        "tEnd": 120.009999,
+        "halfTurns": 3.0171533603299876,
+        "sense": -1,
+        "senseExpected": -1,
+        "crossings": [
+          39.49487921208365,
+          78.88183560007624,
+          118.27099098629445
+        ],
+        "halfPeriods": [
+          39.38695638799259,
+          39.389155386218206
+        ],
+        "period": 78.77611177421079,
+        "periodGamma": 15.755222354842159,
+        "periodGammaJeffery": 15.707963267948966,
+        "periodDeviation": 0.003008606914024492,
+        "rate": {
+          "min": 0.03952007471263981,
+          "max": 0.15937447039748592,
+          "tAtMin": 0.519999988,
+          "tAtMax": 59.3099996,
+          "slowJeffery": 0.04,
+          "fastJeffery": 0.16,
+          "modulation": 4.032747193833436,
+          "modulationJeffery": 4,
+          "modulationDeviation": 0.008186798458359013
+        },
+        "orient": {
+          "bins": [
+            {
+              "bin": 0,
+              "centre": 0.1308996938995747,
+              "measured": 0.0424695646370274,
+              "expected": 0.0420444504226559,
+              "count": 1850
+            },
+            {
+              "bin": 1,
+              "centre": 0.39269908169872414,
+              "measured": 0.05734246860977017,
+              "expected": 0.057573593128807145,
+              "count": 1369
+            },
+            {
+              "bin": 2,
+              "centre": 0.6544984694978736,
+              "measured": 0.08379496365644508,
+              "expected": 0.08447085729384876,
+              "count": 938
+            },
+            {
+              "bin": 3,
+              "centre": 0.916297857297023,
+              "measured": 0.11490889769237655,
+              "expected": 0.11552914270615125,
+              "count": 684
+            },
+            {
+              "bin": 4,
+              "centre": 1.1780972450961724,
+              "measured": 0.14189249093913883,
+              "expected": 0.14242640687119285,
+              "count": 553
+            },
+            {
+              "bin": 5,
+              "centre": 1.4398966328953218,
+              "measured": 0.15681027870335418,
+              "expected": 0.1579555495773441,
+              "count": 501
+            },
+            {
+              "bin": 6,
+              "centre": 1.7016960206944713,
+              "measured": 0.1563738067279811,
+              "expected": 0.1579555495773441,
+              "count": 502
+            },
+            {
+              "bin": 7,
+              "centre": 1.9634954084936205,
+              "measured": 0.1408761576041987,
+              "expected": 0.14242640687119287,
+              "count": 557
+            },
+            {
+              "bin": 8,
+              "centre": 2.2252947962927703,
+              "measured": 0.11404812038860826,
+              "expected": 0.11552914270615125,
+              "count": 690
+            },
+            {
+              "bin": 9,
+              "centre": 2.4870941840919194,
+              "measured": 0.0834349056460851,
+              "expected": 0.0844708572938488,
+              "count": 940
+            },
+            {
+              "bin": 10,
+              "centre": 2.748893571891069,
+              "measured": 0.05725602241546861,
+              "expected": 0.057573593128807166,
+              "count": 1372
+            },
+            {
+              "bin": 11,
+              "centre": 3.010692959690218,
+              "measured": 0.04239638700343793,
+              "expected": 0.04204445042265592,
+              "count": 1871
+            }
+          ],
+          "placement": 0.2709778548408136,
+          "placementJeffery": 0.2661790012136834,
+          "placementDeviation": 0.01802867095168703,
+          "rmsResidual": 0.0048021056557300155
+        },
+        "maxAxisY": 1.50228126e-7
+      }
+    },
+    {
+      "id": "v2",
+      "label": "Jeffery orbit, wall clearance 4a",
+      "short": "H = 4",
+      "role": "orbit",
+      "case": "d62_v2_clearance",
+      "a": 0.5,
+      "b": 0.25,
+      "re": 2,
+      "gammadot": 0.2,
+      "dt": 0.01,
+      "tmin": 0.5,
+      "seams": [
+        50.01,
+        100.01
+      ],
+      "segments": 3,
+      "box": {
+        "x": 8,
+        "y": 6,
+        "h": 4
+      },
+      "clearance": 2,
+      "clearanceAxes": 4,
+      "imageParameter": 0.25,
+      "coarseBox": "20x16x10",
+      "hMin": 0.048936,
+      "thinAxisResolution": 10.217426843223802,
+      "insideDofs": 9530,
+      "reynolds": 0.05,
+      "wallSpeed": 0.4,
+      "analysis": {
+        "samples": 11833,
+        "tStart": 0.509999989,
+        "tEnd": 120.01,
+        "halfTurns": 3.0093401421196524,
+        "sense": -1,
+        "senseExpected": -1,
+        "crossings": [
+          39.685835073664876,
+          79.27391754479761,
+          118.86313765099673
+        ],
+        "halfPeriods": [
+          39.588082471132736,
+          39.58922010619912
+        ],
+        "period": 79.17730257733186,
+        "periodGamma": 15.835460515466373,
+        "periodGammaJeffery": 15.707963267948966,
+        "periodDeviation": 0.008116726869202617,
+        "rate": {
+          "min": 0.039280747218365185,
+          "max": 0.15974292873374,
+          "tAtMin": 0.519999988,
+          "tAtMax": 99.1399989,
+          "slowJeffery": 0.04,
+          "fastJeffery": 0.16,
+          "modulation": 4.0666978111621646,
+          "modulationJeffery": 4,
+          "modulationDeviation": 0.01667445279054114
+        },
+        "orient": {
+          "bins": [
+            {
+              "bin": 0,
+              "centre": 0.1308996938995747,
+              "measured": 0.042024819265625325,
+              "expected": 0.0420444504226559,
+              "count": 1869
+            },
+            {
+              "bin": 1,
+              "centre": 0.39269908169872414,
+              "measured": 0.05699595394117077,
+              "expected": 0.057573593128807145,
+              "count": 1378
+            },
+            {
+              "bin": 2,
+              "centre": 0.6544984694978736,
+              "measured": 0.08367802636430534,
+              "expected": 0.08447085729384876,
+              "count": 938
+            },
+            {
+              "bin": 3,
+              "centre": 0.916297857297023,
+              "measured": 0.11491518308929304,
+              "expected": 0.11552914270615125,
+              "count": 684
+            },
+            {
+              "bin": 4,
+              "centre": 1.1780972450961724,
+              "measured": 0.14196319138436617,
+              "expected": 0.14242640687119285,
+              "count": 553
+            },
+            {
+              "bin": 5,
+              "centre": 1.4398966328953218,
+              "measured": 0.15744332053017207,
+              "expected": 0.1579555495773441,
+              "count": 444
+            },
+            {
+              "bin": 6,
+              "centre": 1.7016960206944713,
+              "measured": 0.15679188064141897,
+              "expected": 0.1579555495773441,
+              "count": 500
+            },
+            {
+              "bin": 7,
+              "centre": 1.9634954084936205,
+              "measured": 0.14089212817265442,
+              "expected": 0.14242640687119287,
+              "count": 558
+            },
+            {
+              "bin": 8,
+              "centre": 2.2252947962927703,
+              "measured": 0.11398683765175603,
+              "expected": 0.11552914270615125,
+              "count": 688
+            },
+            {
+              "bin": 9,
+              "centre": 2.4870941840919194,
+              "measured": 0.08330103794686639,
+              "expected": 0.0844708572938488,
+              "count": 939
+            },
+            {
+              "bin": 10,
+              "centre": 2.748893571891069,
+              "measured": 0.056385759234095306,
+              "expected": 0.057573593128807166,
+              "count": 1332
+            },
+            {
+              "bin": 11,
+              "centre": 3.010692959690218,
+              "measured": 0.041870645876045276,
+              "expected": 0.04204445042265592,
+              "count": 1944
+            }
+          ],
+          "placement": 0.2669830268183694,
+          "placementJeffery": 0.2661790012136834,
+          "placementDeviation": 0.0030206199625812946,
+          "rmsResidual": 0.0047242730869102145
+        },
+        "maxAxisY": 1.4829866e-8
+      }
+    }
+  ]
+}

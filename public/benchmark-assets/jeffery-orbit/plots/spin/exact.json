@@ -1,0 +1,20 @@
+{
+  "x": [
+    1.00999998,
+    10.0099998
+  ],
+  "y": [
+    -0.5,
+    -0.5
+  ],
+  "type": "scatter",
+  "mode": "lines",
+  "name": "Exact −1/2",
+  "line": {
+    "color": "var(--fg1)",
+    "dash": "dash"
+  },
+  "marker": {
+    "color": "var(--fg1)"
+  }
+}

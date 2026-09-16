@@ -5,6 +5,7 @@ import { dktDownloads } from "./dkt";
 import { fac3Downloads } from "./fac3";
 import generatedIndex from "./generated/reference-index.json";
 import { hinderedDownloads } from "./hindered-settling";
+import { jefferyDownloads } from "./jeffery";
 import { viscometerDownloads } from "./numerical-viscometer";
 import { oberbeckDownloads } from "./oberbeck";
 import { rb2Downloads } from "./rb2";
@@ -27,7 +28,8 @@ const curatedDownloads: Record<string, DownloadItem[]> = {
   dkt: dktDownloads,
   "hindered-settling": hinderedDownloads,
   "numerical-viscometer": viscometerDownloads,
-  "oberbeck-spheroid-drag": oberbeckDownloads
+  "oberbeck-spheroid-drag": oberbeckDownloads,
+  "jeffery-orbit": jefferyDownloads
 };
 
 function basename(path: string) {

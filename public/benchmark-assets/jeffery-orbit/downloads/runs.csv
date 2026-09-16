@@ -1,0 +1,4 @@
+run,label,short,role,case,a,b,re,gammadot,box_x,box_y,box_h,coarse_box,h_min,inside_dofs,dt,tmin,seams,segments,rundir
+v0b,"Sphere spin control, r_e = 1","Sphere control",control,d62_v0b_spin,0.25,0.25,1,0.2,8,6,8,20x16x21,0.048146,5006,0.01,1,,1,q2p1_dns_rundir_d62_v0b
+v1b,"Jeffery orbit, wall clearance 8a","H = 8",orbit,d62_v1b_orbit,0.5,0.25,2,0.2,8,6,8,20x16x21,0.048146,10010,0.01,0.5,"40.01,80.01",3,q2p1_dns_rundir_d62_v1b
+v2,"Jeffery orbit, wall clearance 4a","H = 4",orbit,d62_v2_clearance,0.5,0.25,2,0.2,8,6,4,20x16x10,0.048936,9530,0.01,0.5,"50.01,100.01",3,q2p1_dns_rundir_d62_v2

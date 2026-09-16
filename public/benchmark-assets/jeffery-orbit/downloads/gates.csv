@@ -1,0 +1,4 @@
+run,case,aspect_ratio,box_height,clearance_semi_major_axes,h_min,thin_axis_resolution,inside_dofs,T_gammadot,T_gammadot_jeffery,period_deviation,modulation,modulation_deviation,orientation_placement,placement_deviation,rms_waveform_residual,max_axis_y
+v0b,d62_v0b_spin,1,8,16,0.048146,10.385,5006,n/a,12.566371,n/a,1.0024,2.378572e-3,n/a,n/a,5.346707e-3,3.842435e-9
+v1b,d62_v1b_orbit,2,8,8,0.048146,10.385,10010,15.755222,15.707963,3.008607e-3,4.0327,8.186798e-3,0.270978,1.802867e-2,4.802106e-3,1.502281e-7
+v2,d62_v2_clearance,2,4,4,0.048936,10.217,9530,15.835461,15.707963,8.116727e-3,4.0667,1.667445e-2,0.266983,3.020620e-3,4.724273e-3,1.482987e-8

@@ -8,6 +8,7 @@ import { Nav } from "./Nav.jsx";
 import { DraftingKissingTumblingPage } from "./pages/DraftingKissingTumblingPage";
 import { FlowAroundCylinderPage } from "./pages/FlowAroundCylinderPage";
 import { HinderedSettlingPage } from "./pages/HinderedSettlingPage";
+import { JefferyOrbitPage } from "./pages/JefferyOrbitPage";
 import { NumericalViscometerPage } from "./pages/NumericalViscometerPage";
 import { OberbeckSpheroidDragPage } from "./pages/OberbeckSpheroidDragPage";
 import { ParticleSedimentationPage } from "./pages/ParticleSedimentationPage";
@@ -26,8 +27,9 @@ const routeLabels: Record<string, string> = {
   "/benchmarks/hindered-settling": "08 Hindered Settling",
   "/benchmarks/numerical-viscometer": "09 Numerical Viscometer",
   "/benchmarks/oberbeck-spheroid-drag": "10 Oberbeck Spheroid Drag",
-  "/reference-data": "11 Reference Data",
-  "/gallery": "12 Gallery"
+  "/benchmarks/jeffery-orbit": "11 Jeffery Orbit",
+  "/reference-data": "12 Reference Data",
+  "/gallery": "13 Gallery"
 };
 
 function AppShell({ children }: { children: React.ReactNode }) {
@@ -68,6 +70,7 @@ export function App() {
         <Route path="/benchmarks/hindered-settling" element={<HinderedSettlingPage />} />
         <Route path="/benchmarks/numerical-viscometer" element={<NumericalViscometerPage />} />
         <Route path="/benchmarks/oberbeck-spheroid-drag" element={<OberbeckSpheroidDragPage />} />
+        <Route path="/benchmarks/jeffery-orbit" element={<JefferyOrbitPage />} />
         <Route path="/reference-data" element={<ReferenceDataPage />} />
         <Route path="/gallery" element={<Gallery />} />
         <Route path="*" element={<Navigate to="/" replace />} />

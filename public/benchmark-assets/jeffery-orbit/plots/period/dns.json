@@ -1,0 +1,21 @@
+{
+  "x": [
+    0.125,
+    0.25
+  ],
+  "y": [
+    15.755222354842159,
+    15.835460515466375
+  ],
+  "type": "scatter",
+  "mode": "markers",
+  "name": "DNS, both clearances",
+  "line": {
+    "color": "#5fb8ff"
+  },
+  "marker": {
+    "color": "#5fb8ff",
+    "symbol": "circle",
+    "size": 13
+  }
+}

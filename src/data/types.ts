@@ -16,7 +16,8 @@ export type MeshShape =
   | "channel"
   | "dkt-pair"
   | "annulus"
-  | "spheroid";
+  | "spheroid"
+  | "spheroid-shear";
 export type SeriesKind = "code" | "level" | "reference";
 export type PlotSourceKind = "single-trace" | "trace-array" | "segmented-shape";
 export type CompareMode = "overlay" | "diff" | "small-multiples";

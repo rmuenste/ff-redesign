@@ -1,0 +1,42 @@
+[
+  {
+    "x": [
+      0,
+      0.28
+    ],
+    "y": [
+      16.179202165987434,
+      16.179202165987434
+    ],
+    "type": "scatter",
+    "mode": "lines",
+    "name": "+3%",
+    "line": {
+      "color": "var(--fg3)",
+      "dash": "dot"
+    },
+    "marker": {
+      "color": "var(--fg3)"
+    }
+  },
+  {
+    "x": [
+      0,
+      0.28
+    ],
+    "y": [
+      15.236724369910496,
+      15.236724369910496
+    ],
+    "type": "scatter",
+    "mode": "lines",
+    "name": "−3%",
+    "line": {
+      "color": "var(--fg3)",
+      "dash": "dot"
+    },
+    "marker": {
+      "color": "var(--fg3)"
+    }
+  }
+]

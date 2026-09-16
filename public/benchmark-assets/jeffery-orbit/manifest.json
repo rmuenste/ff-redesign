@@ -1,0 +1,311 @@
+{
+  "benchmarkId": "jeffery-orbit",
+  "entries": [
+    {
+      "oldPath": "generated from Jeffery's closed-form solution",
+      "newPath": "plots/axis/jeffery-ax.json",
+      "metric": "axis",
+      "seriesGroupId": "jeffery-ax",
+      "kind": "code",
+      "label": "Jeffery a_x",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "generated from Jeffery's closed-form solution",
+      "newPath": "plots/axis/jeffery-az.json",
+      "metric": "axis",
+      "seriesGroupId": "jeffery-az",
+      "kind": "code",
+      "label": "Jeffery a_z",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/jeffery/run_v1b.csv",
+      "newPath": "plots/axis/h8-ax.json",
+      "metric": "axis",
+      "seriesGroupId": "h8-ax",
+      "kind": "code",
+      "label": "Axis component a_x, H = 8",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/jeffery/run_v1b.csv",
+      "newPath": "plots/axis/h8-az.json",
+      "metric": "axis",
+      "seriesGroupId": "h8-az",
+      "kind": "code",
+      "label": "Axis component a_z, H = 8",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/jeffery/run_v2.csv",
+      "newPath": "plots/axis/h4-ax.json",
+      "metric": "axis",
+      "seriesGroupId": "h4-ax",
+      "kind": "code",
+      "label": "Axis component a_x, H = 4",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/jeffery/run_v2.csv",
+      "newPath": "plots/axis/h4-az.json",
+      "metric": "axis",
+      "seriesGroupId": "h4-az",
+      "kind": "code",
+      "label": "Axis component a_z, H = 4",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "generated from Jeffery's closed-form solution",
+      "newPath": "plots/rate/jeffery.json",
+      "metric": "rate",
+      "seriesGroupId": "jeffery",
+      "kind": "code",
+      "label": "Jeffery rate against time",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "generated from Jeffery's closed-form solution",
+      "newPath": "plots/waveform/jeffery.json",
+      "metric": "waveform",
+      "seriesGroupId": "jeffery",
+      "kind": "code",
+      "label": "Jeffery rate against orientation",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/jeffery/run_v1b.csv",
+      "newPath": "plots/rate/h8.json",
+      "metric": "rate",
+      "seriesGroupId": "h8",
+      "kind": "code",
+      "label": "Rotation rate against time, H = 8",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/jeffery/run_v1b.csv",
+      "newPath": "plots/waveform/h8.json",
+      "metric": "waveform",
+      "seriesGroupId": "h8",
+      "kind": "code",
+      "label": "Rotation rate against orientation, H = 8",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/jeffery/run_v2.csv",
+      "newPath": "plots/rate/h4.json",
+      "metric": "rate",
+      "seriesGroupId": "h4",
+      "kind": "code",
+      "label": "Rotation rate against time, H = 4",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/jeffery/run_v2.csv",
+      "newPath": "plots/waveform/h4.json",
+      "metric": "waveform",
+      "seriesGroupId": "h4",
+      "kind": "code",
+      "label": "Rotation rate against orientation, H = 4",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/jeffery/run_*.csv",
+      "newPath": "plots/period/dns.json",
+      "metric": "period",
+      "seriesGroupId": "dns",
+      "kind": "code",
+      "label": "T gammadot at the two clearances",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "generated from Jeffery's closed-form solution",
+      "newPath": "plots/period/jeffery.json",
+      "metric": "period",
+      "seriesGroupId": "jeffery",
+      "kind": "code",
+      "label": "Unbounded Jeffery period",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "generated from Jeffery's closed-form solution",
+      "newPath": "plots/period/band.json",
+      "metric": "period",
+      "seriesGroupId": "band",
+      "kind": "code",
+      "label": "Period gate band, +/- 3%",
+      "sourceShape": "trace-array",
+      "derived": true
+    },
+    {
+      "oldPath": "derived from the two measured clearances by scripts/convert-jeffery-data.mjs",
+      "newPath": "plots/period/cubic.json",
+      "metric": "period",
+      "seriesGroupId": "cubic",
+      "kind": "code",
+      "label": "Image dipole, (a/l)^3 extrapolation to zero clearance",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "derived from the two measured clearances by scripts/convert-jeffery-data.mjs",
+      "newPath": "plots/period/square.json",
+      "metric": "period",
+      "seriesGroupId": "square",
+      "kind": "code",
+      "label": "Conservative, (a/l)^2 extrapolation to zero clearance",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/jeffery/run_*.csv",
+      "newPath": "plots/excess/dns.json",
+      "metric": "excess",
+      "seriesGroupId": "dns",
+      "kind": "code",
+      "label": "Period excess [%] at the two clearances",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "generated from Jeffery's closed-form solution",
+      "newPath": "plots/excess/jeffery.json",
+      "metric": "excess",
+      "seriesGroupId": "jeffery",
+      "kind": "code",
+      "label": "Unbounded Jeffery period",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "derived from the two measured clearances by scripts/convert-jeffery-data.mjs",
+      "newPath": "plots/excess/cubic.json",
+      "metric": "excess",
+      "seriesGroupId": "cubic",
+      "kind": "code",
+      "label": "Image dipole, (a/l)^3 extrapolation to zero clearance",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "derived from the two measured clearances by scripts/convert-jeffery-data.mjs",
+      "newPath": "plots/excess/square.json",
+      "metric": "excess",
+      "seriesGroupId": "square",
+      "kind": "code",
+      "label": "Conservative, (a/l)^2 extrapolation to zero clearance",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/jeffery/run_v0b.csv",
+      "newPath": "plots/spin/dns.json",
+      "metric": "spin",
+      "seriesGroupId": "dns",
+      "kind": "code",
+      "label": "Sphere spin history",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "generated from Jeffery's closed-form solution",
+      "newPath": "plots/spin/exact.json",
+      "metric": "spin",
+      "seriesGroupId": "exact",
+      "kind": "code",
+      "label": "Exact half-vorticity spin",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "generated from Jeffery's closed-form solution",
+      "newPath": "plots/spin/band.json",
+      "metric": "spin",
+      "seriesGroupId": "band",
+      "kind": "code",
+      "label": "Sphere control band, +/- 1%",
+      "sourceShape": "trace-array",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/jeffery/run_v0b.csv",
+      "newPath": "downloads/run_v0b.csv",
+      "kind": "download",
+      "label": "run_v0b.csv"
+    },
+    {
+      "oldPath": "scripts/source-data/jeffery/run_v1b.csv",
+      "newPath": "downloads/run_v1b.csv",
+      "kind": "download",
+      "label": "run_v1b.csv"
+    },
+    {
+      "oldPath": "scripts/source-data/jeffery/run_v2.csv",
+      "newPath": "downloads/run_v2.csv",
+      "kind": "download",
+      "label": "run_v2.csv"
+    },
+    {
+      "oldPath": "scripts/source-data/jeffery/runs.csv",
+      "newPath": "downloads/runs.csv",
+      "kind": "download",
+      "label": "runs.csv"
+    },
+    {
+      "oldPath": "derived from the axis traces by scripts/convert-jeffery-data.mjs",
+      "newPath": "downloads/gates.csv",
+      "kind": "download",
+      "label": "gates.csv"
+    },
+    {
+      "oldPath": "derived from the axis traces by scripts/convert-jeffery-data.mjs",
+      "newPath": "downloads/crossings.csv",
+      "kind": "download",
+      "label": "crossings.csv"
+    },
+    {
+      "oldPath": "derived from the axis traces by scripts/convert-jeffery-data.mjs",
+      "newPath": "downloads/waveform_bins.csv",
+      "kind": "download",
+      "label": "waveform_bins.csv"
+    },
+    {
+      "oldPath": "derived from the axis traces by scripts/convert-jeffery-data.mjs",
+      "newPath": "downloads/wall_extrapolation.csv",
+      "kind": "download",
+      "label": "wall_extrapolation.csv"
+    },
+    {
+      "oldPath": "scripts/source-data/dns/dns_validation_datasheet.csv",
+      "newPath": "downloads/dns_validation_datasheet.csv",
+      "kind": "download",
+      "label": "dns_validation_datasheet.csv"
+    },
+    {
+      "oldPath": "scripts/source-data/dns/dns_validation_datasheet.csv",
+      "newPath": "downloads/jeffery_validation_rows.csv",
+      "kind": "download",
+      "label": "jeffery_validation_rows.csv"
+    },
+    {
+      "oldPath": "generated from jeffery-orbit downloads",
+      "newPath": "downloads/jeffery-orbit.zip",
+      "kind": "download",
+      "label": "jeffery-orbit.zip"
+    }
+  ]
+}

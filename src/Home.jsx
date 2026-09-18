@@ -17,20 +17,20 @@ export const Home = () => {
         </div>
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 0%, transparent 45%, var(--bg) 100%)", pointerEvents: "none" }} />
         <div className="section" style={{ position: "relative", paddingTop: 96, paddingBottom: 80 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 72 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8, marginBottom: 72 }}>
             <Overline>FeatFloWer · CFD benchmark suite</Overline>
             <div style={{ display: "flex", gap: 20, fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--fg3)" }}>
               <span>{benchmarks.length} benchmarks</span><span>·</span><span>2D & 3D</span>
             </div>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1.25fr 1fr", gap: 64, alignItems: "end" }}>
+          <div className="split split-home">
             <div>
               <Chip tone="solid" style={{ marginBottom: 24 }}>
                 <span style={{ display: "inline-block", width: 6, height: 6, background: "currentColor", borderRadius: 999 }}/>
                 Real benchmark content
               </Chip>
-              <h1 className="display" style={{ fontSize: "clamp(56px, 7vw, 104px)", margin: "0 0 28px", color: "var(--fg1)" }}>
+              <h1 className="display display-xl" style={{ margin: "0 0 28px", color: "var(--fg1)" }}>
                 Flow problems,<br/>
                 <span style={{ color: "var(--primary)", fontStyle: "italic", fontFamily: "var(--font-serif)", fontWeight: 400 }}>measured</span>
                 <span style={{ color: "var(--fg2)" }}> and </span>
@@ -83,10 +83,10 @@ export const Home = () => {
         </div>
       </section>
 
-      <section className="section" style={{ padding: "96px 48px" }}>
+      <section className="section" style={{ paddingTop: 96, paddingBottom: 96 }}>
         <div className="section-marker">I · Capabilities</div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 96, marginBottom: 64 }}>
-          <h2 className="h-editorial" style={{ fontSize: "clamp(38px, 4vw, 60px)", margin: 0 }}>
+        <div className="split split-lede">
+          <h2 className="h-editorial h-editorial-lg" style={{ margin: 0 }}>
             A benchmark site built around <em style={{ color: "var(--primary)" }}>traceable</em> data.
           </h2>
           <p style={{ fontSize: 17, lineHeight: 1.6, color: "var(--fg2)", alignSelf: "end", margin: 0, textWrap: "pretty" }}>
@@ -96,7 +96,7 @@ export const Home = () => {
           </p>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 1, background: "var(--divider)", border: "1px solid var(--divider)" }}>
+        <div className="grid-3" style={{ gap: 1, background: "var(--divider)", border: "1px solid var(--divider)" }}>
           {[
             ["Structured content", "Benchmark pages are modeled as typed tabs, blocks, tables, figures, downloads, and references."],
             ["Interactive plots", "Result views render the benchmark reference data as live Plotly traces with zoom, series toggles, and comparisons."],
@@ -114,7 +114,7 @@ export const Home = () => {
       <section style={{ background: "var(--surface-alt)", padding: "96px 0", borderTop: "1px solid var(--divider)", borderBottom: "1px solid var(--divider)" }}>
         <div className="section">
           <div className="section-marker">II · Benchmarks</div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 20 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(260px, 100%), 1fr))", gap: 20 }}>
             {benchmarks.map((benchmark, index) => (
               <div key={benchmark.id} className={"card" + (benchmark.status === "active" ? " card-interactive" : "")} onClick={() => benchmark.status === "active" && openBenchmark(benchmark)} style={{ overflow: "hidden", opacity: benchmark.status === "active" ? 1 : 0.62 }}>
                 <div style={{ aspectRatio: "1.5/1", background: "var(--bg)" }}>

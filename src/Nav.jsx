@@ -17,12 +17,8 @@ export const Nav = ({ activePath }) => {
       backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)",
       borderBottom: "1px solid var(--divider)",
     }}>
-      <div style={{
-        maxWidth: 1440, margin: "0 auto", padding: "0 32px",
-        display: "flex", alignItems: "center", gap: 28, height: 64,
-      }}>
-        <div onClick={() => navigate("/")}
-          style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }}>
+      <div className="nav-inner">
+        <div className="nav-brand" onClick={() => navigate("/")} role="link" aria-label="FeatFloWer home">
           <div style={{
             width: 28, height: 28, position: "relative",
           }}>
@@ -34,18 +30,18 @@ export const Nav = ({ activePath }) => {
             </svg>
           </div>
           <div>
-            <div style={{ fontSize: 13, fontWeight: 500, letterSpacing: ".02em", lineHeight: 1 }}>FeatFloWer</div>
-            <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--fg3)", letterSpacing: ".16em", textTransform: "uppercase", marginTop: 2 }}>
+            <div className="nav-brand-name" style={{ fontSize: 13, fontWeight: 500, letterSpacing: ".02em", lineHeight: 1 }}>FeatFloWer</div>
+            <div className="nav-brand-sub" style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--fg3)", letterSpacing: ".16em", textTransform: "uppercase", marginTop: 2 }}>
               TU Dortmund · LS3
             </div>
           </div>
         </div>
 
-        <div style={{ flex: 1, display: "flex", gap: 4, marginLeft: 24 }}>
+        <div className="nav-items">
           {items.filter(i => !i.hidden).map(i => (
-            <div key={i.id} onClick={() => navigate(i.path)}
+            <div key={i.id} className="nav-item" onClick={() => navigate(i.path)}
               style={{
-                padding: "8px 14px", fontSize: 13, cursor: "pointer", borderRadius: 4,
+                fontSize: 13, cursor: "pointer", borderRadius: 4,
                 color: activeRoute === i.id ? "var(--fg1)" : "var(--fg2)",
                 background: activeRoute === i.id ? "var(--surface-alt)" : "transparent",
                 transition: "all 160ms var(--ease-std)",
@@ -59,8 +55,8 @@ export const Nav = ({ activePath }) => {
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <div style={{
-            display: "flex", alignItems: "center", gap: 8,
+          <div className="nav-version" style={{
+            alignItems: "center", gap: 8,
             fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--fg2)",
             padding: "4px 10px", borderRadius: 999, border: "1px solid var(--divider)",
           }}>
@@ -71,8 +67,9 @@ export const Nav = ({ activePath }) => {
             }} />
             v0.4 · build 2026.04
           </div>
-          <Btn variant="stroked" size="sm" leading={<Icon name="download" size={14} />} onClick={() => navigate("/reference-data")}>
-            Reference data
+          <Btn variant="stroked" size="sm" leading={<Icon name="download" size={14} />} onClick={() => navigate("/reference-data")}
+            ariaLabel="Reference data" title="Reference data">
+            <span className="nav-ref-label">Reference data</span>
           </Btn>
         </div>
       </div>

@@ -62,6 +62,23 @@ npm run test
 npm run build
 ```
 
+### Mobile layout check
+
+`e2e/mobile-layout.spec.ts` opens every route in headless Chromium at phone
+(390px) and tablet (768px) widths and fails if the page is wider than the
+viewport. It runs against the production build, so build first:
+
+```bash
+npx playwright install chromium   # once per machine
+npm run build
+npm run test:e2e
+```
+
+The same check runs in CI (`mobile-layout` job in `pages.yml`) and gates the
+deploy. `src/responsive.test.ts` in the unit suite guards the source patterns
+that keep the layout fluid (grids as classes, `--gutter`, scrolling tables), so
+most regressions are caught before a browser is needed.
+
 ## Stopping A Server
 
 Stop a running dev or preview server with `Ctrl+C` in the terminal where it is

@@ -753,7 +753,7 @@ export function NumericalViscometerPage() {
           >
             <Icon name="arrow_back" size={14} /> Catalogue / Particulate / Numerical Viscometer
           </button>
-          <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: 40, alignItems: "end" }}>
+          <div className="split split-hero">
             <div>
               <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
                 <Chip tone="solid">Numerical viscometer</Chip>
@@ -761,7 +761,7 @@ export function NumericalViscometerPage() {
                 <Chip>3D</Chip>
                 <Chip>DNS validation</Chip>
               </div>
-              <h1 className="display" style={{ fontSize: "clamp(42px, 5vw, 64px)", margin: "0 0 12px" }}>
+              <h1 className="display display-md" style={{ margin: "0 0 12px" }}>
                 Numerical Viscometer:{" "}
                 <span
                   style={{
@@ -779,7 +779,7 @@ export function NumericalViscometerPage() {
                 ladder that lands on Einstein, Batchelor and Krieger-Dougherty in turn.
               </p>
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
+            <div className="kpi-grid">
               <KpiBox label="Ladder rungs" value={String(viscometerGatedLadder.length)} />
               <KpiBox label="Spheres" value={`225–${viscometerPhi20.particles}`} />
               <KpiBox label="Subdomains" value="108" />

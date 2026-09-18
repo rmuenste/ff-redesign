@@ -55,7 +55,7 @@ export function PageHeader({
     <div style={{ borderBottom: "1px solid var(--divider)", padding: "48px 0 40px", position: "relative", overflow: "hidden" }}>
       <Section>
         {overline && <Overline style={{ marginBottom: 16 }}>{overline}</Overline>}
-        <h1 className="display" style={{ fontSize: "clamp(52px, 6vw, 84px)", margin: "0 0 16px", color: "var(--fg1)" }}>
+        <h1 className="display display-lg" style={{ margin: "0 0 16px", color: "var(--fg1)" }}>
           {title}
         </h1>
         {summary && <p style={{ fontSize: 17, color: "var(--fg2)", margin: 0, maxWidth: 720, lineHeight: 1.55 }}>{summary}</p>}

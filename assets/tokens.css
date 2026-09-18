@@ -183,6 +183,7 @@
   --toolbar-h:   64px;
   --content-max: 1200px;
   --content-narrow: 700px;  /* prose column (inherited from FF) */
+  --gutter: clamp(16px, 4vw, 48px); /* page side gutter: 16px on phones, 48px from ~1200px */
 }
 
 /* ---------- DARK THEME --------------------------------------- */

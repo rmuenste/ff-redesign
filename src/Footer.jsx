@@ -64,7 +64,7 @@ const FooterItem = ({ item }) => {
 
 export const Footer = () => (
   <footer style={{ borderTop: "1px solid var(--divider)", padding: "48px 0 32px", background: "var(--surface)" }}>
-    <div className="section" style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 40, marginBottom: 32 }}>
+    <div className="section footer-grid">
       <div>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
           <svg viewBox="0 0 28 28" style={{ width: 24, height: 24 }}>
@@ -84,7 +84,7 @@ export const Footer = () => (
         </div>
       ))}
     </div>
-    <div className="section" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 24, borderTop: "1px solid var(--divider)", fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--fg3)", letterSpacing: ".08em", textTransform: "uppercase" }}>
+    <div className="section" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8, paddingTop: 24, borderTop: "1px solid var(--divider)", fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--fg3)", letterSpacing: ".08em", textTransform: "uppercase" }}>
       <span>© 2022–2026 · FeatFloWer team</span>
       <span>v0.4.2 · build 2026.04.22</span>
       <span>MIT licensed</span>

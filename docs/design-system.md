@@ -150,7 +150,17 @@ Guidelines:
 - Use mono text for run metadata, tags, filters, plot axes, table labels, and
   status indicators.
 - Do not scale font sizes directly with viewport width except for display/page
-  titles that already use constrained `clamp(...)` patterns.
+  titles, which take one of the size classes below instead of an inline
+  `fontSize`.
+
+Display size classes (`src/styles.css`), each a `clamp()` whose floor fits a
+390px phone column and whose ceiling matches the desktop design:
+
+- `.display-xl`: home hero headline, `clamp(40px, 7vw, 104px)`
+- `.display-lg`: page-level titles (catalogue, gallery, reference data),
+  `clamp(36px, 6vw, 84px)`
+- `.display-md`: benchmark detail titles, `clamp(32px, 5vw, 64px)`
+- `.h-editorial-lg`: large editorial section heading, `clamp(28px, 4vw, 60px)`
 
 ## Spacing, Radius, Shadow, Motion
 
@@ -207,7 +217,9 @@ should prioritize clarity over animation.
 
 Layout tokens:
 
-- `--toolbar-h`: sticky nav height
+- `--toolbar-h`: sticky nav height; every sticky offset derives from it
+- `--gutter`: page side gutter, `clamp(16px, 4vw, 48px)` (16px on phones,
+  48px from about 1200px up)
 - `--content-max`: primary content width
 - `--content-narrow`: prose width
 
@@ -218,6 +230,43 @@ Layout classes:
 - `.rule`: horizontal divider
 - `.v-rule`: vertical divider
 - `.section-marker`: numbered/editorial section starter
+
+### Responsive Layout
+
+Layout that depends on the viewport lives in `src/styles.css`, never in inline
+styles (which cannot carry media queries). There are two breakpoints and only
+two; `src/responsive.test.ts` fails on a third:
+
+- Phone, `max-width: 719.98px`: nav compaction, KPI grid two-up, three-cell
+  grids to one column, footer two-up, shorter plot, tabs gap, index filter bar
+  no longer sticky.
+- Tablet, `max-width: 999.98px`: every `.split` collapses to one column and the
+  comparison aside moves above the plot.
+
+Responsive classes:
+
+- `.split`: two-column grid that stacks below the tablet breakpoint. Modifiers
+  set the ratio: `.split-hero` (benchmark hero, 1.5:1), `.split-home` (home
+  hero, 1.25:1), `.split-lede` (heading beside paragraph, 1:2),
+  `.split-panel` (240px control rail beside a plot; also sets `--plot-h`).
+- `.kpi-grid`: three `KpiBox`es per row, two on phones.
+- `.grid-3`: three equal cells, one column on phones.
+- `.footer-grid`: brand plus three link columns; brand spans a two-up row on
+  phones.
+- `.table-scroll`: a table wider than its container scrolls inside it instead
+  of widening the page. `DataTable` applies it; wrap raw `<table>`s in it.
+- `.panel-aside`, `.filter-bar`: sticky chrome offset from `--toolbar-h`;
+  both stop being sticky when stacked.
+- `.nav-inner`, `.nav-brand`, `.nav-items`, `.nav-item`, `.nav-version`,
+  `.nav-ref-label`: nav layout; see Navigation.
+
+Every grid track is `minmax(0, 1fr)` so min-content can never push the page
+wider than the viewport. Auto-fill grids that stay inline use
+`minmax(min(<px>, 100%), 1fr)` for the same reason.
+
+The rendered result is checked in Chromium by `e2e/mobile-layout.spec.ts`
+(`npm run test:e2e`, also a CI gate): no horizontal overflow on any route at
+390px and 768px.
 
 Common page structure:
 
@@ -368,6 +417,10 @@ Current utility classes in `src/styles.css`:
 - `.verdict`, `.verdict-pass|recorded|resolved|open|fail`
 - `.code-row`, `.code-dot`
 - `.fade-up`
+- `.display-xl|lg|md`, `.h-editorial-lg` (headline sizes)
+- `.split`, `.split-hero|home|lede|panel`, `.kpi-grid`, `.grid-3`,
+  `.footer-grid`, `.table-scroll`, `.panel-aside`, `.filter-bar`, `.nav-*`
+  (responsive layout; see Layout)
 
 Future React components should wrap these patterns so new pages do not keep
 adding large inline style blocks.
@@ -380,11 +433,17 @@ The nav is sticky, translucent, and blurred:
 
 - Background: mixed `--bg` with transparency.
 - Bottom border: `--divider`.
-- Height: 64px.
+- Height: `--toolbar-h` (64px) at every width.
 - Active route uses `--surface-alt`.
 
 The brand lockup uses the circular green technical mark and TU Dortmund/LS3
 metadata.
+
+Below the phone breakpoint the row compacts rather than collapsing into a menu:
+the wordmark, the TU Dortmund/LS3 sub-label and the version badge are hidden,
+the "Reference data" button keeps only its icon (its accessible name and
+`title` remain), and the three route links stay visible. The mark carries
+`aria-label="FeatFloWer home"` because its text disappears.
 
 ### Page Headers
 
@@ -417,6 +476,9 @@ Tabs are text tabs with a thin active underline:
 - Hover/active: `--fg1`.
 - Active underline: `--primary`.
 
+The row never wraps: on narrow screens it scrolls sideways (scrollbar hidden)
+so the ink bar stays on one line.
+
 Use tabs for benchmark-detail sections such as:
 
 - Introduction
@@ -439,6 +501,8 @@ Table style:
 - Thin divider rows.
 - Numeric columns right-aligned.
 - Status values shown as chips or color-coded mono values.
+- Wider than the column: scrolls inside its card (`.table-scroll`), never
+  clipped and never widening the page.
 
 Tables should prioritize scanability over decoration.
 
@@ -544,7 +608,7 @@ To support migrated `ff-angular` content, add these reusable components:
 - `BenchmarkPage`
 - `PageHeader`
 - `BenchmarkTabs`
-- `KpiGrid` / `KpiBox`
+- `KpiGrid` (the `.kpi-grid` class) / `KpiBox`
 - `DataTable`
 - `DownloadTable`
 - `ReferenceList`
@@ -599,9 +663,9 @@ The design system is currently implicit and prototype-oriented.
 
 Gaps to close:
 
-- Many layout and component styles are inline in JSX.
+- Many component styles are still inline in JSX (grids, gutters and headline
+  sizes now live in `src/styles.css`).
 - Primitive component APIs are not fully documented in code.
-- Responsive behavior is not centralized.
 - Real data visualization styling is not finalized.
 - Some mock catalogue entries and fake run metadata must be removed or replaced.
 - Light theme needs visual QA.
@@ -614,5 +678,5 @@ Gaps to close:
 3. Replace the hardcoded detail page with a generic benchmark page shell.
 4. Add MathJax or KaTeX support.
 5. Add real plot components and port the Angular plot-data transformations.
-6. Audit dark/light themes and responsive layouts.
+6. Audit dark/light themes.
 7. Keep this document updated as components become formalized.

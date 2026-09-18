@@ -72,8 +72,36 @@ jobs:
         with:
           path: dist
 
+  # The site must fit a phone. e2e/mobile-layout.spec.ts loads every route in
+  # Chromium at 390px and 768px and fails on any horizontal overflow. It runs
+  # against a root-served build, in parallel with the Pages build, and gates
+  # the deploy the same way the unit tests do.
+  mobile-layout:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v7
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Build
+        run: npm run build
+
+      - name: Check mobile layout
+        run: npm run test:e2e
+
   deploy:
-    needs: build
+    needs: [build, mobile-layout]
     runs-on: ubuntu-latest
     environment:
       name: github-pages

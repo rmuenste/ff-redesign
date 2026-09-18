@@ -44,7 +44,7 @@ export const BenchmarksIndex = () => {
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 0%, var(--bg) 90%)" }} />
         <div className="section" style={{ position: "relative" }}>
           <Overline style={{ marginBottom: 16 }}>Catalogue · {benchmarks.length} benchmarks</Overline>
-          <h1 className="display" style={{ fontSize: "clamp(52px, 6vw, 84px)", margin: "0 0 16px", color: "var(--fg1)" }}>
+          <h1 className="display display-lg" style={{ margin: "0 0 16px", color: "var(--fg1)" }}>
             Benchmarks<span style={{ color: "var(--primary)" }}>.</span>
           </h1>
           <p style={{ fontSize: 17, color: "var(--fg2)", margin: 0, maxWidth: 720, lineHeight: 1.55 }}>
@@ -57,7 +57,7 @@ export const BenchmarksIndex = () => {
         </div>
       </div>
 
-      <div style={{ borderBottom: "1px solid var(--divider)", padding: "16px 0", position: "sticky", top: 64, background: "color-mix(in oklab, var(--bg) 92%, transparent)", backdropFilter: "blur(8px)", zIndex: 10 }}>
+      <div className="filter-bar" style={{ borderBottom: "1px solid var(--divider)", padding: "16px 0", background: "color-mix(in oklab, var(--bg) 92%, transparent)", backdropFilter: "blur(8px)" }}>
         <div className="section" style={{ display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, background: "var(--surface-alt)", padding: "6px 12px", borderRadius: 4, minWidth: 240 }}>
             <Icon name="search" size={16} style={{ color: "var(--fg3)" }}/>
@@ -90,10 +90,10 @@ export const BenchmarksIndex = () => {
         </div>
       </div>
 
-      <div className="section" style={{ padding: "40px 48px 160px" }}>
+      <div className="section" style={{ paddingTop: 40, paddingBottom: 160 }}>
         <div className="overline" style={{ marginBottom: 24 }}>{filtered.length} of {benchmarks.length} shown</div>
         {layout === "grid" ? (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 20 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(300px, 100%), 1fr))", gap: 20 }}>
             {filtered.map((benchmark, index) => (
               <BenchmarkCard
                 key={benchmark.id}
@@ -180,6 +180,7 @@ const BenchmarkCard = ({ benchmark, variant, onOpen }) => {
 };
 
 const BenchmarkTable = ({ rows, onOpen }) => (
+  <div className="table-scroll">
   <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
     <thead>
       <tr style={{ textAlign: "left" }}>
@@ -203,4 +204,5 @@ const BenchmarkTable = ({ rows, onOpen }) => (
       ))}
     </tbody>
   </table>
+  </div>
 );

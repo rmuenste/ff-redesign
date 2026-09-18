@@ -208,7 +208,7 @@ export function RisingBubble2DPage() {
           >
             <Icon name="arrow_back" size={14} /> Catalogue / Two-Phase / RB2
           </button>
-          <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: 40, alignItems: "end" }}>
+          <div className="split split-hero">
             <div>
               <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
                 <Chip tone="solid">RB2</Chip>
@@ -216,14 +216,14 @@ export function RisingBubble2DPage() {
                 <Chip>2D</Chip>
                 <Chip>Code Comparison</Chip>
               </div>
-              <h1 className="display" style={{ fontSize: "clamp(42px, 5vw, 64px)", margin: "0 0 12px" }}>
+              <h1 className="display display-md" style={{ margin: "0 0 12px" }}>
                 Rising Bubble <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400, color: "var(--primary)" }}>2D</span>
               </h1>
               <p style={{ color: "var(--fg2)", fontSize: 15, margin: 0, maxWidth: 700, lineHeight: 1.55 }}>
                 A quantitative two-dimensional bubble dynamics benchmark with two cases, three refinement levels, and code-to-code comparisons across shape and scalar quantities.
               </p>
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
+            <div className="kpi-grid">
               <KpiBox label="Cases" value="2" />
               <KpiBox label="Levels" value="3" />
               <KpiBox label="Metrics" value="5" />

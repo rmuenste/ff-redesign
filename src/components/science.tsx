@@ -9,11 +9,14 @@ export function Equation({
   children: string;
   block?: boolean;
 }) {
-  return (
+  const math = (
     <MathJax inline={!block} dynamic>
       {children}
     </MathJax>
   );
+  // A block equation is one unbreakable line; on a phone it can be wider than
+  // the column, so it scrolls inside this box rather than widening the page.
+  return block ? <div className="equation-block">{math}</div> : math;
 }
 
 export function Figure({

@@ -255,6 +255,9 @@ Responsive classes:
   phones.
 - `.table-scroll`: a table wider than its container scrolls inside it instead
   of widening the page. `DataTable` applies it; wrap raw `<table>`s in it.
+- `.equation-block`: the box `Equation` puts around block math; a formula
+  wider than the column scrolls inside it. `$$...$$` display math typeset by
+  MathJax directly gets the same treatment via `mjx-container[display="true"]`.
 - `.panel-aside`, `.filter-bar`: sticky chrome offset from `--toolbar-h`;
   both stop being sticky when stacked.
 - `.nav-inner`, `.nav-brand`, `.nav-items`, `.nav-item`, `.nav-version`,

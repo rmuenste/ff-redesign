@@ -419,7 +419,7 @@ export function HinderedSettlingPage() {
           >
             <Icon name="arrow_back" size={14} /> Catalogue / Particulate / Hindered Settling
           </button>
-          <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: 40, alignItems: "end" }}>
+          <div className="split split-hero">
             <div>
               <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
                 <Chip tone="solid">Hindered settling</Chip>
@@ -427,7 +427,7 @@ export function HinderedSettlingPage() {
                 <Chip>3D</Chip>
                 <Chip>DNS validation</Chip>
               </div>
-              <h1 className="display" style={{ fontSize: "clamp(42px, 5vw, 64px)", margin: "0 0 12px" }}>
+              <h1 className="display display-md" style={{ margin: "0 0 12px" }}>
                 Hindered Settling of a{" "}
                 <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400, color: "var(--primary)" }}>
                   Particle Cloud
@@ -438,7 +438,7 @@ export function HinderedSettlingPage() {
                 with an exponent that belongs to the confinement, not to the suspension.
               </p>
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
+            <div className="kpi-grid">
               <KpiBox label="Particles" value="20–120" />
               <KpiBox label="Seeds" value="3" />
               <KpiBox label="Runs" value={String(hinderedConfinedRows.length + hinderedWideRows.length + 2)} />

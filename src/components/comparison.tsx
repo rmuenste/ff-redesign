@@ -166,8 +166,8 @@ export function ComparisonPanel({
   const toggleVariant = toggle(setSelectedVariantIds);
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "240px 1fr", gap: 32 }}>
-      <aside style={{ position: "sticky", top: 96, alignSelf: "start", display: "grid", gap: 28 }}>
+    <div className="split split-panel">
+      <aside className="panel-aside">
         <Group label="Metric">
           {metricIds.map(id => (
             <OptionButton key={id} active={metric === id} onClick={() => setMetric(id)}>
@@ -245,7 +245,7 @@ export function ComparisonPanel({
                 layout={comparisonLayout(spec, layoutColors())}
                 config={{ responsive: true, displaylogo: false }}
                 useResizeHandler
-                style={{ width: "100%", height: 520 }}
+                style={{ width: "100%", height: "var(--plot-h)" }}
               />
             </Suspense>
           )}

@@ -324,7 +324,7 @@ export function FlowAroundCylinderPage() {
           >
             <Icon name="arrow_back" size={14} /> Catalogue / Newtonian / FAC
           </button>
-          <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: 40, alignItems: "end" }}>
+          <div className="split split-hero">
             <div>
               <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
                 <Chip tone="solid">FAC</Chip>
@@ -332,14 +332,14 @@ export function FlowAroundCylinderPage() {
                 <Chip>3D</Chip>
                 <Chip>Live Drag/Lift</Chip>
               </div>
-              <h1 className="display" style={{ fontSize: "clamp(42px, 5vw, 64px)", margin: "0 0 12px" }}>
+              <h1 className="display display-md" style={{ margin: "0 0 12px" }}>
                 Flow Around <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400, color: "var(--primary)" }}>Cylinder</span>
               </h1>
               <p style={{ color: "var(--fg2)", fontSize: 15, margin: 0, maxWidth: 700, lineHeight: 1.55 }}>
                 A laminar incompressible Navier-Stokes benchmark comparing drag and lift around a cylindrical obstacle across solver families and mesh levels.
               </p>
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
+            <div className="kpi-grid">
               <KpiBox label="Cases" value="2" />
               <KpiBox label="Re" value="20 / 100" />
               <KpiBox label="Levels" value="4" />

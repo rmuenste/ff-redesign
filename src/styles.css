@@ -87,6 +87,13 @@ body {
   letter-spacing: -0.015em;
   line-height: 1.05;
 }
+/* Display sizes. The slopes match the previous inline clamp() values; only the
+   floors are lower, so nothing changes above ~900px and a 390px phone gets a
+   headline that fits its column. */
+.display-xl { font-size: clamp(40px, 7vw, 104px); }
+.display-lg { font-size: clamp(36px, 6vw, 84px); }
+.display-md { font-size: clamp(32px, 5vw, 64px); }
+.h-editorial-lg { font-size: clamp(28px, 4vw, 60px); }
 
 /* Cells and chrome */
 .rule { height: 1px; background: var(--divider); border: 0; margin: 0; }
@@ -212,9 +219,15 @@ a.plain:hover { border-bottom-color: var(--primary); }
   display: flex;
   gap: 28px;
   border-bottom: 1px solid var(--divider);
+  /* One ink-bar row at every width: scroll sideways rather than wrap. */
+  overflow-x: auto;
+  scrollbar-width: none;
 }
+.tabs::-webkit-scrollbar { display: none; }
 .tab {
   padding: 16px 0;
+  white-space: nowrap;
+  flex: 0 0 auto;
   font-size: 13px;
   letter-spacing: .02em;
   color: var(--fg2);
@@ -269,12 +282,14 @@ a.plain:hover { border-bottom-color: var(--primary); }
 .section {
   max-width: 1320px;
   margin: 0 auto;
-  padding: 0 48px;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
 }
 .section-narrow {
   max-width: 880px;
   margin: 0 auto;
-  padding: 0 48px;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
 }
 
 /* Measure label */
@@ -471,4 +486,66 @@ input[type="range"].tu::-webkit-slider-thumb:hover { transform: scale(1.2); }
   .gallery-control { transition: none; }
   .gallery-card:hover .gallery-frame img { transform: none; }
   .fade-up { animation: none; }
+}
+
+/* ===== Responsive layout =====================================================
+   Layout that has to change with the viewport lives here, not in inline styles
+   (which cannot carry media queries). Two breakpoints, asserted by
+   src/responsive.test.ts:
+     phone  <  720px  (max-width: 719.98px)
+     tablet < 1000px  (max-width: 999.98px)
+   Every track is minmax(0, 1fr) so min-content can never push the page wider
+   than the viewport. */
+
+/* Global nav */
+.nav-inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  height: var(--toolbar-h);
+}
+.nav-brand { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+.nav-items { flex: 1; display: flex; gap: 4px; margin-left: 24px; }
+.nav-item { padding: 8px 14px; }
+.nav-version { display: flex; }
+
+/* Two-column splits: collapse to one column below the tablet breakpoint. */
+.split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; align-items: start; }
+.split-hero { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); align-items: end; }
+.split-home { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 64px; align-items: end; }
+.split-lede { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 96px; margin-bottom: 64px; }
+.split-panel { grid-template-columns: 240px minmax(0, 1fr); gap: 32px; --plot-h: 520px; }
+
+/* Fixed-count grids that step down on phones. */
+.kpi-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 32px; }
+
+/* Wide tables scroll inside their card instead of widening the page. */
+.table-scroll { overflow-x: auto; }
+
+/* Sticky chrome offsets derive from the nav height. */
+.panel-aside { position: sticky; top: calc(var(--toolbar-h) + 32px); align-self: start; display: grid; gap: 28px; }
+.filter-bar { position: sticky; top: var(--toolbar-h); z-index: 10; }
+
+@media (max-width: 999.98px) {
+  .split { grid-template-columns: minmax(0, 1fr); }
+  .panel-aside { position: static; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+}
+
+@media (max-width: 719.98px) {
+  .nav-inner { gap: 12px; }
+  .nav-items { margin-left: 0; }
+  .nav-item { padding: 8px 10px; }
+  .nav-brand-name, .nav-brand-sub, .nav-version, .nav-ref-label { display: none; }
+  .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid-3 { grid-template-columns: minmax(0, 1fr); }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .footer-grid > :first-child { grid-column: 1 / -1; }
+  .split-panel { --plot-h: 360px; }
+  .filter-bar { position: static; }
+  .tabs { gap: 20px; }
 }

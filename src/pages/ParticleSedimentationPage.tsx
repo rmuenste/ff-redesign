@@ -443,7 +443,7 @@ function ValidationTab() {
         </p>
       </div>
 
-      <div style={{ display: "grid", gap: 32, gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))", marginBottom: 36 }}>
+      <div style={{ display: "grid", gap: 32, gridTemplateColumns: "repeat(auto-fit, minmax(min(340px, 100%), 1fr))", marginBottom: 36 }}>
         <div>
           <h4 style={{ margin: "0 0 12px" }}>Timestep ladder, Re = 31.9 at D/h = 23.9</h4>
           <DataTable<SedimentationDtRow>
@@ -568,7 +568,7 @@ export function ParticleSedimentationPage() {
           >
             <Icon name="arrow_back" size={14} /> Catalogue / Particulate / SED
           </button>
-          <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: 40, alignItems: "end" }}>
+          <div className="split split-hero">
             <div>
               <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
                 <Chip tone="solid">SED</Chip>
@@ -576,14 +576,14 @@ export function ParticleSedimentationPage() {
                 <Chip>3D</Chip>
                 <Chip>PIV References</Chip>
               </div>
-              <h1 className="display" style={{ fontSize: "clamp(42px, 5vw, 64px)", margin: "0 0 12px" }}>
+              <h1 className="display display-md" style={{ margin: "0 0 12px" }}>
                 Particle <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400, color: "var(--primary)" }}>Sedimentation</span>
               </h1>
               <p style={{ color: "var(--fg2)", fontSize: 15, margin: 0, maxWidth: 700, lineHeight: 1.55 }}>
                 A confined settling-sphere benchmark comparing FEM-FBM simulations at L2/L3 against PIV particle-motion measurements for four Reynolds-number regimes.
               </p>
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
+            <div className="kpi-grid">
               <KpiBox label="Cases" value="4" />
               <KpiBox label="Re" value="1.5-31.9" />
               <KpiBox label="Levels" value="2" />

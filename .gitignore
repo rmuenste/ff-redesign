@@ -11,3 +11,7 @@ vite.config.d.ts
 /plot_velocities.py
 /plot_positions.py
 /process_and_plot.sh
+
+# Playwright
+/test-results/
+/playwright-report/

@@ -3,7 +3,10 @@ import React from "react";
 // ===== Shared primitives =====
 
 export const Icon = ({ name, size = 20, style }) => (
-  <span className="material-icons" style={{ fontSize: size, lineHeight: 1, ...style }}>{name}</span>
+  <span className="material-icons"
+    style={{ fontSize: size, lineHeight: 1, display: "inline-block", width: size, height: size, overflow: "hidden", verticalAlign: "middle", flex: "none", ...style }}>
+    {name}
+  </span>
 );
 
 export const Chip = ({ children, tone = "default", style }) => {
@@ -34,7 +37,7 @@ export const Overline = ({ children, style }) => (
   }}>{children}</div>
 );
 
-export const Btn = ({ children, variant = "primary", onClick, size = "md", style, leading, trailing }) => {
+export const Btn = ({ children, variant = "primary", onClick, size = "md", style, leading, trailing, ariaLabel, title }) => {
   const base = {
     fontFamily: "inherit", fontWeight: 500, letterSpacing: ".01em",
     border: 0, cursor: "pointer",
@@ -54,7 +57,7 @@ export const Btn = ({ children, variant = "primary", onClick, size = "md", style
     accent: { background: "var(--accent)", color: "var(--on-accent)" },
   };
   return (
-    <button onClick={onClick} style={{ ...base, ...sizes[size], ...variants[variant], ...style }}
+    <button onClick={onClick} aria-label={ariaLabel} title={title} style={{ ...base, ...sizes[size], ...variants[variant], ...style }}
       onMouseEnter={e => {
         if (variant === "primary") e.currentTarget.style.background = "var(--primary-hover)";
         if (variant === "stroked") e.currentTarget.style.boxShadow = "inset 0 0 0 1px var(--fg2)";

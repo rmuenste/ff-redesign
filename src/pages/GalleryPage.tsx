@@ -187,7 +187,7 @@ function Lightbox({
           margin: "auto",
           maxWidth: 1240,
           width: "100%",
-          padding: "24px clamp(16px, 4vw, 48px)",
+          padding: "24px var(--gutter)",
           display: "grid",
           gap: 20,
           justifyItems: "center"
@@ -383,7 +383,7 @@ export function GalleryPage() {
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 0%, var(--bg) 100%)" }} />
         <Section style={{ position: "relative" }}>
           <Overline style={{ marginBottom: 16 }}>Gallery</Overline>
-          <h1 className="display" style={{ fontSize: "clamp(52px, 6vw, 84px)", margin: 0, color: "var(--fg1)" }}>
+          <h1 className="display display-lg" style={{ margin: 0, color: "var(--fg1)" }}>
             The benchmarks,{" "}
             <span style={{ color: "var(--primary)", fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400 }}>
               rendered
@@ -414,7 +414,7 @@ export function GalleryPage() {
           ))}
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 20 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(320px, 100%), 1fr))", gap: 20 }}>
           {shown.map(item => (
             <GalleryCard key={item.id} item={item} onOpen={() => openItem(item.id)} />
           ))}

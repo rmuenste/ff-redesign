@@ -336,7 +336,7 @@ export function DraftingKissingTumblingPage() {
           >
             <Icon name="arrow_back" size={14} /> Catalogue / Particulate / DKT
           </button>
-          <div style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr", gap: 40, alignItems: "end" }}>
+          <div className="split split-hero">
             <div>
               <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
                 <Chip tone="solid">DKT</Chip>
@@ -344,7 +344,7 @@ export function DraftingKissingTumblingPage() {
                 <Chip>3D</Chip>
                 <Chip>DNS validation</Chip>
               </div>
-              <h1 className="display" style={{ fontSize: "clamp(42px, 5vw, 64px)", margin: "0 0 12px" }}>
+              <h1 className="display display-md" style={{ margin: "0 0 12px" }}>
                 Drafting, Kissing and{" "}
                 <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400, color: "var(--primary)" }}>
                   Tumbling
@@ -355,7 +355,7 @@ export function DraftingKissingTumblingPage() {
                 tumbling about the contact point, and separating with the roles exchanged.
               </p>
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
+            <div className="kpi-grid">
               <KpiBox label="Spheres" value="2" />
               <KpiBox label="Density ratio" value="1.14" />
               <KpiBox label="D/h" value="8 / 16" />

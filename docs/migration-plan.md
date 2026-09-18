@@ -434,6 +434,10 @@ For each benchmark:
 
 Goal: verify the migrated site is usable and faithful.
 
+Status: mobile layout pass done. Every route has zero horizontal overflow at
+390px and 768px, guarded by `src/responsive.test.ts` (source patterns) and
+`e2e/mobile-layout.spec.ts` (rendered, in CI).
+
 - Compare each migrated page against its Angular source for content presence.
 - Verify all downloads resolve.
 - Verify all images/videos have alt text or captions.

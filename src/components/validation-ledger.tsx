@@ -24,63 +24,61 @@ const mono = { fontFamily: "var(--font-mono)", fontSize: 12 } as const;
 
 export function ValidationLedger({ rows }: { rows: ValidationRow[] }) {
   return (
-    <div style={{ overflowX: "auto" }}>
-      <DataTable<ValidationRow>
-        columns={[
-          {
-            id: "case",
-            header: "Case",
-            render: row => (
-              <div style={{ minWidth: 150 }}>
-                <div style={mono}>{row.case}</div>
-                <div style={{ color: "var(--fg3)", fontSize: 11, marginTop: 2 }}>{row.suite}</div>
-              </div>
-            )
-          },
-          {
-            id: "quantity",
-            header: "Quantity",
-            render: row => <div style={{ minWidth: 210 }}>{row.quantity}</div>
-          },
-          {
-            id: "expected",
-            header: "Expected",
-            render: row => (
-              <div style={{ minWidth: 190 }}>
-                <div>{row.expected}</div>
-                {row.expectedSource && (
-                  <div style={{ color: "var(--fg3)", fontSize: 11, marginTop: 4 }}>{row.expectedSource}</div>
-                )}
-              </div>
-            )
-          },
-          {
-            id: "measured",
-            header: "Measured",
-            render: row => <div style={{ minWidth: 320 }}>{row.measured}</div>
-          },
-          {
-            id: "gate",
-            header: "Gate",
-            render: row => (
-              <div style={{ minWidth: 92 }}>
-                <div style={mono}>{row.tolerance}</div>
-                {row.relError && row.relError !== "n/a" && (
-                  <div style={{ color: "var(--fg3)", fontSize: 11, marginTop: 2 }}>err {row.relError}</div>
-                )}
-              </div>
-            )
-          },
-          {
-            id: "verdict",
-            header: "Verdict",
-            align: "right",
-            render: row => <VerdictChip verdict={row.verdict} />
-          }
-        ]}
-        rows={rows}
-        getRowKey={row => row.id}
-      />
-    </div>
+    <DataTable<ValidationRow>
+      columns={[
+        {
+          id: "case",
+          header: "Case",
+          render: row => (
+            <div style={{ minWidth: 150 }}>
+              <div style={mono}>{row.case}</div>
+              <div style={{ color: "var(--fg3)", fontSize: 11, marginTop: 2 }}>{row.suite}</div>
+            </div>
+          )
+        },
+        {
+          id: "quantity",
+          header: "Quantity",
+          render: row => <div style={{ minWidth: 210 }}>{row.quantity}</div>
+        },
+        {
+          id: "expected",
+          header: "Expected",
+          render: row => (
+            <div style={{ minWidth: 190 }}>
+              <div>{row.expected}</div>
+              {row.expectedSource && (
+                <div style={{ color: "var(--fg3)", fontSize: 11, marginTop: 4 }}>{row.expectedSource}</div>
+              )}
+            </div>
+          )
+        },
+        {
+          id: "measured",
+          header: "Measured",
+          render: row => <div style={{ minWidth: 320 }}>{row.measured}</div>
+        },
+        {
+          id: "gate",
+          header: "Gate",
+          render: row => (
+            <div style={{ minWidth: 92 }}>
+              <div style={mono}>{row.tolerance}</div>
+              {row.relError && row.relError !== "n/a" && (
+                <div style={{ color: "var(--fg3)", fontSize: 11, marginTop: 2 }}>err {row.relError}</div>
+              )}
+            </div>
+          )
+        },
+        {
+          id: "verdict",
+          header: "Verdict",
+          align: "right",
+          render: row => <VerdictChip verdict={row.verdict} />
+        }
+      ]}
+      rows={rows}
+      getRowKey={row => row.id}
+    />
   );
 }

@@ -215,6 +215,35 @@ describe("buildComparisonTraces (overlay)", () => {
 });
 
 describe("comparisonLayout", () => {
+  const spec = {
+    id: "x",
+    title: "Sphericity",
+    metric: "sphericity",
+    comparisonAxis: "level",
+    seriesGroups: [],
+    defaultSeriesGroupIds: [],
+    compareModes: ["overlay"],
+    defaultCompareMode: "overlay",
+    axisLabels: { x: "Time [s]", y: "Sphericity" }
+  } as unknown as PlotSpec;
+
+  it("keeps the legend beside the plot by default", () => {
+    const layout = comparisonLayout(spec);
+    expect(layout.legend).not.toHaveProperty("orientation");
+    expect(layout.margin.b).toBe(48);
+  });
+
+  it("moves the legend under the chart on a narrow column and reserves a row per two entries", () => {
+    const four = comparisonLayout(spec, {}, { narrow: true, legendEntries: 4 });
+    expect(four.legend).toMatchObject({ orientation: "h", x: 0, xanchor: "left", yanchor: "top" });
+    expect(four.legend.y).toBeLessThan(0);
+    expect(four.margin.b).toBe(96);
+    expect(comparisonLayout(spec, {}, { narrow: true, legendEntries: 1 }).margin.b).toBe(76);
+    expect(comparisonLayout(spec, {}, { narrow: true, legendEntries: 5 }).margin.b).toBe(116);
+    // The side legend is untouched by the entry count.
+    expect(comparisonLayout(spec, {}, { narrow: false, legendEntries: 5 }).margin.b).toBe(48);
+  });
+
   it("produces a transparent, token-themed layout with the spec's axis labels", () => {
     const layout = comparisonLayout({
       id: "x",

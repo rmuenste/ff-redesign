@@ -230,20 +230,51 @@ export interface ComparisonLayoutColors {
   grid?: string;
 }
 
+/**
+ * Below this plot-column width the legend no longer fits beside the curves
+ * without taking a third of the chart: on a phone it moves under the x-axis.
+ * Above it (tablet and desktop, where the control rail sits beside or the
+ * column is wide) the side legend stays.
+ */
+export const NARROW_PLOT_WIDTH = 560;
+
+export interface ComparisonLayoutOptions {
+  /** The plot column is narrower than NARROW_PLOT_WIDTH. */
+  narrow?: boolean;
+  /** Legend entries to make room for when the legend sits under the chart. */
+  legendEntries?: number;
+}
+
+/** Rows a horizontal legend will wrap to; phone-width labels fit about two per row. */
+function legendRows(entries: number) {
+  return Math.max(1, Math.ceil(entries / 2));
+}
+
 /** Themed, token-driven Plotly layout shared by every comparison plot. */
-export function comparisonLayout(spec: PlotSpec, colors: ComparisonLayoutColors = {}) {
+export function comparisonLayout(
+  spec: PlotSpec,
+  colors: ComparisonLayoutColors = {},
+  options: ComparisonLayoutOptions = {}
+) {
   const axis = spec.axisLabels ?? { x: "", y: "" };
   const text = colors.text ?? "rgba(255,255,255,0.82)";
   const mutedText = colors.mutedText ?? "rgba(255,255,255,0.72)";
   const grid = colors.grid ?? "rgba(255,255,255,0.10)";
+  // Under the chart, the legend starts below the x-axis title (yanchor top at
+  // a negative paper y) and wraps; the bottom margin reserves ~20px per row
+  // on top of the axis title's own space.
+  const legend = options.narrow
+    ? { font: { color: mutedText }, orientation: "h" as const, x: 0, xanchor: "left" as const, y: -0.28, yanchor: "top" as const }
+    : { font: { color: mutedText } };
+  const bottom = options.narrow ? 56 + 20 * legendRows(options.legendEntries ?? 0) : 48;
   return {
     title: { text: spec.title },
     autosize: true,
     paper_bgcolor: "rgba(0,0,0,0)",
     plot_bgcolor: "rgba(0,0,0,0)",
     font: { color: text },
-    legend: { font: { color: mutedText } },
-    margin: { l: 54, r: 20, t: 48, b: 48 },
+    legend,
+    margin: { l: 54, r: 20, t: 48, b: bottom },
     xaxis: {
       title: { text: axis.x },
       range: spec.axisRanges?.x,

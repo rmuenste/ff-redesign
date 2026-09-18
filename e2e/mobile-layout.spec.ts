@@ -74,10 +74,17 @@ for (const viewport of VIEWPORTS) {
       });
     }
 
-    test("the comparison panel with a live Plotly chart fits", async ({ page }) => {
+    test("the comparison panel with a live Plotly chart fits, legend beside it or below it on a phone", async ({ page }) => {
       await page.goto("/benchmarks/bubble3?tab=results");
-      await page.locator(".js-plotly-plot").first().waitFor({ timeout: 30_000 });
+      const plot = page.locator(".js-plotly-plot").first();
+      await plot.waitFor({ timeout: 30_000 });
       expectNoOverflow(await horizontalOverflow(page));
+      // On a phone the plot column is too narrow for a side legend; the layout
+      // switches to a horizontal legend under the x-axis. Plotly exposes the
+      // resolved layout on the graph div.
+      await expect
+        .poll(() => plot.evaluate(el => (el as unknown as { _fullLayout?: { legend?: { orientation?: string } } })._fullLayout?.legend?.orientation))
+        .toBe(viewport.name === "phone" ? "h" : "v");
     });
 
     test("the benchmark index table view fits", async ({ page }) => {

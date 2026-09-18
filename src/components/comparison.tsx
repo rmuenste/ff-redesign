@@ -1,10 +1,11 @@
-import { lazy, Suspense, useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import type { CompareMode, PlotSource, PlotSpec, SeriesGroup, TraceVariant } from "../data/types";
 import {
   buildComparisonTraces,
   comparisonLayout,
   deriveTraceVariants,
   expandSource,
+  NARROW_PLOT_WIDTH,
   type ComparisonLayoutColors,
   type LoadedGroup
 } from "../lib/comparison";
@@ -20,6 +21,26 @@ const COMPARE_MODE_LABELS: Record<CompareMode, string> = {
   diff: "Difference",
   "small-multiples": "Small multiples"
 };
+
+/**
+ * Whether the element is narrower than NARROW_PLOT_WIDTH, tracked through
+ * resizes. Read in an effect, so the first paint (and the prerendered shell,
+ * which has no window) never touches layout; until then it reports false and
+ * the plot renders with the desktop legend.
+ */
+function useNarrowColumn(ref: React.RefObject<HTMLElement | null>) {
+  const [narrow, setNarrow] = useState(false);
+  useEffect(() => {
+    const element = ref.current;
+    if (!element || typeof ResizeObserver === "undefined") return;
+    const update = () => setNarrow(element.clientWidth < NARROW_PLOT_WIDTH);
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [ref]);
+  return narrow;
+}
 
 function resolveCssVar(value: string): string {
   const match = /^var\((--[^)]+)\)$/.exec(value.trim());
@@ -165,6 +186,10 @@ export function ComparisonPanel({
   const toggleGroup = toggle(setSelectedGroupIds);
   const toggleVariant = toggle(setSelectedVariantIds);
 
+  const plotColumn = useRef<HTMLElement>(null);
+  const narrow = useNarrowColumn(plotColumn);
+  const legendEntries = traces.filter(trace => trace.showlegend !== false).length;
+
   return (
     <div className="split split-panel">
       <aside className="panel-aside">
@@ -233,7 +258,7 @@ export function ComparisonPanel({
         )}
       </aside>
 
-      <main style={{ minWidth: 0 }}>
+      <main ref={plotColumn} style={{ minWidth: 0 }}>
         <PlotPanel title={spec.title} meta={`${traces.length} Plotly traces · real ${spec.metric} JSON`}>
           {loading && <div style={{ color: "var(--fg2)" }}>Loading plot data...</div>}
           {error && <div style={{ color: "var(--warn)" }}>{error}</div>}
@@ -242,7 +267,7 @@ export function ComparisonPanel({
             <Suspense fallback={<div style={{ color: "var(--fg2)" }}>Loading Plotly...</div>}>
               <Plot
                 data={traces}
-                layout={comparisonLayout(spec, layoutColors())}
+                layout={comparisonLayout(spec, layoutColors(), { narrow, legendEntries })}
                 config={{ responsive: true, displaylogo: false }}
                 useResizeHandler
                 style={{ width: "100%", height: "var(--plot-h)" }}

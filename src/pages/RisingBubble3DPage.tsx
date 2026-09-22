@@ -187,7 +187,7 @@ export function RisingBubble3DPage() {
                 <Chip tone="solid">RB3</Chip>
                 <Chip>Two-Phase</Chip>
                 <Chip>3D</Chip>
-                <Chip>Interactive plots</Chip>
+                <Chip>Core benchmarks</Chip>
               </div>
               <h1 className="display display-md" style={{ margin: "0 0 12px" }}>
                 Rising Bubble <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400, color: "var(--primary)" }}>3D</span>

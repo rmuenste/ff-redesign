@@ -334,12 +334,12 @@ export function DraftingKissingTumblingPage() {
             onClick={() => navigate("/benchmarks")}
             style={{ display: "flex", alignItems: "center", gap: 6, border: 0, background: "transparent", color: "var(--fg2)", cursor: "pointer", fontFamily: "inherit", fontSize: 12, marginBottom: 12 }}
           >
-            <Icon name="arrow_back" size={14} /> Catalogue / Particulate / DKT
+            <Icon name="arrow_back" size={14} /> Catalogue / Particulate / Drafting-Kissing-Tumbling
           </button>
           <div className="split split-hero">
             <div>
               <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
-                <Chip tone="solid">DKT</Chip>
+                <Chip tone="solid">Drafting-kissing-tumbling</Chip>
                 <Chip>Particulate</Chip>
                 <Chip>3D</Chip>
                 <Chip>DNS validation</Chip>

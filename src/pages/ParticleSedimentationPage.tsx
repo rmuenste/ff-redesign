@@ -574,7 +574,7 @@ export function ParticleSedimentationPage() {
                 <Chip tone="solid">SED</Chip>
                 <Chip>Particulate</Chip>
                 <Chip>3D</Chip>
-                <Chip>PIV References</Chip>
+                <Chip>Core benchmarks</Chip>
               </div>
               <h1 className="display display-md" style={{ margin: "0 0 12px" }}>
                 Particle <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400, color: "var(--primary)" }}>Sedimentation</span>

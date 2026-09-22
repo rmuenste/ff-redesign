@@ -214,7 +214,7 @@ export function RisingBubble2DPage() {
                 <Chip tone="solid">RB2</Chip>
                 <Chip>Two-Phase</Chip>
                 <Chip>2D</Chip>
-                <Chip>Code Comparison</Chip>
+                <Chip>Core benchmarks</Chip>
               </div>
               <h1 className="display display-md" style={{ margin: "0 0 12px" }}>
                 Rising Bubble <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400, color: "var(--primary)" }}>2D</span>

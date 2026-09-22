@@ -451,7 +451,7 @@ export function FlowAroundCylinderPage() {
                 <Chip tone="solid">FAC</Chip>
                 <Chip>Newtonian</Chip>
                 <Chip>3D</Chip>
-                <Chip>Live Drag/Lift</Chip>
+                <Chip>Core benchmarks</Chip>
               </div>
               <h1 className="display display-md" style={{ margin: "0 0 12px" }}>
                 Flow Around <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400, color: "var(--primary)" }}>Cylinder</span>

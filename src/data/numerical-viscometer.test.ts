@@ -310,24 +310,28 @@ describe("numerical-viscometer validation ledger", () => {
   it("selects only the D5.1 rungs and uses the campaign verdict vocabulary", () => {
     const allowed = new Set(["PASS", "RECORDED", "RESOLVED", "FAIL", "OPEN"]);
     expect(viscometerValidationRows.map(row => row.case)).toEqual([
-      "d52_v26e_dt_control",
-      "d52_l3_ladder_restated",
+      "d52_l3_baseline",
+      "d52_l3_ladder",
       "d52_v22L_settled",
       "d52_v23L_settled"
     ]);
-    // The spun-up cell's gate row and the original rung rows are superseded by the
-    // restated ladder, and the first-segment pair readings by the settled rows; all
-    // are published only inside the downloadable datasheet.
-    for (const superseded of [
+    // The derivation rows behind the two publication rows, and the first-segment
+    // pair readings the settled rows supersede, are published only inside the
+    // downloadable datasheet.
+    for (const withheld of [
       "d52_v20_baseline",
       "d52_v21_einstein",
       "d52_v22_phi10",
       "d52_v23_phi20",
+      "d52_v26e_dt_control",
+      "d52_l3_ladder_restated",
       "d52_v22L_lubpair",
       "d52_v23L_lubpair"
     ]) {
-      expect(viscometerValidationRows.map(row => row.case)).not.toContain(superseded);
+      expect(viscometerValidationRows.map(row => row.case)).not.toContain(withheld);
     }
+    // The page carries results, not the history of how they were arrived at.
+    expect(JSON.stringify(viscometerValidationRows)).not.toMatch(/was 1\.1062|erratum|correction PR|supersed/i);
     for (const row of viscometerValidationRows) {
       expect(row.suite).toBe("d5_rheology");
       expect(allowed.has(row.verdict), `${row.case}: ${row.verdict}`).toBe(true);

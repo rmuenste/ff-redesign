@@ -697,20 +697,21 @@ writeJson(resolve(generatedDir, "numerical-viscometer.json"), {
 //
 // Selection policy
 // ----------------
-// Published: the empty cell continued at the suspension time step, which is the
-// T(0) of every ratio on the page and certifies the instrument against the
-// analytic torque; the restated concentration ladder, whose three rungs are read
-// against that matched-window baseline; and the two lubrication pairs in their
-// settled form. Withheld: the spun-up cell's own gate row and the three original
-// rung rows, which the ladder row supersedes as absolute viscosities, and the
+// Published: the campaign's two publication rows for the level-3 instrument —
+// the empty cell at the suspension time step, which is the T(0) of every ratio
+// on the page and certifies the instrument against the analytic torque, and
+// the concentration ladder read against it — plus the two lubrication pairs in
+// their settled form. Withheld: the derivation rows behind those results (the
+// spun-up cell's own gate row, the original rung rows, the time-step control
+// and the restated ladder, which the publication rows condense), and the
 // first-segment readings of both pairs, whose windows were taken before the
 // lubricated microstructure had relaxed and which the settled rows supersede.
-// The datasheet download under Reference Data carries every row of the campaign,
-// superseded ones included.
+// The datasheet download under Reference Data carries every row of the
+// campaign, derivation and superseded rows included.
 // Listed in the order the page reads them: instrument, ladder, pairs.
 const PUBLISHED = [
-  "d52_v26e_dt_control",
-  "d52_l3_ladder_restated",
+  "d52_l3_baseline",
+  "d52_l3_ladder",
   "d52_v22L_settled",
   "d52_v23L_settled"
 ];

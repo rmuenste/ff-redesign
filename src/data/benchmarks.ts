@@ -87,7 +87,7 @@ export const benchmarks: BenchmarkMeta[] = [
     summary:
       "An elastic flag attached to a cylinder in laminar channel flow, with self-induced oscillations compared through displacement, drag and lift.",
     thumb: "cylinder-flag",
-    tabs: ["Introduction", "Definition", "Results", "CFD Tests", "CSM Tests", "Reference Data"],
+    tabs: ["Introduction", "Definition", "FSI Tests", "CFD Tests", "CSM Tests", "Reference Data"],
     comparisonAxis: "level",
     status: "active"
   },

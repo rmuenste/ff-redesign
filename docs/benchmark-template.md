@@ -46,8 +46,9 @@ Rules:
   `/reference-data` page links into every benchmark with
   `?tab=reference-data`, and `src/data/reference-data.test.ts` checks that link.
 - The results tab may carry a more specific label when that reads better, for
-  example *The Orbit* (Jeffery), *Ratio Ladder* (Oberbeck), or *Baseline* +
-  *Concentration Ladder* (Viscometer). There must be at least one tab whose job
+  example *The Orbit* (Jeffery), *Ratio Ladder* (Oberbeck), *Baseline* +
+  *Concentration Ladder* (Viscometer), or *FSI Tests* next to the FSI page's
+  *CFD Tests* and *CSM Tests*. There must be at least one tab whose job
   is to display results.
 - The default tab is `introduction`.
 
@@ -67,7 +68,7 @@ Current tab sets, for orientation:
 ```
 FAC3   Introduction · Definition · Results · Reference Data · Conclusion and Bibliography
 RB3    Introduction · Definition · Results · Reference Data
-FSI    Introduction · Definition · Results · CFD Tests · CSM Tests · Reference Data
+FSI    Introduction · Definition · FSI Tests · CFD Tests · CSM Tests · Reference Data
 SED    Introduction · Definition · Results · Lubrication · Validation · Reference Data
 HS     Introduction · Definition · Results · Confinement · Validation · Reference Data
 JEF    Introduction · Definition · The Orbit · Wall Clearance · Sphere Control · Validation · Reference Data

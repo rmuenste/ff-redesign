@@ -412,7 +412,7 @@ function DefinitionTab() {
   );
 }
 
-function ResultsTab() {
+function FsiTestsTab() {
   const fsi2Published = fsiFsi2Rows.find(row => row.dt === "0.0005" && row.level === "4+0")!;
   const fsi3Published = fsiFsi3Rows.find(row => row.dt === "0.0005" && row.level === "4+0")!;
   return (
@@ -585,7 +585,7 @@ export function FsiBenchmarkPage() {
   const tabs = [
     { id: "introduction", label: "Introduction" },
     { id: "definition", label: "Definition" },
-    { id: "results", label: "Results" },
+    { id: "fsi-tests", label: "FSI Tests" },
     { id: "cfd-tests", label: "CFD Tests" },
     { id: "csm-tests", label: "CSM Tests" },
     { id: "reference-data", label: "Reference Data" }
@@ -639,7 +639,7 @@ export function FsiBenchmarkPage() {
 
       {tab === "introduction" && <IntroductionTab />}
       {tab === "definition" && <DefinitionTab />}
-      {tab === "results" && <ResultsTab />}
+      {tab === "fsi-tests" && <FsiTestsTab />}
       {tab === "cfd-tests" && <CfdTestsTab />}
       {tab === "csm-tests" && <CsmTestsTab />}
       {tab === "reference-data" && <ReferenceDataTab />}

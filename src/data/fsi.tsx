@@ -471,7 +471,7 @@ export const fsiReferenceColumns = [
 /** What the bundle holds; the order matches fsiGenerated.bundle.files. */
 export const fsiBundleContents = [
   { file: "ref_fsi2.point", run: "FSI2", level: "4", dt: "0.0005", detail: "Reference run, t = 10 to 14.62 s" },
-  { file: "ref_fsi3.point", run: "FSI3", level: "4", dt: "0.00025", detail: "Reference run, t = 5 to 6.44 s; see the note in Results on its time step" },
+  { file: "ref_fsi3.point", run: "FSI3", level: "4", dt: "0.00025", detail: "Reference run, t = 5 to 6.44 s; see the note in FSI Tests on its time step" },
   ...["2", "3", "4"].flatMap(level =>
     [
       ["", "0.02"],

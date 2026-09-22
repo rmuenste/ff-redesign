@@ -89,7 +89,7 @@ The Turek and Hron fluid-structure interaction benchmark, a core benchmark, at
 legacy featflow.de pages (`en/benchmarks/cfdbenchmarking/fsi_benchmark*`, local
 copy in `~/code/ffweb`), not from `ff-angular`. The tabs follow the template:
 Introduction (abstract, introduction, bibliography), Definition (definitions,
-quantities for comparison, the FSI mesh), Results (FSI1-3), CFD Tests, CSM Tests,
+quantities for comparison, the FSI mesh), FSI Tests (FSI1-3), CFD Tests, CSM Tests,
 Reference Data.
 
 - The reference files and figures are curated under `scripts/source-data/fsi/`;

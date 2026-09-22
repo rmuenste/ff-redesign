@@ -38,9 +38,10 @@
 //   src/data/generated/jeffery-validation.json   Validation-tab rows
 //
 // Run with: node scripts/convert-jeffery-data.mjs
-import { copyFileSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, relative, resolve } from "node:path";
 import { parseCsvRecords } from "./lib/csv.mjs";
+import { resetGeneratedOutputs, writeManifest } from "./lib/output-dir.mjs";
 import { buildLedger, readDatasheet } from "./lib/validation-ledger.mjs";
 import { createStoredZip } from "./lib/zip.mjs";
 
@@ -381,7 +382,7 @@ const wall = {
 };
 
 /* ---------------- assets ---------------- */
-rmSync(outDir, { recursive: true, force: true });
+const preserved = resetGeneratedOutputs(outDir, ["plots", "downloads"], { benchmarkId: BENCHMARK });
 
 const entries = [];
 const zipEntries = [];
@@ -863,7 +864,7 @@ entries.push({
   label: `${BENCHMARK}.zip`
 });
 
-writeJson(resolve(outDir, "manifest.json"), { benchmarkId: BENCHMARK, entries });
+writeManifest(outDir, BENCHMARK, entries, preserved);
 
 // The per-step series stay in the published CSVs; the JSON module carries only
 // the reductions, so the app bundle does not swallow 24 000 orientation samples.

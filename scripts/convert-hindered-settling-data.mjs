@@ -19,9 +19,10 @@
 //   src/data/generated/hindered-settling-validation.json  Validation-tab rows
 //
 // Run with: node scripts/convert-hindered-settling-data.mjs
-import { copyFileSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, relative, resolve } from "node:path";
 import { parseCsvRecords } from "./lib/csv.mjs";
+import { resetGeneratedOutputs, writeManifest } from "./lib/output-dir.mjs";
 import { buildLedger, readDatasheet } from "./lib/validation-ledger.mjs";
 import { createStoredZip } from "./lib/zip.mjs";
 
@@ -159,7 +160,7 @@ const wideSlope = (() => {
   };
 })();
 
-rmSync(outDir, { recursive: true, force: true });
+const preserved = resetGeneratedOutputs(outDir, ["plots", "downloads"], { benchmarkId: "hindered-settling" });
 
 const entries = [];
 const zipEntries = [];
@@ -320,7 +321,7 @@ entries.push({
   label: "hindered-settling.zip"
 });
 
-writeJson(resolve(outDir, "manifest.json"), { benchmarkId: "hindered-settling", entries });
+writeManifest(outDir, "hindered-settling", entries, preserved);
 
 // ---- tables and fits --------------------------------------------------------
 writeJson(resolve(generatedDir, "hindered-settling.json"), {

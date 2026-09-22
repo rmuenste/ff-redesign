@@ -300,10 +300,14 @@ Template: `scripts/convert-hindered-settling-data.mjs`. A converter:
 
 1. reads `scripts/source-data/<id>/` and validates the input (fails loudly on
    unexpected sizes or non-numeric values)
-2. `rmSync`s and rewrites `public/benchmark-assets/<id>/`
+2. resets `public/benchmark-assets/<id>/` with `resetGeneratedOutputs(outDir,
+   ownedPaths, { benchmarkId })` from `scripts/lib/output-dir.mjs`, declaring
+   the paths it writes (`plots`, `downloads`, any named `media/` file); the
+   gallery stills under `media/gallery/` are never a converter's to delete
 3. writes plot JSON, copies downloads, builds `downloads/<id>.zip` with
    `scripts/lib/zip.mjs`
-4. writes `manifest.json`, with one entry per file:
+4. writes `manifest.json` with `writeManifest(outDir, benchmarkId, entries,
+   preserved)`, which carries the entries it does not own; one entry per file:
    `{ oldPath, newPath, metric?, seriesGroupId?, kind, label, sourceShape?, derived? }`,
    where `kind` is `code | level | reference | media | download`
 5. writes `src/data/generated/<id>.json` (derived numbers)

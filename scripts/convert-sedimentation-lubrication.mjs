@@ -6,9 +6,10 @@
 // the plot converter reads a sibling checkout that is not part of this
 // repository, so it cannot be re-run here, while this material must stay
 // rebuildable. Because both write into the same benchmark directory, this script
-// MERGES into the existing manifest: it drops anything it previously owned (every
-// path under plots/lubrication/ and downloads/lubrication/) and appends its own
-// entries. Run it after the plot converter, never before.
+// MERGES into the existing manifest: it rebuilds only what it owns (every path
+// under plots/lubrication/ and downloads/lubrication/) and keeps its entries where
+// they were, ahead of anything added after them. Run it after the plot converter,
+// never before.
 //
 // Inputs (curated under scripts/source-data/sedimentation/lubrication/):
 //   approach_E{1,2}_base.csv   bottom-approach window, lubrication OFF
@@ -33,10 +34,11 @@
 //   src/data/generated/sedimentation-lubrication.json
 //
 // Run with: node scripts/convert-sedimentation-lubrication.mjs
-import { copyFileSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { dirname, relative, resolve } from "node:path";
 import { parseCsvRecords } from "./lib/csv.mjs";
 import { createStoredZip } from "./lib/zip.mjs";
+import { resetGeneratedOutputs, writeManifest } from "./lib/output-dir.mjs";
 
 const root = resolve(import.meta.dirname, "..");
 const srcDir = resolve(root, "scripts/source-data/sedimentation/lubrication");
@@ -186,18 +188,15 @@ const cases = parseCsvRecords(readFileSync(resolve(srcDir, "cases.csv"), "utf-8"
 });
 
 // ---- assets -----------------------------------------------------------------
-const OWNED = path => path.startsWith("plots/lubrication/") || path.startsWith("downloads/lubrication/");
-
+// Only the lubrication material is rebuilt; the core plots, the gallery stills
+// and all of their manifest entries stay.
 const manifestPath = resolve(outDir, "manifest.json");
-const manifest = JSON.parse(readFileSync(manifestPath, "utf-8"));
-if (manifest.benchmarkId !== "sedimentation") {
-  throw new Error(`unexpected manifest at ${manifestPath}: ${manifest.benchmarkId}`);
+if (!existsSync(manifestPath)) {
+  throw new Error(`no manifest at ${manifestPath}: run scripts/convert-sedimentation-data.mjs first`);
 }
-manifest.entries = manifest.entries.filter(entry => !OWNED(entry.newPath));
-
-for (const dir of ["plots/lubrication", "downloads/lubrication"]) {
-  rmSync(resolve(outDir, dir), { recursive: true, force: true });
-}
+const preserved = resetGeneratedOutputs(outDir, ["plots/lubrication", "downloads/lubrication"], {
+  benchmarkId: "sedimentation"
+});
 
 const entries = [];
 const zipEntries = [];
@@ -313,8 +312,7 @@ entries.push({
   label: "sedimentation-lubrication.zip"
 });
 
-manifest.entries.push(...entries);
-writeJson(manifestPath, manifest);
+writeManifest(outDir, "sedimentation", entries, preserved);
 
 // ---- derived numbers --------------------------------------------------------
 writeJson(resolve(generatedDir, "sedimentation-lubrication.json"), {

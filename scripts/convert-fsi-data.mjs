@@ -26,9 +26,10 @@
 //
 // Run by hand: node scripts/convert-fsi-data.mjs
 
-import { copyFileSync, mkdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { basename, dirname, relative, resolve } from "node:path";
 import { createDeflatedZip } from "./lib/zip.mjs";
+import { resetGeneratedOutputs, writeManifest } from "./lib/output-dir.mjs";
 
 const root = resolve(import.meta.dirname, "..");
 const sourceDir = resolve(root, "scripts/source-data/fsi");
@@ -153,8 +154,23 @@ const METRICS = [
   { id: "lift", label: "Lift", scale: 1 }
 ];
 
-rmSync(outDir, { recursive: true, force: true });
-mkdirSync(outDir, { recursive: true });
+/** Legacy figures copied from the featflow.de page: [source under media/, published path, label]. */
+const FIGURES = [
+  ["fig1.jpg", "media/geometry.jpg", "Computational domain"],
+  ["fig2.jpg", "media/structure.jpg", "Detail of the structure part"],
+  ["fig3.jpg", "media/integration-path.jpg", "Integration path for the forces"],
+  ["bench_fs_coarse.png", "media/coarse-mesh.png", "Coarse mesh"],
+  ["cfd3_3_0_2_drag_zoom.png", "media/cfd3-drag.png", "CFD3 drag (legacy plot, no data published)"],
+  ["cfd3_3_0_2_lift_zoom.png", "media/cfd3-lift.png", "CFD3 lift (legacy plot, no data published)"]
+];
+
+// Only the paths this script writes are rebuilt; anything else under media/
+// (gallery stills) stays, with its manifest entries.
+const preserved = resetGeneratedOutputs(
+  outDir,
+  ["plots", "downloads", ...FIGURES.map(([, newPath]) => newPath)],
+  { benchmarkId: "fsi" }
+);
 
 // ---- FSI2 / FSI3 --------------------------------------------------------------
 
@@ -234,14 +250,6 @@ for (const level of CSM_LEVELS) {
 
 // ---- Figures ------------------------------------------------------------------
 
-const FIGURES = [
-  ["fig1.jpg", "media/geometry.jpg", "Computational domain"],
-  ["fig2.jpg", "media/structure.jpg", "Detail of the structure part"],
-  ["fig3.jpg", "media/integration-path.jpg", "Integration path for the forces"],
-  ["bench_fs_coarse.png", "media/coarse-mesh.png", "Coarse mesh"],
-  ["cfd3_3_0_2_drag_zoom.png", "media/cfd3-drag.png", "CFD3 drag (legacy plot, no data published)"],
-  ["cfd3_3_0_2_lift_zoom.png", "media/cfd3-lift.png", "CFD3 lift (legacy plot, no data published)"]
-];
 for (const [from, newPath, label] of FIGURES) {
   copy(`media/${from}`, newPath, { oldPath: `${LEGACY}/${from}`, kind: "media", label });
 }
@@ -259,7 +267,8 @@ entries.push({
 });
 generated.bundle = { file: "fsi.zip", bytes: statSync(zipPath).size, files: bundle.map(file => file.name) };
 
-writeJson(resolve(outDir, "manifest.json"), { benchmarkId: "fsi", entries });
+// This manifest is written compact, like every other JSON file of this benchmark.
+writeManifest(outDir, "fsi", entries, preserved, { indent: 0 });
 mkdirSync(dirname(generatedPath), { recursive: true });
 writeFileSync(generatedPath, JSON.stringify(generated, null, 2) + "\n");
 

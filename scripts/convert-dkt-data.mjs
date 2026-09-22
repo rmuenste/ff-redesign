@@ -11,9 +11,10 @@
 //   src/data/generated/dkt-validation.json  Validation-tab rows
 //
 // Run with: node scripts/convert-dkt-data.mjs
-import { copyFileSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, relative, resolve } from "node:path";
 import { buildLedger, readDatasheet } from "./lib/validation-ledger.mjs";
+import { resetGeneratedOutputs, writeManifest } from "./lib/output-dir.mjs";
 import { createStoredZip } from "./lib/zip.mjs";
 
 const root = resolve(import.meta.dirname, "..");
@@ -81,7 +82,7 @@ function writeJson(path, value) {
   writeFileSync(path, `${JSON.stringify(value, null, 2)}\n`);
 }
 
-rmSync(outDir, { recursive: true, force: true });
+const preserved = resetGeneratedOutputs(outDir, ["plots", "downloads"], { benchmarkId: "dkt" });
 
 const entries = [];
 const zipEntries = [];
@@ -171,7 +172,7 @@ entries.push({
   label: "dkt.zip"
 });
 
-writeJson(resolve(outDir, "manifest.json"), { benchmarkId: "dkt", entries });
+writeManifest(outDir, "dkt", entries, preserved);
 
 // ---- validation ledger ------------------------------------------------------
 // Generated from the datasheet, never hand-written. `dkt*` covers the case

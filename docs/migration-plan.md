@@ -1,5 +1,15 @@
 # React Migration Plan For FeatFloWer Redesign (Revised)
 
+> **Status: largely complete, kept as a historical record.** Stages 0–5 are
+> done and Stage 6 is partly done (the mobile pass; the other QA items are
+> unchecked). The four `ff-angular` benchmarks are migrated, and five DNS-validation
+> benchmarks, a gallery and an aggregate reference-data page have been added
+> since. For current status see [project_state.md](project_state.md). To add a
+> benchmark, follow [benchmark-template.md](benchmark-template.md), which
+> replaces the per-benchmark steps in Stage 5. The sections below describe the
+> plan as it was written. Where a stage turned out differently, a *Status* note
+> says so.
+
 ## Summary
 
 The redesign is React, so the migration is a React/Vite/TypeScript implementation,
@@ -29,7 +39,9 @@ Decisions locked for v1:
 - **No synthetic series.** Every plotted trace comes from real migrated source
   data: Angular JSON assets, Angular text assets, or curated reference files.
 
-Implementation status as of the final benchmark pass:
+Implementation status as of the final `ff-angular` benchmark pass (the DNS
+benchmarks, gallery, reference-data page and mobile pass came later and are
+recorded in `project_state.md`):
 
 - Stage 0 through the final Particle Sedimentation migration pass are complete.
 - The shared comparison engine now supports RB3 trace variants and RB2's explicit
@@ -189,6 +201,12 @@ Build while doing Stage 3 (RB3 drives the API):
 
 Defer to Stage 5 (built as later benchmarks demand): compare-mode `diff` /
 `small-multiples`, `CodeSelector` specialization, gallery components.
+
+*Status:* `BenchmarkPage` and `BenchmarkHero` were never built; each page
+declares its own hero and tabs. The selectors live inside `ComparisonPanel`
+rather than as separate exported components. `diff` and `small-multiples` are
+still unimplemented. The gallery components were built later (`GalleryPage`,
+`GalleryFigure`).
 
 Component behavior:
 
@@ -371,6 +389,10 @@ Acceptance for Stage 3:
 
 Goal: make navigation and entry points truthful.
 
+*Status:* done. The catalogue and Home page are driven by the registry, with
+every benchmark active and no planned or mock entries. The gallery is a real
+page built on rendered stills (`/gallery`).
+
 Benchmark index:
 
 - Replace the mock catalogue with real registry-driven entries.
@@ -399,6 +421,11 @@ Gallery:
 
 Goal: repeat the proven pattern, and prove the comparison component on its **second
 axis (codes)**.
+
+*Status:* done. After the three benchmarks below, five DNS-validation
+benchmarks were added in the same way (DKT, Hindered Settling, Numerical
+Viscometer, Oberbeck Spheroid Drag, Jeffery Orbit). The per-benchmark steps are
+now maintained, in more detail, in [benchmark-template.md](benchmark-template.md).
 
 Completed in this order:
 
@@ -453,6 +480,11 @@ Status: mobile layout pass done. Every route has zero horizontal overflow at
 
 ## Test Plan
 
+*Status:* the unit suite (`npm run test`) now covers every benchmark, not only
+RB3: the registry, routes, manifests, the gallery, the reference-data index,
+responsive source patterns, and the derived numbers of each benchmark. The e2e
+mobile-layout check runs in CI. The list below is the original plan.
+
 - TypeScript build passes.
 - Vite production build passes.
 - Unit tests for benchmark registry validity and content schema completeness.
@@ -494,4 +526,5 @@ Manual acceptance scenarios:
   integration. Legacy formulas may be rewritten or supported with explicit macros.
 - Curated asset copying is preferred over linking into `ff-angular`.
 - Only the four Angular-backed benchmarks are production content until additional real
-  benchmark content exists.
+  benchmark content exists. *(Superseded: the DNS campaign has since supplied
+  five more.)*

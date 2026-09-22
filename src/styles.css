@@ -534,9 +534,14 @@ input[type="range"].tu::-webkit-slider-thumb:hover { transform: scale(1.2); }
 /* A block equation wider than its column scrolls in place, like a table,
    rather than widening the page. The Equation component wraps block math in
    .equation-block; the mjx rule covers $$...$$ display math typeset by
-   MathJax directly. The padding keeps ascenders/descenders clear of the clip. */
-.equation-block { max-width: 100%; overflow-x: auto; overflow-y: hidden; padding: 4px 0; }
+   MathJax directly. Scrolling forces a vertical clip (overflow-x: auto makes
+   overflow-y non-visible), and MathJax's measured box can sit a little inside
+   the ink of fractions, bars and big operators. So inside .equation-block only
+   the outer div clips: the display container stays unclipped, its 1em margin
+   becomes headroom within the div, and the em padding covers inline math. */
+.equation-block { max-width: 100%; overflow-x: auto; overflow-y: hidden; padding: 0.5em 0; }
 mjx-container[jax="CHTML"][display="true"] { max-width: 100%; overflow-x: auto; overflow-y: hidden; }
+.equation-block mjx-container[jax="CHTML"][display="true"] { overflow: visible; }
 
 /* Sticky chrome offsets derive from the nav height. */
 .panel-aside { position: sticky; top: calc(var(--toolbar-h) + 32px); align-self: start; display: grid; gap: 28px; }

@@ -15,6 +15,7 @@ import {
   viscometerPairsSpecs,
   viscometerPhi10,
   viscometerPhi20,
+  viscometerRestart,
   viscometerRungs,
   viscometerTorqueSpecs,
   viscometerValidationRows,
@@ -66,12 +67,15 @@ describe("numerical-viscometer plateau statistics", () => {
       "batchelor",
       "krieger-dougherty"
     ]);
-    expect(viscometerEinstein.eta).toBeCloseTo(1.1062, 4);
-    expect(viscometerPhi10.eta).toBeCloseTo(1.2454, 4);
-    expect(viscometerPhi20.eta).toBeCloseTo(1.7143, 4);
+    expect(viscometerEinstein.eta).toBeCloseTo(1.11223, 4);
+    expect(viscometerPhi10.eta).toBeCloseTo(1.25218, 4);
+    expect(viscometerPhi20.eta).toBeCloseTo(1.72354, 4);
+    // Every rung inside the campaign's three-per-cent band, and within 1.1% of its closure.
     for (const rung of viscometerGatedLadder) {
-      expect(Math.abs(rung.deviationComposite), `phi = ${rung.phi}`).toBeLessThan(0.01);
+      expect(Math.abs(rung.deviationComposite), `phi = ${rung.phi}`).toBeLessThan(0.012);
     }
+    expect(viscometerPhi10.deviationComposite).toBeCloseTo(-0.0024, 4);
+    expect(viscometerPhi20.deviationComposite).toBeCloseTo(-0.004, 3);
   });
 
   it("outgrows each closure in turn, by a margin the instrument resolves", () => {
@@ -89,11 +93,46 @@ describe("numerical-viscometer plateau statistics", () => {
   });
 
   it("reads the empty instrument within the three-per-cent torque gate", () => {
-    expect(viscometerBaseline.torqueDna).toBeCloseTo(84.2296, 3);
+    expect(viscometerBaseline.torqueDna).toBeCloseTo(83.7768, 3);
     expect(Math.abs(viscometerGates.torque)).toBeLessThan(0.03);
-    expect(viscometerGates.torque).toBeCloseTo(0.0054, 4);
-    // Machine-steady: the plateau varies by less than a part per million of itself.
-    expect(viscometerBaseline.scatter).toBeLessThan(1e-6);
+    // Continued at the suspension time step, the empty cell sits on the analytic torque.
+    expect(Math.abs(viscometerGates.torque)).toBeLessThan(1e-4);
+    expect(viscometerGates.torque).toBeCloseTo(0.000012, 6);
+    // Steady: the plateau varies by a few parts in a hundred thousand of itself.
+    expect(viscometerBaseline.scatter).toBeLessThan(1e-4);
+  });
+
+  it("reads every rung against the empty cell over its own matched window", () => {
+    // The control's own plateau is the window matched to the first rung.
+    expect(viscometerBaseline.window).toEqual([230, 250]);
+    expect(viscometerBaseline.baselineWindow).toEqual(viscometerBaseline.window);
+    expect(viscometerBaseline.runEnd).toBeGreaterThan(viscometerBaseline.window[1]);
+    // The ladder rungs are matched window for window; the twins, whose plateaus lie
+    // beyond the control's end, use its final window.
+    for (const rung of [viscometerEinstein, viscometerPhi10, viscometerPhi20]) {
+      expect(rung.baselineWindow, rung.run).toEqual(rung.window);
+    }
+    for (const pair of viscometerPairs) {
+      const rung = viscometerRungs.find(candidate => candidate.run === pair.run)!;
+      expect(rung.window[0]).toBeGreaterThan(rung.baselineWindow[1]);
+      expect(rung.baselineWindow[1]).toBeCloseTo(viscometerBaseline.runEnd, 3);
+    }
+    expect(viscometerEinstein.torqueReference).toBeCloseTo(83.7768, 4);
+    expect(viscometerPhi10.torqueReference).toBeCloseTo(83.7768, 4);
+    expect(viscometerPhi20.torqueReference).toBeCloseTo(83.7759, 4);
+    expect(viscometerRungs.find(rung => rung.run === "phi10_lub")!.torqueReference).toBeCloseTo(83.7735, 4);
+    // Every T(0) within a few parts in a hundred thousand of the analytic torque.
+    for (const rung of viscometerRungs) {
+      expect(Math.abs(rung.torqueReference / viscometerInstrument.torqueExact - 1), rung.run).toBeLessThan(5e-5);
+    }
+    // The ratio is the same to five digits whichever estimator reads it.
+    for (const rung of viscometerLoadedRungs) {
+      expect(rung.etaCorrected, rung.run).toBeCloseTo(rung.eta, 4);
+    }
+    // The loaded plateaus themselves are untouched by the choice of reference.
+    expect(viscometerEinstein.torqueDna).toBeCloseTo(93.1787, 4);
+    expect(viscometerPhi10.torqueDna).toBeCloseTo(104.9036, 4);
+    expect(viscometerPhi20.torqueDna).toBeCloseTo(144.391, 4);
   });
 
   it("recovers the exact torque from the second estimator once the offset is added", () => {
@@ -103,9 +142,9 @@ describe("numerical-viscometer plateau statistics", () => {
 
   it("measures the Einstein rung against the composite target, not the naive law", () => {
     expect(viscometerEinstein.etaPstd).toBeLessThan(1e-3);
-    expect(viscometerEinstein.etaComposite).toBe(1.0996);
+    expect(viscometerEinstein.etaComposite).toBe(1.10025);
     expect(viscometerEinstein.etaNaive).toBe(1.125);
-    expect(viscometerEinstein.deviationComposite).toBeCloseTo(0.006, 3);
+    expect(viscometerEinstein.deviationComposite).toBeCloseTo(0.0109, 4);
     // The naive dilute value sits further away than the composite, which is the point.
     expect(Math.abs(viscometerEinstein.deviationNaive)).toBeGreaterThan(
       Math.abs(viscometerEinstein.deviationComposite)
@@ -118,8 +157,8 @@ describe("numerical-viscometer plateau statistics", () => {
     for (const rung of viscometerLoadedRungs) {
       expect(Math.abs(rung.gapDeviation), rung.run).toBeLessThan(1e-4);
     }
-    // Empty, the offset carries the same discretisation error as the torque itself.
-    expect(Math.abs(viscometerBaseline.gapDeviation)).toBeLessThan(0.03);
+    // And in the empty cell, read at the same time step.
+    expect(Math.abs(viscometerBaseline.gapDeviation)).toBeLessThan(1e-4);
   });
 
   it("attributes the lubrication contribution to single-variable twins", () => {
@@ -130,7 +169,7 @@ describe("numerical-viscometer plateau statistics", () => {
       expect(pair.saturatedPairs).toBeLessThan(pair.activePairs);
       expect(pair.samples).toBeGreaterThan(1000);
     }
-    expect(viscometerPairs[0].delta).toBeCloseTo(0.0075, 4);
+    expect(viscometerPairs[0].delta).toBeCloseTo(0.0076, 4);
     expect(viscometerPairs[1].delta).toBeCloseTo(0.0271, 4);
     expect(Math.round(viscometerPairs[0].activePairs)).toBe(302);
     expect(Math.round(viscometerPairs[1].activePairs)).toBe(1065);
@@ -148,19 +187,39 @@ describe("numerical-viscometer plateau statistics", () => {
     const torqueGate = viscometerGateRows.find(row => row.gate === "Analytic torque");
     expect(torqueGate?.reference).toBe(viscometerInstrument.torqueExact.toFixed(4));
     expect(torqueGate?.measured).toBe(viscometerBaseline.torqueDna.toFixed(4));
-    expect(torqueGate?.deviation).toBe(percent(viscometerGates.torque));
+    expect(torqueGate?.deviation).toBe(percent(viscometerGates.torque, 3));
+    const gapGate = viscometerGateRows.find(row => row.gate === "Estimator concordance");
+    expect(gapGate?.measured).toBe(viscometerBaseline.gap.toFixed(4));
+    expect(gapGate?.deviation).toBe(percent(viscometerBaseline.gapDeviation, 3));
     expect(viscometerGateRows).toHaveLength(4);
   });
 });
 
 describe("numerical-viscometer plot assets", () => {
-  it("puts both runs on one time axis, with the suspension after the baseline", () => {
+  it("puts spin-up and suspension on one time axis, with the suspension after the restart", () => {
     const dna = readPlot("torque", "dna");
     expect(dna.mode).toBe("lines");
     expect(dna.x[0]).toBeLessThan(1);
     expect(dna.x[dna.x.length - 1]).toBeCloseTo(250, 0);
     // Monotone time, i.e. the two histories are concatenated and not interleaved.
     for (let i = 1; i < dna.x.length; i += 1) expect(dna.x[i]).toBeGreaterThan(dna.x[i - 1]);
+    const insertion = readPlot("torque", "insertion");
+    expect(viscometerRestart).toBe(200);
+    expect(insertion.x).toEqual([viscometerRestart, viscometerRestart]);
+  });
+
+  it("draws the empty instrument continued at the suspension time step from the restart", () => {
+    const control = readPlot("torque", "baseline");
+    expect(control.mode).toBe("lines");
+    expect(control.x[0]).toBeGreaterThan(viscometerRestart);
+    expect(control.x[0] - viscometerRestart).toBeLessThan(0.1);
+    expect(control.x[control.x.length - 1]).toBeCloseTo(viscometerBaseline.runEnd, 0);
+    // It settles onto the analytic torque: the last sample is within 0.01% of it.
+    const last = control.y[control.y.length - 1];
+    expect(Math.abs(last / viscometerInstrument.torqueExact - 1)).toBeLessThan(1e-4);
+    // And the exact reference line spans it.
+    const exact = readPlot("torque", "exact");
+    expect(exact.x[1]).toBeGreaterThanOrEqual(control.x[control.x.length - 1]);
   });
 
   it("stores the corrected reaction estimator as the reaction estimator plus the offset", () => {
@@ -245,23 +304,30 @@ describe("numerical-viscometer plot assets", () => {
 describe("numerical-viscometer validation ledger", () => {
   it("is generated from the curated datasheet, not hand-written", () => {
     expect(viscometerValidationSource).toBe("scripts/source-data/dns/dns_validation_datasheet.csv");
-    expect(viscometerValidationRows).toHaveLength(6);
+    expect(viscometerValidationRows).toHaveLength(4);
   });
 
   it("selects only the D5.1 rungs and uses the campaign verdict vocabulary", () => {
     const allowed = new Set(["PASS", "RECORDED", "RESOLVED", "FAIL", "OPEN"]);
     expect(viscometerValidationRows.map(row => row.case)).toEqual([
+      "d52_v26e_dt_control",
+      "d52_l3_ladder_restated",
+      "d52_v22L_settled",
+      "d52_v23L_settled"
+    ]);
+    // The spun-up cell's gate row and the original rung rows are superseded by the
+    // restated ladder, and the first-segment pair readings by the settled rows; all
+    // are published only inside the downloadable datasheet.
+    for (const superseded of [
       "d52_v20_baseline",
       "d52_v21_einstein",
       "d52_v22_phi10",
       "d52_v23_phi20",
-      "d52_v22L_settled",
-      "d52_v23L_settled"
-    ]);
-    // The first-segment pair readings are superseded by the settled rows and are
-    // published only inside the downloadable datasheet.
-    expect(viscometerValidationRows.map(row => row.case)).not.toContain("d52_v22L_lubpair");
-    expect(viscometerValidationRows.map(row => row.case)).not.toContain("d52_v23L_lubpair");
+      "d52_v22L_lubpair",
+      "d52_v23L_lubpair"
+    ]) {
+      expect(viscometerValidationRows.map(row => row.case)).not.toContain(superseded);
+    }
     for (const row of viscometerValidationRows) {
       expect(row.suite).toBe("d5_rheology");
       expect(allowed.has(row.verdict), `${row.case}: ${row.verdict}`).toBe(true);

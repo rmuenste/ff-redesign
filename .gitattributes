@@ -1,0 +1,10 @@
+# Check every text file out with LF, whatever core.autocrlf says on the
+# machine. The converters copy and zip source files byte for byte and the
+# reference index records their size and hash, so a CRLF working copy
+# produces artifacts that no longer match the LF files git stores.
+* text=auto eol=lf
+
+*.zip  binary
+*.png  binary
+*.webp binary
+*.mp4  binary

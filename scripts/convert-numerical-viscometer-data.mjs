@@ -1,13 +1,18 @@
 // Builds the numerical-viscometer (D5.1) benchmark assets.
 //
 // Inputs (curated under scripts/source-data/):
-//   numerical-viscometer/torque_baseline.csv   torque history, empty instrument
-//   numerical-viscometer/torque_einstein.csv   torque history, phi = 0.05 suspension
+//   numerical-viscometer/torque_spinup.csv     torque history, empty instrument spun up to its
+//                                              steady state at dt = 0.05 (t = 0..200)
+//   numerical-viscometer/torque_baseline.csv   torque history, empty instrument continued from
+//                                              that state at the suspension time step dt = 0.005
+//                                              (t = 200..): the T(0) reference of every rung
+//   numerical-viscometer/torque_<rung>.csv     torque history of each loaded rung, also continued
+//                                              from the spun-up state at dt = 0.005
 //   numerical-viscometer/rungs.csv             one row per rung of the phi ladder
 //   numerical-viscometer/velocity_profile.csv  the profile gate, measured off the VTK frame
 //   dns/dns_validation_datasheet.csv           the campaign's claim ledger
 //
-// The two torque histories are the VISC_TORQUE_DNA and VISC_TORQUE_RES records of
+// The torque histories are the VISC_TORQUE_DNA and VISC_TORQUE_RES records of
 // each run's own solver protocol (_data/prot.txt in the campaign rundirs), one
 // sample per time step and neither smoothed nor trimmed, so every plateau number
 // on the site is a statistic of the published series rather than a transcription.
@@ -15,6 +20,22 @@
 // cloud size, and the two PREDICTIONS the measurement is gated against — the
 // composite-Einstein target computed by the campaign from the measured phi(r,z)
 // field, and the naive dilute-limit value.
+//
+// Matched-window baseline
+// -----------------------
+// The relative viscosity is a ratio of two readings of the same instrument, and
+// the level-3 discrete steady state of the empty cell depends on the time step:
+// spun up at dt = 0.05 it plateaus 0.54% above the analytic torque, continued at
+// the suspension time step dt = 0.005 it relaxes onto it. Every loaded rung is
+// such a continuation, so T(0) is NOT a single constant of the spun-up cell but
+// the empty cell continued the same way, averaged over the same window of time
+// after the restart as the rung it normalises. rungs.csv states that window per
+// rung (baseline_start, baseline_end): the rung's own plateau window wherever
+// the empty control covers it, and the control's final window for the
+// lubricated twins, whose plateaus lie beyond the control's end (their T(0) is
+// then the fully relaxed cell, within 3e-5 of the analytic torque). The
+// spun-up history is published and plotted for the start-up, but no ratio is
+// formed against it.
 //
 // Everything else is derived here: the exact analytic torque, the transpose
 // correction between the two estimators, the plateau statistics, the relative
@@ -28,7 +49,7 @@
 //   src/data/generated/numerical-viscometer-validation.json  Validation-tab rows
 //
 // Run with: node scripts/convert-numerical-viscometer-data.mjs
-import { copyFileSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, relative, resolve } from "node:path";
 import { parseCsvRecords } from "./lib/csv.mjs";
 import { buildLedger, readDatasheet } from "./lib/validation-ledger.mjs";
@@ -73,7 +94,7 @@ const HOLE_VOLUME = Math.PI * INSTRUMENT.rInner ** 2 * INSTRUMENT.height;
 const TRANSPOSE_CORRECTION = 2 * MU * INSTRUMENT.omega * HOLE_VOLUME;
 
 /** Plot sampling per run, chosen so each history contributes ~1000 points. */
-const PLOT_SAMPLE = { baseline: 5, einstein: 10 };
+const PLOT_SAMPLE = { spinup: 5, einstein: 10, baseline: 10 };
 
 const SERIES_COLORS = {
   dna: "#5fb8ff",
@@ -90,6 +111,9 @@ function readTorque(name) {
 }
 
 const mean = values => values.reduce((sum, value) => sum + value, 0) / values.length;
+
+/** Closed window test; the end carries the tolerance the printed times need. */
+const inWindow = (t, [start, end]) => t >= start && t <= end + 1e-6;
 
 function pstdev(values) {
   const m = mean(values);
@@ -156,15 +180,23 @@ const rungs = parseCsvRecords(readFileSync(resolve(srcDir, "rungs.csv"), "utf-8"
   const history = readTorque(run);
   if (!history.length) throw new Error(`rungs.csv names a run with no torque history: ${run}`);
 
-  // The plateau runs from `plateau_start` to the end of the run, which is how the
-  // campaign quotes every plateau statistic. `run_end` is carried for the reader
-  // and checked against the series rather than used to trim it.
-  const window = [Number(record.plateau_start), Number(record.run_end)];
-  const plateau = history.filter(point => point.t >= window[0]);
+  // The plateau of a loaded rung runs from `plateau_start` to the end of the run,
+  // which is how the campaign quotes every plateau statistic; the empty control
+  // runs on past the ladder's windows, so its own plateau is the window matched
+  // to the first rung. `run_end` is carried for the reader and checked against
+  // the series rather than used to trim it.
+  const window = [Number(record.plateau_start), Number(record.plateau_end)];
+  const runEnd = Number(record.run_end);
+  const plateau = history.filter(point => inWindow(point.t, window));
   if (plateau.length < 100) throw new Error(`${run}: only ${plateau.length} samples in the plateau window`);
-  if (Math.abs(history[history.length - 1].t - window[1]) > 1e-2) {
-    throw new Error(`${run}: history ends at ${history[history.length - 1].t}, not the declared ${window[1]}`);
+  if (Math.abs(history[history.length - 1].t - runEnd) > 1e-2) {
+    throw new Error(`${run}: history ends at ${history[history.length - 1].t}, not the declared ${runEnd}`);
   }
+  if (window[1] > runEnd + 1e-2) throw new Error(`${run}: plateau window ends after the run`);
+  // The window of the empty control that serves as this rung's T(0); see the
+  // header. Blank for the control itself, whose reference is its own plateau.
+  const baselineWindow =
+    record.baseline_start === "" ? null : [Number(record.baseline_start), Number(record.baseline_end)];
 
   const dna = plateau.map(point => Math.abs(point.dna));
   const res = plateau.map(point => Math.abs(point.res));
@@ -176,6 +208,8 @@ const rungs = parseCsvRecords(readFileSync(resolve(srcDir, "rungs.csv"), "utf-8"
     phi: Number(record.phi),
     particles: Number(record.particles),
     window,
+    runEnd,
+    baselineWindow,
     samples: plateau.length,
     torqueDna: mean(dna),
     torqueDnaPstd: pstdev(dna),
@@ -193,17 +227,52 @@ const rungs = parseCsvRecords(readFileSync(resolve(srcDir, "rungs.csv"), "utf-8"
 });
 
 const baseline = rungs.find(rung => rung.run === "baseline");
-const reference = baseline?.torqueDna;
-if (!baseline || !reference) throw new Error("rungs.csv carries no baseline rung");
+if (!baseline) throw new Error("rungs.csv carries no baseline rung");
+if (baseline.baselineWindow) throw new Error("the baseline rung is its own reference; leave its baseline window blank");
+baseline.baselineWindow = baseline.window;
+
+const control = readTorque("baseline");
+const controlEnd = control[control.length - 1].t;
+
+/**
+ * T(0) for one rung: the empty control averaged over the window rungs.csv
+ * matches to it. The window is the rung's own plateau wherever the control
+ * covers it; only a plateau that starts after the control ends may fall back to
+ * the control's final window, and that window must run to the control's end.
+ */
+function emptyReference(rung) {
+  const window = rung.baselineWindow;
+  if (!window) throw new Error(`${rung.run}: rungs.csv states no baseline window`);
+  const matched = window[0] === rung.window[0] && window[1] === rung.window[1];
+  if (!matched) {
+    if (rung.window[0] < controlEnd) {
+      throw new Error(`${rung.run}: the empty control covers the plateau window, so T(0) must be read over it`);
+    }
+    if (Math.abs(window[1] - controlEnd) > 1e-2) {
+      throw new Error(`${rung.run}: a fallback baseline window must run to the control's end (${controlEnd})`);
+    }
+  }
+  const samples = control.filter(point => inWindow(point.t, window));
+  if (samples.length < 100) throw new Error(`${rung.run}: only ${samples.length} control samples in the baseline window`);
+  return {
+    dna: mean(samples.map(point => Math.abs(point.dna))),
+    res: mean(samples.map(point => Math.abs(point.res))),
+    samples: samples.length
+  };
+}
 
 // The empty instrument defines T(0), so every rung's relative viscosity is a ratio
-// of two measurements made in the same cell with the same estimator.
+// of two measurements made in the same cell, with the same estimator, at the same
+// time step, over the same window of time after the restart.
 for (const rung of rungs) {
-  rung.eta = rung.torqueDna / reference;
-  rung.etaPstd = rung.torqueDnaPstd / reference;
+  const reference = emptyReference(rung);
+  rung.torqueReference = reference.dna;
+  rung.torqueReferenceRes = reference.res;
+  rung.referenceSamples = reference.samples;
+  rung.eta = rung.torqueDna / reference.dna;
+  rung.etaPstd = rung.torqueDnaPstd / reference.dna;
   /** The same ratio read off the corrected reaction estimator, as a cross-check. */
-  rung.etaCorrected =
-    (rung.torqueRes + TRANSPOSE_CORRECTION) / (baseline.torqueRes + TRANSPOSE_CORRECTION);
+  rung.etaCorrected = (rung.torqueRes + TRANSPOSE_CORRECTION) / (reference.res + TRANSPOSE_CORRECTION);
   rung.gapDeviation = rung.gap / TRANSPOSE_CORRECTION - 1;
 
   // Every composite offered at this concentration, with the gate flagged. The
@@ -285,7 +354,15 @@ const baselineGates = {
 };
 
 // ---- assets -----------------------------------------------------------------
-rmSync(outDir, { recursive: true, force: true });
+// The gallery stills under media/ and their manifest entries are not built here
+// (they are rendered offline and land with the gallery), so they are carried
+// over untouched; everything else is rebuilt from scratch.
+const manifestPath = resolve(outDir, "manifest.json");
+const preserved = existsSync(manifestPath)
+  ? JSON.parse(readFileSync(manifestPath, "utf-8")).entries.filter(entry => entry.kind === "media")
+  : [];
+for (const dir of ["plots", "downloads"]) rmSync(resolve(outDir, dir), { recursive: true, force: true });
+rmSync(manifestPath, { force: true });
 
 const entries = [];
 const zipEntries = [];
@@ -306,9 +383,22 @@ function emitPlot(metric, id, traces, { seriesGroupId, label, shape, oldPath }) 
 }
 
 // ---- torque: the whole experiment on one time axis ---------------------------
-// The suspension run is a same-level restart from the empty instrument's own dump
-// at t = 200, so the two histories are one continuous measurement and are plotted
-// as one trace per estimator. The step at t = 200 is the particles arriving.
+// The suspension run is a same-level restart from the spun-up empty instrument's
+// own dump at t = 200, so spin-up and suspension are one continuous measurement
+// and are plotted as one trace per estimator; the step at t = 200 is the
+// particles arriving. The empty control continues from the same dump at the
+// suspension time step and is drawn from t = 200 as its own trace: the T(0) the
+// ratios are formed against.
+const spinup = readTorque("spinup");
+const restart = Number(spinup[spinup.length - 1].t.toFixed(2));
+if (control[0].t <= restart || control[0].t - restart > 1e-2) {
+  throw new Error(`the empty control starts at ${control[0].t}, not at the spin-up's end ${restart}`);
+}
+const einsteinHistory = readTorque("einstein");
+if (einsteinHistory[0].t <= restart || einsteinHistory[0].t - restart > 1e-2) {
+  throw new Error(`the einstein rung starts at ${einsteinHistory[0].t}, not at the spin-up's end ${restart}`);
+}
+
 const sampled = Object.fromEntries(
   Object.keys(PLOT_SAMPLE).map(run => [
     run,
@@ -316,7 +406,7 @@ const sampled = Object.fromEntries(
   ])
 );
 
-const timeline = [...sampled.baseline, ...sampled.einstein];
+const timeline = [...sampled.spinup, ...sampled.einstein];
 const torqueOf = {
   dna: point => Math.abs(point.dna),
   res: point => Math.abs(point.res),
@@ -345,7 +435,22 @@ for (const [id, value] of Object.entries(torqueOf)) {
   );
 }
 
-const tEnd = timeline[timeline.length - 1].t;
+emitPlot(
+  "torque",
+  "baseline",
+  lineTrace(sampled.baseline.map(point => point.t), sampled.baseline.map(torqueOf.dna), {
+    name: "Empty instrument, suspension time step",
+    color: "#c9a5f5"
+  }),
+  {
+    seriesGroupId: "baseline",
+    label: "Torque history, empty instrument continued at the suspension time step (volume-form estimator)",
+    shape: "single-trace",
+    oldPath: "scripts/source-data/numerical-viscometer/torque_baseline.csv"
+  }
+);
+
+const tEnd = Math.max(timeline[timeline.length - 1].t, controlEnd);
 
 emitPlot(
   "torque",
@@ -363,9 +468,9 @@ emitPlot(
   }
 );
 
-// The suspension run restarts from the baseline's final dump, so the seeding
-// instant is the end of the baseline run.
-const insertion = baseline.window[1];
+// The suspension run restarts from the spun-up cell's final dump, so the seeding
+// instant is the end of the spin-up.
+const insertion = restart;
 emitPlot(
   "torque",
   "insertion",
@@ -518,6 +623,7 @@ for (const pair of pairs) {
 
 // ---- downloads --------------------------------------------------------------
 const downloadNames = [
+  "torque_spinup.csv",
   ...rungs.map(rung => `torque_${rung.run}.csv`),
   ...pairs.map(pair => `lubpairs_${pair.run.replace("_lub", "")}.csv`),
   "rungs.csv",
@@ -560,7 +666,8 @@ entries.push({
   label: "numerical-viscometer.zip"
 });
 
-writeJson(resolve(outDir, "manifest.json"), { benchmarkId: "numerical-viscometer", entries });
+entries.push(...preserved);
+writeJson(manifestPath, { benchmarkId: "numerical-viscometer", entries });
 
 // ---- instrument, rungs and gates --------------------------------------------
 writeJson(resolve(generatedDir, "numerical-viscometer.json"), {
@@ -577,6 +684,7 @@ writeJson(resolve(generatedDir, "numerical-viscometer.json"), {
   closures: Object.fromEntries(
     Object.entries(CLOSURES).map(([id, closure]) => [id, { label: closure.label }])
   ),
+  restart,
   rungs,
   pairs,
   pairDecay,
@@ -589,23 +697,28 @@ writeJson(resolve(generatedDir, "numerical-viscometer.json"), {
 //
 // Selection policy
 // ----------------
-// Published: the empty-cell baseline that certifies the instrument against the
-// analytic torque, the three loaded rungs of the concentration ladder, and the two
-// lubrication pairs in their settled form. Withheld: the first-segment readings of
-// both pairs, whose windows were taken before the lubricated microstructure had
-// relaxed and which the settled rows supersede. The datasheet download under
-// Reference Data carries every row of the campaign, superseded ones included.
-const PUBLISHED = new Set([
-  "d52_v20_baseline",
-  "d52_v21_einstein",
-  "d52_v22_phi10",
-  "d52_v23_phi20",
+// Published: the empty cell continued at the suspension time step, which is the
+// T(0) of every ratio on the page and certifies the instrument against the
+// analytic torque; the restated concentration ladder, whose three rungs are read
+// against that matched-window baseline; and the two lubrication pairs in their
+// settled form. Withheld: the spun-up cell's own gate row and the three original
+// rung rows, which the ladder row supersedes as absolute viscosities, and the
+// first-segment readings of both pairs, whose windows were taken before the
+// lubricated microstructure had relaxed and which the settled rows supersede.
+// The datasheet download under Reference Data carries every row of the campaign,
+// superseded ones included.
+// Listed in the order the page reads them: instrument, ladder, pairs.
+const PUBLISHED = [
+  "d52_v26e_dt_control",
+  "d52_l3_ladder_restated",
   "d52_v22L_settled",
   "d52_v23L_settled"
-]);
+];
 
 const records = readDatasheet(resolve(root, datasheetSource));
-const ledger = buildLedger(records, record => PUBLISHED.has(record.case.trim()));
+const ledger = buildLedger(records, record => PUBLISHED.includes(record.case.trim())).sort(
+  (a, b) => PUBLISHED.indexOf(a.case) - PUBLISHED.indexOf(b.case)
+);
 
 writeJson(resolve(generatedDir, "numerical-viscometer-validation.json"), {
   source: datasheetSource,

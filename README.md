@@ -74,8 +74,8 @@ npm run build
 npm run test:e2e
 ```
 
-The same check runs in CI (`mobile-layout` job in `pages.yml`) and gates the
-deploy. `src/responsive.test.ts` in the unit suite guards the source patterns
+The same check runs in CI: on every pull request (`ci.yml`) and, as the
+`mobile-layout` job in `pages.yml`, before every deploy, which it gates. `src/responsive.test.ts` in the unit suite guards the source patterns
 that keep the layout fluid (grids as classes, `--gutter`, scrolling tables), so
 most regressions are caught before a browser is needed.
 
@@ -103,6 +103,10 @@ The site is published to GitHub Pages at
 `.github/workflows/pages.yml`, which runs on every push to `master` (and can be
 triggered manually from the Actions tab). The workflow installs with `npm ci`,
 runs the tests, builds, and uploads `dist/` to Pages.
+
+Pull requests into `master` run the same tests, build and mobile-layout check
+through `.github/workflows/ci.yml`, with read-only permissions and no deploy, so
+a failure shows on the PR before it is merged.
 
 One-time repository setup: **Settings → Pages → Build and deployment → Source:
 GitHub Actions**. The workflow's first run fails without it.

@@ -1,7 +1,7 @@
-run,label,phi,particles,plateau_start,run_end,lubrication,closure
-baseline,Empty instrument,0.0000,0,150,200,off,exact
-einstein,phi = 0.05,0.0500,225,230,250,off,einstein
-phi10,phi = 0.10,0.1000,450,230,250,off,batchelor
-phi20,phi = 0.20,0.2000,900,235,250,off,krieger-dougherty
-phi10_lub,phi = 0.10 lubricated,0.1000,450,270,300,on,batchelor
-phi20_lub,phi = 0.20 lubricated,0.2000,900,270,295.78,on,krieger-dougherty
+run,label,phi,particles,plateau_start,plateau_end,run_end,baseline_start,baseline_end,lubrication,closure
+baseline,Empty instrument,0.0000,0,230,250,269.215,,,off,exact
+einstein,phi = 0.05,0.0500,225,230,250,250,230,250,off,einstein
+phi10,phi = 0.10,0.1000,450,230,250.005,250.005,230,250.005,off,batchelor
+phi20,phi = 0.20,0.2000,900,235,250.005,250.005,235,250.005,off,krieger-dougherty
+phi10_lub,phi = 0.10 lubricated,0.1000,450,270,300.005,300.005,250,269.215,on,batchelor
+phi20_lub,phi = 0.20 lubricated,0.2000,900,270,295.78,295.78,250,269.215,on,krieger-dougherty

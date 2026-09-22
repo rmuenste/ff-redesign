@@ -32,6 +32,16 @@
       "derived": true
     },
     {
+      "oldPath": "scripts/source-data/numerical-viscometer/torque_baseline.csv",
+      "newPath": "plots/torque/baseline.json",
+      "metric": "torque",
+      "seriesGroupId": "baseline",
+      "kind": "code",
+      "label": "Torque history, empty instrument continued at the suspension time step (volume-form estimator)",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
       "oldPath": "generated from the instrument definition",
       "newPath": "plots/torque/exact.json",
       "metric": "torque",
@@ -150,6 +160,12 @@
       "label": "Saturated pairs, phi = 0.20",
       "sourceShape": "single-trace",
       "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/numerical-viscometer/torque_spinup.csv",
+      "newPath": "downloads/torque_spinup.csv",
+      "kind": "download",
+      "label": "torque_spinup.csv"
     },
     {
       "oldPath": "scripts/source-data/numerical-viscometer/torque_baseline.csv",

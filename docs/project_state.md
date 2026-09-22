@@ -15,10 +15,39 @@ Last updated: 2026-09-22
   - Oberbeck Spheroid Drag: `/benchmarks/oberbeck-spheroid-drag`
   - Jeffery Orbit: `/benchmarks/jeffery-orbit`
 - Still planned: none
+- Site-wide pages: catalogue `/benchmarks`, gallery `/gallery`, aggregate
+  reference data `/reference-data`
 
-The app foundation, shared comparison engine, MathJax setup, curated asset layout,
-and active benchmark routes are in place. Tests and build were green after the
-particle sedimentation migration.
+The app foundation, shared comparison engine, MathJax setup, curated asset
+layout and all benchmark routes are in place. The unit suite (`npm run test`)
+was green on 2026-09-22. How to add a benchmark is
+specified in [benchmark-template.md](benchmark-template.md).
+
+## Site-wide Features
+
+- **Reference data index** (`/reference-data`): every benchmark's downloads in
+  one page, derived from the asset manifests by
+  `scripts/build-reference-index.mjs`, which runs as the first step of
+  `npm run build`. Files that are byte-identical across benchmarks, such as the
+  DNS datasheet, are listed once as shared assets.
+- **Gallery** (`/gallery`): the rendered stills of the six particulate
+  benchmarks (Particle Sedimentation plus the five DNS-validation pages), from
+  the registry in `src/data/gallery.ts`, with family filters and a lightbox. Each
+  of those benchmarks' Introduction tab opens with its still and links back into
+  the gallery. RB3, RB2 and FAC3 have no still yet.
+- **Mobile layout**: every route, and every tab of every benchmark page, fits
+  390px and 768px without horizontal overflow. Until 2026-09-22 the e2e check
+  loaded only each route's default tab, and ten other tabs overflowed unnoticed,
+  all for one reason: a wide table inside an inline `display: grid` wrapper with
+  no column track, which let the table stretch the column. Every such wrapper in
+  the benchmark pages now uses the `.stack` class (one `minmax(0, 1fr)` track),
+  and the e2e check clicks through every tab. `src/responsive.test.ts` guards the source patterns, and
+  `e2e/mobile-layout.spec.ts` measures the rendered pages in Chromium as the
+  `mobile-layout` CI job, which gates the Pages deploy. Block equations scroll
+  inside their box, and plot legends move under the chart on narrow columns.
+- **Deep links**: `scripts/prerender-routes.mjs` writes an `index.html` for
+  every route, so GitHub Pages returns 200 for deep links. Benchmark tabs are
+  deep-linkable with `?tab=<id>`.
 
 ## Particle Sedimentation Migration
 

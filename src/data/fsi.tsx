@@ -124,6 +124,81 @@ export const fsiNondimensionalRows = [
   { id: "FSI3", beta: "1", young: "–", ae: "1.4 × 10³" }
 ];
 
+/**
+ * The legacy pages open each test family with its own "Parameter settings"
+ * tables, parameters down the side and tests across the top. Those are rebuilt
+ * here from `fsiTestCases` and `fsiNondimensionalRows`, so every number is
+ * written once, and each family gets the rows the legacy table listed for it.
+ */
+export interface FsiParameterRow {
+  parameter: string;
+  values: string[];
+}
+
+type CaseKey = keyof Omit<FsiTestCase, "id" | "family" | "structure" | "solution">;
+
+const DIMENSIONAL: Record<string, Array<[string, CaseKey]>> = {
+  CFD: [
+    ["ρᶠ [10³ kg/m³]", "rhoF"],
+    ["νᶠ [10⁻³ m²/s]", "nuF"],
+    ["Ū [m/s]", "meanVelocity"]
+  ],
+  CSM: [
+    ["ρˢ [10³ kg/m³]", "rhoS"],
+    ["νˢ", "nuS"],
+    ["μˢ [10⁶ kg/(m s²)]", "muS"],
+    ["ρᶠ [10³ kg/m³]", "rhoF"],
+    ["νᶠ [10⁻³ m²/s]", "nuF"],
+    ["Ū [m/s]", "meanVelocity"],
+    ["g [m/s²]", "gravity"]
+  ],
+  FSI: [
+    ["ρˢ [10³ kg/m³]", "rhoS"],
+    ["νˢ", "nuS"],
+    ["μˢ [10⁶ kg/(m s²)]", "muS"],
+    ["ρᶠ [10³ kg/m³]", "rhoF"],
+    ["νᶠ [10⁻³ m²/s]", "nuF"],
+    ["Ū [m/s]", "meanVelocity"]
+  ]
+};
+
+type NondimensionalRow = (typeof fsiNondimensionalRows)[number];
+
+const NONDIMENSIONAL: Record<string, Array<[string, (test: FsiTestCase, nd?: NondimensionalRow) => string]>> = {
+  CFD: [
+    ["Re = Ū d / νᶠ", test => test.reynolds],
+    ["Ū [m/s]", test => test.meanVelocity]
+  ],
+  CSM: [
+    ["β = ρˢ / ρᶠ", (_test, nd) => nd?.beta ?? "–"],
+    ["νˢ", test => test.nuS],
+    ["Eˢ [kg/(m s²)]", (_test, nd) => nd?.young ?? "–"],
+    ["Re = Ū d / νᶠ", test => test.reynolds],
+    ["Ū [m/s]", test => test.meanVelocity],
+    ["g [m/s²]", test => test.gravity]
+  ],
+  FSI: [
+    ["β = ρˢ / ρᶠ", (_test, nd) => nd?.beta ?? "–"],
+    ["νˢ", test => test.nuS],
+    ["Ae = Eˢ / (ρᶠ Ū²)", (_test, nd) => nd?.ae ?? "–"],
+    ["Re = Ū d / νᶠ", test => test.reynolds],
+    ["Ū [m/s]", test => test.meanVelocity]
+  ]
+};
+
+export function fsiParameterTables(family: FsiTestCase["family"]) {
+  const tests = fsiTestCases.filter(test => test.family === family);
+  const nd = (id: string) => fsiNondimensionalRows.find(row => row.id === id);
+  return {
+    tests: tests.map(test => test.id),
+    dimensional: DIMENSIONAL[family].map(([parameter, key]) => ({ parameter, values: tests.map(test => test[key]) })),
+    nondimensional: NONDIMENSIONAL[family].map(([parameter, read]) => ({
+      parameter,
+      values: tests.map(test => read(test, nd(test.id)))
+    }))
+  };
+}
+
 // ---- Published result tables ---------------------------------------------------
 
 export interface FsiMeshRow {

@@ -42,11 +42,13 @@ import {
   fsiIntegrationPathAsset,
   fsiMeshRows,
   fsiNondimensionalRows,
+  fsiParameterTables,
   fsiReferenceColumns,
   fsiSolidMaterials,
   fsiStructureAsset,
   fsiTestCases,
   type FsiFsi1Row,
+  type FsiParameterRow,
   type FsiPeriodicRow,
   type FsiSteadyDisplacementRow,
   type FsiSteadyForceRow
@@ -186,6 +188,33 @@ function RecomputedTable({ run, published, publishedLabel }: { run: "fsi2" | "fs
       rows={rows}
       getRowKey={row => row.quantity}
     />
+  );
+}
+
+/**
+ * The family's parameter settings, laid out as the legacy pages had them:
+ * parameters down the side, tests across the top. Repeated on each test tab so
+ * it can be read without going back to the Definition tab, where the same
+ * numbers appear once more as the combined nine-test case table.
+ */
+function ParameterTables({ family }: { family: "CFD" | "CSM" | "FSI" }) {
+  const { tests, dimensional, nondimensional } = fsiParameterTables(family);
+  const table = (rows: FsiParameterRow[], header: string) => (
+    <DataTable<FsiParameterRow>
+      columns={[
+        { id: "parameter", header, render: row => row.parameter },
+        ...tests.map((test, index) => ({ id: test, header: test, align: "right" as const, render: (row: FsiParameterRow) => row.values[index] }))
+      ]}
+      rows={rows}
+      getRowKey={row => row.parameter}
+    />
+  );
+  return (
+    <div className="stack" style={{ gap: 24 }}>
+      <h3 style={{ margin: 0 }}>Parameter settings for the {family} tests</h3>
+      {table(dimensional, "Dimensional parameter")}
+      {table(nondimensional, "Non-dimensional parameter")}
+    </div>
   );
 }
 
@@ -390,8 +419,9 @@ function ResultsTab() {
     <Section style={{ paddingTop: 40, paddingBottom: 100 }}>
       <div className="stack" style={{ gap: 36 }}>
         <p style={{ ...prose, maxWidth: 900, margin: 0 }}>
-          The full FSI tests couple the flow and the elastic flag. FSI1 reaches a steady state; FSI2 and FSI3 develop self-induced periodic oscillations and are the benchmark proper. Periodic results are given as <em>mean ± amplitude [frequency]</em>, displacements in m, forces in N. The parameters of each test are in the Definition tab.
+          The full FSI tests couple the flow and the elastic flag. FSI1 reaches a steady state; FSI2 and FSI3 develop self-induced periodic oscillations and are the benchmark proper. Periodic results are given as <em>mean ± amplitude [frequency]</em>, displacements in m, forces in N.
         </p>
+        <ParameterTables family="FSI" />
 
         <CaseHeading label="FSI1">Steady, Re = 20</CaseHeading>
         <p style={{ ...prose, maxWidth: 900, margin: 0 }}>
@@ -453,6 +483,7 @@ function CfdTestsTab() {
         <p style={{ ...prose, maxWidth: 900, margin: 0 }}>
           With the flag held rigid, three tests check the fluid solver alone: CFD1 and CFD2 are steady at Re = 20 and 100, CFD3 is periodic at Re = 200. Drag and lift act on the cylinder and the flag together. These tests use their own mesh, so the element counts differ from those of the FSI mesh.
         </p>
+        <ParameterTables family="CFD" />
 
         <CaseHeading label="CFD1">Steady, Re = 20</CaseHeading>
         <TableBlock title="Drag and lift by mesh level">
@@ -485,8 +516,9 @@ function CsmTestsTab() {
     <Section style={{ paddingTop: 40, paddingBottom: 100 }}>
       <div className="stack" style={{ gap: 36 }}>
         <p style={{ ...prose, maxWidth: 900, margin: 0 }}>
-          The structural tests compute the elastic bar alone, without the surrounding fluid, loaded only by gravity g = 2 m/s² acting on the structure. CSM1 and CSM2 are steady solutions for two stiffnesses. CSM3 is time-dependent: the bar starts undeformed and swings under its own weight. Displacements of A are in 10⁻³ m.
+          The structural tests compute the elastic bar alone, without the surrounding fluid, loaded only by gravity g = 2 m/s² acting on the structure. CSM1 and CSM2 are steady solutions for two stiffnesses. CSM3 is time-dependent: the bar starts undeformed and swings under its own weight. Displacements of A are in 10⁻³ m. The fluid parameters are listed because the legacy table gives them, though no fluid is solved.
         </p>
+        <ParameterTables family="CSM" />
 
         <CaseHeading label="CSM1">Steady, μˢ = 0.5 × 10⁶</CaseHeading>
         <TableBlock title="Displacement of A by mesh level">

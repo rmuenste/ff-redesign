@@ -11,6 +11,7 @@ import {
   fsiGenerated,
   fsiGeometryRows,
   fsiMeshRows,
+  fsiParameterTables,
   fsiTestCases,
   type FsiPeriodicRow
 } from "./fsi";
@@ -138,6 +139,41 @@ describe("FSI download bundle", () => {
   it("is the page's only download", () => {
     expect(fsiDownloads).toHaveLength(1);
     expect(fsiDownloads[0].href).toMatch(/downloads\/fsi\.zip$/);
+  });
+});
+
+describe("FSI parameter tables", () => {
+  it("reproduce the legacy CFD, CSM and FSI parameter settings", () => {
+    const cfd = fsiParameterTables("CFD");
+    expect(cfd.tests).toEqual(["CFD1", "CFD2", "CFD3"]);
+    expect(cfd.dimensional.map(row => row.parameter.split(" ")[0])).toEqual(["ρᶠ", "νᶠ", "Ū"]);
+    expect(cfd.dimensional.at(-1)?.values).toEqual(["0.2", "1", "2"]);
+    expect(cfd.nondimensional[0].values).toEqual(["20", "100", "200"]);
+
+    const csm = fsiParameterTables("CSM");
+    expect(csm.tests).toEqual(["CSM1", "CSM2", "CSM3"]);
+    // Shear modulus: CSM2 is the stiff one.
+    expect(csm.dimensional[2].values).toEqual(["0.5", "2.0", "0.5"]);
+    expect(csm.nondimensional[2].values).toEqual(["1.4 × 10⁶", "5.6 × 10⁶", "1.4 × 10⁶"]);
+    expect(csm.dimensional.at(-1)?.values).toEqual(["2", "2", "2"]);
+
+    const fsi = fsiParameterTables("FSI");
+    expect(fsi.tests).toEqual(["FSI1", "FSI2", "FSI3"]);
+    // FSI2 is the heavy flag, FSI3 the stiff one.
+    expect(fsi.dimensional[0].values).toEqual(["1", "10", "1"]);
+    expect(fsi.dimensional[2].values).toEqual(["0.5", "0.5", "2.0"]);
+    expect(fsi.nondimensional[0].values).toEqual(["1", "10", "1"]);
+    expect(fsi.nondimensional[2].values).toEqual(["3.5 × 10⁴", "1.4 × 10³", "1.4 × 10³"]);
+  });
+
+  it("stay in step with the combined case table", () => {
+    for (const family of ["CFD", "CSM", "FSI"] as const) {
+      const table = fsiParameterTables(family);
+      const cases = fsiTestCases.filter(test => test.family === family);
+      expect(table.tests).toEqual(cases.map(test => test.id));
+      const meanVelocity = table.dimensional.find(row => row.parameter.startsWith("Ū"));
+      expect(meanVelocity?.values).toEqual(cases.map(test => test.meanVelocity));
+    }
   });
 });
 

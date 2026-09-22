@@ -161,7 +161,7 @@ function DefinitionTab() {
           }
         ]}
       />
-      <div style={{ display: "grid", gap: 32, marginTop: 24 }}>
+      <div className="stack" style={{ gap: 32, marginTop: 24 }}>
         <div>
           <h3>Case parameters</h3>
           <DataTable<ViscometerParameterRow>
@@ -223,7 +223,7 @@ function DefinitionTab() {
 function BaselineTab() {
   return (
     <Section style={{ paddingTop: 40, paddingBottom: 100 }}>
-      <div style={{ maxWidth: 900, display: "grid", gap: 20 }}>
+      <div className="stack" style={{ maxWidth: 900, gap: 20 }}>
         <h3 style={{ margin: 0 }}>The empty instrument, against an exact answer</h3>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
           Nothing is suspended in the gap; the bob simply turns until the flow is steady. The cell is spun up to
@@ -313,7 +313,7 @@ function BaselineTab() {
 function LadderTab() {
   return (
     <Section style={{ paddingTop: 40, paddingBottom: 100 }}>
-      <div style={{ maxWidth: 900, display: "grid", gap: 20 }}>
+      <div className="stack" style={{ maxWidth: 900, gap: 20 }}>
         <h3 style={{ margin: 0 }}>Three concentrations, three closures</h3>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
           Each rung is a fresh suspension seeded into the certified Couette field of the empty instrument by random
@@ -398,7 +398,7 @@ function LadderTab() {
         targets are the open diamonds — the same closures composed over the measured concentration field.
       </p>
 
-      <div style={{ marginTop: 44, maxWidth: 900, display: "grid", gap: 32 }}>
+      <div className="stack" style={{ marginTop: 44, maxWidth: 900, gap: 32 }}>
         <div>
           <h3>Where each closure runs out</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
@@ -521,7 +521,7 @@ function LubricationTab({ onOpenSedimentation }: { onOpenSedimentation: () => vo
 
   return (
     <Section style={{ paddingTop: 40, paddingBottom: 100 }}>
-      <div style={{ maxWidth: 900, display: "grid", gap: 20 }}>
+      <div className="stack" style={{ maxWidth: 900, gap: 20 }}>
         <h3 style={{ margin: 0 }}>What the unresolved film is worth</h3>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
           Every rung above was measured with the fluid solver alone. At eight to nine elements per diameter the
@@ -615,7 +615,7 @@ function LubricationTab({ onOpenSedimentation }: { onOpenSedimentation: () => vo
         <ComparisonPanel specs={viscometerPairsSpecs} defaultMetric="pairs" />
       </div>
 
-      <div style={{ marginTop: 44, maxWidth: 900, display: "grid", gap: 32 }}>
+      <div className="stack" style={{ marginTop: 44, maxWidth: 900, gap: 32 }}>
         <div>
           <h3>Why the decay is the result</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
@@ -669,7 +669,7 @@ function ValidationTab() {
         </p>
       </div>
       <ValidationLedger rows={viscometerValidationRows} />
-      <div style={{ marginTop: 36, maxWidth: 900, display: "grid", gap: 20 }}>
+      <div className="stack" style={{ marginTop: 36, maxWidth: 900, gap: 20 }}>
         <div>
           <h3>Controlled comparison</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
@@ -707,7 +707,7 @@ function ReferenceDataTab() {
           }
         ]}
       />
-      <div style={{ marginTop: 32, display: "grid", gap: 32 }}>
+      <div className="stack" style={{ marginTop: 32, gap: 32 }}>
         <DataTable
           columns={[
             { id: "fileType", header: "Quantity", render: row => row.fileType },

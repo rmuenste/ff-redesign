@@ -522,6 +522,10 @@ input[type="range"].tu::-webkit-slider-thumb:hover { transform: scale(1.2); }
 /* Fixed-count grids that step down on phones. */
 .kpi-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+/* A single-column stack of blocks. The one track is minmax(0, 1fr) so a wide
+   table inside it scrolls in its card instead of stretching every sibling. */
+.stack { display: grid; grid-template-columns: minmax(0, 1fr); }
 .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 32px; }
 
 /* Wide tables scroll inside their card instead of widening the page. */
@@ -530,9 +534,14 @@ input[type="range"].tu::-webkit-slider-thumb:hover { transform: scale(1.2); }
 /* A block equation wider than its column scrolls in place, like a table,
    rather than widening the page. The Equation component wraps block math in
    .equation-block; the mjx rule covers $$...$$ display math typeset by
-   MathJax directly. The padding keeps ascenders/descenders clear of the clip. */
-.equation-block { max-width: 100%; overflow-x: auto; overflow-y: hidden; padding: 4px 0; }
+   MathJax directly. Scrolling forces a vertical clip (overflow-x: auto makes
+   overflow-y non-visible), and MathJax's measured box can sit a little inside
+   the ink of fractions, bars and big operators. So inside .equation-block only
+   the outer div clips: the display container stays unclipped, its 1em margin
+   becomes headroom within the div, and the em padding covers inline math. */
+.equation-block { max-width: 100%; overflow-x: auto; overflow-y: hidden; padding: 0.5em 0; }
 mjx-container[jax="CHTML"][display="true"] { max-width: 100%; overflow-x: auto; overflow-y: hidden; }
+.equation-block mjx-container[jax="CHTML"][display="true"] { overflow: visible; }
 
 /* Sticky chrome offsets derive from the nav height. */
 .panel-aside { position: sticky; top: calc(var(--toolbar-h) + 32px); align-self: start; display: grid; gap: 28px; }

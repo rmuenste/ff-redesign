@@ -109,7 +109,7 @@ function DefinitionTab() {
           }
         ]}
       />
-      <div style={{ display: "grid", gap: 32, marginTop: 24 }}>
+      <div className="stack" style={{ gap: 32, marginTop: 24 }}>
         <div>
           <h3>Case parameters</h3>
           <DataTable<DktParameterRow>
@@ -173,7 +173,7 @@ function DefinitionTab() {
 function ResultsTab() {
   return (
     <Section style={{ paddingTop: 40, paddingBottom: 100 }}>
-      <div style={{ display: "grid", gap: 28 }}>
+      <div className="stack" style={{ gap: 28 }}>
         <div style={{ maxWidth: 900 }}>
           <h3>Trajectory comparison</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
@@ -194,7 +194,7 @@ function ResultsTab() {
 function ContactModelTab() {
   return (
     <Section style={{ paddingTop: 40, paddingBottom: 100 }}>
-      <div style={{ maxWidth: 820, display: "grid", gap: 20 }}>
+      <div className="stack" style={{ maxWidth: 820, gap: 20 }}>
         <h3 style={{ margin: 0 }}>Practical guidance: choose the contact friction as physics</h3>
         <div
           style={{
@@ -258,7 +258,7 @@ function ValidationTab() {
         </p>
       </div>
       <ValidationLedger rows={dktValidationRows} />
-      <div style={{ marginTop: 36, maxWidth: 900, display: "grid", gap: 20 }}>
+      <div className="stack" style={{ marginTop: 36, maxWidth: 900, gap: 20 }}>
         <div>
           <h3>Controlled comparison</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
@@ -295,7 +295,7 @@ function ReferenceDataTab() {
           }
         ]}
       />
-      <div style={{ marginTop: 32, display: "grid", gap: 32 }}>
+      <div className="stack" style={{ marginTop: 32, gap: 32 }}>
         <DataTable
           columns={[
             { id: "fileType", header: "Quantity", render: row => row.fileType },
@@ -334,12 +334,12 @@ export function DraftingKissingTumblingPage() {
             onClick={() => navigate("/benchmarks")}
             style={{ display: "flex", alignItems: "center", gap: 6, border: 0, background: "transparent", color: "var(--fg2)", cursor: "pointer", fontFamily: "inherit", fontSize: 12, marginBottom: 12 }}
           >
-            <Icon name="arrow_back" size={14} /> Catalogue / Particulate / DKT
+            <Icon name="arrow_back" size={14} /> Catalogue / Particulate / Drafting-Kissing-Tumbling
           </button>
           <div className="split split-hero">
             <div>
               <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
-                <Chip tone="solid">DKT</Chip>
+                <Chip tone="solid">Drafting-kissing-tumbling</Chip>
                 <Chip>Particulate</Chip>
                 <Chip>3D</Chip>
                 <Chip>DNS validation</Chip>

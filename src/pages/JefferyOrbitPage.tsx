@@ -184,7 +184,7 @@ function DefinitionTab() {
           }
         ]}
       />
-      <div style={{ display: "grid", gap: 32, marginTop: 24 }}>
+      <div className="stack" style={{ gap: 32, marginTop: 24 }}>
         <div>
           <h3>Case parameters</h3>
           <DataTable<JefferyParameterRow>
@@ -239,7 +239,7 @@ function DefinitionTab() {
 function OrbitTab() {
   return (
     <Section style={{ paddingTop: 40, paddingBottom: 100 }}>
-      <div style={{ maxWidth: 900, display: "grid", gap: 20 }}>
+      <div className="stack" style={{ maxWidth: 900, gap: 20 }}>
         <h3 style={{ margin: 0 }}>Jeffery's curve, and the samples on it</h3>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
           Three views of the same {jefferyH8.analysis.halfTurns.toFixed(2)} half-turns. The first is the
@@ -371,7 +371,7 @@ function ClearanceTab() {
 
   return (
     <Section style={{ paddingTop: 40, paddingBottom: 100 }}>
-      <div style={{ maxWidth: 900, display: "grid", gap: 20 }}>
+      <div className="stack" style={{ maxWidth: 900, gap: 20 }}>
         <h3 style={{ margin: 0 }}>Halving the clearance, changing one thing</h3>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
           The second rung keeps the body, the aspect ratio, the shear rate, the time step and the
@@ -414,7 +414,7 @@ function ClearanceTab() {
         laws separate, which they only do below the clearances actually run.
       </p>
 
-      <div style={{ marginTop: 40, maxWidth: 900, display: "grid", gap: 32 }}>
+      <div className="stack" style={{ marginTop: 40, maxWidth: 900, gap: 32 }}>
         <div>
           <h3>The extrapolations</h3>
           <DataTable<(typeof rows)[number]>
@@ -484,7 +484,7 @@ function ClearanceTab() {
 function ControlTab() {
   return (
     <Section style={{ paddingTop: 40, paddingBottom: 100 }}>
-      <div style={{ maxWidth: 900, display: "grid", gap: 20 }}>
+      <div className="stack" style={{ maxWidth: 900, gap: 20 }}>
         <h3 style={{ margin: 0 }}>A sphere, before anything with a shape</h3>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
           At aspect ratio one Jeffery's orbit degenerates into something with no shape left in it: a
@@ -507,7 +507,7 @@ function ControlTab() {
         <ComparisonPanel specs={jefferyControlSpecs} defaultMetric="spin" />
       </div>
 
-      <div style={{ marginTop: 40, maxWidth: 900, display: "grid", gap: 32 }}>
+      <div className="stack" style={{ marginTop: 40, maxWidth: 900, gap: 32 }}>
         <div>
           <h3>Why it is quoted next to the orbit</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
@@ -549,7 +549,7 @@ function ValidationTab() {
         </p>
       </div>
       <ValidationLedger rows={jefferyValidationRows} />
-      <div style={{ marginTop: 36, maxWidth: 900, display: "grid", gap: 20 }}>
+      <div className="stack" style={{ marginTop: 36, maxWidth: 900, gap: 20 }}>
         <div>
           <h3>Controlled comparison</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
@@ -589,7 +589,7 @@ function ReferenceDataTab() {
           }
         ]}
       />
-      <div style={{ marginTop: 32, display: "grid", gap: 32 }}>
+      <div className="stack" style={{ marginTop: 32, gap: 32 }}>
         <DataTable
           columns={[
             { id: "fileType", header: "Quantity", render: row => row.fileType },

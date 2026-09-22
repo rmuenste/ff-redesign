@@ -74,6 +74,27 @@ for (const viewport of VIEWPORTS) {
       });
     }
 
+    // A route loads on its default tab, but most of a benchmark's tables and
+    // equations live on the others. The tabs are read from the page's own tab
+    // row, so a new tab is covered without an edit; soft assertions report
+    // every tab that overflows, not only the first.
+    for (const route of routes.filter(route => route.startsWith("/benchmarks/"))) {
+      test(`${route}: every tab fits`, async ({ page }) => {
+        await page.goto(route);
+        const tabs = page.getByRole("tab");
+        const count = await tabs.count();
+        expect(count, "benchmark page has a tab row").toBeGreaterThan(0);
+        for (let index = 0; index < count; index++) {
+          const tab = tabs.nth(index);
+          const label = (await tab.innerText()).trim();
+          await tab.click();
+          await expect(tab).toHaveAttribute("aria-selected", "true");
+          const { overflow, culprits } = await horizontalOverflow(page);
+          expect.soft(overflow, `"${label}" tab is ${overflow}px wider than the viewport; crossing the edge:\n  ${culprits.join("\n  ")}`).toBe(0);
+        }
+      });
+    }
+
     test("the comparison panel with a live Plotly chart fits, legend beside it or below it on a phone", async ({ page }) => {
       await page.goto("/benchmarks/bubble3?tab=results");
       const plot = page.locator(".js-plotly-plot").first();

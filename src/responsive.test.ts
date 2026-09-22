@@ -99,6 +99,13 @@ describe("responsive layout guard", () => {
     expect(rule(".table-scroll")).toMatch(/overflow-x:\s*auto/);
   });
 
+  it("lets block equations scroll without clipping their ink", () => {
+    expect(rule(".equation-block")).toMatch(/overflow-x:\s*auto/);
+    // Only the outer div clips; its padding must scale with the math.
+    expect(rule(".equation-block")).toMatch(/padding:\s*[\d.]+em 0/);
+    expect(rule('.equation-block mjx-container[jax="CHTML"][display="true"]')).toMatch(/overflow:\s*visible/);
+  });
+
   it("uses exactly the two documented breakpoints", () => {
     const widths = [...STYLES.matchAll(/@media\s*\(max-width:\s*([^)]+)\)/g)].map(match => match[1].trim());
     expect(new Set(widths)).toEqual(new Set(BREAKPOINTS));

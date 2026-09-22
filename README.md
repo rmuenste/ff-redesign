@@ -65,8 +65,8 @@ npm run build
 ### Mobile layout check
 
 `e2e/mobile-layout.spec.ts` opens every route in headless Chromium at phone
-(390px) and tablet (768px) widths and fails if the page is wider than the
-viewport. It runs against the production build, so build first:
+(390px) and tablet (768px) widths, clicks through every tab of each benchmark
+page, and fails if the page is wider than the viewport. It runs against the production build, so build first:
 
 ```bash
 npx playwright install chromium   # once per machine

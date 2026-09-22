@@ -99,7 +99,7 @@ function DefinitionTab() {
         rows={rb3PhysicalRows}
         getRowKey={row => String(row.position)}
       />
-      <div style={{ marginTop: 32, display: "grid", gap: 22 }}>
+      <div className="stack" style={{ marginTop: 32, gap: 22 }}>
         <div>
           <h3>Bubble Size</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
@@ -187,7 +187,7 @@ export function RisingBubble3DPage() {
                 <Chip tone="solid">RB3</Chip>
                 <Chip>Two-Phase</Chip>
                 <Chip>3D</Chip>
-                <Chip>Interactive plots</Chip>
+                <Chip>Core benchmarks</Chip>
               </div>
               <h1 className="display display-md" style={{ margin: "0 0 12px" }}>
                 Rising Bubble <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400, color: "var(--primary)" }}>3D</span>

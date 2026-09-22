@@ -171,8 +171,8 @@
           "path": "downloads/dns_validation_datasheet.csv",
           "label": "dns_validation_datasheet.csv",
           "format": "CSV",
-          "bytes": 121009,
-          "sha1": "020ece9a93e2e79344e5544c4d093049ccb529b4",
+          "bytes": 200601,
+          "sha1": "91da3957b58c00b75f09cc2f3fce27ea3f3c8fb4",
           "shared": true
         },
         {
@@ -180,8 +180,8 @@
           "path": "downloads/dkt.zip",
           "label": "dkt.zip",
           "format": "ZIP archive",
-          "bytes": 554046,
-          "sha1": "70d964f93c0b41fa022d8b01792fe6dc22b90302",
+          "bytes": 633638,
+          "sha1": "9274f440d8c3ab065249ae51a3fbc14cce7f3eaf",
           "shared": false
         }
       ]
@@ -312,8 +312,8 @@
           "path": "downloads/dns_validation_datasheet.csv",
           "label": "dns_validation_datasheet.csv",
           "format": "CSV",
-          "bytes": 121009,
-          "sha1": "020ece9a93e2e79344e5544c4d093049ccb529b4",
+          "bytes": 200601,
+          "sha1": "91da3957b58c00b75f09cc2f3fce27ea3f3c8fb4",
           "shared": true
         },
         {
@@ -321,8 +321,8 @@
           "path": "downloads/hindered-settling.zip",
           "label": "hindered-settling.zip",
           "format": "ZIP archive",
-          "bytes": 245728,
-          "sha1": "b97b5e21a2a2f044a71f74b60e87e14630c76f41",
+          "bytes": 325320,
+          "sha1": "11eec8f340ca773a970533da2d9f7b8dbd7e1e58",
           "shared": false
         }
       ]
@@ -407,9 +407,9 @@
           "path": "downloads/dns_validation_datasheet.csv",
           "label": "dns_validation_datasheet.csv",
           "format": "CSV",
-          "bytes": 122324,
-          "sha1": "cfe8eac793377fc0e5a7c2903c44f5efc271a131",
-          "shared": false
+          "bytes": 200601,
+          "sha1": "91da3957b58c00b75f09cc2f3fce27ea3f3c8fb4",
+          "shared": true
         },
         {
           "name": "jeffery_validation_rows.csv",
@@ -425,8 +425,8 @@
           "path": "downloads/jeffery-orbit.zip",
           "label": "jeffery-orbit.zip",
           "format": "ZIP archive",
-          "bytes": 1410820,
-          "sha1": "76f96a9d3a01e44b19df39d79a21ac082f10b1cb",
+          "bytes": 1489097,
+          "sha1": "47857e4bd9608e7689c0ce90211b8c97a0f99e6a",
           "shared": false
         }
       ]
@@ -547,17 +547,17 @@
           "path": "downloads/dns_validation_datasheet.csv",
           "label": "dns_validation_datasheet.csv",
           "format": "CSV",
-          "bytes": 197211,
-          "sha1": "97bfdbad18a73a61fef10f806b683d21d505909e",
-          "shared": false
+          "bytes": 200601,
+          "sha1": "91da3957b58c00b75f09cc2f3fce27ea3f3c8fb4",
+          "shared": true
         },
         {
           "name": "numerical-viscometer.zip",
           "path": "downloads/numerical-viscometer.zip",
           "label": "numerical-viscometer.zip",
           "format": "ZIP archive",
-          "bytes": 3313882,
-          "sha1": "8368bb2e25ad955c24b2385d9164a2aba110dbd3",
+          "bytes": 3317272,
+          "sha1": "fd747c85dc621337d7c09ed572bb8d4e873efe84",
           "shared": false
         }
       ]
@@ -678,8 +678,8 @@
           "path": "downloads/dns_validation_datasheet.csv",
           "label": "dns_validation_datasheet.csv",
           "format": "CSV",
-          "bytes": 121009,
-          "sha1": "020ece9a93e2e79344e5544c4d093049ccb529b4",
+          "bytes": 200601,
+          "sha1": "91da3957b58c00b75f09cc2f3fce27ea3f3c8fb4",
           "shared": true
         },
         {
@@ -696,8 +696,8 @@
           "path": "downloads/oberbeck-spheroid-drag.zip",
           "label": "oberbeck-spheroid-drag.zip",
           "format": "ZIP archive",
-          "bytes": 606383,
-          "sha1": "4424ef88e05d396a0c5c46f36a492fd0be5dd470",
+          "bytes": 685975,
+          "sha1": "a328ed055960dbbc07790478d0c3694d65253e9a",
           "shared": false
         }
       ]
@@ -1037,11 +1037,13 @@
     {
       "name": "dns_validation_datasheet.csv",
       "format": "CSV",
-      "bytes": 121009,
-      "sha1": "020ece9a93e2e79344e5544c4d093049ccb529b4",
+      "bytes": 200601,
+      "sha1": "91da3957b58c00b75f09cc2f3fce27ea3f3c8fb4",
       "benchmarkIds": [
         "dkt",
         "hindered-settling",
+        "jeffery-orbit",
+        "numerical-viscometer",
         "oberbeck-spheroid-drag"
       ]
     }
@@ -1049,6 +1051,6 @@
   "totals": {
     "benchmarks": 10,
     "files": 109,
-    "bytes": 17454552
+    "bytes": 18095438
   }
 }

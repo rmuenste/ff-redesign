@@ -154,11 +154,10 @@ describe("fsi asset manifest (public/benchmark-assets/fsi/manifest.json)", () =>
     expect(new Set(csm.map(entry => entry.seriesGroupId))).toEqual(new Set(["l2", "l3", "l4"]));
   });
 
-  it("offers the eleven reference files and a zip bundle as downloads", () => {
+  it("publishes the reference files only as the zip bundle", () => {
     const downloads = fsiManifest.entries.filter(entry => entry.kind === "download").map(entry => entry.newPath);
-    expect(downloads).toHaveLength(12);
-    expect(downloads).toContain("downloads/fsi.zip");
-    expect(downloads.filter(path => path.endsWith(".point"))).toHaveLength(11);
+    expect(downloads).toEqual(["downloads/fsi.zip"]);
+    expect(listFiles(FSI_DIR).filter(file => file.endsWith(".point"))).toEqual([]);
   });
 
   it("replaces the FSI2, FSI3 and CSM3 plot images with live data and keeps only the CFD3 plots, which have none", () => {

@@ -240,5 +240,22 @@
         }
       }
     }
+  },
+  "bundle": {
+    "file": "fsi.zip",
+    "bytes": 1203496,
+    "files": [
+      "ref_fsi2.point",
+      "ref_fsi3.point",
+      "csm3_l2.point",
+      "csm3_l2_0p01.point",
+      "csm3_l2_t0p005.point",
+      "csm3_l3.point",
+      "csm3_l3_0p01.point",
+      "csm3_l3_t0p005.point",
+      "csm3_l4.point",
+      "csm3_l4_0p01.point",
+      "csm3_l4_t0p005.point"
+    ]
   }
 }

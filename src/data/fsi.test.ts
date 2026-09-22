@@ -3,7 +3,9 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import type { RawTrace } from "../lib/comparison";
 import {
+  fsiBundleContents,
   fsiCsm3Rows,
+  fsiDownloads,
   fsiFsi2Rows,
   fsiFsi3Rows,
   fsiGenerated,
@@ -121,6 +123,21 @@ describe("FSI plots", () => {
     expect(max(uy.y) / 1e3).toBeCloseTo(run.uy.mean + run.uy.amplitude, 2);
     expect(max(drag.y)).toBeCloseTo(run.drag.mean + run.drag.amplitude, -1);
     expect(uy.x[0]).toBe(10);
+  });
+});
+
+describe("FSI download bundle", () => {
+  it("holds the eleven reference files, deflated", () => {
+    const bundle = fsiGenerated.bundle;
+    expect(bundle.files).toHaveLength(11);
+    expect(bundle.files).toEqual(fsiBundleContents.map(row => row.file));
+    // 4.8 MB of plain-text numbers; anything near that size means it is stored.
+    expect(bundle.bytes).toBeLessThan(2_000_000);
+  });
+
+  it("is the page's only download", () => {
+    expect(fsiDownloads).toHaveLength(1);
+    expect(fsiDownloads[0].href).toMatch(/downloads\/fsi\.zip$/);
   });
 });
 

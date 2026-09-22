@@ -16,15 +16,19 @@
 // the cylinder), 11 / 12 (x / y displacement of point A). Column 2 is the time step;
 // the others are not documented and are passed through untouched in the downloads.
 //
+// The eleven reference files are published only as the deflated bundle
+// downloads/fsi.zip (1.2 MB against 4.8 MB of loose files), the way RB3 and FAC3
+// publish theirs. The plots carry the same data for reading on the page.
+//
 // Writes:
-//   public/benchmark-assets/fsi/    Plotly traces, figures, downloads, fsi.zip, manifest
+//   public/benchmark-assets/fsi/    Plotly traces, figures, fsi.zip, manifest
 //   src/data/generated/fsi.json     last-period statistics of every published run
 //
 // Run by hand: node scripts/convert-fsi-data.mjs
 
-import { copyFileSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { basename, dirname, relative, resolve } from "node:path";
-import { createStoredZip } from "./lib/zip.mjs";
+import { createDeflatedZip } from "./lib/zip.mjs";
 
 const root = resolve(import.meta.dirname, "..");
 const sourceDir = resolve(root, "scripts/source-data/fsi");
@@ -160,6 +164,8 @@ const FSI_RUNS = [
 ];
 
 const generated = { source: "scripts/convert-fsi-data.mjs", runs: {} };
+/** The files that go into downloads/fsi.zip, in publication order. */
+const bundle = [];
 
 for (const run of FSI_RUNS) {
   const rows = readPoint(resolve(sourceDir, run.file));
@@ -187,11 +193,7 @@ for (const run of FSI_RUNS) {
     span: [series.t[0], series.t.at(-1)],
     ...lastPeriodStats(series, "lift", ["ux", "drag"])
   };
-  copy(run.file, `downloads/${basename(run.file)}`, {
-    oldPath: `${LEGACY}/${run.legacy}`,
-    kind: "download",
-    label: basename(run.file)
-  });
+  bundle.push({ name: basename(run.file), from: run.file, legacy: `${LEGACY}/${run.legacy}` });
 }
 
 // ---- CSM3 ---------------------------------------------------------------------
@@ -226,7 +228,7 @@ for (const level of CSM_LEVELS) {
     }
     const { ux, uy, window } = lastPeriodStats({ t: series.t, ux: series.ux, uy: series.uy }, "uy", []);
     generated.runs.csm3[`${level}-${step.id}`] = { file: name, samples: rows.length, timeStep: step.dt, window, ux, uy };
-    copy(`data/csm/${name}`, `downloads/${name}`, { oldPath: `${LEGACY}/data/csm/${name}`, kind: "download", label: name });
+    bundle.push({ name, from: `data/csm/${name}`, legacy: `${LEGACY}/data/csm/${name}` });
   }
 }
 
@@ -246,12 +248,16 @@ for (const [from, newPath, label] of FIGURES) {
 
 // ---- Bundle, manifest, derived numbers ------------------------------------------
 
-const downloads = entries.filter(entry => entry.kind === "download");
-writeFileSync(
-  resolve(outDir, "downloads/fsi.zip"),
-  createStoredZip(downloads.map(entry => ({ name: `fsi/${basename(entry.newPath)}`, data: readFileSync(resolve(outDir, entry.newPath)) })))
-);
-entries.push({ oldPath: "generated from the fsi downloads", newPath: "downloads/fsi.zip", kind: "download", label: "fsi.zip" });
+mkdirSync(resolve(outDir, "downloads"), { recursive: true });
+const zipPath = resolve(outDir, "downloads/fsi.zip");
+writeFileSync(zipPath, createDeflatedZip(bundle.map(file => ({ name: `fsi/${file.name}`, data: readFileSync(resolve(sourceDir, file.from)) }))));
+entries.push({
+  oldPath: `${LEGACY}/data (11 reference files)`,
+  newPath: "downloads/fsi.zip",
+  kind: "download",
+  label: "fsi.zip"
+});
+generated.bundle = { file: "fsi.zip", bytes: statSync(zipPath).size, files: bundle.map(file => file.name) };
 
 writeJson(resolve(outDir, "manifest.json"), { benchmarkId: "fsi", entries });
 mkdirSync(dirname(generatedPath), { recursive: true });
@@ -259,7 +265,8 @@ writeFileSync(generatedPath, JSON.stringify(generated, null, 2) + "\n");
 
 const { fsi2, fsi3 } = generated.runs;
 console.log(
-  `Generated ${entries.length} fsi manifest entries in ${relative(root, outDir)}; ` +
+  `Generated ${entries.length} fsi manifest entries in ${relative(root, outDir)}, ` +
+    `${bundle.length} reference files bundled into fsi.zip (${(generated.bundle.bytes / 1e6).toFixed(2)} MB); ` +
     `FSI2 drag ${fsi2.drag.mean} ± ${fsi2.drag.amplitude} [${fsi2.drag.frequency}], ` +
     `FSI3 drag ${fsi3.drag.mean} ± ${fsi3.drag.amplitude} [${fsi3.drag.frequency}]`
 );

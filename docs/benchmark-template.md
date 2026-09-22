@@ -186,6 +186,8 @@ public/benchmark-assets/<id>/
     manifest.json                         authoritative list of every file (oldPath -> newPath)
     plots/<metric>/<series>.json          Plotly trace JSON, one trace or an array
     downloads/                            the files offered on Reference Data, plus <id>.zip
+                                          (or only the zip, as RB3 and FSI do; deflate a
+                                          bundle of text files with createDeflatedZip)
     media/                                figures, videos, media/gallery/*.webp stills
 src/data/generated/<id>.json              derived numbers (fits, tables) — never edited by hand
 src/data/generated/<id>-validation.json   ledger rows (DNS)                          — never edited by hand

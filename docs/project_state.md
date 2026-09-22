@@ -94,8 +94,11 @@ Reference Data.
 
 - The reference files and figures are curated under `scripts/source-data/fsi/`;
   `scripts/convert-fsi-data.mjs` turns them into Plotly traces (displacements in
-  mm; drag and lift as beam + cylinder), downloads, `fsi.zip` and the manifest,
-  and evaluates every file's last period into `src/data/generated/fsi.json`.
+  mm; drag and lift as beam + cylinder), the manifest, and the last period of
+  every file in `src/data/generated/fsi.json`. The reference files are published
+  only as `downloads/fsi.zip`, deflated: 1.2 MB against 4.8 MB of loose files.
+  `createDeflatedZip` in `scripts/lib/zip.mjs` is new; the other benchmarks keep
+  their stored zips until someone regenerates them.
 - The published tables in `src/data/fsi.tsx` were extracted from the visible
   HTML tables by script, not retyped. Tables the legacy pages kept inside HTML
   comments were not migrated.

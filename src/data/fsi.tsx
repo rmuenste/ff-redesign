@@ -393,35 +393,31 @@ export const fsiReferenceColumns = [
   { column: "12", quantity: "y-displacement of A" }
 ];
 
-const CSM_FILES = ["l2", "l3", "l4"].flatMap(level =>
-  [
-    ["", "0.02"],
-    ["_0p01", "0.01"],
-    ["_t0p005", "0.005"]
-  ].map(([suffix, dt]) => ({
-    label: `csm3_${level}${suffix}.point`,
-    href: benchmarkAssetPath(ID, `downloads/csm3_${level}${suffix}.point`),
-    description: `CSM3 on level ${level.slice(1)}, time step ${dt}`
-  }))
-);
+/** What the bundle holds; the order matches fsiGenerated.bundle.files. */
+export const fsiBundleContents = [
+  { file: "ref_fsi2.point", run: "FSI2", level: "4", dt: "0.0005", detail: "Reference run, t = 10 to 14.62 s" },
+  { file: "ref_fsi3.point", run: "FSI3", level: "4", dt: "0.00025", detail: "Reference run, t = 5 to 6.44 s; see the note in Results on its time step" },
+  ...["2", "3", "4"].flatMap(level =>
+    [
+      ["", "0.02"],
+      ["_0p01", "0.01"],
+      ["_t0p005", "0.005"]
+    ].map(([suffix, dt]) => ({
+      file: `csm3_l${level}${suffix}.point`,
+      run: "CSM3",
+      level,
+      dt,
+      detail: "Displacement of A from rest, t = 0 to 10 s"
+    }))
+  )
+];
 
 export const fsiDownloads: DownloadItem[] = [
   {
     label: "fsi.zip",
     href: benchmarkAssetPath(ID, "downloads/fsi.zip"),
-    description: "All reference files below in one bundle"
-  },
-  {
-    label: "ref_fsi2.point",
-    href: benchmarkAssetPath(ID, "downloads/ref_fsi2.point"),
-    description: "FSI2 reference run, level 4, time step 0.0005, t = 10 to 14.62 s"
-  },
-  {
-    label: "ref_fsi3.point",
-    href: benchmarkAssetPath(ID, "downloads/ref_fsi3.point"),
-    description: "FSI3 reference run, level 4, time step 0.00025 as recorded in the file, t = 5 to 6.44 s"
-  },
-  ...CSM_FILES
+    description: `All ${fsiBundleContents.length} reference files: the FSI2 and FSI3 runs and CSM3 on three levels and three time steps`
+  }
 ];
 
 // ---- Bibliography ----------------------------------------------------------------

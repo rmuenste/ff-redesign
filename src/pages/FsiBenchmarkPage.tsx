@@ -18,6 +18,7 @@ import {
 } from "../components";
 import {
   fsiBibliography,
+  fsiBundleContents,
   fsiCfd1Rows,
   fsiCfd2Rows,
   fsiCfd3DragAsset,
@@ -516,7 +517,7 @@ function ReferenceDataTab() {
   return (
     <Section narrow style={{ paddingTop: 40, paddingBottom: 100 }}>
       <p style={prose}>
-        The reference files are plain text with twelve whitespace-separated columns, one row per time step, in SI units. The columns below are documented; the others (3, 4, 9, 10) are internal to the solver output and kept as they are. The total drag and lift on the body are the sums of the beam and cylinder parts: drag = column 5 + column 7, lift = column 6 + column 8.
+        The reference files are published as one bundle, fsi.zip. Each file is plain text with twelve whitespace-separated columns, one row per time step, in SI units. The columns below are documented; the others (3, 4, 9, 10) are internal to the solver output and kept as they are. The total drag and lift on the body are the sums of the beam and cylinder parts: drag = column 5 + column 7, lift = column 6 + column 8.
       </p>
       <div className="stack" style={{ marginTop: 32, gap: 32 }}>
         <DataTable
@@ -528,6 +529,20 @@ function ReferenceDataTab() {
           getRowKey={row => row.column}
         />
         <DownloadTable items={fsiDownloads} />
+        <div>
+          <h3>What the bundle contains</h3>
+          <DataTable
+            columns={[
+              { id: "file", header: "File", render: row => row.file },
+              { id: "run", header: "Test", render: row => row.run },
+              { id: "level", header: "Level", align: "right", render: row => row.level },
+              { id: "dt", header: "Δt [s]", align: "right", render: row => row.dt },
+              { id: "detail", header: "Contents", render: row => row.detail }
+            ]}
+            rows={fsiBundleContents}
+            getRowKey={row => row.file}
+          />
+        </div>
       </div>
     </Section>
   );

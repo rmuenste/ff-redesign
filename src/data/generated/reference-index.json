@@ -213,111 +213,12 @@
       "benchmarkId": "fsi",
       "files": [
         {
-          "name": "ref_fsi2.point",
-          "path": "downloads/ref_fsi2.point",
-          "label": "ref_fsi2.point",
-          "format": "POINT",
-          "bytes": 1783320,
-          "sha1": "e3e2b22677a94c2764b2820796404a90bd7fd78d",
-          "shared": false
-        },
-        {
-          "name": "ref_fsi3.point",
-          "path": "downloads/ref_fsi3.point",
-          "label": "ref_fsi3.point",
-          "format": "POINT",
-          "bytes": 1113417,
-          "sha1": "8c328840696217b0f50515230ca8f7da2c60c343",
-          "shared": false
-        },
-        {
-          "name": "csm3_l2.point",
-          "path": "downloads/csm3_l2.point",
-          "label": "csm3_l2.point",
-          "format": "POINT",
-          "bytes": 96693,
-          "sha1": "3174e8069f827d46654411f050ac3a70d53af3b1",
-          "shared": false
-        },
-        {
-          "name": "csm3_l2_0p01.point",
-          "path": "downloads/csm3_l2_0p01.point",
-          "label": "csm3_l2_0p01.point",
-          "format": "POINT",
-          "bytes": 193193,
-          "sha1": "2e8f5322a7eb1146a6b7a09e94048267a3b53585",
-          "shared": false
-        },
-        {
-          "name": "csm3_l2_t0p005.point",
-          "path": "downloads/csm3_l2_t0p005.point",
-          "label": "csm3_l2_t0p005.point",
-          "format": "POINT",
-          "bytes": 386193,
-          "sha1": "e0bcce27fa43c62538e51097c725ed47f252fe19",
-          "shared": false
-        },
-        {
-          "name": "csm3_l3.point",
-          "path": "downloads/csm3_l3.point",
-          "label": "csm3_l3.point",
-          "format": "POINT",
-          "bytes": 96693,
-          "sha1": "9fc8808f428c534972bdf7763b00220291986887",
-          "shared": false
-        },
-        {
-          "name": "csm3_l3_0p01.point",
-          "path": "downloads/csm3_l3_0p01.point",
-          "label": "csm3_l3_0p01.point",
-          "format": "POINT",
-          "bytes": 193193,
-          "sha1": "ca174aa393efe6e14ac051fad9e5039bc988fca3",
-          "shared": false
-        },
-        {
-          "name": "csm3_l3_t0p005.point",
-          "path": "downloads/csm3_l3_t0p005.point",
-          "label": "csm3_l3_t0p005.point",
-          "format": "POINT",
-          "bytes": 386193,
-          "sha1": "a2d0a231e768f2befef65ec67ce1b6581b293bff",
-          "shared": false
-        },
-        {
-          "name": "csm3_l4.point",
-          "path": "downloads/csm3_l4.point",
-          "label": "csm3_l4.point",
-          "format": "POINT",
-          "bytes": 96693,
-          "sha1": "91f6733f102ea073eb57c0fb47a0ab88d6b08bcc",
-          "shared": false
-        },
-        {
-          "name": "csm3_l4_0p01.point",
-          "path": "downloads/csm3_l4_0p01.point",
-          "label": "csm3_l4_0p01.point",
-          "format": "POINT",
-          "bytes": 193193,
-          "sha1": "12f80cc4f6c63110d506b594addcb5098ce70f61",
-          "shared": false
-        },
-        {
-          "name": "csm3_l4_t0p005.point",
-          "path": "downloads/csm3_l4_t0p005.point",
-          "label": "csm3_l4_t0p005.point",
-          "format": "POINT",
-          "bytes": 386193,
-          "sha1": "585cc8d60ab25b2dfa6054ea21a9648ace6072b9",
-          "shared": false
-        },
-        {
           "name": "fsi.zip",
           "path": "downloads/fsi.zip",
           "label": "fsi.zip",
           "format": "ZIP archive",
-          "bytes": 4926282,
-          "sha1": "da6000e4878df82121cdba40b9b9633cac76e242",
+          "bytes": 1203496,
+          "sha1": "e4e8ee4eb415fc6516ec857652468182c4d89b0a",
           "shared": false
         }
       ]
@@ -1147,7 +1048,7 @@
   ],
   "totals": {
     "benchmarks": 10,
-    "files": 120,
-    "bytes": 26102312
+    "files": 109,
+    "bytes": 17454552
   }
 }

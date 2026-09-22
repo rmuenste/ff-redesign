@@ -16,6 +16,7 @@ describe("benchmark registry", () => {
       rb2: "bubble-2d",
       fac3: "cylinder",
       sedimentation: "sediment",
+      fsi: "cylinder-flag",
       dkt: "dkt-pair",
       "hindered-settling": "particle",
       "numerical-viscometer": "annulus",
@@ -29,6 +30,7 @@ describe("benchmark registry", () => {
     expect(getBenchmarkBySlug("2d-rising-bubble")?.id).toBe("rb2");
     expect(getBenchmarkBySlug("fac3")?.id).toBe("fac3");
     expect(getBenchmarkBySlug("particle-sedimentation")?.id).toBe("sedimentation");
+    expect(getBenchmarkBySlug("fsi-benchmark")?.id).toBe("fsi");
     expect(getBenchmarkBySlug("drafting-kissing-tumbling")?.id).toBe("dkt");
     expect(getBenchmarkBySlug("hindered-settling")?.id).toBe("hindered-settling");
     expect(getBenchmarkBySlug("numerical-viscometer")?.id).toBe("numerical-viscometer");
@@ -51,6 +53,7 @@ describe("benchmark registry", () => {
       "rb2",
       "fac3",
       "sedimentation",
+      "fsi",
       "dkt",
       "hindered-settling",
       "numerical-viscometer",

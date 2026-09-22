@@ -22,6 +22,7 @@ const PAGE_FILES: Record<string, string> = {
   rb2: "RisingBubble2DPage.tsx",
   fac3: "FlowAroundCylinderPage.tsx",
   sedimentation: "ParticleSedimentationPage.tsx",
+  fsi: "FsiBenchmarkPage.tsx",
   dkt: "DraftingKissingTumblingPage.tsx",
   "hindered-settling": "HinderedSettlingPage.tsx",
   "numerical-viscometer": "NumericalViscometerPage.tsx",
@@ -42,7 +43,7 @@ describe("generated reference index", () => {
   });
 
   it("derives a non-empty group for every benchmark that publishes data", () => {
-    expect(referenceGroups.length).toBeGreaterThanOrEqual(9);
+    expect(referenceGroups.length).toBeGreaterThanOrEqual(10);
     for (const group of referenceGroups) {
       expect(group.files.length, group.benchmark.id).toBeGreaterThan(0);
       expect(group.bytes, group.benchmark.id).toBeGreaterThan(0);

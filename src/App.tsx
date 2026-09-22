@@ -6,6 +6,7 @@ import { Home } from "./Home.jsx";
 import { Nav } from "./Nav.jsx";
 import { DraftingKissingTumblingPage } from "./pages/DraftingKissingTumblingPage";
 import { FlowAroundCylinderPage } from "./pages/FlowAroundCylinderPage";
+import { FsiBenchmarkPage } from "./pages/FsiBenchmarkPage";
 import { GalleryPage } from "./pages/GalleryPage";
 import { HinderedSettlingPage } from "./pages/HinderedSettlingPage";
 import { JefferyOrbitPage } from "./pages/JefferyOrbitPage";
@@ -23,13 +24,14 @@ const routeLabels: Record<string, string> = {
   "/benchmarks/2d-rising-bubble": "04 Rising Bubble 2D",
   "/benchmarks/fac3": "05 Flow Around Cylinder 3D",
   "/benchmarks/particle-sedimentation": "06 Particle Sedimentation",
-  "/benchmarks/drafting-kissing-tumbling": "07 Drafting-Kissing-Tumbling",
-  "/benchmarks/hindered-settling": "08 Hindered Settling",
-  "/benchmarks/numerical-viscometer": "09 Numerical Viscometer",
-  "/benchmarks/oberbeck-spheroid-drag": "10 Oberbeck Spheroid Drag",
-  "/benchmarks/jeffery-orbit": "11 Jeffery Orbit",
-  "/reference-data": "12 Reference Data",
-  "/gallery": "13 Gallery"
+  "/benchmarks/fsi-benchmark": "07 FSI Benchmark",
+  "/benchmarks/drafting-kissing-tumbling": "08 Drafting-Kissing-Tumbling",
+  "/benchmarks/hindered-settling": "09 Hindered Settling",
+  "/benchmarks/numerical-viscometer": "10 Numerical Viscometer",
+  "/benchmarks/oberbeck-spheroid-drag": "11 Oberbeck Spheroid Drag",
+  "/benchmarks/jeffery-orbit": "12 Jeffery Orbit",
+  "/reference-data": "13 Reference Data",
+  "/gallery": "14 Gallery"
 };
 
 function AppShell({ children }: { children: React.ReactNode }) {
@@ -66,6 +68,7 @@ export function App() {
         <Route path="/benchmarks/2d-rising-bubble" element={<RisingBubble2DPage />} />
         <Route path="/benchmarks/fac3" element={<FlowAroundCylinderPage />} />
         <Route path="/benchmarks/particle-sedimentation" element={<ParticleSedimentationPage />} />
+        <Route path="/benchmarks/fsi-benchmark" element={<FsiBenchmarkPage />} />
         <Route path="/benchmarks/drafting-kissing-tumbling" element={<DraftingKissingTumblingPage />} />
         <Route path="/benchmarks/hindered-settling" element={<HinderedSettlingPage />} />
         <Route path="/benchmarks/numerical-viscometer" element={<NumericalViscometerPage />} />

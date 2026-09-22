@@ -67,6 +67,7 @@ Current tab sets, for orientation:
 ```
 FAC3   Introduction · Definition · Results · Reference Data · Conclusion and Bibliography
 RB3    Introduction · Definition · Results · Reference Data
+FSI    Introduction · Definition · Results · CFD Tests · CSM Tests · Reference Data
 SED    Introduction · Definition · Results · Lubrication · Validation · Reference Data
 HS     Introduction · Definition · Results · Confinement · Validation · Reference Data
 JEF    Introduction · Definition · The Orbit · Wall Clearance · Sphere Control · Validation · Reference Data
@@ -324,7 +325,7 @@ recorded in the manifest as `kind: "media"` with an `oldPath` of
 | File | Change |
 |---|---|
 | `src/data/benchmarks.ts` | registry entry |
-| `src/App.tsx` | import the page, add `<Route path="/benchmarks/<slug>" element={...} />`, add a `routeLabels` entry and renumber Reference Data / Gallery |
+| `src/App.tsx` | import the page, add `<Route path="/benchmarks/<slug>" element={...} />`, add a `routeLabels` entry and renumber the entries after it (`src/pages/gallery-page.test.ts` pins the Gallery label) |
 | `src/data/reference-data.tsx` | import `<id>Downloads` and add it to the `curatedDownloads` map |
 | `src/data/gallery.ts` | optional: gallery item (id, family, caption, provenance, aspect, focal, sources) |
 | `src/data/types.ts`, `src/Primitives.jsx` | only for a new thumbnail motif |

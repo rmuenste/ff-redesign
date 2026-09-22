@@ -1,7 +1,7 @@
 // ===== Benchmarks index =====
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { benchmarks, benchmarkSuites } from "./data/benchmarks";
+import { benchmarkModels, benchmarks, benchmarkSuites } from "./data/benchmarks";
 import { galleryItemById, gallerySizes, gallerySrcAt, gallerySrcSet } from "./data/gallery";
 import { Chip, FlowCanvas, Icon, MeshThumb, Overline } from "./Primitives.jsx";
 
@@ -9,7 +9,7 @@ const dims = ["All", "2D", "3D"];
 
 /** Widest a card image is drawn at in the grid — what `sizes` is hinted against. */
 const CARD_WIDTH = 480;
-const models = ["All", "Two-Phase", "Newtonian", "Particulate"];
+const models = ["All", ...benchmarkModels];
 const suites = ["All", ...benchmarkSuites];
 
 export const BenchmarksIndex = () => {
@@ -49,8 +49,8 @@ export const BenchmarksIndex = () => {
           </h1>
           <p style={{ fontSize: 17, color: "var(--fg2)", margin: 0, maxWidth: 720, lineHeight: 1.55 }}>
             Validated flow-simulation benchmarks: two-phase bubble dynamics, laminar
-            flow around a cylinder, particulate sedimentation, and direct numerical
-            simulation of interacting particles. Each page provides the problem
+            flow around a cylinder, fluid-structure interaction, particulate
+            sedimentation, and direct numerical simulation of interacting particles. Each page provides the problem
             definition, interactive result comparisons, and downloadable reference
             data.
           </p>

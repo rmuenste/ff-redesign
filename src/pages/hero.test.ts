@@ -12,6 +12,7 @@ const PAGE_FILES: Record<string, string> = {
   rb2: "RisingBubble2DPage.tsx",
   fac3: "FlowAroundCylinderPage.tsx",
   sedimentation: "ParticleSedimentationPage.tsx",
+  fsi: "FsiBenchmarkPage.tsx",
   dkt: "DraftingKissingTumblingPage.tsx",
   "hindered-settling": "HinderedSettlingPage.tsx",
   "numerical-viscometer": "NumericalViscometerPage.tsx",

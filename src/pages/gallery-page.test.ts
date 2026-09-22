@@ -26,7 +26,7 @@ describe("gallery route", () => {
   it("serves /gallery from the page, with the nav label kept", () => {
     expect(APP).toContain('<Route path="/gallery" element={<GalleryPage />} />');
     expect(APP).toContain('import { GalleryPage } from "./pages/GalleryPage";');
-    expect(APP).toContain('"/gallery": "13 Gallery"');
+    expect(APP).toContain('"/gallery": "14 Gallery"');
   });
 
   it("leaves no placeholder behind", () => {

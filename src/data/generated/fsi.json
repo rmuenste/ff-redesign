@@ -1,0 +1,244 @@
+{
+  "source": "scripts/convert-fsi-data.mjs",
+  "runs": {
+    "fsi2": {
+      "file": "ref_fsi2.point",
+      "samples": 9240,
+      "timeStep": 0.0005,
+      "span": [
+        10,
+        14.6195
+      ],
+      "window": [
+        13.8475,
+        14.3654
+      ],
+      "ux": {
+        "mean": -0.0148531,
+        "amplitude": 0.01271722,
+        "frequency": 3.862
+      },
+      "uy": {
+        "mean": 0.001253706,
+        "amplitude": 0.08165589,
+        "frequency": 1.931
+      },
+      "drag": {
+        "mean": 215.091,
+        "amplitude": 77.62058,
+        "frequency": 3.862
+      },
+      "lift": {
+        "mean": 0.610945,
+        "amplitude": 237.8016,
+        "frequency": 1.931
+      }
+    },
+    "fsi3": {
+      "file": "ref_fsi3.point",
+      "samples": 5769,
+      "timeStep": 0.00025,
+      "span": [
+        5,
+        6.442
+      ],
+      "window": [
+        6.17589,
+        6.35862
+      ],
+      "ux": {
+        "mean": -0.002865387,
+        "amplitude": 0.002703631,
+        "frequency": 10.945
+      },
+      "uy": {
+        "mean": 0.001458317,
+        "amplitude": 0.03490912,
+        "frequency": 5.4725
+      },
+      "drag": {
+        "mean": 460.3045,
+        "amplitude": 27.51294,
+        "frequency": 10.945
+      },
+      "lift": {
+        "mean": 2.53022,
+        "amplitude": 153.6021,
+        "frequency": 5.4725
+      }
+    },
+    "csm3": {
+      "l2-dt0p02": {
+        "file": "csm3_l2.point",
+        "samples": 501,
+        "timeStep": 0.02,
+        "window": [
+          8.91868,
+          9.83615
+        ],
+        "ux": {
+          "mean": -0.01436927,
+          "amplitude": 0.01437243,
+          "frequency": 1.09
+        },
+        "uy": {
+          "mean": -0.06426813,
+          "amplitude": 0.06450845,
+          "frequency": 1.09
+        }
+      },
+      "l2-dt0p01": {
+        "file": "csm3_l2_0p01.point",
+        "samples": 1001,
+        "timeStep": 0.01,
+        "window": [
+          8.90822,
+          9.82103
+        ],
+        "ux": {
+          "mean": -0.01463247,
+          "amplitude": 0.01463747,
+          "frequency": 1.0955
+        },
+        "uy": {
+          "mean": -0.0647441,
+          "amplitude": 0.06490976,
+          "frequency": 1.0955
+        }
+      },
+      "l2-dt0p005": {
+        "file": "csm3_l2_t0p005.point",
+        "samples": 2001,
+        "timeStep": 0.005,
+        "window": [
+          8.90724,
+          9.82069
+        ],
+        "ux": {
+          "mean": -0.01427961,
+          "amplitude": 0.01427996,
+          "frequency": 1.0947
+        },
+        "uy": {
+          "mean": -0.06354194,
+          "amplitude": 0.06509418,
+          "frequency": 1.0947
+        }
+      },
+      "l3-dt0p02": {
+        "file": "csm3_l3.point",
+        "samples": 501,
+        "timeStep": 0.02,
+        "window": [
+          8.9225,
+          9.84031
+        ],
+        "ux": {
+          "mean": -0.01438759,
+          "amplitude": 0.01439103,
+          "frequency": 1.0895
+        },
+        "uy": {
+          "mean": -0.06435018,
+          "amplitude": 0.06459379,
+          "frequency": 1.0895
+        }
+      },
+      "l3-dt0p01": {
+        "file": "csm3_l3_0p01.point",
+        "samples": 1001,
+        "timeStep": 0.01,
+        "window": [
+          8.91192,
+          9.82515
+        ],
+        "ux": {
+          "mean": -0.01464645,
+          "amplitude": 0.01465213,
+          "frequency": 1.095
+        },
+        "uy": {
+          "mean": -0.06476677,
+          "amplitude": 0.06494991,
+          "frequency": 1.095
+        }
+      },
+      "l3-dt0p005": {
+        "file": "csm3_l3_t0p005.point",
+        "samples": 2001,
+        "timeStep": 0.005,
+        "window": [
+          8.91096,
+          9.82479
+        ],
+        "ux": {
+          "mean": -0.01429954,
+          "amplitude": 0.01429995,
+          "frequency": 1.0943
+        },
+        "uy": {
+          "mean": -0.06359522,
+          "amplitude": 0.06515455,
+          "frequency": 1.0943
+        }
+      },
+      "l4-dt0p02": {
+        "file": "csm3_l4.point",
+        "samples": 501,
+        "timeStep": 0.02,
+        "window": [
+          8.92352,
+          9.84141
+        ],
+        "ux": {
+          "mean": -0.01438965,
+          "amplitude": 0.01439314,
+          "frequency": 1.0895
+        },
+        "uy": {
+          "mean": -0.06436929,
+          "amplitude": 0.06460958,
+          "frequency": 1.0895
+        }
+      },
+      "l4-dt0p01": {
+        "file": "csm3_l4_0p01.point",
+        "samples": 1001,
+        "timeStep": 0.01,
+        "window": [
+          8.91292,
+          9.82624
+        ],
+        "ux": {
+          "mean": -0.0146467,
+          "amplitude": 0.0146524,
+          "frequency": 1.0949
+        },
+        "uy": {
+          "mean": -0.06476834,
+          "amplitude": 0.06495256,
+          "frequency": 1.0949
+        }
+      },
+      "l4-dt0p005": {
+        "file": "csm3_l4_t0p005.point",
+        "samples": 2001,
+        "timeStep": 0.005,
+        "window": [
+          8.91195,
+          9.82588
+        ],
+        "ux": {
+          "mean": -0.01430516,
+          "amplitude": 0.01430572,
+          "frequency": 1.0942
+        },
+        "uy": {
+          "mean": -0.06360777,
+          "amplitude": 0.06516071,
+          "frequency": 1.0942
+        }
+      }
+    }
+  }
+}

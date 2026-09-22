@@ -9,6 +9,7 @@ Last updated: 2026-09-22
   - Rising Bubble 2D: `/benchmarks/2d-rising-bubble`
   - Flow Around Cylinder 3D: `/benchmarks/fac3`
   - Particle Sedimentation: `/benchmarks/particle-sedimentation`
+  - FSI Benchmark: `/benchmarks/fsi-benchmark`
   - Drafting-Kissing-Tumbling: `/benchmarks/drafting-kissing-tumbling`
   - Hindered Settling: `/benchmarks/hindered-settling`
   - Numerical Viscometer: `/benchmarks/numerical-viscometer`
@@ -80,6 +81,39 @@ legacy `ffweb` pages (`dfg_flow3d*.html`), the page now labels them
 
 The legacy FeatFlow level-convergence PNGs stay dropped, as `assets.test.ts`
 requires. The DFG 2D benchmarks (2D-1, 2D-2, 2D-3) are not migrated yet.
+
+## FSI Benchmark (first version, migrated from featflow.de)
+
+The Turek and Hron fluid-structure interaction benchmark, a core benchmark, at
+`/benchmarks/fsi-benchmark`. Unlike the other core benchmarks it comes from the
+legacy featflow.de pages (`en/benchmarks/cfdbenchmarking/fsi_benchmark*`, local
+copy in `~/code/ffweb`), not from `ff-angular`. The tabs follow the template:
+Introduction (abstract, introduction, bibliography), Definition (definitions,
+quantities for comparison, the FSI mesh), Results (FSI1-3), CFD Tests, CSM Tests,
+Reference Data.
+
+- The reference files and figures are curated under `scripts/source-data/fsi/`;
+  `scripts/convert-fsi-data.mjs` turns them into Plotly traces (displacements in
+  mm; drag and lift as beam + cylinder), downloads, `fsi.zip` and the manifest,
+  and evaluates every file's last period into `src/data/generated/fsi.json`.
+- The published tables in `src/data/fsi.tsx` were extracted from the visible
+  HTML tables by script, not retyped. Tables the legacy pages kept inside HTML
+  comments were not migrated.
+- `src/data/fsi.test.ts` holds the site's evaluation of each reference file to the
+  published rows: FSI2 to its level 4, dt 0.0005 row, and all nine CSM3 runs.
+- Live plots replace the legacy PNGs for FSI2, FSI3 and CSM3. CFD3 has no
+  published data, so its two original plots are kept as figures.
+- New: the `Fluid-Structure` model, the `cylinder-flag` thumbnail motif, and the
+  catalogue's model filter derived from the registry (`benchmarkModels`).
+
+Open questions on the legacy data, stated on the page rather than resolved:
+
+- `ref_fsi3.point` sits in a `0p00025` folder and records dt = 0.00025, but its
+  last period reproduces the published dt = 0.0005 row, not the dt = 0.00025 row.
+- The legacy geometry table puts B at (0.2, 0.2), the cylinder centre; its text
+  and figure put it at (0.15, 0.2). The page follows the text.
+- The legacy fluid-material table is shown under the solid table's header; its
+  LaTeX source gives the real columns, which the page uses.
 
 ## DKT Migration (first DNS validation benchmark)
 

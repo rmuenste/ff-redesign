@@ -6,6 +6,7 @@ import type { AssetManifest } from "./types";
 const RB3_DIR = resolve(process.cwd(), "public/benchmark-assets/rb3");
 const RB2_DIR = resolve(process.cwd(), "public/benchmark-assets/rb2");
 const FAC3_DIR = resolve(process.cwd(), "public/benchmark-assets/fac3");
+const FSI_DIR = resolve(process.cwd(), "public/benchmark-assets/fsi");
 const SEDIMENTATION_DIR = resolve(process.cwd(), "public/benchmark-assets/sedimentation");
 const DKT_DIR = resolve(process.cwd(), "public/benchmark-assets/dkt");
 const HINDERED_DIR = resolve(process.cwd(), "public/benchmark-assets/hindered-settling");
@@ -20,6 +21,7 @@ const RB2_CODES = new Set(["tp2d", "freelife", "moonmd", "featflower"]);
 const manifest = JSON.parse(readFileSync(resolve(RB3_DIR, "manifest.json"), "utf-8")) as AssetManifest;
 const rb2Manifest = JSON.parse(readFileSync(resolve(RB2_DIR, "manifest.json"), "utf-8")) as AssetManifest;
 const fac3Manifest = JSON.parse(readFileSync(resolve(FAC3_DIR, "manifest.json"), "utf-8")) as AssetManifest;
+const fsiManifest = JSON.parse(readFileSync(resolve(FSI_DIR, "manifest.json"), "utf-8")) as AssetManifest;
 const sedimentationManifest = JSON.parse(readFileSync(resolve(SEDIMENTATION_DIR, "manifest.json"), "utf-8")) as AssetManifest;
 const dktManifest = JSON.parse(readFileSync(resolve(DKT_DIR, "manifest.json"), "utf-8")) as AssetManifest;
 const hinderedManifest = JSON.parse(
@@ -126,6 +128,45 @@ describe("fac3 asset manifest (public/benchmark-assets/fac3/manifest.json)", () 
       expect(copied.some(file => file.endsWith(name)), name).toBe(false);
       expect(mapped.some(file => file.endsWith(name)), name).toBe(false);
     }
+  });
+});
+
+describe("fsi asset manifest (public/benchmark-assets/fsi/manifest.json)", () => {
+  it("maps every file on disk, and every entry exists", () => {
+    expect(fsiManifest.benchmarkId).toBe("fsi");
+    const mapped = new Set(fsiManifest.entries.map(entry => entry.newPath));
+    for (const entry of fsiManifest.entries) {
+      expect(existsSync(resolve(FSI_DIR, entry.newPath)), entry.newPath).toBe(true);
+    }
+    for (const file of listFiles(FSI_DIR).filter(file => file !== "manifest.json")) {
+      expect(mapped.has(file), file).toBe(true);
+    }
+  });
+
+  it("derives FSI2 and FSI3 plots for four metrics and CSM3 for two metrics, three levels and three time steps", () => {
+    const plots = fsiManifest.entries.filter(entry => entry.newPath.startsWith("plots/"));
+    expect(plots.every(entry => entry.derived)).toBe(true);
+    for (const run of ["fsi2", "fsi3"]) {
+      expect(plots.filter(entry => entry.newPath.startsWith(`plots/${run}/`)).map(entry => entry.metric).sort()).toEqual(["drag", "lift", "ux", "uy"]);
+    }
+    const csm = plots.filter(entry => entry.newPath.startsWith("plots/csm3/"));
+    expect(csm).toHaveLength(18);
+    expect(new Set(csm.map(entry => entry.seriesGroupId))).toEqual(new Set(["l2", "l3", "l4"]));
+  });
+
+  it("offers the eleven reference files and a zip bundle as downloads", () => {
+    const downloads = fsiManifest.entries.filter(entry => entry.kind === "download").map(entry => entry.newPath);
+    expect(downloads).toHaveLength(12);
+    expect(downloads).toContain("downloads/fsi.zip");
+    expect(downloads.filter(path => path.endsWith(".point"))).toHaveLength(11);
+  });
+
+  it("replaces the FSI2, FSI3 and CSM3 plot images with live data and keeps only the CFD3 plots, which have none", () => {
+    const media = fsiManifest.entries.filter(entry => entry.kind === "media").map(entry => entry.oldPath);
+    for (const dropped of ["fsi2b_", "fsi3b_", "csm1b_svk_"]) {
+      expect(media.some(path => path.includes(dropped)), dropped).toBe(false);
+    }
+    expect(media.filter(path => path.includes("cfd3_"))).toHaveLength(2);
   });
 });
 

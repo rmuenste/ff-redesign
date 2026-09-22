@@ -144,7 +144,7 @@ function DefinitionTab() {
           }
         ]}
       />
-      <div style={{ display: "grid", gap: 32, marginTop: 24 }}>
+      <div className="stack" style={{ gap: 32, marginTop: 24 }}>
         <div>
           <h3>Case parameters</h3>
           <DataTable<HinderedParameterRow>
@@ -239,7 +239,7 @@ function ladderColumns(showEnvelope: boolean) {
 function ResultsTab() {
   return (
     <Section style={{ paddingTop: 40, paddingBottom: 100 }}>
-      <div style={{ display: "grid", gap: 28 }}>
+      <div className="stack" style={{ gap: 28 }}>
         <div style={{ maxWidth: 900 }}>
           <h3>Hindered-settling ladder</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
@@ -273,7 +273,7 @@ function ConfinementTab() {
 
   return (
     <Section style={{ paddingTop: 40, paddingBottom: 100 }}>
-      <div style={{ maxWidth: 820, display: "grid", gap: 20 }}>
+      <div className="stack" style={{ maxWidth: 820, gap: 20 }}>
         <h3 style={{ margin: 0 }}>Practical guidance: a hindrance exponent belongs to a geometry</h3>
         <div
           style={{
@@ -344,7 +344,7 @@ function ValidationTab() {
         </p>
       </div>
       <ValidationLedger rows={hinderedValidationRows} />
-      <div style={{ marginTop: 36, maxWidth: 900, display: "grid", gap: 20 }}>
+      <div className="stack" style={{ marginTop: 36, maxWidth: 900, gap: 20 }}>
         <div>
           <h3>Controlled comparison</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
@@ -379,7 +379,7 @@ function ReferenceDataTab() {
           }
         ]}
       />
-      <div style={{ marginTop: 32, display: "grid", gap: 32 }}>
+      <div className="stack" style={{ marginTop: 32, gap: 32 }}>
         <DataTable
           columns={[
             { id: "fileType", header: "Quantity", render: row => row.fileType },

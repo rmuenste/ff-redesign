@@ -94,7 +94,7 @@ function DefinitionTab() {
         alt="Experimental setup and boundary conditions for a settling sphere"
         caption="Experimental setup and boundary conditions for the settling-sphere benchmark."
       />
-      <div style={{ display: "grid", gap: 24, marginTop: 24 }}>
+      <div className="stack" style={{ gap: 24, marginTop: 24 }}>
         <div>
           <h3>Particle and fluid properties</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
@@ -138,7 +138,7 @@ function DefinitionTab() {
 function ResultsTab() {
   return (
     <Section style={{ paddingTop: 40, paddingBottom: 100 }}>
-      <div style={{ display: "grid", gap: 28 }}>
+      <div className="stack" style={{ gap: 28 }}>
         <div style={{ maxWidth: 900 }}>
           <h3>Live sedimentation curves</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
@@ -160,7 +160,7 @@ function LubricationTab({ onOpenViscometer }: { onOpenViscometer: () => void }) 
 
   return (
     <Section style={{ paddingTop: 40, paddingBottom: 100 }}>
-      <div style={{ maxWidth: 900, display: "grid", gap: 20 }}>
+      <div className="stack" style={{ maxWidth: 900, gap: 20 }}>
         <h3 style={{ margin: 0 }}>What a sub-grid model adds to an already-resolved film</h3>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
           The rigid-body engine now carries a switchable sub-grid lubrication model — the Kroupa et al. resistance
@@ -226,7 +226,7 @@ function LubricationTab({ onOpenViscometer }: { onOpenViscometer: () => void }) 
         <ComparisonPanel specs={sedimentationLubricationSpecs} defaultMetric="approach" />
       </div>
 
-      <div style={{ marginTop: 44, maxWidth: 900, display: "grid", gap: 32 }}>
+      <div className="stack" style={{ marginTop: 44, maxWidth: 900, gap: 32 }}>
         <div>
           <h3>Through the film band</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
@@ -395,7 +395,7 @@ function LubricationTab({ onOpenViscometer }: { onOpenViscometer: () => void }) 
 function ValidationTab() {
   return (
     <Section style={{ paddingTop: 40, paddingBottom: 100 }}>
-      <div style={{ maxWidth: 860, display: "grid", gap: 20, marginBottom: 32 }}>
+      <div className="stack" style={{ maxWidth: 860, gap: 20, marginBottom: 32 }}>
         <h3 style={{ margin: 0 }}>What convergence looks like on this benchmark</h3>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
           The settling peak was measured across three mesh levels for all four cases. Refinement is not monotone:
@@ -527,7 +527,7 @@ function ReferenceDataTab() {
           }
         ]}
       />
-      <div style={{ marginTop: 32, display: "grid", gap: 32 }}>
+      <div className="stack" style={{ marginTop: 32, gap: 32 }}>
         <DataTable
           columns={[
             { id: "fileType", header: "File family", render: row => row.fileType },

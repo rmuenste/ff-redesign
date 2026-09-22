@@ -99,7 +99,7 @@ function DefinitionTab() {
         rows={rb3PhysicalRows}
         getRowKey={row => String(row.position)}
       />
-      <div style={{ marginTop: 32, display: "grid", gap: 22 }}>
+      <div className="stack" style={{ marginTop: 32, gap: 22 }}>
         <div>
           <h3>Bubble Size</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>

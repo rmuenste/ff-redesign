@@ -184,7 +184,7 @@ function DefinitionTab() {
           }
         ]}
       />
-      <div style={{ display: "grid", gap: 32, marginTop: 24 }}>
+      <div className="stack" style={{ gap: 32, marginTop: 24 }}>
         <div>
           <h3>Case parameters</h3>
           <DataTable<OberbeckParameterRow>
@@ -306,7 +306,7 @@ function LadderTable({ rows }: { rows: OberbeckRung[] }) {
 function RatioTab() {
   return (
     <Section style={{ paddingTop: 40, paddingBottom: 100 }}>
-      <div style={{ maxWidth: 900, display: "grid", gap: 20 }}>
+      <div className="stack" style={{ maxWidth: 900, gap: 20 }}>
         <h3 style={{ margin: 0 }}>Three rungs, two factors</h3>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
           The anisotropy ratio is the primary gate, and it was measured three times. Two rungs keep the
@@ -379,7 +379,7 @@ function AbsolutesTab() {
 
   return (
     <Section style={{ paddingTop: 40, paddingBottom: 100 }}>
-      <div style={{ maxWidth: 900, display: "grid", gap: 20 }}>
+      <div className="stack" style={{ maxWidth: 900, gap: 20 }}>
         <h3 style={{ margin: 0 }}>Each orientation against its own resistance function</h3>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
           The ratio is the gate that matters, because the lattice correction and the discretisation bias mostly
@@ -451,7 +451,7 @@ function AbsolutesTab() {
         <ComparisonPanel specs={oberbeckAbsolutesSpecs} defaultMetric="absolutes" />
       </div>
 
-      <div style={{ marginTop: 44, maxWidth: 900, display: "grid", gap: 32 }}>
+      <div className="stack" style={{ marginTop: 44, maxWidth: 900, gap: 32 }}>
         <div>
           <h3>The off-diagonal, qualitatively</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
@@ -482,7 +482,7 @@ function SteadinessTab() {
 
   return (
     <Section style={{ paddingTop: 40, paddingBottom: 100 }}>
-      <div style={{ maxWidth: 900, display: "grid", gap: 20 }}>
+      <div className="stack" style={{ maxWidth: 900, gap: 20 }}>
         <h3 style={{ margin: 0 }}>What the plateau is worth</h3>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
           Every number on this page is read at the end of a run that goes to t = 4. Two things are worth
@@ -501,7 +501,7 @@ function SteadinessTab() {
         <ComparisonPanel specs={oberbeckHistorySpecs} defaultMetric="force" />
       </div>
 
-      <div style={{ marginTop: 44, maxWidth: 900, display: "grid", gap: 32 }}>
+      <div className="stack" style={{ marginTop: 44, maxWidth: 900, gap: 32 }}>
         <div>
           <h3>Window sensitivity, honestly</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
@@ -594,7 +594,7 @@ function ValidationTab() {
         </p>
       </div>
       <ValidationLedger rows={oberbeckValidationRows} />
-      <div style={{ marginTop: 36, maxWidth: 900, display: "grid", gap: 20 }}>
+      <div className="stack" style={{ marginTop: 36, maxWidth: 900, gap: 20 }}>
         <div>
           <h3>Controlled comparison</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
@@ -631,7 +631,7 @@ function ReferenceDataTab() {
           }
         ]}
       />
-      <div style={{ marginTop: 32, display: "grid", gap: 32 }}>
+      <div className="stack" style={{ marginTop: 32, gap: 32 }}>
         <DataTable
           columns={[
             { id: "fileType", header: "Quantity", render: row => row.fileType },

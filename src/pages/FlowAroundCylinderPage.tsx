@@ -138,7 +138,7 @@ function IntroductionTab() {
           }
         ]}
       />
-      <div style={{ marginTop: 28, display: "grid", gap: 12 }}>
+      <div className="stack" style={{ marginTop: 28, gap: 12 }}>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
           Because the codes employ different numerical techniques, the benchmark is also used to investigate three practical solver questions:
         </p>
@@ -243,7 +243,7 @@ function DefinitionTab() {
       </p>
       <CaseTable />
 
-      <div style={{ marginTop: 32, display: "grid", gap: 18 }}>
+      <div className="stack" style={{ marginTop: 32, gap: 18 }}>
         <h3 style={{ margin: 0 }}>Boundary conditions</h3>
         <p style={{ ...prose, margin: 0 }}>
           No-slip conditions (U = V = W = 0) hold on the channel walls and on the cylinder surface, and natural do-nothing conditions are imposed at the outflow plane. At the inflow plane, Case 1 imposes the steady parabolic profile (1) with U_m = 0.45 m/s. Case 2 imposes the same profile scaled by sin(πt/8), equation (2), with U_m = 2.25 m/s. Case 2 is simulated over half a period of that ramp, 0 ≤ t ≤ 8 s: the inflow starts from zero with zero initial conditions, peaks at t = 4 s where Re = 100, and returns to zero at t = 8 s.

@@ -1,6 +1,13 @@
-// Stored (uncompressed) ZIP writer, so reference-data bundles are byte-stable
-// across rebuilds and need no dependency. Extracted verbatim from
+// Minimal ZIP writer for reference-data bundles: no dependency, and byte-stable
+// across rebuilds on the same Node version. Extracted verbatim from
 // scripts/convert-sedimentation-data.mjs, which keeps its own copy.
+//
+// createStoredZip writes the entries uncompressed. createDeflatedZip deflates
+// them, which is worth it for bundles of plain-text numbers: the FSI reference
+// files go from 4.8 MB to 1.2 MB. Converters run by hand, so the committed zip
+// is the artifact; a different zlib build would only change it at the next run.
+
+import { deflateRawSync } from "node:zlib";
 
 export function crc32(buffer) {
   let crc = 0xffffffff;
@@ -33,6 +40,14 @@ function writeUInt32(value) {
 }
 
 export function createStoredZip(entries) {
+  return createZip(entries, { compress: false });
+}
+
+export function createDeflatedZip(entries) {
+  return createZip(entries, { compress: true });
+}
+
+function createZip(entries, { compress }) {
   const localParts = [];
   const centralParts = [];
   let offset = 0;
@@ -41,32 +56,35 @@ export function createStoredZip(entries) {
   for (const entry of entries) {
     const name = Buffer.from(entry.name);
     const data = entry.data;
+    // The CRC and the uncompressed size always describe the original bytes.
     const crc = crc32(data);
+    const payload = compress ? deflateRawSync(data, { level: 9 }) : data;
+    const method = compress ? 8 : 0;
     const localHeader = Buffer.concat([
       writeUInt32(0x04034b50),
       writeUInt16(20),
       writeUInt16(0),
-      writeUInt16(0),
+      writeUInt16(method),
       writeUInt16(dosTime),
       writeUInt16(dosDate),
       writeUInt32(crc),
-      writeUInt32(data.length),
+      writeUInt32(payload.length),
       writeUInt32(data.length),
       writeUInt16(name.length),
       writeUInt16(0),
       name
     ]);
-    localParts.push(localHeader, data);
+    localParts.push(localHeader, payload);
     centralParts.push(Buffer.concat([
       writeUInt32(0x02014b50),
       writeUInt16(20),
       writeUInt16(20),
       writeUInt16(0),
-      writeUInt16(0),
+      writeUInt16(method),
       writeUInt16(dosTime),
       writeUInt16(dosDate),
       writeUInt32(crc),
-      writeUInt32(data.length),
+      writeUInt32(payload.length),
       writeUInt32(data.length),
       writeUInt16(name.length),
       writeUInt16(0),
@@ -77,7 +95,7 @@ export function createStoredZip(entries) {
       writeUInt32(offset),
       name
     ]));
-    offset += localHeader.length + data.length;
+    offset += localHeader.length + payload.length;
   }
 
   const central = Buffer.concat(centralParts);

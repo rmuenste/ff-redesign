@@ -74,6 +74,24 @@ export const benchmarks: BenchmarkMeta[] = [
     status: "active"
   },
   {
+    id: "fsi",
+    slug: "fsi-benchmark",
+    title: "Fluid-Structure Interaction Between an Elastic Object and Laminar Flow",
+    shortTitle: "FSI Benchmark",
+    tag: "FSI",
+    suite: "Core benchmarks",
+    model: "Fluid-Structure",
+    dimension: "2D",
+    reynolds: "20 / 100 / 200",
+    levels: 4,
+    summary:
+      "An elastic flag attached to a cylinder in laminar channel flow, with self-induced oscillations compared through displacement, drag and lift.",
+    thumb: "cylinder-flag",
+    tabs: ["Introduction", "Definition", "FSI Tests", "CFD Tests", "CSM Tests", "Reference Data"],
+    comparisonAxis: "level",
+    status: "active"
+  },
+  {
     id: "dkt",
     slug: "drafting-kissing-tumbling",
     title: "Drafting, Kissing and Tumbling of Two Spheres",
@@ -190,6 +208,7 @@ export const benchmarks: BenchmarkMeta[] = [
 
 /** Catalogue facet values, in display order, derived from the registry. */
 export const benchmarkSuites = Array.from(new Set(benchmarks.map(benchmark => benchmark.suite)));
+export const benchmarkModels = Array.from(new Set(benchmarks.map(benchmark => benchmark.model)));
 
 export function getBenchmarkBySlug(slug: string) {
   return benchmarks.find(benchmark => benchmark.slug === slug);

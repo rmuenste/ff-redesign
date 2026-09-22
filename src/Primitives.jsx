@@ -202,6 +202,32 @@ const FAC = (() => {
 })();
 
 /**
+ * FSI benchmark (Turek and Hron): the FAC channel and cylinder with the elastic
+ * flag behind it, to scale (length l = 7r, thickness h = 0.4r). The flag is drawn
+ * in its first bending mode, y(s) = d (s/l)^2, at four phases of the swing; only
+ * the outer streamlines are kept, since the inner ones would cross the flag.
+ */
+const FSI_FLAG = (() => {
+  const x0 = FAC.cx + FAC.a;
+  const length = 7 * FAC.a;
+  const path = d => {
+    const pts = [];
+    for (let i = 0; i <= 24; i++) {
+      const s = i / 24;
+      pts.push(`${(x0 + s * length).toFixed(1)} ${(FAC.cy + d * s * s).toFixed(1)}`);
+    }
+    return "M" + pts.join(" L");
+  };
+  return {
+    width: 0.4 * FAC.a,
+    ghosts: [-16, -6, 6].map(path),
+    flag: path(16),
+    tip: { x: x0 + length, y: FAC.cy + 16 },
+    lines: FAC.lines.filter((_, i) => i >= 4)
+  };
+})();
+
+/**
  * RB2 case-2 final bubble interface (MooNMD level 1), taken from real benchmark
  * data: public/benchmark-assets/rb2/plots/case-2/shape/moonmd-l1.json. The 1550-point
  * closed polyline was fitted to the 240x160 viewBox (y flipped), Douglas-Peucker
@@ -317,6 +343,7 @@ const MESH_SEEDS = {
   annulus: { shape: "annulus", color: "var(--tu-green-500)" },
   spheroid: { shape: "spheroid", color: "var(--tu-green-500)" },
   "spheroid-shear": { shape: "spheroid-shear", color: "var(--tu-green-500)" },
+  "cylinder-flag": { shape: "cylinder-flag", color: "var(--tu-green-500)" },
 };
 const MESH_ORDER = ["cylinder", "bubble", "particle", "channel"];
 
@@ -352,6 +379,25 @@ export const MeshThumb = ({ variant = 0, shape, style }) => {
             ))}
           </g>
           <line x1={FAC.xL} y1={FAC.cy} x2={FAC.cx - FAC.a} y2={FAC.cy} stroke="var(--tu-green-300)" strokeWidth="0.9" opacity="0.8" />
+          <circle cx={FAC.cx} cy={FAC.cy} r={FAC.a} fill="var(--surface)" stroke={s.color} strokeWidth="1.6" />
+        </>
+      )}
+      {s.shape === "cylinder-flag" && (
+        <>
+          <line x1={FAC.xL} y1={FAC.wallTop} x2={FAC.xR} y2={FAC.wallTop} stroke="var(--fg3)" strokeWidth="1" />
+          <line x1={FAC.xL} y1={FAC.wallBot} x2={FAC.xR} y2={FAC.wallBot} stroke="var(--fg3)" strokeWidth="1" />
+          <g fill="none" stroke="var(--tu-green-400)" strokeLinecap="round">
+            {FSI_FLAG.lines.map((l, i) => (
+              <path key={i} d={l.d} strokeWidth={l.w} opacity={l.op} />
+            ))}
+          </g>
+          <g fill="none" stroke="var(--tu-green-300)" strokeWidth={FSI_FLAG.width} strokeLinecap="butt">
+            {FSI_FLAG.ghosts.map((d, i) => (
+              <path key={i} d={d} opacity={0.14 + 0.08 * i} />
+            ))}
+          </g>
+          <path d={FSI_FLAG.flag} fill="none" stroke={s.color} strokeWidth={FSI_FLAG.width} strokeLinecap="butt" />
+          <circle cx={FSI_FLAG.tip.x} cy={FSI_FLAG.tip.y} r="2.2" fill="var(--tu-orange-500)" />
           <circle cx={FAC.cx} cy={FAC.cy} r={FAC.a} fill="var(--surface)" stroke={s.color} strokeWidth="1.6" />
         </>
       )}

@@ -210,6 +210,20 @@
       ]
     },
     {
+      "benchmarkId": "fsi",
+      "files": [
+        {
+          "name": "fsi.zip",
+          "path": "downloads/fsi.zip",
+          "label": "fsi.zip",
+          "format": "ZIP archive",
+          "bytes": 1203496,
+          "sha1": "e4e8ee4eb415fc6516ec857652468182c4d89b0a",
+          "shared": false
+        }
+      ]
+    },
+    {
       "benchmarkId": "hindered-settling",
       "files": [
         {
@@ -1033,8 +1047,8 @@
     }
   ],
   "totals": {
-    "benchmarks": 9,
-    "files": 108,
-    "bytes": 16251056
+    "benchmarks": 10,
+    "files": 109,
+    "bytes": 17454552
   }
 }

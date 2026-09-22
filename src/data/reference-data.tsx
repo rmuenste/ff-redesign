@@ -3,6 +3,7 @@ import { benchmarkAssetPath } from "./assets";
 import { benchmarks } from "./benchmarks";
 import { dktDownloads } from "./dkt";
 import { fac3Downloads } from "./fac3";
+import { fsiDownloads } from "./fsi";
 import generatedIndex from "./generated/reference-index.json";
 import { hinderedDownloads } from "./hindered-settling";
 import { jefferyDownloads } from "./jeffery";
@@ -25,6 +26,7 @@ const curatedDownloads: Record<string, DownloadItem[]> = {
   rb2: rb2Downloads,
   fac3: fac3Downloads,
   sedimentation: sedimentationDownloads,
+  fsi: fsiDownloads,
   dkt: dktDownloads,
   "hindered-settling": hinderedDownloads,
   "numerical-viscometer": viscometerDownloads,

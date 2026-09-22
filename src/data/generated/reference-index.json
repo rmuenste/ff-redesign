@@ -533,8 +533,8 @@
           "path": "downloads/dns_validation_datasheet.csv",
           "label": "dns_validation_datasheet.csv",
           "format": "CSV",
-          "bytes": 197225,
-          "sha1": "0e6b39de9e3b4389738bfbb4c22d93e149e3148e",
+          "bytes": 197211,
+          "sha1": "97bfdbad18a73a61fef10f806b683d21d505909e",
           "shared": false
         },
         {
@@ -542,8 +542,8 @@
           "path": "downloads/numerical-viscometer.zip",
           "label": "numerical-viscometer.zip",
           "format": "ZIP archive",
-          "bytes": 3313896,
-          "sha1": "654bdffc2e21659c92a5b22e9488f7a14ea24d83",
+          "bytes": 3313882,
+          "sha1": "8368bb2e25ad955c24b2385d9164a2aba110dbd3",
           "shared": false
         }
       ]
@@ -1035,6 +1035,6 @@
   "totals": {
     "benchmarks": 9,
     "files": 108,
-    "bytes": 16251084
+    "bytes": 16251056
   }
 }

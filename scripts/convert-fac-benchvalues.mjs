@@ -1,5 +1,6 @@
-import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
+import { resetGeneratedOutputs, writeManifest } from "./lib/output-dir.mjs";
 
 const root = resolve(import.meta.dirname, "..");
 const angularAssets = resolve(root, "../ff-angular/src/assets");
@@ -53,8 +54,13 @@ function writeTrace(metric, rows, column, title) {
   };
 }
 
-rmSync(outDir, { recursive: true, force: true });
-mkdirSync(outDir, { recursive: true });
+// Only the paths this script writes are rebuilt; anything else under media/
+// (gallery stills) stays, with its manifest entries.
+const preserved = resetGeneratedOutputs(
+  outDir,
+  ["plots", "downloads", "media/fac-geometry.png", "media/base-mesh.png", "media/fac3d.mp4"],
+  { benchmarkId: "fac3" }
+);
 
 const rows = readBenchValues();
 const entries = [
@@ -66,9 +72,6 @@ const entries = [
   writeTrace("lift", rows, 2, "Lift coefficient")
 ];
 
-writeFileSync(
-  join(outDir, "manifest.json"),
-  JSON.stringify({ benchmarkId: "fac3", entries }, null, 2) + "\n"
-);
+writeManifest(outDir, "fac3", entries, preserved);
 
 console.log(`Converted ${rows.length} BenchValues rows into FAC Drag/Lift Plotly JSON.`);

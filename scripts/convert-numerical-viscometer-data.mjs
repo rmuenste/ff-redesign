@@ -49,11 +49,12 @@
 //   src/data/generated/numerical-viscometer-validation.json  Validation-tab rows
 //
 // Run with: node scripts/convert-numerical-viscometer-data.mjs
-import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, relative, resolve } from "node:path";
 import { parseCsvRecords } from "./lib/csv.mjs";
 import { buildLedger, readDatasheet } from "./lib/validation-ledger.mjs";
 import { createStoredZip } from "./lib/zip.mjs";
+import { resetGeneratedOutputs, writeManifest } from "./lib/output-dir.mjs";
 
 const root = resolve(import.meta.dirname, "..");
 const srcDir = resolve(root, "scripts/source-data/numerical-viscometer");
@@ -355,14 +356,9 @@ const baselineGates = {
 
 // ---- assets -----------------------------------------------------------------
 // The gallery stills under media/ and their manifest entries are not built here
-// (they are rendered offline and land with the gallery), so they are carried
-// over untouched; everything else is rebuilt from scratch.
-const manifestPath = resolve(outDir, "manifest.json");
-const preserved = existsSync(manifestPath)
-  ? JSON.parse(readFileSync(manifestPath, "utf-8")).entries.filter(entry => entry.kind === "media")
-  : [];
-for (const dir of ["plots", "downloads"]) rmSync(resolve(outDir, dir), { recursive: true, force: true });
-rmSync(manifestPath, { force: true });
+// (they are rendered offline and land with the gallery); only what this script
+// owns is rebuilt from scratch.
+const preserved = resetGeneratedOutputs(outDir, ["plots", "downloads"], { benchmarkId: "numerical-viscometer" });
 
 const entries = [];
 const zipEntries = [];
@@ -666,8 +662,7 @@ entries.push({
   label: "numerical-viscometer.zip"
 });
 
-entries.push(...preserved);
-writeJson(manifestPath, { benchmarkId: "numerical-viscometer", entries });
+writeManifest(outDir, "numerical-viscometer", entries, preserved);
 
 // ---- instrument, rungs and gates --------------------------------------------
 writeJson(resolve(generatedDir, "numerical-viscometer.json"), {

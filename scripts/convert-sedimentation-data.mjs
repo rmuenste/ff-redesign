@@ -1,5 +1,6 @@
-import { copyFileSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, relative, resolve } from "node:path";
+import { resetGeneratedOutputs, writeManifest } from "./lib/output-dir.mjs";
 
 const root = resolve(import.meta.dirname, "..");
 const outDir = resolve(root, "public/benchmark-assets/sedimentation");
@@ -165,7 +166,15 @@ function createStoredZip(entries) {
   ]);
 }
 
-rmSync(outDir, { recursive: true, force: true });
+// Only the paths this script writes are rebuilt; the gallery stills under
+// media/gallery/ and their manifest entries stay. plots/ and downloads/ include
+// the lubrication material, which scripts/convert-sedimentation-lubrication.mjs
+// rebuilds afterwards.
+const preserved = resetGeneratedOutputs(
+  outDir,
+  ["plots", "downloads", "media/sedimentation-setup.png"],
+  { benchmarkId: "sedimentation" }
+);
 
 const entries = [];
 const zipEntries = [];
@@ -267,6 +276,6 @@ entries.push({
   label: "sedimentation.zip"
 });
 
-writeJson(resolve(outDir, "manifest.json"), { benchmarkId: "sedimentation", entries });
+writeManifest(outDir, "sedimentation", entries, preserved);
 
 console.log(`Generated ${entries.length} sedimentation manifest entries in ${relative(root, outDir)}`);

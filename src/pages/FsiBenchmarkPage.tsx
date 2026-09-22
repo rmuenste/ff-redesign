@@ -250,7 +250,7 @@ function DefinitionTab() {
 
       <h4>Fluid</h4>
       <p style={prose}>The fluid state is described by the velocity and pressure fields vᶠ and pᶠ. The balance equations and the constitutive law are</p>
-      <Equation block>{"$$\\begin{aligned}\\varrho^f \\frac{\\partial \\mathbf{v}^f}{\\partial t} + \\varrho^f (\\nabla \\mathbf{v}^f)\\,\\mathbf{v}^f &= \\nabla\\cdot\\boldsymbol{\\sigma}^f, \\qquad \\nabla\\cdot\\mathbf{v}^f = 0 \\qquad \\text{in } \\Omega^f_t,\\\\ \\boldsymbol{\\sigma}^f &= -p^f\\mathbf{I} + \\varrho^f\\nu^f\\left(\\nabla\\mathbf{v}^f + (\\nabla\\mathbf{v}^f)^T\\right),\\end{aligned}$$"}</Equation>
+      <Equation block>{"$$\\begin{aligned}\\varrho^f \\frac{\\partial \\mathbf{v}^f}{\\partial t} + \\varrho^f (\\nabla \\mathbf{v}^f)\\,\\mathbf{v}^f &= \\nabla\\cdot\\pmb{\\sigma}^f, \\qquad \\nabla\\cdot\\mathbf{v}^f = 0 \\qquad \\text{in } \\Omega^f_t,\\\\ \\pmb{\\sigma}^f &= -p^f\\mathbf{I} + \\varrho^f\\nu^f\\left(\\nabla\\mathbf{v}^f + (\\nabla\\mathbf{v}^f)^T\\right),\\end{aligned}$$"}</Equation>
       <p style={prose}>
         with the constant fluid density ρᶠ and the kinematic viscosity νᶠ. The Reynolds number is formed with the cylinder diameter 2r and the mean inflow velocity Ū, which is two thirds of the centreline velocity of the parabolic inflow profile:
       </p>
@@ -260,11 +260,11 @@ function DefinitionTab() {
       <p style={prose}>
         The structure is elastic and compressible, described by its displacement uˢ with velocity vˢ = ∂uˢ/∂t. Written with respect to the undeformed reference configuration Ωˢ (the Lagrangian description), the balance equation is
       </p>
-      <Equation block>{"$$\\varrho^s \\frac{\\partial^2 \\mathbf{u}^s}{\\partial t^2} = \\nabla\\cdot\\left(J\\,\\boldsymbol{\\sigma}^s\\mathbf{F}^{-T}\\right) + \\varrho^s\\mathbf{g} \\qquad \\text{in } \\Omega^s, \\qquad \\mathbf{F} = \\mathbf{I} + \\nabla\\mathbf{u}^s,\\; J = \\det\\mathbf{F}.$$"}</Equation>
+      <Equation block>{"$$\\varrho^s \\frac{\\partial^2 \\mathbf{u}^s}{\\partial t^2} = \\nabla\\cdot\\left(J\\,\\pmb{\\sigma}^s\\mathbf{F}^{-T}\\right) + \\varrho^s\\mathbf{g} \\qquad \\text{in } \\Omega^s, \\qquad \\mathbf{F} = \\mathbf{I} + \\nabla\\mathbf{u}^s,\\; J = \\det\\mathbf{F}.$$"}</Equation>
       <p style={prose}>
         The material is St. Venant-Kirchhoff. With the Green-Lagrange strain E = ½(FᵀF − I), the Cauchy stress σˢ and the second Piola-Kirchhoff stress Sˢ = J F⁻¹ σˢ F⁻ᵀ are (see Ciarlet 1988)
       </p>
-      <Equation block>{"$$\\boldsymbol{\\sigma}^s = \\frac{1}{J}\\,\\mathbf{F}\\left(\\lambda^s(\\operatorname{tr}\\mathbf{E})\\,\\mathbf{I} + 2\\mu^s\\mathbf{E}\\right)\\mathbf{F}^T, \\qquad \\mathbf{S}^s = \\lambda^s(\\operatorname{tr}\\mathbf{E})\\,\\mathbf{I} + 2\\mu^s\\mathbf{E}.$$"}</Equation>
+      <Equation block>{"$$\\pmb{\\sigma}^s = \\frac{1}{J}\\,\\mathbf{F}\\left(\\lambda^s(\\operatorname{tr}\\mathbf{E})\\,\\mathbf{I} + 2\\mu^s\\mathbf{E}\\right)\\mathbf{F}^T, \\qquad \\mathbf{S}^s = \\lambda^s(\\operatorname{tr}\\mathbf{E})\\,\\mathbf{I} + 2\\mu^s\\mathbf{E}.$$"}</Equation>
       <p style={prose}>
         ρˢ is the density of the undeformed structure. Its elasticity is given by the Poisson ratio νˢ (νˢ &lt; ½ for a compressible structure) and the Young modulus E, or equivalently by the Lamé coefficients λˢ and μˢ, the shear modulus:
       </p>
@@ -272,7 +272,7 @@ function DefinitionTab() {
 
       <h4>Interaction conditions</h4>
       <p style={prose}>On the fluid-structure interface the stresses balance and the velocities agree, which is the no-slip condition for the flow (n is the unit normal on Γ⁰ₜ):</p>
-      <Equation block>{"$$\\boldsymbol{\\sigma}^f\\mathbf{n} = \\boldsymbol{\\sigma}^s\\mathbf{n}, \\qquad \\mathbf{v}^f = \\mathbf{v}^s \\qquad \\text{on } \\Gamma^0_t.$$"}</Equation>
+      <Equation block>{"$$\\pmb{\\sigma}^f\\mathbf{n} = \\pmb{\\sigma}^s\\mathbf{n}, \\qquad \\mathbf{v}^f = \\mathbf{v}^s \\qquad \\text{on } \\Gamma^0_t.$$"}</Equation>
 
       <h4>Choice of material parameters</h4>
       <p style={prose}>
@@ -357,7 +357,7 @@ function DefinitionTab() {
       <p style={prose}>
         The forces are integrated over the path S = S₁ ∪ S₂, the part of the circle in contact with the fluid (S₁) plus the fluid-facing boundary of the flag (S₂), with n the outer unit normal with respect to the fluid domain. Up to numerical effects, all of these evaluations lead asymptotically to the same result:
       </p>
-      <Equation block>{"$$\\begin{aligned}(F_D, F_L) = \\int_S \\boldsymbol{\\sigma}\\mathbf{n}\\,dS &= \\int_{S_1}\\boldsymbol{\\sigma}^f\\mathbf{n}\\,dS + \\int_{S_2}\\boldsymbol{\\sigma}^f\\mathbf{n}\\,dS = \\int_{S_1}\\boldsymbol{\\sigma}^f\\mathbf{n}\\,dS + \\int_{S_2}\\boldsymbol{\\sigma}^s\\mathbf{n}\\,dS\\\\ &= \\int_{S_1}\\boldsymbol{\\sigma}^f\\mathbf{n}\\,dS + \\int_{S_2}\\tfrac{1}{2}\\left(\\boldsymbol{\\sigma}^s + \\boldsymbol{\\sigma}^f\\right)\\mathbf{n}\\,dS = \\int_{S_0}\\boldsymbol{\\sigma}\\mathbf{n}\\,dS.\\end{aligned}$$"}</Equation>
+      <Equation block>{"$$\\begin{aligned}(F_D, F_L) = \\int_S \\pmb{\\sigma}\\mathbf{n}\\,dS &= \\int_{S_1}\\pmb{\\sigma}^f\\mathbf{n}\\,dS + \\int_{S_2}\\pmb{\\sigma}^f\\mathbf{n}\\,dS = \\int_{S_1}\\pmb{\\sigma}^f\\mathbf{n}\\,dS + \\int_{S_2}\\pmb{\\sigma}^s\\mathbf{n}\\,dS\\\\ &= \\int_{S_1}\\pmb{\\sigma}^f\\mathbf{n}\\,dS + \\int_{S_2}\\tfrac{1}{2}\\left(\\pmb{\\sigma}^s + \\pmb{\\sigma}^f\\right)\\mathbf{n}\\,dS = \\int_{S_0}\\pmb{\\sigma}\\mathbf{n}\\,dS.\\end{aligned}$$"}</Equation>
       <Figure src={fsiIntegrationPathAsset} alt="Integration path S1 around the cylinder and S2 along the flag" caption="Integration path S = S₁ ∪ S₂ for the forces; S₀ is the alternative path around the cylinder." />
       <p style={prose}>
         A periodic quantity is reported as its mean value, amplitude and frequency, written <em>mean ± amplitude [frequency]</em>. Mean and amplitude come from the maximum and minimum over the last period of the oscillation. The frequency is 1/T for the period T, or the lowest significant frequency of a Fourier analysis. A plot of the quantities over the period should be provided as well.

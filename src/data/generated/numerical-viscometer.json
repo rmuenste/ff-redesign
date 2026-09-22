@@ -25,6 +25,7 @@
       "label": "Krieger-Dougherty, phi_m = 0.64"
     }
   },
+  "restart": 200,
   "rungs": [
     {
       "run": "baseline",
@@ -32,23 +33,31 @@
       "phi": 0,
       "particles": 0,
       "window": [
-        150,
-        200
+        230,
+        250
       ],
-      "samples": 1001,
-      "torqueDna": 84.22964606073926,
-      "torqueDnaPstd": 0.00007255931196829029,
-      "torqueRes": 52.35755347302695,
-      "torqueResPstd": 0.00007192957005765734,
-      "gap": 31.87209258771231,
-      "scatter": 8.614462408635398e-7,
-      "drift": -5.3311494761082044e-8,
+      "runEnd": 269.215,
+      "baselineWindow": [
+        230,
+        250
+      ],
+      "samples": 4001,
+      "torqueDna": 83.77681298612849,
+      "torqueDnaPstd": 0.0019291454106886337,
+      "torqueRes": 52.36165940837287,
+      "torqueResPstd": 0.0019291291565825246,
+      "gap": 31.415153577755618,
+      "scatter": 0.00002302719979343277,
+      "drift": -0.000003902987578765279,
       "lubrication": false,
       "closure": "exact",
+      "torqueReference": 83.77681298612849,
+      "torqueReferenceRes": 52.36165940837287,
+      "referenceSamples": 4001,
       "eta": 1,
-      "etaPstd": 8.614462408635398e-7,
+      "etaPstd": 0.00002302719979343277,
       "etaCorrected": 1,
-      "gapDeviation": 0.014520216403394182,
+      "gapDeviation": -0.00002460402183068755,
       "composites": [],
       "etaComposite": null,
       "deviationComposite": null,
@@ -65,6 +74,11 @@
         230,
         250
       ],
+      "runEnd": 250,
+      "baselineWindow": [
+        230,
+        250
+      ],
       "samples": 4000,
       "torqueDna": 93.17866575150005,
       "torqueDnaPstd": 0.06303430560137818,
@@ -75,24 +89,27 @@
       "drift": -0.000102162138203857,
       "lubrication": false,
       "closure": "einstein",
-      "eta": 1.1062454861119506,
-      "etaPstd": 0.0007483624655851361,
-      "etaCorrected": 1.1122775682020254,
+      "torqueReference": 83.77681298612849,
+      "torqueReferenceRes": 52.36165940837287,
+      "referenceSamples": 4001,
+      "eta": 1.112224999140613,
+      "etaPstd": 0.0007524075380119223,
+      "etaCorrected": 1.1122230555333887,
       "gapDeviation": -0.000022182145324012303,
       "composites": [
         {
           "phi": 0.05,
           "closure": "einstein",
-          "eta": 1.0996,
+          "eta": 1.10025,
           "gate": true,
-          "deviation": 0.006043548664924181
+          "deviation": 0.010883889243910927
         }
       ],
-      "etaComposite": 1.0996,
-      "deviationComposite": 0.006043548664924181,
+      "etaComposite": 1.10025,
+      "deviationComposite": 0.010883889243910927,
       "etaClosure": 1.125,
       "etaNaive": 1.125,
-      "deviationNaive": -0.016670679011599465
+      "deviationNaive": -0.011355556319455062
     },
     {
       "run": "phi10",
@@ -101,7 +118,12 @@
       "particles": 450,
       "window": [
         230,
-        250
+        250.005
+      ],
+      "runEnd": 250.005,
+      "baselineWindow": [
+        230,
+        250.005
       ],
       "samples": 4002,
       "torqueDna": 104.90364677786104,
@@ -113,9 +135,12 @@
       "drift": -0.0003792318511669408,
       "lubrication": false,
       "closure": "batchelor",
-      "eta": 1.245448030283939,
-      "etaPstd": 0.0032294432477164778,
-      "etaCorrected": 1.2522369829054212,
+      "torqueReference": 83.77681235579712,
+      "torqueReferenceRes": 52.361658778035945,
+      "referenceSamples": 4002,
+      "eta": 1.2521799747206783,
+      "etaPstd": 0.0032468991607506603,
+      "etaCorrected": 1.2521756202540733,
       "gapDeviation": -0.00001919650537673956,
       "composites": [
         {
@@ -123,21 +148,21 @@
           "closure": "einstein",
           "eta": 1.1926,
           "gate": false,
-          "deviation": 0.04431329052820643
+          "deviation": 0.049958053597751295
         },
         {
           "phi": 0.1,
           "closure": "batchelor",
           "eta": 1.2552,
           "gate": true,
-          "deviation": -0.007769255669264674
+          "deviation": -0.0024060112167955117
         }
       ],
       "etaComposite": 1.2552,
-      "deviationComposite": -0.007769255669264674,
+      "deviationComposite": -0.0024060112167955117,
       "etaClosure": 1.312,
       "etaNaive": 1.25,
-      "deviationNaive": -0.0036415757728487375
+      "deviationNaive": 0.0017439797765426146
     },
     {
       "run": "phi20",
@@ -146,7 +171,12 @@
       "particles": 900,
       "window": [
         235,
-        250
+        250.005
+      ],
+      "runEnd": 250.005,
+      "baselineWindow": [
+        235,
+        250.005
       ],
       "samples": 3002,
       "torqueDna": 144.39097192871398,
@@ -158,9 +188,12 @@
       "drift": -0.00019467204384696234,
       "lubrication": false,
       "closure": "krieger-dougherty",
-      "eta": 1.7142535755711414,
-      "etaPstd": 0.006543903647586178,
-      "etaCorrected": 1.723590567940447,
+      "torqueReference": 83.77588413034644,
+      "torqueReferenceRes": 52.36073056042632,
+      "referenceSamples": 3002,
+      "eta": 1.7235386224519798,
+      "etaPstd": 0.006579347909168821,
+      "etaCorrected": 1.7235252036962185,
       "gapDeviation": -0.000006622698722313913,
       "composites": [
         {
@@ -168,21 +201,21 @@
           "closure": "batchelor",
           "eta": 1.623,
           "gate": false,
-          "deviation": 0.05622524680908292
+          "deviation": 0.061946162940221594
         },
         {
           "phi": 0.2,
           "closure": "krieger-dougherty",
           "eta": 1.7305,
           "gate": true,
-          "deviation": -0.009388283402980924
+          "deviation": -0.0040227550118578925
         }
       ],
       "etaComposite": 1.7305,
-      "deviationComposite": -0.009388283402980924,
+      "deviationComposite": -0.0040227550118578925,
       "etaClosure": 1.8212253050718914,
       "etaNaive": 1.5,
-      "deviationNaive": 0.1428357170474277
+      "deviationNaive": 0.14902574830131976
     },
     {
       "run": "phi10_lub",
@@ -191,7 +224,12 @@
       "particles": 450,
       "window": [
         270,
-        300
+        300.005
+      ],
+      "runEnd": 300.005,
+      "baselineWindow": [
+        250,
+        269.215
       ],
       "samples": 6002,
       "torqueDna": 105.69317321776104,
@@ -203,9 +241,12 @@
       "drift": -0.00025303832161312445,
       "lubrication": true,
       "closure": "batchelor",
-      "eta": 1.2548215285333637,
-      "etaPstd": 0.003822357549526679,
-      "etaCorrected": 1.2616614411694054,
+      "torqueReference": 83.77347167710715,
+      "torqueReferenceRes": 52.35831812572843,
+      "referenceSamples": 3844,
+      "eta": 1.261654448619967,
+      "etaPstd": 0.003843171556207667,
+      "etaCorrected": 1.2616499253051532,
       "gapDeviation": -0.00001898088457819025,
       "composites": [
         {
@@ -213,21 +254,21 @@
           "closure": "einstein",
           "eta": 1.1926,
           "gate": false,
-          "deviation": 0.05217300732296115
+          "deviation": 0.05790243888979285
         },
         {
           "phi": 0.1,
           "closure": "batchelor",
           "eta": 1.2552,
           "gate": true,
-          "deviation": -0.00030152283830175985
+          "deviation": 0.005142167479259774
         }
       ],
       "etaComposite": 1.2552,
-      "deviationComposite": -0.00030152283830175985,
+      "deviationComposite": 0.005142167479259774,
       "etaClosure": 1.312,
       "etaNaive": 1.25,
-      "deviationNaive": 0.003857222826690876
+      "deviationNaive": 0.009323558895973694
     },
     {
       "run": "phi20_lub",
@@ -237,6 +278,11 @@
       "window": [
         270,
         295.78
+      ],
+      "runEnd": 295.78,
+      "baselineWindow": [
+        250,
+        269.215
       ],
       "samples": 5157,
       "torqueDna": 148.30541116501823,
@@ -248,9 +294,12 @@
       "drift": 0.001137512205925958,
       "lubrication": true,
       "closure": "krieger-dougherty",
-      "eta": 1.7607269898542965,
-      "etaPstd": 0.017963972938020198,
-      "etaCorrected": 1.770316814452548,
+      "torqueReference": 83.77347167710715,
+      "torqueReferenceRes": 52.35831812572843,
+      "referenceSamples": 3844,
+      "eta": 1.7703147332444356,
+      "etaPstd": 0.018061792738471714,
+      "etaCorrected": 1.7703006558164405,
       "gapDeviation": -0.000006019239497612183,
       "composites": [
         {
@@ -258,21 +307,21 @@
           "closure": "batchelor",
           "eta": 1.623,
           "gate": false,
-          "deviation": 0.08485951315729912
+          "deviation": 0.09076693360716925
         },
         {
           "phi": 0.2,
           "closure": "krieger-dougherty",
           "eta": 1.7305,
           "gate": true,
-          "deviation": 0.0174672001469498
+          "deviation": 0.023007647064106074
         }
       ],
       "etaComposite": 1.7305,
-      "deviationComposite": 0.0174672001469498,
+      "deviationComposite": 0.023007647064106074,
       "etaClosure": 1.8212253050718914,
       "etaNaive": 1.5,
-      "deviationNaive": 0.17381799323619762
+      "deviationNaive": 0.1802098221629571
     }
   ],
   "pairs": [
@@ -281,9 +330,9 @@
       "particles": 450,
       "run": "phi10_lub",
       "twin": "phi10",
-      "etaWithout": 1.245448030283939,
-      "etaWith": 1.2548215285333637,
-      "delta": 0.007526205848418899,
+      "etaWithout": 1.2521799747206783,
+      "etaWith": 1.261654448619967,
+      "delta": 0.007566383499626017,
       "activePairs": 301.5803065644785,
       "saturatedPairs": 95.35638120626457,
       "samples": 6002
@@ -293,26 +342,26 @@
       "particles": 900,
       "run": "phi20_lub",
       "twin": "phi20",
-      "etaWithout": 1.7142535755711414,
-      "etaWith": 1.7607269898542965,
-      "delta": 0.027109999912160898,
+      "etaWithout": 1.7235386224519798,
+      "etaWith": 1.7703147332444356,
+      "delta": 0.02713957794917876,
       "activePairs": 1065.033546635641,
       "saturatedPairs": 347.70641846034516,
       "samples": 5157
     }
   ],
   "pairDecay": {
-    "eta": 3.6020805779390357,
+    "eta": 3.586862594331914,
     "pairs": 3.531508932954594
   },
   "baselineGates": {
-    "torque": 0.005417339408558153,
-    "correctedTorque": 83.77348000892488,
-    "correctedDeviation": -0.000027741742714693096,
-    "gapDeviation": 0.014520216403394182,
+    "torque": 0.00001204274207289302,
+    "correctedTorque": 83.77758594427081,
+    "correctedDeviation": 0.000021269250259248196,
+    "gapDeviation": -0.00002460402183068755,
     "profileMeanError": 0.0034,
     "profileMaxError": 0.025,
-    "scatter": 8.614462408635398e-7
+    "scatter": 0.00002302719979343277
   },
   "profile": {
     "mean_rel_error": 0.0034,

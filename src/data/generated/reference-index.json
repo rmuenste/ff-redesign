@@ -421,12 +421,21 @@
       "benchmarkId": "numerical-viscometer",
       "files": [
         {
+          "name": "torque_spinup.csv",
+          "path": "downloads/torque_spinup.csv",
+          "label": "torque_spinup.csv",
+          "format": "CSV",
+          "bytes": 169819,
+          "sha1": "de591d58c42a079831866e9ecb53e8b5de72c997",
+          "shared": false
+        },
+        {
           "name": "torque_baseline.csv",
           "path": "downloads/torque_baseline.csv",
           "label": "torque_baseline.csv",
           "format": "CSV",
-          "bytes": 169819,
-          "sha1": "de591d58c42a079831866e9ecb53e8b5de72c997",
+          "bytes": 595266,
+          "sha1": "61d4e9c8e88d96841267a7c77148096a79f05795",
           "shared": false
         },
         {
@@ -497,8 +506,8 @@
           "path": "downloads/rungs.csv",
           "label": "rungs.csv",
           "format": "CSV",
-          "bytes": 418,
-          "sha1": "738b5f70cb7e1d3d8fb7ed94f7418d3de323d3e9",
+          "bytes": 571,
+          "sha1": "22f494c258530833767068f05b02330f15eb3e7a",
           "shared": false
         },
         {
@@ -506,8 +515,8 @@
           "path": "downloads/composites.csv",
           "label": "composites.csv",
           "format": "CSV",
-          "bytes": 175,
-          "sha1": "c0650f5a58512557e2f7aa86e62d67771fb8af67",
+          "bytes": 176,
+          "sha1": "252e4d2e0693506b07fba936af6910645795c6a0",
           "shared": false
         },
         {
@@ -524,17 +533,17 @@
           "path": "downloads/dns_validation_datasheet.csv",
           "label": "dns_validation_datasheet.csv",
           "format": "CSV",
-          "bytes": 121009,
-          "sha1": "020ece9a93e2e79344e5544c4d093049ccb529b4",
-          "shared": true
+          "bytes": 197225,
+          "sha1": "0e6b39de9e3b4389738bfbb4c22d93e149e3148e",
+          "shared": false
         },
         {
           "name": "numerical-viscometer.zip",
           "path": "downloads/numerical-viscometer.zip",
           "label": "numerical-viscometer.zip",
           "format": "ZIP archive",
-          "bytes": 2642108,
-          "sha1": "d04c1f11b4c74b1810f7ede578f0da44a399d4a3",
+          "bytes": 3313896,
+          "sha1": "654bdffc2e21659c92a5b22e9488f7a14ea24d83",
           "shared": false
         }
       ]
@@ -1019,14 +1028,13 @@
       "benchmarkIds": [
         "dkt",
         "hindered-settling",
-        "numerical-viscometer",
         "oberbeck-spheroid-drag"
       ]
     }
   ],
   "totals": {
     "benchmarks": 9,
-    "files": 107,
-    "bytes": 14907660
+    "files": 108,
+    "bytes": 16251084
   }
 }

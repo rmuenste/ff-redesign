@@ -27,9 +27,11 @@ function group(
 }
 
 /**
- * Torque history. The suspension run restarts from the empty instrument's own
- * dump, so both runs share one time axis and the seeding shows up as a step. The
- * y-range deliberately clips the start-up transient, which is two orders of
+ * Torque history. The suspension run restarts from the spun-up empty instrument's
+ * own dump, so both share one time axis and the seeding shows up as a step; the
+ * empty instrument continued from the same dump at the suspension time step — the
+ * T(0) of every ratio on the page — is drawn from the restart as its own trace.
+ * The y-range deliberately clips the start-up transient, which is two orders of
  * magnitude above the plateau and would flatten everything the plot is about.
  */
 const torqueSpec: PlotSpec = {
@@ -42,15 +44,16 @@ const torqueSpec: PlotSpec = {
     group("torque", "dna", "Volume-form estimator", "code", "#5fb8ff"),
     group("torque", "res", "Reaction estimator", "code", "#f5b84b"),
     group("torque", "res-corrected", "Reaction + transpose correction", "code", "#7bd88f"),
+    group("torque", "baseline", "Empty instrument, suspension time step", "code", "#c9a5f5"),
     group("torque", "exact", "Exact analytic torque", "reference", "var(--fg1)"),
     group("torque", "insertion", "Particles inserted", "reference", "var(--fg3)")
   ],
-  defaultSeriesGroupIds: ["dna", "res", "res-corrected", "exact", "insertion"],
+  defaultSeriesGroupIds: ["dna", "res", "res-corrected", "baseline", "exact", "insertion"],
   compareModes: ["overlay"],
   defaultCompareMode: "overlay",
   preserveSourceColorsWhenSingleGroup: false,
   axisLabels: { x: "Time t [-]", y: "|T| [-]" },
-  axisRanges: { x: [0, 250], y: [40, 110] }
+  axisRanges: { x: [0, 270], y: [40, 110] }
 };
 
 /**
@@ -143,6 +146,8 @@ export const viscometerPairsSpecs: Record<string, PlotSpec> = { pairs: pairsSpec
 export const viscometerInstrument = generated.instrument;
 export const viscometerGates = generated.baselineGates;
 export const viscometerProfile = generated.profile;
+/** The instant every continued run — the suspensions and the empty control — starts from. */
+export const viscometerRestart = generated.restart;
 
 export interface ViscometerComposite {
   phi: number;
@@ -162,7 +167,11 @@ export interface ViscometerRung {
   composites: ViscometerComposite[];
   etaClosure: number | null;
   window: number[];
+  runEnd: number;
+  /** The window of the empty control that serves as this rung's T(0). */
+  baselineWindow: number[];
   samples: number;
+  referenceSamples: number;
   torqueDna: number;
   torqueDnaPstd: number;
   torqueRes: number;
@@ -171,6 +180,9 @@ export interface ViscometerRung {
   gapDeviation: number;
   scatter: number;
   drift: number;
+  /** T(0): the empty control over `baselineWindow`, both estimators. */
+  torqueReference: number;
+  torqueReferenceRes: number;
   eta: number;
   etaPstd: number;
   etaCorrected: number;
@@ -254,7 +266,7 @@ export const viscometerParameterRows: ViscometerParameterRow[] = [
   { symbol: "Ta", quantity: "Taylor number (subcritical)", value: "156" },
   { symbol: "D/h", quantity: "Elements per particle diameter", value: "8-9" },
   { symbol: "-", quantity: "Mesh", value: "18,800-hex O-grid, 108 subdomains" },
-  { symbol: "dt", quantity: "Time step", value: "5e-2 (empty), 5e-3 (suspension)" }
+  { symbol: "dt", quantity: "Time step", value: "5e-3 (spin-up of the empty cell at 5e-2)" }
 ];
 
 export interface ViscometerGateRow {
@@ -274,7 +286,7 @@ export const viscometerGateRows: ViscometerGateRow[] = [
     gate: "Analytic torque",
     reference: viscometerInstrument.torqueExact.toFixed(4),
     measured: viscometerBaseline.torqueDna.toFixed(4),
-    deviation: percent(viscometerGates.torque),
+    deviation: percent(viscometerGates.torque, 3),
     tolerance: "+/- 3%"
   },
   {
@@ -291,7 +303,7 @@ export const viscometerGateRows: ViscometerGateRow[] = [
     gate: "Estimator concordance",
     reference: viscometerInstrument.transposeCorrection.toFixed(4),
     measured: viscometerBaseline.gap.toFixed(4),
-    deviation: percent(viscometerBaseline.gapDeviation),
+    deviation: percent(viscometerBaseline.gapDeviation, 3),
     tolerance: "+/- 3%"
   },
   {
@@ -309,7 +321,7 @@ export interface ViscometerLadderRow {
   detail: string;
 }
 
-/** The concentration ladder as it stands: two rungs measured, two ahead. */
+/** The concentration ladder: the exact empty rung and the three measured ones. */
 export const viscometerLadderRows: ViscometerLadderRow[] = [
   {
     label: "phi = 0",
@@ -354,7 +366,7 @@ export const viscometerReferences = [
 ];
 
 const rungFileDescriptions: Record<string, string> = {
-  baseline: "empty instrument",
+  baseline: "empty instrument continued at the suspension time step, the T(0) of every reading",
   einstein: "phi = 0.05 suspension",
   phi10: "phi = 0.10 suspension",
   phi20: "phi = 0.20 suspension",
@@ -363,6 +375,11 @@ const rungFileDescriptions: Record<string, string> = {
 };
 
 const dataFiles: Array<{ name: string; description: string }> = [
+  {
+    name: "torque_spinup.csv",
+    description:
+      "Torque history of the empty instrument spun up to its steady state at the coarse time step, both estimators, every time step"
+  },
   ...viscometerRungs.map(rung => ({
     name: `torque_${rung.run}.csv`,
     description: `Torque history of the ${rungFileDescriptions[rung.run] ?? rung.label}, both estimators, every time step`
@@ -408,7 +425,7 @@ export const viscometerReferenceRows = [
   {
     fileType: "Run table",
     pattern: "rungs.csv",
-    columns: "run, label, phi, particles, plateau_start, run_end, lubrication, closure"
+    columns: "run, label, phi, particles, plateau_start, plateau_end, run_end, baseline_start, baseline_end, lubrication, closure"
   },
   {
     fileType: "Closure targets",

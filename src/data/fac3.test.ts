@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
-import { fac3PlotSpecs } from "./fac3";
+import { fac3Cases, fac3DofRows, fac3PlotSpecs } from "./fac3";
 import type { RawTrace } from "../lib/comparison";
 
 function loadTrace(metric: "drag" | "lift"): RawTrace {
@@ -51,5 +51,26 @@ describe("fac3 plot specs", () => {
   it("pins documented axis ranges from the Gnuplot reference", () => {
     expect(fac3PlotSpecs.drag.axisRanges).toEqual({ x: [0, 8], y: [-0.5, 3.5] });
     expect(fac3PlotSpecs.lift.axisRanges).toEqual({ x: [0, 8], y: [-0.015, 0.005] });
+  });
+});
+
+describe("fac3 case definitions", () => {
+  it("labels the steady and the unsteady case explicitly", () => {
+    expect(fac3Cases.map(c => c.label)).toEqual(["Case 1: steady, Re = 20", "Case 2: unsteady, Re_max = 100"]);
+  });
+
+  it("derives each Reynolds number from U_m with the 3D mean of 4/9 U_m", () => {
+    const D = 0.1;
+    const nu = 1e-3;
+    const reynolds = fac3Cases.map(c => (((4 / 9) * parseFloat(c.um)) * D) / nu);
+    expect(reynolds[0]).toBeCloseTo(20, 10);
+    expect(reynolds[1]).toBeCloseTo(100, 10);
+  });
+});
+
+describe("fac3 DOF table", () => {
+  it("lists each level's cell count on its middle row, eight times the level below", () => {
+    const cells = fac3DofRows.filter(row => row.cells !== "").map(row => Number(row.cells));
+    expect(cells).toEqual([6144, 49152, 393216, 3145728]);
   });
 });

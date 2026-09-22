@@ -88,8 +88,88 @@ export const fac3DofRows: Fac3DofRow[] = [
   { level: "L3", name: "OpenFOAM", cells: "393216", dofu: 1179648, dofp: 393216, doft: 1572864 },
   { level: "", name: "FeatFlow", cells: "", dofu: 9859200, dofp: 1572864, doft: 11432064 },
   { level: "", name: "CFX", cells: "", dofu: 9647136, dofp: 3215712, doft: 12862848 },
-  { level: "L4", name: "OpenFOAM", cells: "9437184", dofu: 9437184, dofp: 3145728, doft: 12582912 },
+  { level: "L4", name: "OpenFOAM", cells: "3145728", dofu: 9437184, dofp: 3145728, doft: 12582912 },
   { level: "", name: "FeatFlow", cells: "", dofu: 77177104, dofp: 12582912, doft: 89760016 }
+];
+
+/**
+ * How each code counts unknowns from its mesh, so equal cell counts can be read as
+ * unequal DOF counts in the table above. nvt: vertices, nel: cells.
+ */
+export const fac3DofRules = [
+  { code: "CFX", velocity: "3 · nvt", pressure: "nvt" },
+  { code: "OpenFOAM", velocity: "3 · nel", pressure: "nel" },
+  { code: "FeatFlow", velocity: "24 · nvt", pressure: "4 · nel" }
+];
+
+export type Fac3CaseId = "steady" | "unsteady";
+
+export interface Fac3Case {
+  id: Fac3CaseId;
+  label: string;
+  flow: string;
+  inflow: string;
+  um: string;
+  meanVelocity: string;
+  reynolds: string;
+  time: string;
+  criteria: string;
+  reference: string;
+}
+
+/**
+ * The two DFG 3D problems. The mean velocity of the 3D parabolic profile is
+ * 4/9 of its peak U_m, which is what turns U_m = 0.45 and 2.25 m/s into Re = 20
+ * and a peak Re of 100 with D = 0.1 m and nu = 1e-3 m^2/s.
+ */
+export const fac3Cases: Fac3Case[] = [
+  {
+    id: "steady",
+    label: "Case 1: steady, Re = 20",
+    flow: "Steady",
+    inflow: "Eq. (1), constant",
+    um: "0.45 m/s",
+    meanVelocity: "0.2 m/s",
+    reynolds: "20",
+    time: "Run to steady state",
+    criteria: "cD, cL",
+    reference: "cD = 6.18533, cL = 0.009401 (Braack and Richter)"
+  },
+  {
+    id: "unsteady",
+    label: "Case 2: unsteady, Re_max = 100",
+    flow: "Unsteady",
+    inflow: "Eq. (2), sin(πt/8) ramp",
+    um: "2.25 m/s",
+    meanVelocity: "1.0 m/s at t = 4 s",
+    reynolds: "100 sin(πt/8), peak 100",
+    time: "0 ≤ t ≤ 8 s, fixed",
+    criteria: "cD,max, cL,min, L2 and L∞ errors of cD(t), cL(t)",
+    reference: "FeatFlow level 4 time series (BenchValues.txt)"
+  }
+];
+
+export interface Fac3SolverSettingRow {
+  setting: string;
+  value: string;
+  description: string;
+}
+
+export const fac3OpenFoamSettings: Fac3SolverSettingRow[] = [
+  { setting: "Time scheme (ddtSchemes)", value: "CrankNicholson 0.5", description: "Implicit Euler blended (0.5) with Crank-Nicolson, for improved stability." },
+  { setting: "Interpolation schemes", value: "linear", description: "Linear interpolation (central differencing)." },
+  { setting: "Surface normal gradients (snGradSchemes)", value: "corrected", description: "Explicit non-orthogonal correction." },
+  { setting: "Gradient and divergence schemes", value: "Gauss linear", description: "Second order, Gaussian integration." },
+  { setting: "Laplacian schemes", value: "Gauss linear corrected", description: "Unbounded, second order, conservative." },
+  { setting: "Pressure solver", value: "GAMG, Gauss-Seidel, tol 1e-7", description: "Geometric-algebraic multigrid with a Gauss-Seidel smoother." },
+  { setting: "Velocity solver", value: "PBiCG, DILU, tol 1e-6", description: "Preconditioned bi-conjugate gradient with a diagonal-based incomplete LU preconditioner." }
+];
+
+export const fac3CfxSettings: Fac3SolverSettingRow[] = [
+  { setting: "Transient scheme", value: "Second order backward Euler", description: "Second order, unbounded, implicit, conservative time stepping." },
+  { setting: "Interpolation", value: "FE shape functions: trilinear velocity, linear-linear pressure", description: "True trilinear interpolation for velocity and linear-linear interpolation for pressure." },
+  { setting: "Advection scheme", value: "High resolution", description: "Numerical advection scheme with a calculated blending factor." },
+  { setting: "Convergence criterion", value: "MAX residual, target 5e-5", description: "Maximum value of the normalized residuals." }
 ];
 
 export interface Fac3SteadyComparisonRow {

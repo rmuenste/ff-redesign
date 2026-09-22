@@ -1,6 +1,6 @@
 # Project State
 
-Last updated: 2026-09-16
+Last updated: 2026-09-22
 
 ## Current Migration Status
 
@@ -27,6 +27,30 @@ velocity and position result images were replaced by live Plotly plots generated
 from migrated simulation txt files and PIV reference files. The generated
 `sedimentation.zip` is built by the converter from the available migrated
 downloads, including simulation and PIV source files.
+
+## Flow Around Cylinder 3D: the two cases made explicit
+
+The FAC3 page always carried both DFG 3D problems, but only Re = 20 was named;
+the unsteady problem appeared as "the second benchmark". Checked against the
+legacy `ffweb` pages (`dfg_flow3d*.html`), the page now labels them
+"Case 1: steady, Re = 20" and "Case 2: unsteady, Re_max = 100", without new tabs:
+
+- Definition gains a case table (U_m 0.45 / 2.25 m/s, mean velocity 4/9 U_m,
+  Re, simulated time, compared quantities, reference), the geometry dimensions,
+  boundary conditions, inflow equations tagged per case, the force notation, the
+  per-code DOF rules, and the content of the legacy "Used CFD Software Packages"
+  page (OpenFOAM and CFX settings tables, FeatFlow Q2/P1 description).
+- Results is split into a Case 1 and a Case 2 section. Case 1 states its
+  reference values (Braack and Richter); Case 2 carries the earlier reference
+  intervals, the fixed-time-step rationale, the hardware notes and the live plots.
+- The c_D / c_L normalization is taken from Schaefer and Turek (1996); the legacy
+  page refers to it but never printed it.
+- Fixed the OpenFOAM L4 cell count (was the velocity DOF count, 9437184).
+- The Results grid overflowed a phone by 189px (already true on master); it now
+  uses the new `.stack` class, a single `minmax(0, 1fr)` track.
+
+The legacy FeatFlow level-convergence PNGs stay dropped, as `assets.test.ts`
+requires. The DFG 2D benchmarks (2D-1, 2D-2, 2D-3) are not migrated yet.
 
 ## DKT Migration (first DNS validation benchmark)
 

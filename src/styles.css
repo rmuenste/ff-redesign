@@ -522,6 +522,10 @@ input[type="range"].tu::-webkit-slider-thumb:hover { transform: scale(1.2); }
 /* Fixed-count grids that step down on phones. */
 .kpi-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+/* A single-column stack of blocks. The one track is minmax(0, 1fr) so a wide
+   table inside it scrolls in its card instead of stretching every sibling. */
+.stack { display: grid; grid-template-columns: minmax(0, 1fr); }
 .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 32px; }
 
 /* Wide tables scroll inside their card instead of widening the page. */

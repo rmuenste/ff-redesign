@@ -36,6 +36,7 @@ import {
   viscometerPhi20,
   viscometerReferenceRows,
   viscometerReferences,
+  viscometerRestart,
   viscometerTorqueSpecs,
   viscometerValidationRows,
   viscometerViscositySpecs,
@@ -58,6 +59,10 @@ const PHI = viscometerEinstein.phi.toFixed(2);
 const N_PARTICLES = String(viscometerEinstein.particles);
 const PHI_MAX = viscometerPhi20.phi.toFixed(2);
 const ETA_MAX = viscometerPhi20.eta.toFixed(4);
+/** The largest departure of any measured rung from the closure that governs it, in per cent. */
+const LADDER_WORST = (
+  100 * Math.max(...viscometerGatedLadder.map(rung => Math.abs(rung.deviationComposite)))
+).toFixed(1);
 
 function IntroductionTab() {
   return (
@@ -203,10 +208,11 @@ function DefinitionTab() {
           <h3>Observables</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
             Every number on this page is a plateau statistic of the torque history: the mean over the settled
-            window, with its scatter about that mean. The empty instrument is averaged over t ={" "}
-            {viscometerBaseline.window[0]}–{viscometerBaseline.window[1]} and the suspension over t ={" "}
-            {viscometerEinstein.window[0]}–{viscometerEinstein.window[1]}, the latter after the seeding transient
-            has run out.
+            window, with its scatter about that mean. A suspension and the empty cell it is divided by are averaged
+            over the same window of time after the restart — t = {viscometerEinstein.window[0]}–
+            {viscometerEinstein.window[1]} for the {"φ"} = {PHI} rung, once the seeding transient has run out — so
+            the ratio compares two readings taken at the same time step and at the same point in the instrument's
+            life.
           </p>
         </div>
       </div>
@@ -220,18 +226,21 @@ function BaselineTab() {
       <div style={{ maxWidth: 900, display: "grid", gap: 20 }}>
         <h3 style={{ margin: 0 }}>The empty instrument, against an exact answer</h3>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
-          Nothing is suspended in the gap; the bob simply turns until the flow is steady. Four gates then decide
-          whether the instrument may be used: the torque it reports, the velocity field it produces, the
-          agreement between its two independent torque estimators, and the steadiness of the reading. All four
-          pass, with wide margins.
+          Nothing is suspended in the gap; the bob simply turns until the flow is steady. The cell is spun up to
+          that state at a coarse time step and then continued at the time step the suspensions use, and it is the
+          continued run that is read: every T(0) on this page comes from it, over the same window as the reading
+          it normalises. Four gates then decide whether the instrument may be used: the torque it reports, the
+          velocity field it produces, the agreement between its two independent torque estimators, and the
+          steadiness of the reading. All four pass, with wide margins.
         </p>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
           The torque plateaus at {viscometerBaseline.torqueDna.toFixed(4)} against the analytic {T_EXACT_LONG},
-          a deviation of {percent(viscometerGates.torque)} on a gate of three per cent. The azimuthal velocity
-          profile follows the exact Couette solution to a pointwise mean error of{" "}
-          {(viscometerGates.profileMeanError * 100).toFixed(2)} per cent, with the prescribed values on the bob
-          and the outer wall reproduced exactly. And the reading is machine-steady: over the whole averaging
-          window the plateau varies by less than one part in a million of its own value.
+          a deviation of {percent(viscometerGates.torque, 3)} on a gate of three per cent. The azimuthal
+          velocity profile, read off the spun-up field, follows the exact Couette solution to a pointwise mean
+          error of {(viscometerGates.profileMeanError * 100).toFixed(2)} per cent, with the prescribed values on
+          the bob and the outer wall reproduced exactly. And the reading is steady: over the whole averaging
+          window the plateau varies by {Math.round(viscometerGates.scatter * 1e6)} parts per million of its own
+          value.
         </p>
       </div>
 
@@ -273,15 +282,16 @@ function BaselineTab() {
       </div>
 
       <div style={{ marginTop: 44, maxWidth: 900 }}>
-        <h3>What the two estimators separate</h3>
+        <h3>What the two estimators agree on</h3>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
           The measured offset between the two estimators is {viscometerBaseline.gap.toFixed(3)} against the
-          analytic {CORRECTION}, and once it is added back the reaction estimator reads{" "}
-          {viscometerGates.correctedTorque.toFixed(4)} — the exact analytic torque, to better than one part in
-          ten thousand. That is a useful thing to know rather than a curiosity: it places the whole of the{" "}
-          {percent(viscometerGates.torque)} residual in the volume-form estimator, where it belongs, as the
-          discretisation error of a deformation-stress integral. The instrument's systematic error is
-          identified, not merely bounded.
+          analytic {CORRECTION}, a match to {percent(viscometerBaseline.gapDeviation, 3)}, and once it is added
+          back the reaction estimator reads {viscometerGates.correctedTorque.toFixed(4)} — the exact analytic
+          torque, to better than one part in ten thousand, by a route that shares almost no code with the first.
+          Two independent readings of one torque, both sitting on the closed-form answer to a few parts in a
+          hundred thousand: at its working point the instrument carries no systematic error that needs
+          accounting for, and the offset between its estimators is exactly the geometric term it was predicted
+          to be.
         </p>
       </div>
 
@@ -289,9 +299,11 @@ function BaselineTab() {
         <ComparisonPanel specs={viscometerTorqueSpecs} defaultMetric="torque" />
       </div>
       <p style={{ color: "var(--fg2)", lineHeight: 1.65, maxWidth: 900, marginTop: 20 }}>
-        Both runs share one time axis: the suspension is started from the empty instrument's own converged state
-        at t = {viscometerBaseline.window[1]},
-        so the step in the curve is the particles arriving. The start-up transient runs off the top of the frame
+        The runs share one time axis. The empty instrument is spun up to its steady state, and at t ={" "}
+        {viscometerRestart} it is continued twice over from that same state: once with the {N_PARTICLES} spheres of
+        the {"φ"} = {PHI} suspension, once empty at the suspension's time step. The step in the curve is the
+        particles arriving; the empty continuation settles onto the analytic line, and it is the T(0) that every
+        reading on this page is divided by, window for window. The start-up transient runs off the top of the frame
         by two orders of magnitude and is cropped, which is what makes the plateaus legible.
       </p>
     </Section>
@@ -369,9 +381,10 @@ function LadderTab() {
           getRowKey={row => row.run}
         />
         <p style={{ color: "var(--fg2)", fontSize: 13, lineHeight: 1.6, marginTop: 12 }}>
-          Every rung inside one per cent of the closure that governs it, with no tuned parameter anywhere in the
-          chain. The targets are composites: the closure evaluated pointwise over the concentration field the run
-          itself produced, which is what accounts for the particle-free layers at the two walls.
+          Every rung within {LADDER_WORST} per cent of the closure that governs it, on an acceptance band of three,
+          with no tuned parameter anywhere in the chain. The targets are composites: the closure evaluated
+          pointwise over the concentration field the run itself produced, which is what accounts for the
+          particle-free layers at the two walls.
         </p>
       </div>
 
@@ -649,10 +662,10 @@ function ValidationTab() {
         <h3>Validation ledger</h3>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
           One row per quantitative claim, generated from the campaign datasheet that is offered in full under
-          Reference Data and reproduced as the campaign wrote it, apart from internal run identifiers. Both
-          rungs of the instrument are gated against a prediction rather than against another simulation: the
-          empty cell against the exact annular-Couette torque, the suspension against the composite-Einstein
-          target built from its own measured concentration field.
+          Reference Data and reproduced as the campaign wrote it, apart from internal run identifiers. Every
+          rung of the instrument is gated against a prediction rather than against another simulation: the
+          empty cell against the exact annular-Couette torque, each suspension against the closure valid at its
+          concentration, composed over its own measured concentration field.
         </p>
       </div>
       <ValidationLedger rows={viscometerValidationRows} />
@@ -660,10 +673,11 @@ function ValidationTab() {
         <div>
           <h3>Controlled comparison</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-            The two runs are the same instrument. They share the mesh, the partitioning, the binary and the
-            operating point, and the suspension run starts from the baseline's own converged field. The only
-            variable between the two readings that form {"η"} is the presence of the {N_PARTICLES} spheres,
-            which is what makes the ratio a measurement of the suspension and not of the cell.
+            The two readings that form {"η"} are the same instrument. They share the mesh, the partitioning, the
+            binary, the operating point and the time step; both continue from the empty cell's own converged
+            field, and both are averaged over the same window of time after that restart. The only variable
+            between them is the presence of the {N_PARTICLES} spheres, which is what makes the ratio a
+            measurement of the suspension and not of the cell.
           </p>
         </div>
         <div>
@@ -689,7 +703,7 @@ function ReferenceDataTab() {
           {
             type: "paragraph",
             text:
-              "The torque histories are the raw record of each run: one line per time step, carrying the time and both torque estimators, neither smoothed nor trimmed. Alongside them, the lubrication files carry the solver's per-step count of near-contact films, the run table carries the plateau window and the switch settings of every rung, the closure file carries the targets composed from the measured concentration field, and the profile file carries the velocity-profile gate. All quantities are nondimensional with unit sphere diameter, and torques are signed about the axis of rotation. The bundle also contains the campaign datasheet from which the validation ledger is generated."
+              "The torque histories are the raw record of each run: one line per time step, carrying the time and both torque estimators, neither smoothed nor trimmed. Alongside them, the lubrication files carry the solver's per-step count of near-contact films, the run table carries the plateau window, the matched window of the empty cell and the switch settings of every rung, the closure file carries the targets composed from the measured concentration field, and the profile file carries the velocity-profile gate. All quantities are nondimensional with unit sphere diameter, and torques are signed about the axis of rotation. The bundle also contains the campaign datasheet from which the validation ledger is generated."
           }
         ]}
       />

@@ -45,12 +45,13 @@ describe("numerical-viscometer instrument", () => {
 });
 
 describe("numerical-viscometer plateau statistics", () => {
-  it("carries the whole ladder plus both lubrication twins", () => {
+  it("carries the whole ladder plus a lubrication twin at every rung", () => {
     expect(viscometerRungs.map(rung => rung.run)).toEqual([
       "baseline",
       "einstein",
       "phi10",
       "phi20",
+      "einstein_lub",
       "phi10_lub",
       "phi20_lub"
     ]);
@@ -58,7 +59,7 @@ describe("numerical-viscometer plateau statistics", () => {
     expect(viscometerGatedLadder.map(rung => rung.phi)).toEqual([0.05, 0.1, 0.2]);
     expect(viscometerGatedLadder.map(rung => rung.particles)).toEqual([225, 450, 900]);
     // Concentration rises with sphere count at fixed cell volume, as it must.
-    expect(viscometerLoadedRungs).toHaveLength(5);
+    expect(viscometerLoadedRungs).toHaveLength(6);
   });
 
   it("lands every rung on the closure that governs its concentration", () => {
@@ -120,7 +121,9 @@ describe("numerical-viscometer plateau statistics", () => {
     expect(viscometerEinstein.torqueReference).toBeCloseTo(83.7768, 4);
     expect(viscometerPhi10.torqueReference).toBeCloseTo(83.7768, 4);
     expect(viscometerPhi20.torqueReference).toBeCloseTo(83.7759, 4);
-    expect(viscometerRungs.find(rung => rung.run === "phi10_lub")!.torqueReference).toBeCloseTo(83.7735, 4);
+    for (const run of ["einstein_lub", "phi10_lub", "phi20_lub"]) {
+      expect(viscometerRungs.find(rung => rung.run === run)!.torqueReference, run).toBeCloseTo(83.7735, 4);
+    }
     // Every T(0) within a few parts in a hundred thousand of the analytic torque.
     for (const rung of viscometerRungs) {
       expect(Math.abs(rung.torqueReference / viscometerInstrument.torqueExact - 1), rung.run).toBeLessThan(5e-5);
@@ -162,25 +165,41 @@ describe("numerical-viscometer plateau statistics", () => {
   });
 
   it("attributes the lubrication contribution to single-variable twins", () => {
-    expect(viscometerPairs.map(pair => pair.phi)).toEqual([0.1, 0.2]);
+    expect(viscometerPairs.map(pair => pair.phi)).toEqual([0.05, 0.1, 0.2]);
     for (const pair of viscometerPairs) {
       // Same cloud, same deck, same binary: only the model switch differs.
       expect(pair.etaWith).toBeGreaterThan(pair.etaWithout);
       expect(pair.saturatedPairs).toBeLessThan(pair.activePairs);
       expect(pair.samples).toBeGreaterThan(1000);
     }
-    expect(viscometerPairs[0].delta).toBeCloseTo(0.0076, 4);
-    expect(viscometerPairs[1].delta).toBeCloseTo(0.0271, 4);
-    expect(Math.round(viscometerPairs[0].activePairs)).toBe(302);
-    expect(Math.round(viscometerPairs[1].activePairs)).toBe(1065);
+    expect(viscometerPairs[0].delta).toBeCloseTo(0.0038, 4);
+    expect(viscometerPairs[1].delta).toBeCloseTo(0.0076, 4);
+    expect(viscometerPairs[2].delta).toBeCloseTo(0.0271, 4);
+    expect(Math.round(viscometerPairs[0].activePairs)).toBe(76);
+    expect(Math.round(viscometerPairs[1].activePairs)).toBe(302);
+    expect(Math.round(viscometerPairs[2].activePairs)).toBe(1065);
+    // The dilute twin: eta against the matched empty window, and its own plateau.
+    expect(viscometerPairs[0].etaWith).toBeCloseTo(1.11648, 5);
+    expect(viscometerPairs[0].etaWithout).toBeCloseTo(1.11223, 4);
+    expect(Math.round(viscometerPairs[0].saturatedPairs)).toBe(21);
+    expect(viscometerPairs[0].samples).toBe(6001);
   });
 
   it("decays the lubrication contribution with the near-contact film count", () => {
     // The headline: the correction tracks how often two surfaces are close,
-    // rather than acting everywhere like a numerical offset would.
-    expect(viscometerPairDecay.eta).toBeCloseTo(3.6, 1);
-    expect(viscometerPairDecay.pairs).toBeCloseTo(3.5, 1);
-    expect(Math.abs(viscometerPairDecay.eta - viscometerPairDecay.pairs)).toBeLessThan(0.5);
+    // rather than acting everywhere like a numerical offset would. Both decays
+    // are power laws in concentration fitted over every pair of the ladder and
+    // quoted as the factor per halving of phi.
+    expect(viscometerPairDecay.concentrations).toBe(viscometerPairs.length);
+    expect(viscometerPairDecay.etaExponent).toBeCloseTo(1.41, 2);
+    expect(viscometerPairDecay.pairsExponent).toBeCloseTo(1.91, 2);
+    expect(viscometerPairDecay.eta).toBeCloseTo(2.7, 1);
+    expect(viscometerPairDecay.pairs).toBeCloseTo(3.8, 1);
+    // The contribution decays steeply, and a little shallower than the films do:
+    // sublinear in the film count, but nowhere near flat.
+    expect(viscometerPairDecay.eta).toBeGreaterThan(2);
+    expect(viscometerPairDecay.etaExponent).toBeLessThan(viscometerPairDecay.pairsExponent);
+    expect(viscometerPairDecay.etaExponent / viscometerPairDecay.pairsExponent).toBeGreaterThan(0.7);
   });
 
   it("keeps every published gate row in step with the generated numbers", () => {
@@ -237,10 +256,12 @@ describe("numerical-viscometer plot assets", () => {
     expect(measured.y[0]).toBe(1);
     expect(measured.y[1]).toBeCloseTo(viscometerEinstein.eta, 10);
     expect(measured.error_y.array[1]).toBeCloseTo(viscometerEinstein.etaPstd, 10);
-    // The lubricated twins are a separate series at the two densest rungs.
+    // The lubricated twins are a separate series at every loaded rung.
     const lubricated = readPlot("viscosity", "lubricated");
-    expect(lubricated.x).toEqual([0.1, 0.2]);
-    expect(lubricated.y[1]).toBeCloseTo(viscometerPairs[1].etaWith, 10);
+    expect(lubricated.x).toEqual([0.05, 0.1, 0.2]);
+    for (const [index, pair] of viscometerPairs.entries()) {
+      expect(lubricated.y[index], pair.run).toBeCloseTo(pair.etaWith, 10);
+    }
   });
 
   it("draws every closure through unity and orders them by concentration term", () => {
@@ -255,7 +276,7 @@ describe("numerical-viscometer plot assets", () => {
   });
 
   it("stores the film counts the lubrication result is attributed to", () => {
-    for (const stem of ["phi10", "phi20"]) {
+    for (const stem of ["einstein", "phi10", "phi20"]) {
       const active = readPlot("pairs", `${stem}-active`);
       const saturated = readPlot("pairs", `${stem}-saturated`);
       expect(active.x.length).toBe(saturated.x.length);
@@ -296,7 +317,11 @@ describe("numerical-viscometer plot assets", () => {
       expect(spec.levelAxis, spec.id).toBeUndefined();
     }
     for (const spec of Object.values(viscometerPairsSpecs)) {
-      expect(spec.levelAxis?.options.map(option => option.id), spec.id).toEqual(["phi10", "phi20"]);
+      expect(spec.levelAxis?.options.map(option => option.id), spec.id).toEqual([
+        "einstein",
+        "phi10",
+        "phi20"
+      ]);
     }
   });
 });
@@ -304,7 +329,7 @@ describe("numerical-viscometer plot assets", () => {
 describe("numerical-viscometer validation ledger", () => {
   it("is generated from the curated datasheet, not hand-written", () => {
     expect(viscometerValidationSource).toBe("scripts/source-data/dns/dns_validation_datasheet.csv");
-    expect(viscometerValidationRows).toHaveLength(4);
+    expect(viscometerValidationRows).toHaveLength(5);
   });
 
   it("selects only the D5.1 rungs and uses the campaign verdict vocabulary", () => {
@@ -312,6 +337,7 @@ describe("numerical-viscometer validation ledger", () => {
     expect(viscometerValidationRows.map(row => row.case)).toEqual([
       "d52_v26e_dt_control",
       "d52_l3_ladder_restated",
+      "d52_v21L_settled",
       "d52_v22L_settled",
       "d52_v23L_settled"
     ]);
@@ -323,6 +349,7 @@ describe("numerical-viscometer validation ledger", () => {
       "d52_v21_einstein",
       "d52_v22_phi10",
       "d52_v23_phi20",
+      "d52_v21L_submitted",
       "d52_v22L_lubpair",
       "d52_v23L_lubpair"
     ]) {
@@ -338,7 +365,7 @@ describe("numerical-viscometer validation ledger", () => {
   it("strips internal scheduler job ids from published prose", () => {
     const blob = JSON.stringify(viscometerValidationRows);
     expect(blob).not.toMatch(/\bjobs?\s+\d/i);
-    // The two runs behind this page, by scheduler id. Step counts written as
+    // The runs behind this page, by scheduler id. Step counts written as
     // "10000/10000" are content, so the guard names the ids rather than a shape.
     expect(blob).not.toMatch(/\b1[34]\d{4}\b/);
   });

@@ -480,6 +480,15 @@
           "shared": false
         },
         {
+          "name": "torque_einstein_lub.csv",
+          "path": "downloads/torque_einstein_lub.csv",
+          "label": "torque_einstein_lub.csv",
+          "format": "CSV",
+          "bytes": 430017,
+          "sha1": "c36cad95f0214ac84ce83b72753079732067979e",
+          "shared": false
+        },
+        {
           "name": "torque_phi10_lub.csv",
           "path": "downloads/torque_phi10_lub.csv",
           "label": "torque_phi10_lub.csv",
@@ -495,6 +504,15 @@
           "format": "CSV",
           "bytes": 393682,
           "sha1": "89a6a46606930f9fdf1fa9d465d75dc2267348c0",
+          "shared": false
+        },
+        {
+          "name": "lubpairs_einstein.csv",
+          "path": "downloads/lubpairs_einstein.csv",
+          "label": "lubpairs_einstein.csv",
+          "format": "CSV",
+          "bytes": 167888,
+          "sha1": "db20a75cfebaafb55830c711638269d4d4eddfb0",
           "shared": false
         },
         {
@@ -520,8 +538,8 @@
           "path": "downloads/rungs.csv",
           "label": "rungs.csv",
           "format": "CSV",
-          "bytes": 571,
-          "sha1": "22f494c258530833767068f05b02330f15eb3e7a",
+          "bytes": 661,
+          "sha1": "35a932206799866b8b99ca82a4258b3f2d03d762",
           "shared": false
         },
         {
@@ -556,8 +574,8 @@
           "path": "downloads/numerical-viscometer.zip",
           "label": "numerical-viscometer.zip",
           "format": "ZIP archive",
-          "bytes": 3317272,
-          "sha1": "fd747c85dc621337d7c09ed572bb8d4e873efe84",
+          "bytes": 3915591,
+          "sha1": "6866749bdb681dafe5c7d31846c22f0a5d480936",
           "shared": false
         }
       ]
@@ -1050,7 +1068,7 @@
   ],
   "totals": {
     "benchmarks": 10,
-    "files": 109,
-    "bytes": 18095438
+    "files": 111,
+    "bytes": 19291752
   }
 }

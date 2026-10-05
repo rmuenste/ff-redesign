@@ -122,6 +122,26 @@
       "derived": true
     },
     {
+      "oldPath": "scripts/source-data/numerical-viscometer/lubpairs_einstein.csv",
+      "newPath": "plots/pairs/einstein-active.json",
+      "metric": "pairs",
+      "seriesGroupId": "active",
+      "kind": "code",
+      "label": "Active lubrication pairs, phi = 0.05",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/numerical-viscometer/lubpairs_einstein.csv",
+      "newPath": "plots/pairs/einstein-saturated.json",
+      "metric": "pairs",
+      "seriesGroupId": "saturated",
+      "kind": "code",
+      "label": "Saturated pairs, phi = 0.05",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
       "oldPath": "scripts/source-data/numerical-viscometer/lubpairs_phi10.csv",
       "newPath": "plots/pairs/phi10-active.json",
       "metric": "pairs",
@@ -192,6 +212,12 @@
       "label": "torque_phi20.csv"
     },
     {
+      "oldPath": "scripts/source-data/numerical-viscometer/torque_einstein_lub.csv",
+      "newPath": "downloads/torque_einstein_lub.csv",
+      "kind": "download",
+      "label": "torque_einstein_lub.csv"
+    },
+    {
       "oldPath": "scripts/source-data/numerical-viscometer/torque_phi10_lub.csv",
       "newPath": "downloads/torque_phi10_lub.csv",
       "kind": "download",
@@ -202,6 +228,12 @@
       "newPath": "downloads/torque_phi20_lub.csv",
       "kind": "download",
       "label": "torque_phi20_lub.csv"
+    },
+    {
+      "oldPath": "scripts/source-data/numerical-viscometer/lubpairs_einstein.csv",
+      "newPath": "downloads/lubpairs_einstein.csv",
+      "kind": "download",
+      "label": "lubpairs_einstein.csv"
     },
     {
       "oldPath": "scripts/source-data/numerical-viscometer/lubpairs_phi10.csv",

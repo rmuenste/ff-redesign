@@ -378,13 +378,13 @@ describe("numerical-viscometer asset manifest (public/benchmark-assets/numerical
     const plots = viscometerManifest.entries.filter(entry => entry.newPath.startsWith("plots/"));
     // torque: three estimators, the empty control at the suspension time step and
     // two references; viscosity: two measured series, the composite targets and
-    // three closures; pairs: active and saturated films at each of the two
+    // three closures; pairs: active and saturated films at each of the three
     // lubrication rungs.
-    expect(plots).toHaveLength(16);
+    expect(plots).toHaveLength(18);
     const byMetric = (metric: string) => plots.filter(entry => entry.metric === metric).length;
     expect(byMetric("torque")).toBe(6);
     expect(byMetric("viscosity")).toBe(6);
-    expect(byMetric("pairs")).toBe(4);
+    expect(byMetric("pairs")).toBe(6);
     for (const entry of plots) {
       expect(VISCOMETER_METRICS.has(entry.metric!), entry.metric).toBe(true);
       expect(entry.derived, entry.newPath).toBe(true);

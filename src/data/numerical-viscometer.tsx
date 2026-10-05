@@ -6,8 +6,16 @@ import type { PlotSource, PlotSpec, SeriesGroup } from "./types";
 
 export type ViscometerMetricId = "torque" | "viscosity" | "pairs";
 
-/** Plot-asset stems of the two lubrication pairs, in ladder order. */
-const viscometerPairStems = ["phi10", "phi20"];
+/**
+ * The lubrication pairs as the plot assets name them: one entry per lubricated
+ * rung, in ladder order, carrying the stem its film-count traces are filed under
+ * and the concentration it was measured at. Taken from the generated numbers so a
+ * rung added to the run table reaches the pairs panel without a second edit.
+ */
+const viscometerPairLevels = generated.pairs.map(pair => ({
+  stem: pair.run.replace("_lub", ""),
+  phi: pair.phi
+}));
 
 function source(metric: string, file: string): PlotSource {
   return {
@@ -101,7 +109,7 @@ const pairsSpec: PlotSpec = {
       kind: "code",
       color: "#7bd88f",
       levelSources: Object.fromEntries(
-        viscometerPairStems.map(stem => [stem, source("pairs", `${stem}-active`)])
+        viscometerPairLevels.map(level => [level.stem, source("pairs", `${level.stem}-active`)])
       ),
       variantStrategy: { kind: "single-trace" }
     },
@@ -111,7 +119,7 @@ const pairsSpec: PlotSpec = {
       kind: "code",
       color: "#f5b84b",
       levelSources: Object.fromEntries(
-        viscometerPairStems.map(stem => [stem, source("pairs", `${stem}-saturated`)])
+        viscometerPairLevels.map(level => [level.stem, source("pairs", `${level.stem}-saturated`)])
       ),
       variantStrategy: { kind: "single-trace" }
     }
@@ -120,11 +128,11 @@ const pairsSpec: PlotSpec = {
   levelAxis: {
     id: "concentration",
     label: "Concentration",
-    options: viscometerPairStems.map(stem => ({
-      id: stem,
-      label: `phi = ${(Number(stem.replace("phi", "")) / 100).toFixed(2)}`
+    options: viscometerPairLevels.map(level => ({
+      id: level.stem,
+      label: `phi = ${level.phi.toFixed(2)}`
     })),
-    defaultLevelId: viscometerPairStems[viscometerPairStems.length - 1]
+    defaultLevelId: viscometerPairLevels[viscometerPairLevels.length - 1].stem
   },
   compareModes: ["overlay"],
   defaultCompareMode: "overlay",
@@ -370,6 +378,7 @@ const rungFileDescriptions: Record<string, string> = {
   einstein: "phi = 0.05 suspension",
   phi10: "phi = 0.10 suspension",
   phi20: "phi = 0.20 suspension",
+  einstein_lub: "phi = 0.05 suspension with sub-grid lubrication",
   phi10_lub: "phi = 0.10 suspension with sub-grid lubrication",
   phi20_lub: "phi = 0.20 suspension with sub-grid lubrication"
 };

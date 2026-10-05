@@ -113,7 +113,7 @@ function IntroductionTab() {
           {
             type: "paragraph",
             text:
-              `Einstein's law is first order in concentration, so it has an expiry date. The ladder walks up to ${"φ"} = ${PHI_MAX}, where the instrument reads ${ETA_MAX} — more than seventy per cent above the pure fluid — and at every rung the measurement lands on the closure that governs it: Einstein while particles are effectively alone, Batchelor once they interact in pairs, and a concentrated closure past the point where that series expires. Three regimes, no tuned parameter, one instrument. The two densest rungs were then each run twice over, to price what the mesh leaves out of the films between nearly touching spheres.`
+              `Einstein's law is first order in concentration, so it has an expiry date. The ladder walks up to ${"φ"} = ${PHI_MAX}, where the instrument reads ${ETA_MAX} — more than seventy per cent above the pure fluid — and at every rung the measurement lands on the closure that governs it: Einstein while particles are effectively alone, Batchelor once they interact in pairs, and a concentrated closure past the point where that series expires. Three regimes, no tuned parameter, one instrument. Every rung was then run twice over, to price what the mesh leaves out of the films between nearly touching spheres.`
           }
         ]}
       />
@@ -517,7 +517,8 @@ function LadderTab() {
 
 function LubricationTab({ onOpenSedimentation }: { onOpenSedimentation: () => void }) {
   const dilute = viscometerPairs[0];
-  const dense = viscometerPairs[1];
+  const middle = viscometerPairs[1];
+  const dense = viscometerPairs[viscometerPairs.length - 1];
 
   return (
     <Section style={{ paddingTop: 40, paddingBottom: 100 }}>
@@ -530,7 +531,7 @@ function LubricationTab({ onOpenSedimentation }: { onOpenSedimentation: () => vo
           what the resolved flow is missing, armed at a gap of two grid cells.
         </p>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
-          The two densest rungs were therefore run twice. Same cloud, particle for particle; same deck; same binary.
+          All three rungs were therefore run twice. Same cloud, particle for particle; same deck; same binary.
           The single difference between the members of each pair is one switch in the rigid-body configuration. That
           makes the difference in viscosity an attribution rather than a comparison.
         </p>
@@ -544,9 +545,10 @@ function LubricationTab({ onOpenSedimentation }: { onOpenSedimentation: () => vo
         >
           <p style={{ margin: 0, color: "var(--fg1)", lineHeight: 1.65 }}>
             Sub-grid lubrication adds {percent(dense.delta, 1)} to the suspension viscosity at{" "}
-            {"φ"} = {dense.phi.toFixed(2)} and {percent(dilute.delta, 1)} at {"φ"} = {dilute.phi.toFixed(2)}. The
-            contribution decays by a factor of {viscometerPairDecay.eta.toFixed(1)} between the two, tracking the
-            number of near-contact films the model acts on, which falls by{" "}
+            {"φ"} = {dense.phi.toFixed(2)}, {percent(middle.delta, 1)} at {"φ"} = {middle.phi.toFixed(2)} and{" "}
+            {percent(dilute.delta, 1)} at {"φ"} = {dilute.phi.toFixed(2)}. Across those three concentrations the
+            contribution falls by a factor of {viscometerPairDecay.eta.toFixed(1)} for every halving of the
+            concentration, close behind the number of near-contact films the model acts on, which falls by{" "}
             {viscometerPairDecay.pairs.toFixed(1)}. Unresolved films matter where films are routine, and by a
             quantified amount.
           </p>
@@ -620,15 +622,18 @@ function LubricationTab({ onOpenSedimentation }: { onOpenSedimentation: () => vo
           <h3>Why the decay is the result</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
             A correction that grew or held steady as the suspension thinned would point at something acting
-            everywhere — a numerical offset rather than a film. Instead it falls almost exactly as fast as the films
-            themselves become rare: {viscometerPairDecay.eta.toFixed(1)} against{" "}
-            {viscometerPairDecay.pairs.toFixed(1)}. What the model adds is proportional to how often two surfaces
-            are close, which is what a lubrication term should do and is the cleanest available evidence that it is
-            modelling the right thing at suspension scale.
+            everywhere — a numerical offset rather than a film. Instead it falls away with the films themselves:
+            over a factor of four in concentration, a factor of {viscometerPairDecay.eta.toFixed(1)} per halving
+            against {viscometerPairDecay.pairs.toFixed(1)} for the film count. What the model adds follows how
+            often two surfaces are close, the contribution decaying the more gently of the two, so the thinnest
+            rung keeps a little more of its correction than the film count alone would grant it. That is what a
+            lubrication term should do, and it is the cleanest available evidence that the model is doing the right
+            thing at suspension scale.
           </p>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
             The practical reading for anyone choosing a resolution: at {"φ"} = {dilute.phi.toFixed(2)} the
-            unresolved film is worth under one per cent and can reasonably be neglected; by{" "}
+            unresolved film is worth under half a per cent and at {"φ"} = {middle.phi.toFixed(2)} still under one,
+            so through the dilute half of the ladder it can reasonably be neglected; by{" "}
             {"φ"} = {dense.phi.toFixed(2)} it is approaching three, and a suspension viscosity quoted without it is
             low by about that much at this resolution.
           </p>

@@ -329,11 +329,33 @@ const pairs = rungs
   })
   .sort((a, b) => a.phi - b.phi);
 
-if (pairs.length !== 2) throw new Error(`expected two lubrication pairs, found ${pairs.length}`);
+if (pairs.length < 2) {
+  throw new Error(`the pair decay needs at least two concentrations, found ${pairs.length}`);
+}
+
+/**
+ * How steeply the lubrication contribution decays as the suspension thins, and how
+ * steeply the films it acts on become rare. The ladder is geometric in
+ * concentration, so each quantity is fitted as a power law in phi over EVERY pair
+ * — least squares on log y against log phi — and reported as the factor it falls
+ * by when the concentration is halved. With two pairs a factor-of-two step apart
+ * this is exactly their ratio; with more rungs it is the trend through all of them.
+ */
+function decayPerHalving(values) {
+  const x = pairs.map(pair => Math.log(pair.phi));
+  const exponent = slope(x, values.map(Math.log));
+  return { exponent, factor: 2 ** exponent };
+}
+
+const etaDecay = decayPerHalving(pairs.map(pair => pair.delta));
+const filmDecay = decayPerHalving(pairs.map(pair => pair.activePairs));
 // The headline: the contribution decays with concentration, tracking the pair count.
 const pairDecay = {
-  eta: pairs[1].delta / pairs[0].delta,
-  pairs: pairs[1].activePairs / pairs[0].activePairs
+  eta: etaDecay.factor,
+  pairs: filmDecay.factor,
+  etaExponent: etaDecay.exponent,
+  pairsExponent: filmDecay.exponent,
+  concentrations: pairs.length
 };
 
 const profile = Object.fromEntries(
@@ -695,10 +717,10 @@ writeJson(resolve(generatedDir, "numerical-viscometer.json"), {
 // Published: the empty cell continued at the suspension time step, which is the
 // T(0) of every ratio on the page and certifies the instrument against the
 // analytic torque; the restated concentration ladder, whose three rungs are read
-// against that matched-window baseline; and the two lubrication pairs in their
+// against that matched-window baseline; and all three lubrication pairs in their
 // settled form. Withheld: the spun-up cell's own gate row and the three original
 // rung rows, which the ladder row supersedes as absolute viscosities, and the
-// first-segment readings of both pairs, whose windows were taken before the
+// first-segment readings of the pairs, whose windows were taken before the
 // lubricated microstructure had relaxed and which the settled rows supersede.
 // The datasheet download under Reference Data carries every row of the campaign,
 // superseded ones included.
@@ -706,6 +728,7 @@ writeJson(resolve(generatedDir, "numerical-viscometer.json"), {
 const PUBLISHED = [
   "d52_v26e_dt_control",
   "d52_l3_ladder_restated",
+  "d52_v21L_settled",
   "d52_v22L_settled",
   "d52_v23L_settled"
 ];

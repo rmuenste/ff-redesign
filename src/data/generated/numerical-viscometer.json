@@ -218,6 +218,52 @@
       "deviationNaive": 0.14902574830131976
     },
     {
+      "run": "einstein_lub",
+      "label": "phi = 0.05 lubricated",
+      "phi": 0.05,
+      "particles": 225,
+      "window": [
+        270,
+        300
+      ],
+      "runEnd": 300,
+      "baselineWindow": [
+        250,
+        269.215
+      ],
+      "samples": 6001,
+      "torqueDna": 93.53124550594889,
+      "torqueDnaPstd": 0.1436924472602742,
+      "torqueRes": 62.116012988668615,
+      "torqueResPstd": 0.14369129148019957,
+      "gap": 31.415232517280273,
+      "scatter": 0.0015363042209368943,
+      "drift": -0.00016655429390782358,
+      "lubrication": true,
+      "closure": "einstein",
+      "torqueReference": 83.77347167710715,
+      "torqueReferenceRes": 52.35831812572843,
+      "referenceSamples": 3844,
+      "eta": 1.1164780882718062,
+      "etaPstd": 0.0017152499995955301,
+      "etaCorrected": 1.1164760709255286,
+      "gapDeviation": -0.000022091298719884023,
+      "composites": [
+        {
+          "phi": 0.05,
+          "closure": "einstein",
+          "eta": 1.10025,
+          "gate": true,
+          "deviation": 0.014749455370876019
+        }
+      ],
+      "etaComposite": 1.10025,
+      "deviationComposite": 0.014749455370876019,
+      "etaClosure": 1.125,
+      "etaNaive": 1.125,
+      "deviationNaive": -0.007575032647283431
+    },
+    {
       "run": "phi10_lub",
       "label": "phi = 0.10 lubricated",
       "phi": 0.1,
@@ -326,6 +372,18 @@
   ],
   "pairs": [
     {
+      "phi": 0.05,
+      "particles": 225,
+      "run": "einstein_lub",
+      "twin": "einstein",
+      "etaWithout": 1.112224999140613,
+      "etaWith": 1.1164780882718062,
+      "delta": 0.003823946714450299,
+      "activePairs": 75.53391101483086,
+      "saturatedPairs": 20.508748541909682,
+      "samples": 6001
+    },
+    {
       "phi": 0.1,
       "particles": 450,
       "run": "phi10_lub",
@@ -351,8 +409,11 @@
     }
   ],
   "pairDecay": {
-    "eta": 3.586862594331914,
-    "pairs": 3.531508932954594
+    "eta": 2.664069980823077,
+    "pairs": 3.755006192888423,
+    "etaExponent": 1.4136319801795796,
+    "pairsExponent": 1.9088152870849662,
+    "concentrations": 3
   },
   "baselineGates": {
     "torque": 0.00001204274207289302,

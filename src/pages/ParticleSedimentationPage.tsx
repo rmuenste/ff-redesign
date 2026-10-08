@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Button,
@@ -11,6 +12,7 @@ import {
   GalleryFigure,
   Icon,
   KpiBox,
+  Overline,
   ReferenceList,
   Section,
   Tabs,
@@ -26,6 +28,7 @@ import {
   sedimentationLubricationRows,
   sedimentationLubricationSpecs,
   sedimentationPhysicalRows,
+  sedimentationPlaybackSpeeds,
   sedimentationPlotSpecs,
   sedimentationReferenceRows,
   sedimentationReferences,
@@ -33,6 +36,8 @@ import {
   sedimentationDtLadder,
   sedimentationFourCasePosterAsset,
   sedimentationFourCaseVideoAsset,
+  sedimentationFourColumnPosterAsset,
+  sedimentationFourColumnVideoAsset,
   sedimentationSetupAsset,
   sedimentationValidationRows,
   type SedimentationBrennerBand,
@@ -152,6 +157,82 @@ function DefinitionTab() {
   );
 }
 
+/**
+ * The composite player. `VideoBlock` owns its own <video> and exposes no ref,
+ * so the speed switcher lives here rather than on the shared component every
+ * other page renders; the player itself keeps VideoBlock's dimensions and
+ * frame. The switcher mirrors the plot controls visually (a labelled group of
+ * option buttons with a mono detail line) without reaching into the
+ * comparison-panel internals, which are local to that module.
+ *
+ * One file, three rates: the asset is the 50 fps master and slow motion is
+ * `playbackRate`, so switching keeps the playhead where it is. The rate is
+ * re-applied on `loadedmetadata` because some browsers reset it when the
+ * resource loads, and `defaultPlaybackRate` is set alongside it for the same
+ * reason.
+ */
+function CompositeVideoBlock() {
+  const [speedId, setSpeedId] = useState(sedimentationPlaybackSpeeds[0].id);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const rate = (sedimentationPlaybackSpeeds.find(speed => speed.id === speedId) ?? sedimentationPlaybackSpeeds[0]).rate;
+
+  const applyRate = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.defaultPlaybackRate = rate;
+    video.playbackRate = rate;
+  };
+
+  useEffect(applyRate, [rate]);
+
+  return (
+    <div>
+      <video
+        ref={videoRef}
+        controls
+        preload="metadata"
+        poster={sedimentationFourColumnPosterAsset}
+        onLoadedMetadata={applyRate}
+        style={{ width: "100%", maxWidth: 760, borderRadius: 4, border: "1px solid var(--divider)", display: "block" }}
+      >
+        <source src={sedimentationFourColumnVideoAsset} type="video/mp4" />
+      </video>
+      <div style={{ marginTop: 16, maxWidth: 760 }}>
+        <Overline style={{ marginBottom: 12 }}>Playback speed</Overline>
+        <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+          {sedimentationPlaybackSpeeds.map(speed => {
+            const active = speed.id === speedId;
+            return (
+              <button
+                key={speed.id}
+                type="button"
+                className="focus-ring"
+                aria-pressed={active}
+                onClick={() => setSpeedId(speed.id)}
+                style={{
+                  padding: "8px 12px",
+                  background: active ? "var(--surface-alt)" : "transparent",
+                  border: `1px solid ${active ? "var(--primary)" : "var(--divider)"}`,
+                  borderRadius: 4,
+                  color: active ? "var(--fg1)" : "var(--fg2)",
+                  cursor: "pointer",
+                  fontFamily: "inherit",
+                  textAlign: "left"
+                }}
+              >
+                <span style={{ display: "block" }}>{speed.label}</span>
+                <span style={{ display: "block", color: "var(--fg3)", fontFamily: "var(--font-mono)", fontSize: 10, marginTop: 2 }}>
+                  {speed.detail}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ResultsTab() {
   return (
     <Section style={{ paddingTop: 40, paddingBottom: 100 }}>
@@ -163,6 +244,18 @@ function ResultsTab() {
           </p>
         </div>
         <ComparisonPanel specs={sedimentationPlotSpecs} defaultMetric="velocity" />
+        <div style={{ maxWidth: 900 }}>
+          <h3>Where the curves come from</h3>
+          <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
+            The same four cases on one shared clock, from t = 0 to 4.30 s, with the columns left to right E1, E2, E3,
+            E4. Beneath them the settling velocity and the sphere height of all four cases are drawn up to the current
+            instant, against the PIV measurements, so every point on the curves above can be traced back to the flow
+            that produced it. The film plays at physical real time by default; the 2x and 4x settings slow it down
+            without changing anything in the data. Each column holds its last image once that case has settled &mdash;
+            E4 from t = 1.30 s, E3 from 1.80 s, E2 from 2.70 s &mdash; which is what keeps the four on one clock.
+          </p>
+          <CompositeVideoBlock />
+        </div>
       </div>
     </Section>
   );

@@ -214,9 +214,9 @@ describe("sedimentation asset manifest (public/benchmark-assets/sedimentation/ma
 
   it("has exactly the derived plot and copied asset entries planned for migration", () => {
     expect(sedimentationManifest.benchmarkId).toBe("sedimentation");
-    expect(coreEntries).toHaveLength(50);
+    expect(coreEntries).toHaveLength(54);
     expect(coreEntries.filter(entry => entry.derived)).toHaveLength(24);
-    expect(coreEntries.filter(entry => !entry.derived)).toHaveLength(26);
+    expect(coreEntries.filter(entry => !entry.derived)).toHaveLength(30);
   });
 
   it("carries the lubrication study the companion converter merges in", () => {

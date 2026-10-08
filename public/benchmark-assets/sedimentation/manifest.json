@@ -392,6 +392,30 @@
       "label": "Sedimentation experimental setup"
     },
     {
+      "oldPath": "generated from blender_viz/ten_cate_movie/four_cases_render.mp4",
+      "newPath": "media/ten-cate-four-cases.mp4",
+      "kind": "media",
+      "label": "Four sedimentation cases on one clock"
+    },
+    {
+      "oldPath": "generated from blender_viz/ten_cate_movie/renders/four_cases/frame_040.png",
+      "newPath": "media/ten-cate-four-cases-poster.webp",
+      "kind": "media",
+      "label": "Four sedimentation cases, poster frame"
+    },
+    {
+      "oldPath": "generated from blender_viz/ten_cate_movie/four_columns_realtime.mp4",
+      "newPath": "media/ten-cate-four-columns.mp4",
+      "kind": "media",
+      "label": "Four sedimentation cases with the velocity and position panels"
+    },
+    {
+      "oldPath": "generated from blender_viz/ten_cate_movie/four_columns_realtime.mp4",
+      "newPath": "media/ten-cate-four-columns-poster.webp",
+      "kind": "media",
+      "label": "Four sedimentation cases with panels, poster frame"
+    },
+    {
       "oldPath": "generated from sedimentation downloads",
       "newPath": "downloads/sedimentation.zip",
       "kind": "download",

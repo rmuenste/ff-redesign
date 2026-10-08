@@ -109,6 +109,42 @@ export const sedimentationPlotSpecs: Record<SedimentationMetricId, PlotSpec> = O
 
 export const sedimentationSetupAsset = benchmarkAssetPath("sedimentation", "media/sedimentation-setup.png");
 
+export const sedimentationFourCaseVideoAsset = benchmarkAssetPath(
+  "sedimentation",
+  "media/ten-cate-four-cases.mp4"
+);
+
+export const sedimentationFourCasePosterAsset = benchmarkAssetPath(
+  "sedimentation",
+  "media/ten-cate-four-cases-poster.webp"
+);
+
+export const sedimentationFourColumnVideoAsset = benchmarkAssetPath(
+  "sedimentation",
+  "media/ten-cate-four-columns.mp4"
+);
+
+export const sedimentationFourColumnPosterAsset = benchmarkAssetPath(
+  "sedimentation",
+  "media/ten-cate-four-columns-poster.webp"
+);
+
+/**
+ * The composite is a 50 fps master, one video frame per 0.02 s of simulated
+ * time, so it plays at physical real time. Slow motion is the HTML5
+ * `playbackRate` on that one file rather than three re-timed encodes.
+ */
+export const sedimentationPlaybackSpeeds: Array<{
+  id: string;
+  label: string;
+  detail: string;
+  rate: number;
+}> = [
+  { id: "1x", label: "1x", detail: "real time", rate: 1 },
+  { id: "2x", label: "2x", detail: "slow motion", rate: 0.5 },
+  { id: "4x", label: "4x", detail: "slow motion", rate: 0.25 }
+];
+
 export interface SedimentationPhysicalRow {
   case: SedimentationCaseId;
   rhoF: number;

@@ -15,7 +15,8 @@ import {
   Section,
   Tabs,
   useTabParam,
-  ValidationLedger
+  ValidationLedger,
+  VideoBlock
 } from "../components";
 import {
   sedimentationBrennerBands,
@@ -30,6 +31,8 @@ import {
   sedimentationReferences,
   sedimentationDecomposition,
   sedimentationDtLadder,
+  sedimentationFourCasePosterAsset,
+  sedimentationFourCaseVideoAsset,
   sedimentationSetupAsset,
   sedimentationValidationRows,
   type SedimentationBrennerBand,
@@ -62,6 +65,20 @@ function IntroductionTab() {
           }
         ]}
       />
+      <VideoBlock
+        src={sedimentationFourCaseVideoAsset}
+        poster={sedimentationFourCasePosterAsset}
+        title="Four cases on one clock"
+      />
+      <p style={{ color: "var(--fg2)", fontSize: 13, lineHeight: 1.6, maxWidth: 760, marginTop: -20 }}>
+        The four benchmark cases settle side by side on one clock: all four spheres are released at the same instant,
+        and the film runs from t = 0 to 4.30 s at half real time. Colour is the fluid velocity magnitude on a vertical
+        plane through the middle of each tank, and the sphere is the opaque body. Only the two faster cases reach the
+        floor &mdash; E4 at Re = 31.9 touches down at t = 1.16 s and rebounds about 0.17 mm, E3 at Re = 11.6 at
+        t = 1.58 s &mdash; while at Re = 4.1 and Re = 1.5 the squeeze film arrests the sphere 0.13 to 0.14 mm clear of
+        the bottom. These are the base cases, without the sub-grid lubrication model; once a case has settled its
+        column holds its last image, so all four stay on the same clock.
+      </p>
       <div style={{ marginTop: 32 }}>
         <h3>Reference</h3>
         <ReferenceList items={sedimentationReferences} />

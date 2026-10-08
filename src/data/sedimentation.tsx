@@ -109,6 +109,16 @@ export const sedimentationPlotSpecs: Record<SedimentationMetricId, PlotSpec> = O
 
 export const sedimentationSetupAsset = benchmarkAssetPath("sedimentation", "media/sedimentation-setup.png");
 
+export const sedimentationFourCaseVideoAsset = benchmarkAssetPath(
+  "sedimentation",
+  "media/ten-cate-four-cases.mp4"
+);
+
+export const sedimentationFourCasePosterAsset = benchmarkAssetPath(
+  "sedimentation",
+  "media/ten-cate-four-cases-poster.webp"
+);
+
 export interface SedimentationPhysicalRow {
   case: SedimentationCaseId;
   rhoF: number;

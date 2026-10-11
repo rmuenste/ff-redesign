@@ -18,6 +18,7 @@ import {
 import {
   rb2Cases,
   rb2Downloads,
+  rb2Feat3Levels,
   rb2FormatRows,
   rb2GeometryAsset,
   rb2NotationRows,
@@ -133,7 +134,45 @@ function ResultsTab() {
         ))}
       </div>
       <ComparisonPanel specs={rb2PlotSpecs[caseId]} defaultMetric="shape" />
+      {caseId === "case-1" && <Feat3Section />}
     </Section>
+  );
+}
+
+/** FEAT3 contributes Case 1 only, so its method notes sit under the Case 1 plots. */
+function Feat3Section() {
+  return (
+    <div style={{ marginTop: 48, maxWidth: 820 }}>
+      <ContentRenderer
+        blocks={[
+          { type: "heading", level: 3, text: "FEAT3 (Case 1)" },
+          {
+            type: "paragraph",
+            text:
+              "FEAT3 (TU Dortmund) is a C++ port of the FeatFloWer front-tracking solver. It discretises the flow with isoparametric Q2/P1dc finite elements on quadrilaterals on a sharp, interface-fitted ALE mesh: the interface is made of curved Q2 edges, and its nodes move in a Lagrangian manner along the interface normal. The interior mesh follows by a Laplace smoothing of the node coordinates. Surface tension enters through the Laplace-Beltrami operator, treated semi-implicitly. Time stepping is Crank-Nicolson with one discrete pressure projection per step, which makes the scheme first order in k overall. There is no remeshing and no mass correction."
+          },
+          {
+            type: "paragraph",
+            text:
+              "The three levels are matched to TP2D's h = 1/40, 1/80 and 1/160 by the total number of degrees of freedom, NDOF = 2 × (Q2 nodes) + 3 × NEL. All three use the time step k = 2.5e-4 up to t = 3 (12,000 steps)."
+          }
+        ]}
+      />
+      <div style={{ marginTop: 24 }}>
+        <DataTable
+          columns={[
+            { id: "site", header: "Level", render: row => row.siteLevel.replace("l", "Level ") },
+            { id: "feat3", header: "FEAT3 level", align: "right", render: row => row.feat3Level },
+            { id: "nel", header: "NEL", align: "right", render: row => row.cells.toLocaleString("en-US") },
+            { id: "ndof", header: "NDOF", align: "right", render: row => row.ndof.toLocaleString("en-US") },
+            { id: "k", header: "k", align: "right", render: row => row.timeStep.toExponential(1) },
+            { id: "edges", header: "Interface edges", align: "right", render: row => row.interfaceEdges }
+          ]}
+          rows={rb2Feat3Levels}
+          getRowKey={row => row.siteLevel}
+        />
+      </div>
+    </div>
   );
 }
 

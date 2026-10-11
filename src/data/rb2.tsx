@@ -1,11 +1,12 @@
 import type { DownloadItem } from "../components";
 import { benchmarkAssetPath } from "./assets";
+import generatedFeat3 from "./generated/rb2-feat3.json";
 import type { PlotSource, PlotSpec, SeriesGroup, TraceVariantStrategy } from "./types";
 
 export type Rb2CaseId = "case-1" | "case-2";
 export type Rb2MetricId = "shape" | "center-of-mass" | "circularity" | "rise-velocity" | "mass";
 export type Rb2LevelId = "l1" | "l2" | "l3";
-export type Rb2CodeId = "tp2d" | "freelife" | "moonmd" | "featflower";
+export type Rb2CodeId = "tp2d" | "freelife" | "moonmd" | "featflower" | "feat3";
 
 export const rb2Cases: Array<{ id: Rb2CaseId; label: string; detail: string; re: string; eo: string }> = [
   { id: "case-1", label: "Case 1", detail: "Moderate density and viscosity ratios", re: "35", eo: "10" },
@@ -26,17 +27,21 @@ export const rb2Metrics: Array<{ id: Rb2MetricId; label: string; yAxis: string }
   { id: "mass", label: "Mass / area", yAxis: "Mass / Area" }
 ];
 
-const rb2CodeMeta: Record<Rb2CodeId, { label: string; color: string; markerSymbol: string }> = {
+const rb2CodeMeta: Record<Rb2CodeId, { label: string; color: string; markerSymbol: string; highlight?: boolean }> = {
   tp2d: { label: "TP2D", color: "var(--tu-petrol-400)", markerSymbol: "circle" },
   freelife: { label: "FreeLIFE", color: "var(--tu-green-400)", markerSymbol: "square" },
   moonmd: { label: "MooNMD", color: "var(--tu-red-300)", markerSymbol: "x" },
-  featflower: { label: "FeatFloWer", color: "var(--primary)", markerSymbol: "diamond" }
+  featflower: { label: "FeatFloWer", color: "var(--primary)", markerSymbol: "diamond", highlight: true },
+  feat3: { label: "FEAT3", color: "var(--tu-orange-500)", markerSymbol: "triangle-up", highlight: true }
 };
 
 const baseCodes: Rb2CodeId[] = ["tp2d", "freelife", "moonmd"];
 
 function availableCodes(caseId: Rb2CaseId, metric: Rb2MetricId): Rb2CodeId[] {
-  if (caseId === "case-2" && (metric === "shape" || metric === "circularity" || metric === "mass")) {
+  // FEAT3 has Case 1 on every metric and level; FeatFloWer has Case 2 shape,
+  // circularity and mass. Neither has data for the other case.
+  if (caseId === "case-1") return [...baseCodes, "feat3"];
+  if (metric === "shape" || metric === "circularity" || metric === "mass") {
     return [...baseCodes, "featflower"];
   }
   return baseCodes;
@@ -74,7 +79,7 @@ function rb2SeriesGroups(caseId: Rb2CaseId, metric: Rb2MetricId): SeriesGroup[] 
     kind: "code",
     color: rb2CodeMeta[code].color,
     markerSymbol: rb2CodeMeta[code].markerSymbol,
-    highlight: code === "featflower",
+    highlight: rb2CodeMeta[code].highlight ?? false,
     variantStrategy: rb2VariantStrategy(metric),
     levelSources: Object.fromEntries(
       rb2Levels.map(level => [level.id, rb2Source(caseId, metric, code, level.id)])
@@ -124,8 +129,40 @@ export const rb2GeometryAsset = benchmarkAssetPath("rb2", "media/geometry-2d.png
 
 export const rb2Downloads: DownloadItem[] = [
   { label: "quantities.zip", href: benchmarkAssetPath("rb2", "downloads/quantities.zip"), description: "ASCII reference data for mass, circularity, center of mass, and rise velocity" },
-  { label: "shapes.zip", href: benchmarkAssetPath("rb2", "downloads/shapes.zip"), description: "ASCII line-segment data for bubble shapes" }
+  { label: "shapes.zip", href: benchmarkAssetPath("rb2", "downloads/shapes.zip"), description: "ASCII line-segment data for bubble shapes" },
+  {
+    label: "feat3-case1.zip",
+    href: benchmarkAssetPath("rb2", "downloads/feat3-case1.zip"),
+    description: "FEAT3, Case 1, levels 1-3: quantities at every time step (c1feat3l#.txt) and line-segment shapes at t = 3 (c1feat3l#s.txt)"
+  }
 ];
+
+/**
+ * One FEAT3 run per site level, from src/data/generated/rb2-feat3.json, which
+ * scripts/convert-rb2-feat3-data.mjs derives from the runs' bench.txt and
+ * interface files. The key values are read from the full-resolution series.
+ */
+export interface Rb2Feat3Level {
+  siteLevel: Rb2LevelId;
+  feat3Level: number;
+  runDir: string;
+  cells: number;
+  q2Nodes: number;
+  ndof: number;
+  interfaceEdges: number;
+  timeStep: number;
+  steps: number;
+  gitRevision: string;
+  plotPoints: number;
+  shapeSegments: number;
+  minCircularity: number;
+  minCircularityTime: number;
+  maxRiseVelocity: number;
+  maxRiseVelocityTime: number;
+  centerOfMassEnd: number;
+}
+
+export const rb2Feat3Levels = generatedFeat3.levels as Rb2Feat3Level[];
 
 export interface Rb2PhysicalRow {
   position: number;
@@ -152,6 +189,7 @@ export const rb2NotationRows = [
   { abbreviation: "g1", description: "TU Dortmund (TP2D)" },
   { abbreviation: "g2", description: "EPFL Lausanne (FreeLIFE)" },
   { abbreviation: "g3", description: "Uni Magdeburg (MooNMD)" },
+  { abbreviation: "feat3", description: "TU Dortmund (FEAT3); in its files, l1-l3 are the Results-tab levels 1-3 (FEAT3 mesh levels 2-4)" },
   { abbreviation: "l#", description: "Grid refinement level; higher numbers indicate denser grids" }
 ];
 

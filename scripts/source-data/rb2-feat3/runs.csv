@@ -1,0 +1,4 @@
+site_level,feat3_level,run_dir,cells,q2_nodes,time_step,end_time,git_revision
+l1,2,case1_L2_k2.5e-4,1760,7177,2.5e-4,3,da2918911
+l2,3,case1_L3_k2.5e-4,7040,28433,2.5e-4,3,da2918911
+l3,4,case1_L4_k2.5e-4_mg,28160,113185,2.5e-4,3,bccc9e12c

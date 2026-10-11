@@ -740,6 +740,15 @@
           "bytes": 341936,
           "sha1": "5f9b548b24f248303b6b3ca8e43ae6a365d13b30",
           "shared": false
+        },
+        {
+          "name": "feat3-case1.zip",
+          "path": "downloads/feat3-case1.zip",
+          "label": "FEAT3 Case 1 reference data",
+          "format": "ZIP archive",
+          "bytes": 1426757,
+          "sha1": "03a44a7182ad7f55d1788438b0685bfca4d84933",
+          "shared": false
         }
       ]
     },
@@ -1068,7 +1077,7 @@
   ],
   "totals": {
     "benchmarks": 10,
-    "files": 111,
-    "bytes": 19291752
+    "files": 112,
+    "bytes": 20718509
   }
 }

@@ -326,7 +326,7 @@ function ResultsTab() {
             The step from the intermediate to the finest level shifts the peak by 2.1 to 2.4 percentage points, and it
             does so almost identically for every case despite an eightfold range in Reynolds number. The dominant
             spatial error therefore comes from how the sphere surface is represented on the mesh, not from the flow
-            regime — which is why the four ladders lie nearly on top of one another.
+            regime — which is why the four cases' refinement curves lie nearly on top of one another.
           </p>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
             The lowest-Reynolds case is the hard one: it sits about three per cent below the experiment at the
@@ -411,7 +411,7 @@ function ResultsTab() {
               getRowKey={row => `p${row.order}`}
             />
             <p style={{ color: "var(--fg2)", fontSize: 13, lineHeight: 1.6, marginTop: 12 }}>
-              Percentage points, from an additive fit to the whole ladder. The temporal order is not known precisely, so both
+              Percentage points, from an additive fit to all mesh levels and time steps. The temporal order is not known precisely, so both
               readings are shown; they agree on the structure. The spatial term reaches zero within its uncertainty at
               the finest level, and the temporal term is negative while the coarse spatial terms are positive — which
               is the cancellation that makes the intermediate mesh at 1 ms look better than it is.
@@ -506,10 +506,10 @@ function LubricationTab({ onOpenViscometer }: { onOpenViscometer: () => void }) 
       </div>
 
       <div style={{ marginTop: 44, maxWidth: 900 }}>
-        <h3>The lubricated rerun</h3>
+        <h3>With the model switched on</h3>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-          The two lowest-Reynolds fixtures of this benchmark were rerun with the model in its production
-          configuration. The decks are identical to the published E1 and E2 runs; the single difference is that
+          The two lowest-Reynolds cases of this benchmark were run again with the model in its production
+          configuration. Everything else is the same as in the E1 and E2 runs; the single difference is that
           lubrication is switched on. The baselines are therefore the very curves on the Results tab, which makes the
           pair a controlled comparison rather than two similar simulations.
         </p>
@@ -662,8 +662,8 @@ function LubricationTab({ onOpenViscometer }: { onOpenViscometer: () => void }) 
           <h3>At suspension scale</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
             What the same model does to the bulk viscosity of a sheared suspension, rather than to a single sphere
-            approaching a wall, belongs to the numerical viscometer: a concentration ladder there carries a
-            with-and-without pair at its densest rung.
+            approaching a wall, belongs to the numerical viscometer: its concentration series runs every
+            concentration with and without the model.
           </p>
           <Button variant="stroked" size="sm" onClick={onOpenViscometer} trailing={<Icon name="arrow_forward" size={14} />}>
             Numerical Viscometer

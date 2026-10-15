@@ -178,7 +178,7 @@ export const dktDownloads: DownloadItem[] = [
   {
     label: "dns_validation_datasheet.csv",
     href: benchmarkAssetPath("dkt", "downloads/dns_validation_datasheet.csv"),
-    description: "Complete DNS campaign claim ledger, one row per quantitative claim"
+    description: "The DNS validation datasheet, one row per quantitative result"
   },
   ...runFiles.flatMap(run =>
     seriesStems.map(series => ({

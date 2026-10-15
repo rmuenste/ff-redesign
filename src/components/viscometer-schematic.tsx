@@ -224,8 +224,7 @@ export function ViscometerSchematic() {
         ))}
       </svg>
       <figcaption style={{ color: "var(--fg2)", fontSize: 13, marginTop: 10 }}>
-        <b>The instrument.</b> Drawn to scale in campaign units, where the particle diameter is the unit of
-        length. Because the cell is closed by symmetry planes rather than end plates, the flow is an axially
+        <b>The instrument.</b> Drawn to scale, with the particle diameter as the unit of length. Because the cell is closed by symmetry planes rather than end plates, the flow is an axially
         uniform annular Couette flow with no end effects — which is what gives the instrument an exact
         analytic torque to be measured against.
       </figcaption>

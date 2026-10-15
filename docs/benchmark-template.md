@@ -47,7 +47,7 @@ Rules:
   `?tab=reference-data`, and `src/data/reference-data.test.ts` checks that link.
 - The results tab may carry a more specific label when that reads better, for
   example *The Orbit* (Jeffery), *Ratio Ladder* (Oberbeck), *Baseline* +
-  *Concentration Ladder* (Viscometer), or *FSI Tests* next to the FSI page's
+  *Concentration Series* (Viscometer), or *FSI Tests* next to the FSI page's
   *CFD Tests* and *CSM Tests*. There must be at least one tab whose job
   is to display results.
 - The default tab is `introduction`.
@@ -79,6 +79,40 @@ produced. It read as an internal record rather than a result, so it was dropped.
 The datasheet stays a Reference Data download; a number or explanation a visitor
 needs goes on a results tab, in plain language, without gate, rung, twin, pin,
 job-id or tool vocabulary.
+
+### Visitor language
+
+Every tab is written for a visitor: what was measured, and how far it sits from
+its reference. No procedure narrative and no campaign bookkeeping. This covers all
+readable text, including captions, KPI labels, table headers, callouts, schematic
+labels, hero chips, download descriptions and the data modules that hold copy.
+
+- Do not use: *certified*, *certification*, *twin*, *bitwise*, *byte-identical*,
+  *gate(d)*, *pin(ned)* in the code-version sense, *binary*, *commit*, *rundir*,
+  *job* or job numbers, datasheet case ids (`d61_v5_halfsize`, `e4_l3_dt0p5`),
+  *protocol*, *verdict*, *RECORDED* / *RESOLVED* / *PASS* as labels, *owner*,
+  *review*, *erratum*, *superseded*, *staged*, *cluster*, machine names,
+  *campaign*, or *anchor* in the regression sense.
+- *Rung* and *ladder* only where the page's own structure is a ladder the visitor
+  is looking at: Oberbeck's *Ratio Ladder* tab and its table. Elsewhere, Oberbeck's
+  other tabs included, say run, configuration, concentration, cloud size, clearance
+  or mesh level.
+- Each page stands alone. A term gets a one-clause definition at first use
+  (resistance function, hydrodynamic radius, solid fraction, 2a/L, 2b/h), and no
+  sentence relies on knowing another DNS case or the order the cases were run in.
+  Say "production resolution" or "closing run" only after saying what it is, or
+  better, give the number (cells across the thin axis).
+- A pass/fail table is a tolerance table, *What is compared, and the tolerance*,
+  with the columns Quantity, Reference, Tolerance, Result.
+- A sentence whose only content is that something was checked, re-run or found
+  unchanged against an earlier state is regression bookkeeping and stays off the
+  page. When the identity is itself the result shown, say it plainly (*the same
+  force to every printed digit*).
+- Column headers of downloadable files are quoted as the files have them, even
+  when they carry internal names.
+
+`src/pages/visitor-language.test.ts` greps the copy of the DNS pages for this list.
+Add a new DNS page to its `PAGES` map.
 
 The `tabs` array in the registry entry (section 3) is not read by the page, which
 declares its own tab list. `src/pages/hero.test.ts` checks that the two agree and
@@ -358,6 +392,7 @@ These tests list benchmarks explicitly and fail until the new one is added:
 | `src/data/assets.test.ts` | a manifest `describe` block (every `newPath` exists, every file on disk is mapped, metric set); if there is a gallery still, add it to the "gallery stills" list |
 | `src/data/gallery.test.ts` | if there is a gallery still: order, families, neighbours |
 | `src/pages/gallery-page.test.ts` | if there is a gallery still: the cross-link list |
+| `src/pages/visitor-language.test.ts` | DNS pages: `PAGES` entry (page, data module, schematic, generated file) |
 
 Add these:
 

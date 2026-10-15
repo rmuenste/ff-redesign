@@ -138,13 +138,13 @@ export const benchmarks: BenchmarkMeta[] = [
     reynolds: "0.5",
     levels: 3,
     summary:
-      "A Couette cell with an exact analytic torque, calibrated empty and then walked up a concentration ladder whose rungs land on Einstein, Batchelor and Krieger-Dougherty in turn.",
+      "A Couette cell with an exact analytic torque, calibrated empty and then loaded at three concentrations that land on Einstein, Batchelor and Krieger-Dougherty in turn.",
     thumb: "annulus",
     tabs: [
       "Introduction",
       "Definition",
       "Baseline",
-      "Concentration Ladder",
+      "Concentration Series",
       "Lubrication",
       "Reference Data"
     ],
@@ -163,7 +163,7 @@ export const benchmarks: BenchmarkMeta[] = [
     reynolds: "3e-3",
     levels: 2,
     summary:
-      "A prolate spheroid held fixed in a periodic Stokes cell, measured end-on and broadside against Oberbeck's exact resistance functions, with a ladder that attributes the residual to the finite cell rather than to the method.",
+      "A prolate spheroid held fixed in a periodic Stokes cell, measured end-on and broadside against Oberbeck's exact resistance functions, with three runs that attribute the residual to the finite cell rather than to the method.",
     thumb: "spheroid",
     tabs: [
       "Introduction",
@@ -188,7 +188,7 @@ export const benchmarks: BenchmarkMeta[] = [
     reynolds: "0.05",
     levels: 2,
     summary:
-      "A prolate spheroid tumbling freely in planar Couette flow, gated on the period and the whole rate waveform of Jeffery's 1922 closed form, with a wall-clearance rung that measures the boundary systematic instead of assuming it away.",
+      "A prolate spheroid tumbling freely in planar Couette flow, measured against the period and the whole rate waveform of Jeffery's 1922 closed form, with a second wall clearance that measures the boundary systematic instead of assuming it away.",
     thumb: "spheroid-shear",
     tabs: [
       "Introduction",

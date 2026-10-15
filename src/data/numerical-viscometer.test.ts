@@ -5,7 +5,7 @@ import {
   percent,
   viscometerBaseline,
   viscometerEinstein,
-  viscometerGateRows,
+  viscometerToleranceRows,
   viscometerGatedLadder,
   viscometerGates,
   viscometerInstrument,
@@ -200,15 +200,17 @@ describe("numerical-viscometer plateau statistics", () => {
     expect(viscometerPairDecay.etaExponent / viscometerPairDecay.pairsExponent).toBeGreaterThan(0.7);
   });
 
-  it("keeps every published gate row in step with the generated numbers", () => {
-    const torqueGate = viscometerGateRows.find(row => row.gate === "Analytic torque");
-    expect(torqueGate?.reference).toBe(viscometerInstrument.torqueExact.toFixed(4));
-    expect(torqueGate?.measured).toBe(viscometerBaseline.torqueDna.toFixed(4));
-    expect(torqueGate?.deviation).toBe(percent(viscometerGates.torque, 3));
-    const gapGate = viscometerGateRows.find(row => row.gate === "Estimator concordance");
-    expect(gapGate?.measured).toBe(viscometerBaseline.gap.toFixed(4));
-    expect(gapGate?.deviation).toBe(percent(viscometerBaseline.gapDeviation, 3));
-    expect(viscometerGateRows).toHaveLength(4);
+  it("keeps every published tolerance row in step with the generated numbers", () => {
+    const torque = viscometerToleranceRows.find(row => row.quantity === "Torque on the bob");
+    expect(torque?.reference).toContain(viscometerInstrument.torqueExact.toFixed(4));
+    expect(torque?.result).toBe(
+      `${viscometerBaseline.torqueDna.toFixed(4)} (${percent(viscometerGates.torque, 3)})`
+    );
+    const gap = viscometerToleranceRows.find(row => row.quantity === "Offset between the two estimators");
+    expect(gap?.result).toBe(
+      `${viscometerBaseline.gap.toFixed(4)} (${percent(viscometerBaseline.gapDeviation, 3)})`
+    );
+    expect(viscometerToleranceRows).toHaveLength(4);
   });
 });
 

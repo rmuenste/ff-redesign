@@ -7,7 +7,6 @@ import {
   oberbeckAnchor,
   oberbeckClosingRung,
   oberbeckDownloads,
-  oberbeckGateRows,
   oberbeckHistorySpecs,
   oberbeckL3Full,
   oberbeckL4Full,
@@ -17,6 +16,7 @@ import {
   oberbeckRatioSpecs,
   oberbeckResistance,
   oberbeckRungs,
+  oberbeckToleranceRows,
   percent
 } from "./oberbeck";
 
@@ -174,12 +174,12 @@ describe("Oberbeck ladder", () => {
     expect(oberbeckOblique.predictedTilt).toBeCloseTo(3.88, 2);
   });
 
-  it("keeps the published gate table in step with the generated numbers", () => {
-    expect(oberbeckGateRows).toHaveLength(4);
-    const ratioGate = oberbeckGateRows.find(row => row.gate.startsWith("Anisotropy"));
-    expect(ratioGate?.measured).toContain(oberbeckClosingRung.ratio.toFixed(5));
-    expect(ratioGate?.measured).toContain(percent(oberbeckClosingRung.deviation));
-    for (const row of oberbeckGateRows) expect(row.verdict).toBe("PASS");
+  it("keeps the published tolerance table in step with the generated numbers", () => {
+    expect(oberbeckToleranceRows).toHaveLength(3);
+    const ratio = oberbeckToleranceRows.find(row => row.quantity.startsWith("Anisotropy"));
+    expect(ratio?.reference).toContain(oberbeckResistance.ratio.toFixed(5));
+    expect(ratio?.result).toContain(oberbeckClosingRung.ratio.toFixed(5));
+    expect(ratio?.result).toContain(percent(oberbeckClosingRung.deviation));
   });
 });
 

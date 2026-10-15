@@ -71,7 +71,7 @@ function IntroductionTab() {
             {
               type: "paragraph",
               text:
-                "Tumbling is a symmetry-breaking instability, so trajectories after contact amplify small perturbations and a pointwise comparison against experiment would not be meaningful. The benchmark is therefore gated on mechanism: whether the phase sequence appears at all, and whether the kissing time is reproducible. Post-tumbling behaviour is recorded qualitatively."
+                "Tumbling is a symmetry-breaking instability, so trajectories after contact amplify small perturbations and a pointwise comparison against experiment would not be meaningful. The benchmark is therefore judged on mechanism: whether the phase sequence appears at all, and whether the kissing time is reproducible. Post-tumbling behaviour is described qualitatively."
             },
             {
               type: "paragraph",
@@ -138,13 +138,12 @@ function DefinitionTab() {
         </div>
 
         <div>
-          <h3>Resolution ladder</h3>
+          <h3>Mesh resolutions</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
             D/h counts Q2 elements per sphere diameter. Velocity nodes sit at half that spacing, so nodal
             resolutions quoted in the lattice-Boltzmann and immersed-boundary literature should be halved before
-            comparison. The published trajectories are computed on the first rung; the second was computed to check
-            that the drafting and kissing phases are resolution-independent, and the third is prepared and awaits the
-            compute allocation it needs.
+            comparison. The published trajectories are computed at D/h = 8; the run at D/h = 16 shows that the
+            drafting and kissing phases are resolution-independent.
           </p>
           <DataTable<DktLadderRow>
             columns={[
@@ -249,7 +248,7 @@ function ReferenceDataTab() {
           {
             type: "paragraph",
             text:
-              "Each file is a two-column text file, sampled every fifth time step from the solver's per-step particle record. Distances are in sphere diameters and times and velocities are nondimensional. The bundle also contains the DNS campaign datasheet."
+              "Each file is a two-column text file, sampled every fifth time step from the solver's per-step particle record. Distances are in sphere diameters and times and velocities are nondimensional. The bundle also contains the DNS validation datasheet."
           }
         ]}
       />

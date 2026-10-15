@@ -28,7 +28,7 @@ const HALF = PX / 2;
 /** Panel box, and the baseline the caption block starts from. */
 const PANEL = { width: 180, height: 156 };
 
-/** Semi-axes in cell units: volume-matched to the D1.1 sphere at aspect ratio 2. */
+/** Semi-axes in cell units: volume-matched to the periodic-array sphere at aspect ratio 2. */
 const B = 1 / 6 / Math.cbrt(2);
 const A = 2 * B;
 
@@ -38,7 +38,7 @@ const PANELS = [
   {
     n: 1,
     title: "PARALLEL",
-    lines: ["axis along the driving force,", "hydrodynamic radius gates a·X^A"],
+    lines: ["axis along the driving force,", "hydrodynamic radius vs a·X^A"],
     rx: B,
     ry: A,
     scale: 1
@@ -46,7 +46,7 @@ const PANELS = [
   {
     n: 2,
     title: "PERPENDICULAR",
-    lines: ["axis across the force,", "hydrodynamic radius gates a·Y^A"],
+    lines: ["axis across the force,", "hydrodynamic radius vs a·Y^A"],
     rx: A,
     ry: B,
     scale: 1
@@ -103,7 +103,7 @@ export function OberbeckSchematic() {
         aria-labelledby="obSchemT obSchemD"
         style={{ width: "100%", height: "auto" }}
       >
-        <title id="obSchemT">The Oberbeck spheroid fixture</title>
+        <title id="obSchemT">The Oberbeck spheroid setup</title>
         <desc id="obSchemD">
           Three panels, drawn to scale. Each shows a triply periodic cubic cell driven by a uniform body
           force pointing up, with a prolate spheroid of aspect ratio two held fixed at the centre and its
@@ -190,7 +190,7 @@ export function OberbeckSchematic() {
         ))}
       </svg>
       <figcaption style={{ color: "var(--fg2)", fontSize: 13, marginTop: 10 }}>
-        <b>The fixture.</b> Drawn to scale in cell units. The body is held fixed at the centre of a triply
+        <b>The setup.</b> Drawn to scale in cell units. The body is held fixed at the centre of a triply
         periodic cube and the flow is driven by a uniform body force, so the cell is an infinite simple-cubic
         lattice of identical spheroids — the dashed outlines are the nearest images. Halving the body in the
         same cell, as the third panel does, leaves the shape and the mesh spacing alone and changes only how

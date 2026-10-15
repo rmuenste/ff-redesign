@@ -130,13 +130,9 @@ export function DktSchematic() {
         </text>
       </svg>
       <figcaption style={{ color: "var(--fg2)", fontSize: 13, marginTop: 10 }}>
-        <b>The sequence.</b> Phases 1 and 2 reproduced immediately at every resolution. Phase 3 appeared to
-        stall at θ ≈ 4°, at D/h = 8 and again at D/h = 16, until the cause was traced to a solver defect that
-        zeroed every particle&apos;s angular velocity each step (<span className="code-inline">hcaf_angvel_reset</span>):
-        rolling was kinematically impossible, so any tangential friction froze the contact. On the repaired
-        binary the same frictional run tumbles — 16.2° at t = 25, doubling every three time units
-        (<span className="code-inline">d23_omegafix_rerun</span>) — and both contact models complete the full
-        sequence (<span className="code-inline">d23_result</span>).
+        <b>The sequence.</b> Phases 1 and 2 appear at every resolution. With dry friction the doublet still
+        tumbles — 16.2° at t = 25, the tilt doubling every three time units — and both contact models complete
+        the full sequence.
       </figcaption>
     </figure>
   );

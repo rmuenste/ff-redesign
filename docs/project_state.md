@@ -77,6 +77,29 @@ the Introduction tab; `e2e/mobile-layout.spec.ts` checks that.
 - `src/pages/hero.test.ts` now checks each page's tab row against the registry
   and that no page renders a ledger.
 
+## 2026-10-15: visitor-language sweep of the DNS pages
+
+- 2026-10-15: one sweep of internal campaign vocabulary across every tab of SED,
+  DKT, HS, NV, OBK and JEF, plus their registry summaries and gallery captions
+  (rule in benchmark-template.md, "Visitor language"). The Gates tables on NV,
+  OBK and JEF became *What is compared, and the tolerance* tables (Quantity,
+  Reference, Tolerance, Result); NV's *Concentration Ladder* tab is now
+  *Concentration Series* (id `ladder` kept, so old links still work); OBK's
+  sphere regression-anchor paragraph and table row, its review/twin sentence and
+  the DKT schematic's solver-defect history were dropped as bookkeeping, and with
+  them the only two numbers removed (the anchor's K and the defect-era 4° stall).
+  Every other measured number, reference and tolerance is unchanged; downloads and
+  generated data are untouched. `src/pages/visitor-language.test.ts` keeps the vocabulary
+  out.
+- 2026-10-15, after owner feedback on PR #22: OBK's Introduction and Definition
+  now stand alone. The hydrodynamic radius is explained at first use (Hasimoto's
+  closed-form periodic-array drag solved for an equivalent sphere radius), the
+  three runs are described by cells across the thin axis and by 2a/L instead of
+  "production resolution" and "closing rung", and a, U, X^A, Y^A, 2b/h, the solid
+  fraction and the superficial velocity are defined where they first appear.
+  *Rung* and *ladder* on OBK are confined to the Ratio Ladder tab (elsewhere:
+  *configuration*), and the test checks that.
+
 ## Particle Sedimentation Migration
 
 Particle Sedimentation is now the fourth migrated benchmark. The Angular static

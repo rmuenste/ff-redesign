@@ -7,6 +7,8 @@ import {
   comparisonLayout,
   deriveTraceVariants,
   expandSource,
+  LEGEND_ROW_PX,
+  legendRows,
   type LoadedGroup,
   type RawTrace
 } from "./comparison";
@@ -201,6 +203,47 @@ describe("buildComparisonTraces (overlay)", () => {
     expect(traces[1].showlegend).toBe(false);
   });
 
+  it("starts the sampled markers at an offset, so two codes on one time grid interleave", () => {
+    const group: SeriesGroup = { ...groupL1, markerSymbol: "triangle-up" };
+    const raw: RawTrace[] = [{ x: [0, 1, 2, 3, 4, 5], y: [10, 11, 12, 13, 14, 15], name: "FEAT3" }];
+    const at = (offset: number) =>
+      buildComparisonTraces(
+        { ...spec, seriesGroups: [group] },
+        [{ group, source: { ...groupL1.source!, markerSampleEvery: 4, markerSampleOffset: offset }, rawTraces: raw, variants: deriveTraceVariants(raw, group.variantStrategy) }],
+        { selectedGroupIds: ["l1"], selectedVariantIds: ["0"], compareMode: "overlay" }
+      )[1].x;
+    expect(at(0)).toEqual([0, 4]);
+    expect(at(2)).toEqual([2]);
+    expect(at(6)).toEqual([2]);
+  });
+
+  it("puts the marker in the legend entry when asked, through a one-point proxy", () => {
+    const source = { ...groupL1.source!, markerSampleEvery: 2, markerInLegend: true };
+    const group: SeriesGroup = { ...groupL1, label: "FEAT3 L3", markerSymbol: "triangle-up", dash: "dash" };
+    const raw: RawTrace[] = [{ x: [0, 1, 2, 3], y: [10, 11, 12, 13], name: "FEAT3 E4 L3" }];
+    const traces = buildComparisonTraces(
+      { ...spec, preserveSourceColorsWhenSingleGroup: false, seriesGroups: [group] },
+      [{ group, source, rawTraces: raw, variants: deriveTraceVariants(raw, group.variantStrategy) }],
+      { selectedGroupIds: ["l1"], selectedVariantIds: ["0"], compareMode: "overlay" }
+    );
+    expect(traces).toHaveLength(3);
+    const [line, markers, proxy] = traces;
+    // The full line and its sampled markers stay out of the legend...
+    expect(line.x).toEqual([0, 1, 2, 3]);
+    expect(line.showlegend).toBe(false);
+    expect(markers.showlegend).toBe(false);
+    // ...and the legend shows line, dash and marker together, on a point that is
+    // already a sampled marker, so the chart gains nothing visible.
+    expect(proxy.showlegend).toBe(true);
+    expect(proxy.mode).toBe("lines+markers");
+    expect(proxy.line.dash).toBe("dash");
+    expect(proxy.marker.symbol).toBe("triangle-up");
+    expect([proxy.x, proxy.y]).toEqual([[0], [10]]);
+    // One legend group, so a legend click toggles all three.
+    expect(new Set(traces.map(trace => trace.legendgroup)).size).toBe(1);
+    expect(line.legendgroup).toBeTruthy();
+  });
+
   it("throws for a mode not enabled on the spec", () => {
     expect(() =>
       buildComparisonTraces(spec, loaded, { selectedGroupIds: ["l1"], selectedVariantIds: ["0"], compareMode: "diff" })
@@ -235,12 +278,17 @@ describe("comparisonLayout", () => {
   });
 
   it("moves the legend under the chart on a narrow column and reserves a row per two entries", () => {
-    const four = comparisonLayout(spec, {}, { narrow: true, legendEntries: 4 });
-    expect(four.legend).toMatchObject({ orientation: "h", x: 0, xanchor: "left", yanchor: "top" });
-    expect(four.legend.y).toBeLessThan(0);
+    const four = comparisonLayout(spec, {}, { narrow: true, legendEntries: 4, width: 310 });
+    // Pinned to the bottom of the figure, never riding up into the x-axis title.
+    expect(four.legend).toMatchObject({ orientation: "h", x: 0, xanchor: "left", y: 0, yref: "container", yanchor: "bottom" });
+    // Two entries a row: each is a 40px symbol, its entry width and a 5px gap,
+    // and Plotly wraps at the plot-area width (310 - 54 - 12 = 244).
+    expect(four.legend).toMatchObject({ entrywidthmode: "pixels", entrywidth: 76, tracegroupgap: 0 });
+    expect(2 * (40 + 76 + 5)).toBeLessThanOrEqual(310 - four.margin.l - four.margin.r);
     expect(four.margin.b).toBe(96);
     expect(comparisonLayout(spec, {}, { narrow: true, legendEntries: 1 }).margin.b).toBe(76);
     expect(comparisonLayout(spec, {}, { narrow: true, legendEntries: 5 }).margin.b).toBe(116);
+    expect(comparisonLayout(spec, {}, { narrow: true, legendEntries: 7 }).margin.b).toBe(56 + LEGEND_ROW_PX * legendRows(7));
     // The side legend is untouched by the entry count.
     expect(comparisonLayout(spec, {}, { narrow: false, legendEntries: 5 }).margin.b).toBe(48);
   });

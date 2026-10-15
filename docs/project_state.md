@@ -141,6 +141,47 @@ reason.
   directly under `downloads/` and the setup figure, so it no longer deletes the
   lubrication companion's output; the two converters can be re-run in either order.
 
+### 2026-10-15: FEAT3 alongside FeatFloWer
+
+The same four cases at L2, L3 and L4, computed with FEAT3 on the same meshes (so
+a level is the same D/h, 11.4 / 23.9 / 49.1, for both codes), now share the Results
+charts and run table with FeatFloWer.
+
+- `scripts/convert-sedimentation-feat3-data.mjs` reads
+  `scripts/source-data/sedimentation/feat3/` (`vel<CASE>_L<n>.txt`,
+  `pos<CASE>_L<n>.txt`, `feat3_runs.csv`) under the campaign rules of
+  `scripts/lib/sedimentation-campaign.mjs` (now taking the runs CSV's name; it also
+  checks `D_over_h` against the level). It owns `plots/{velocity,position}/feat3-*.json`
+  and `downloads/feat3/` (`feat3_vel*`/`feat3_pos*` series, `feat3_runs.csv`,
+  `sedimentation-feat3.zip`) and writes `src/data/generated/sedimentation-feat3.json`.
+  The core converter now owns its curves by file (`<CASE>-*.json`) rather than the
+  whole curve folders; core, lubrication and FEAT3 converters produce an identical
+  manifest in any run order. Not wired into `package.json`: the build does not run
+  converters.
+- Encoding: colour and dash stay the level on the per-case panel, and colour the
+  case plus dash the level on the all-cases panel (PR #20). The code is the marker,
+  as on the rising bubble pages (FeatFloWer diamond, FEAT3 triangle), sampled about
+  twenty times per curve with FEAT3's half an interval later so the two interleave.
+  New `PlotSource.markerSampleOffset` and `markerInLegend` (a one-point legend proxy,
+  so a legend entry shows line, dash and marker together; Plotly omits data-less
+  traces from the legend).
+- The per-case panel shows both codes at all three levels by default (seven legend
+  entries, level-major: FeatFloWer L2, FEAT3 L2, ...). Each level is a same-coloured
+  pair, so the code gap reads inside a pair and refinement across colours, on one
+  chart. Both gaps are 1-3 % at the peak here, so neither swamps the other; a split
+  into a codes mode and a levels mode was not needed (it would also have needed a
+  second selector beside the case selector). The series checkboxes thin the chart.
+  The all-cases panel has twelve entries (each case's two codes, then the PIV).
+- Phone legends (all panels, site-wide): pinned to the figure bottom in container
+  coordinates, exactly two entries a row (entry width from the measured figure
+  width), and the figure grows by the legend rows so the plot area keeps its height.
+  Before, a long legend overlapped the x-axis title and squashed the plot.
+- Copy: a short "Two codes" paragraph on Results, the run table gains Code and
+  "Cells across diameter" columns (24 rows), hero names both codes, the "Metrics"
+  KPI became "Codes", the catalogue summary mentions two codes, and the Reference
+  Data tab describes the FEAT3 files. The convergence discussion and the
+  lubrication baselines are scoped to FeatFloWer, which they are about.
+
 ## Flow Around Cylinder 3D: the two cases made explicit
 
 The FAC3 page always carried both DFG 3D problems, but only Re = 20 was named;

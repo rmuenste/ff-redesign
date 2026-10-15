@@ -14,9 +14,10 @@ export interface RawTrace {
   type?: string;
   mode?: string;
   name?: string | null;
-  marker?: { color?: string; symbol?: string };
+  marker?: { color?: string; symbol?: string; size?: number };
   line?: { color?: string; dash?: string };
   showlegend?: boolean;
+  legendgroup?: string;
 }
 
 /** A trace ready to hand to Plotly, with resolved colour/dash/name. */
@@ -216,23 +217,46 @@ function styleTrace(
 
   if (!source.markerSampleEvery || source.markerSampleEvery <= 0) return [lineTrace];
 
+  const symbol = group.markerSymbol ?? trace.marker?.symbol;
+  const markers: PlotlyTrace = {
+    ...trace,
+    x: sample(trace.x, source.markerSampleEvery, source.markerSampleOffset),
+    y: sample(trace.y, source.markerSampleEvery, source.markerSampleOffset),
+    name,
+    mode: "markers",
+    line: { ...line },
+    marker: { ...trace.marker, color, symbol },
+    showlegend: false
+  };
+  if (!source.markerInLegend) return [lineTrace, markers];
+
+  // The legend entry is a proxy drawn as line + marker: a single point on top of
+  // the first sampled marker, so it adds nothing visible to the chart (Plotly
+  // leaves a trace without data out of the legend). The full line and its sampled
+  // markers stay out of the legend but share its legend group, so a legend click
+  // still toggles the whole curve.
+  const legendgroup = `${group.id}:${variant.id}`;
+  const anchor = markers.x.length ? 0 : -1;
   return [
-    lineTrace,
+    { ...lineTrace, showlegend: false, legendgroup },
+    { ...markers, legendgroup },
     {
-      ...trace,
-      x: sample(trace.x, source.markerSampleEvery),
-      y: sample(trace.y, source.markerSampleEvery),
+      x: anchor < 0 ? trace.x.slice(0, 1) : markers.x.slice(0, 1),
+      y: anchor < 0 ? trace.y.slice(0, 1) : markers.y.slice(0, 1),
+      type: trace.type ?? "scatter",
       name,
-      mode: "markers",
-      line: { ...line },
-      marker: { ...trace.marker, color, symbol: group.markerSymbol ?? trace.marker?.symbol },
-      showlegend: false
+      mode: "lines+markers",
+      line,
+      marker: { ...trace.marker, color, symbol },
+      showlegend,
+      legendgroup
     }
   ];
 }
 
-function sample(values: number[], every: number) {
-  return values.filter((_, index) => index % every === 0);
+function sample(values: number[], every: number, offset = 0) {
+  const first = ((offset % every) + every) % every;
+  return values.filter((_, index) => index % every === first);
 }
 
 /** Resolved theme tokens for the plot chrome; callers pass values read from the
@@ -256,12 +280,17 @@ export interface ComparisonLayoutOptions {
   narrow?: boolean;
   /** Legend entries to make room for when the legend sits under the chart. */
   legendEntries?: number;
+  /** Width of the figure in pixels, to split a legend under the chart into two columns. */
+  width?: number;
 }
 
-/** Rows a horizontal legend will wrap to; phone-width labels fit about two per row. */
-function legendRows(entries: number) {
+/** Rows the horizontal legend wraps to: it is laid out two entries per row. */
+export function legendRows(entries: number) {
   return Math.max(1, Math.ceil(entries / 2));
 }
+
+/** Pixels a legend row takes under the chart. */
+export const LEGEND_ROW_PX = 20;
 
 /** Themed, token-driven Plotly layout shared by every comparison plot. */
 export function comparisonLayout(
@@ -273,13 +302,32 @@ export function comparisonLayout(
   const text = colors.text ?? "rgba(255,255,255,0.82)";
   const mutedText = colors.mutedText ?? "rgba(255,255,255,0.72)";
   const grid = colors.grid ?? "rgba(255,255,255,0.10)";
-  // Under the chart, the legend starts below the x-axis title (yanchor top at
-  // a negative paper y) and wraps; the bottom margin reserves ~20px per row
-  // on top of the axis title's own space.
+  // Under the chart, the legend sits at the bottom of the figure (container
+  // coordinates, so it never rides up into the x-axis title however short the
+  // plot area is), two entries per row; the bottom margin reserves a row height
+  // per row on top of the axis title's own space. The panel grows the figure by
+  // the same amount, so the plot area keeps its height.
+  // Plotly wraps a horizontal legend at the plot-area width, and each entry is its
+  // symbol (40px) plus `entrywidth` plus a 5px gap, so half the plot area less
+  // those makes exactly two entries a row. Legend groups (see `markerInLegend`)
+  // would add a 10px gap under every row; it is dropped here.
+  const right = options.narrow ? 12 : 20;
+  const plotAreaWidth = (options.width ?? 320) - 54 - right;
   const legend = options.narrow
-    ? { font: { color: mutedText }, orientation: "h" as const, x: 0, xanchor: "left" as const, y: -0.28, yanchor: "top" as const }
+    ? {
+        font: { color: mutedText, size: 11 },
+        orientation: "h" as const,
+        entrywidth: Math.max(40, Math.floor(plotAreaWidth / 2) - 46),
+        tracegroupgap: 0,
+        entrywidthmode: "pixels" as const,
+        x: 0,
+        xanchor: "left" as const,
+        y: 0,
+        yref: "container" as const,
+        yanchor: "bottom" as const
+      }
     : { font: { color: mutedText } };
-  const bottom = options.narrow ? 56 + 20 * legendRows(options.legendEntries ?? 0) : 48;
+  const bottom = options.narrow ? 56 + LEGEND_ROW_PX * legendRows(options.legendEntries ?? 0) : 48;
   return {
     title: { text: spec.title },
     autosize: true,
@@ -287,7 +335,7 @@ export function comparisonLayout(
     plot_bgcolor: "rgba(0,0,0,0)",
     font: { color: text },
     legend,
-    margin: { l: 54, r: 20, t: 48, b: bottom },
+    margin: { l: 54, r: right, t: 48, b: bottom },
     xaxis: {
       title: { text: axis.x },
       range: spec.axisRanges?.x,

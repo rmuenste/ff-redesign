@@ -18,10 +18,11 @@ import { galleryItems } from "../data/gallery";
  * Registry and gallery copy is read from the modules themselves.
  */
 
-const PAGES: Record<string, { files: string[]; generated?: string }> = {
+const PAGES: Record<string, { files: string[]; generated?: string | string[] }> = {
   sedimentation: {
     files: ["src/pages/ParticleSedimentationPage.tsx", "src/data/sedimentation.tsx"],
-    generated: "sedimentation-lubrication.json"
+    // The FEAT3 run table names its code in a label the run table and legends show.
+    generated: ["sedimentation-lubrication.json", "sedimentation-feat3.json"]
   },
   dkt: {
     files: ["src/pages/DraftingKissingTumblingPage.tsx", "src/data/dkt.tsx", "src/components/dkt-schematic.tsx"]
@@ -169,7 +170,7 @@ function pageCopy(id: string, { ladderTab = true } = {}) {
   };
   return [
     ...page.files.map(file => visibleCopy(read(file))),
-    page.generated ? generatedLabels(page.generated) : "",
+    ...[page.generated ?? []].flat().map(generatedLabels),
     benchmark.title,
     benchmark.shortTitle,
     benchmark.summary,
@@ -205,6 +206,19 @@ describe("visitor language on the DNS pages", () => {
     expect(copy).toContain("The pinned rung");
     expect(copy).toContain("Every run passes its gate");
     expect(copy).not.toMatch(/twin|ladder|runs\.csv/);
+  });
+
+  it("sedimentation: reads the FEAT3 copy, and none of the FEAT3 runs' provenance", () => {
+    const copy = pageCopy("sedimentation");
+    // The extraction reaches the new prose, table headers, legend labels and downloads.
+    expect(copy).toContain("the newest member of the");
+    expect(copy).toContain("Cells across diameter");
+    expect(copy).toContain("FEAT3");
+    expect(copy).toContain("All FEAT3 series and their run summary");
+    // feat3_runs.csv's provenance columns are for the download only.
+    for (const term of [/default-mg|gmres|mg16/i, /\branks?\b/i, /\b14\d{4}\b/, /ccnd-sedimentation/i, /solver.note/i]) {
+      expect(hits(copy, term), String(term)).toEqual([]);
+    }
   });
 
   for (const id of Object.keys(PAGES)) {

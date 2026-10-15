@@ -29,14 +29,28 @@
 //   src/data/generated/sedimentation-runs.json
 //
 // plots/lubrication/ and downloads/lubrication/ belong to
-// scripts/convert-sedimentation-lubrication.mjs; this script leaves them, and
-// their manifest entries, untouched.
+// scripts/convert-sedimentation-lubrication.mjs, and plots/{velocity,position}/feat3-*
+// and downloads/feat3/ to scripts/convert-sedimentation-feat3-data.mjs; this script
+// leaves them, and their manifest entries, untouched. Its own curves are the
+// <CASE>-*.json files in the two curve folders, so the FEAT3 curves next to them
+// survive a re-run in either order.
 //
 // Run with: node scripts/convert-sedimentation-data.mjs
 import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { dirname, relative, resolve } from "node:path";
 import { resetGeneratedOutputs, writeManifest } from "./lib/output-dir.mjs";
-import { campaignName, levelTag, parsePairs, readCampaignSeries } from "./lib/sedimentation-campaign.mjs";
+import {
+  CASES,
+  LEVELS,
+  START_HEIGHT,
+  campaignName,
+  caseColors,
+  gapHeight,
+  levelDashes,
+  levelTag,
+  parsePairs,
+  readCampaignSeries
+} from "./lib/sedimentation-campaign.mjs";
 import { createDeflatedZip } from "./lib/zip.mjs";
 
 const root = resolve(import.meta.dirname, "..");
@@ -46,13 +60,8 @@ const runsCsv = `${campaignDir}/campaign_runs.csv`;
 const outDir = resolve(root, "public/benchmark-assets/sedimentation");
 const generatedPath = resolve(root, "src/data/generated/sedimentation-runs.json");
 
-/** Initial sphere-centre height: eight diameters above the bottom wall. */
-const SPHERE_RADIUS = 0.0075;
-const SPHERE_DIAMETER = 0.015;
-const START_HEIGHT = 0.1275;
-
-const cases = ["E1", "E2", "E3", "E4"];
-const levels = ["l2", "l3", "l4"];
+const cases = CASES;
+const levels = LEVELS;
 const metrics = {
   velocity: {
     label: "Velocity",
@@ -64,15 +73,9 @@ const metrics = {
     label: "Position",
     prefix: "pos",
     pivFile: caseId => `case_${caseId}_h.csv`,
-    // Gap height in diameters; rounded to drop float noise such as 8.000000000000002.
-    transform: value => Number(((value - SPHERE_RADIUS) / SPHERE_DIAMETER).toPrecision(12))
+    // Gap height in diameters.
+    transform: gapHeight
   }
-};
-const caseColors = {
-  E1: "#5fb8ff",
-  E2: "#f5b84b",
-  E3: "#7bd88f",
-  E4: "#ef6f6c"
 };
 const pivSymbols = {
   E1: "square-open",
@@ -80,8 +83,6 @@ const pivSymbols = {
   E3: "triangle-up-open",
   E4: "diamond-open"
 };
-/** One dash per level, shared with the page's level vocabulary. */
-const levelDashes = { l2: "dot", l3: "dash", l4: "solid" };
 
 function traceFromPairs(pairs, { name, color, mode, dash, markerSymbol }) {
   return {
@@ -113,11 +114,22 @@ if (!series.length) throw new Error(`no campaign series found in ${campaignDir}`
 
 // ---- assets -------------------------------------------------------------------
 
-// Only the paths this script writes are rebuilt: the two curve folders, the
-// files directly under downloads/ (the ones present from the last run and the
-// ones this run will write) and the setup figure. The lubrication material under
-// plots/lubrication/ and downloads/lubrication/, the films and gallery stills
-// under media/, and all of their manifest entries stay where they are.
+// Only the paths this script writes are rebuilt: its <CASE>-*.json curves in the
+// two curve folders and the files directly under downloads/ (in both cases the
+// ones present from the last run and the ones this run will write), and the setup
+// figure. The lubrication material under plots/lubrication/ and
+// downloads/lubrication/, the FEAT3 curves (feat3-*.json) and downloads/feat3/, the
+// films and gallery stills under media/, and all of their manifest entries stay
+// where they are.
+const ownCurve = /^E\d+-.+\.json$/;
+const plotNames = Object.keys(metrics).flatMap(metricId => {
+  const dir = resolve(outDir, "plots", metricId);
+  const stale = existsSync(dir)
+    ? readdirSync(dir, { withFileTypes: true }).filter(entry => entry.isFile() && ownCurve.test(entry.name)).map(entry => entry.name)
+    : [];
+  const fresh = cases.flatMap(caseId => [...series.filter(run => run.caseId === caseId).map(run => `${caseId}-${run.level}.json`), `${caseId}-piv.json`]);
+  return [...new Set([...stale, ...fresh])].map(name => `plots/${metricId}/${name}`);
+});
 const downloadNames = [
   ...series.flatMap(run => Object.values(metrics).map(metric => campaignName(metric.prefix, run.caseId, run.level))),
   "campaign_runs.csv",
@@ -131,8 +143,7 @@ const staleDownloads = existsSync(downloadsDir)
 const preserved = resetGeneratedOutputs(
   outDir,
   [
-    "plots/velocity",
-    "plots/position",
+    ...plotNames,
     ...[...new Set([...staleDownloads, ...downloadNames])].map(name => `downloads/${name}`),
     "media/sedimentation-setup.png"
   ],

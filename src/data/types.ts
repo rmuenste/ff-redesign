@@ -82,6 +82,18 @@ export interface PlotSource {
   dash?: string;
   /** Optional sampled marker companion for dense quantity traces. */
   markerSampleEvery?: number;
+  /**
+   * First sampled index (default 0). Two codes drawn over the same time grid
+   * can offset their markers by half an interval so they interleave rather
+   * than stack on the same instants.
+   */
+  markerSampleOffset?: number;
+  /**
+   * Show the group's marker in its legend entry (line, dash and marker together)
+   * rather than the bare line. For groups that share a colour and dash and differ
+   * only by marker, such as two codes at one mesh level.
+   */
+  markerInLegend?: boolean;
 }
 
 /**

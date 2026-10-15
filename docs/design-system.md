@@ -552,8 +552,9 @@ Plot styling should preserve:
 - Primary highlight for FeatFloWer.
 - Series (code or level), metric, baseline, and export controls adjacent to the plot.
 - Legend beside the curves, except when the plot column is narrower than
-  `NARROW_PLOT_WIDTH` (560px, i.e. phones): then it sits under the x-axis in
-  horizontal rows and the bottom margin grows with the number of rows. The
+  `NARROW_PLOT_WIDTH` (560px, i.e. phones): then it sits at the bottom of the
+  figure, two entries a row, and the bottom margin and the figure height grow
+  with the number of rows, so the plot area keeps its height. The
   comparison panel measures its own column with a `ResizeObserver` in an
   effect, so the prerendered shell never reads layout.
 

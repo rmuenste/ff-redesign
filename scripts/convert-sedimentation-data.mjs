@@ -1,24 +1,71 @@
-import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+// Builds the core plot assets of the Particle Sedimentation page (ten Cate
+// cases E1-E4): the campaign's settling velocity and sphere height at mesh
+// levels L2, L3 and L4, the digitised PIV references, the downloads and the
+// per-run summary the page quotes.
+//
+// Inputs:
+//   scripts/source-data/sedimentation/campaign/
+//     vel<CASE>_L<n>.txt     headerless "time[s] v_z[m/s]", one row per time step
+//     pos<CASE>_L<n>.txt     headerless "time[s] z[m]", raw sphere-centre height
+//     campaign_runs.csv      one row per exported run (steps, dt, end time, peak)
+//   scripts/source-data/sedimentation/ref_<CASE>.dat      PIV velocity
+//   scripts/source-data/sedimentation/case_<CASE>_h.csv   PIV gap height h/d_p
+//   scripts/source-data/sedimentation/sedimentation-setup.png
+//
+// A case/level pair is published when both of its text files exist. A pair that
+// has not been exported is skipped and logged, never filled in; exporting it
+// into the same folder (and its row into campaign_runs.csv) and re-running this
+// script is all it takes to publish it. Every published series must have its row
+// in campaign_runs.csv, and the row must agree with the file (step count, end
+// time, peak settling velocity and its time), so nothing the page states about a
+// run can drift from the curve it draws. The rules live in
+// scripts/lib/sedimentation-campaign.mjs.
+//
+// Outputs:
+//   public/benchmark-assets/sedimentation/plots/{velocity,position}/<CASE>-l<n>.json
+//   public/benchmark-assets/sedimentation/plots/{velocity,position}/<CASE>-piv.json
+//   public/benchmark-assets/sedimentation/downloads/*  (+ sedimentation.zip)
+//   public/benchmark-assets/sedimentation/media/sedimentation-setup.png
+//   src/data/generated/sedimentation-runs.json
+//
+// plots/lubrication/ and downloads/lubrication/ belong to
+// scripts/convert-sedimentation-lubrication.mjs; this script leaves them, and
+// their manifest entries, untouched.
+//
+// Run with: node scripts/convert-sedimentation-data.mjs
+import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { dirname, relative, resolve } from "node:path";
 import { resetGeneratedOutputs, writeManifest } from "./lib/output-dir.mjs";
+import { campaignName, levelTag, parsePairs, readCampaignSeries } from "./lib/sedimentation-campaign.mjs";
+import { createDeflatedZip } from "./lib/zip.mjs";
 
 const root = resolve(import.meta.dirname, "..");
+const sourceDir = "scripts/source-data/sedimentation";
+const campaignDir = `${sourceDir}/campaign`;
+const runsCsv = `${campaignDir}/campaign_runs.csv`;
 const outDir = resolve(root, "public/benchmark-assets/sedimentation");
+const generatedPath = resolve(root, "src/data/generated/sedimentation-runs.json");
+
+/** Initial sphere-centre height: eight diameters above the bottom wall. */
+const SPHERE_RADIUS = 0.0075;
+const SPHERE_DIAMETER = 0.015;
+const START_HEIGHT = 0.1275;
 
 const cases = ["E1", "E2", "E3", "E4"];
-const levels = ["l2", "l3"];
+const levels = ["l2", "l3", "l4"];
 const metrics = {
   velocity: {
     label: "Velocity",
-    simPrefix: "vel",
+    prefix: "vel",
     pivFile: caseId => `ref_${caseId}.dat`,
     transform: value => value
   },
   position: {
     label: "Position",
-    simPrefix: "pos",
+    prefix: "pos",
     pivFile: caseId => `case_${caseId}_h.csv`,
-    transform: value => (value - 0.0075) / 0.015
+    // Gap height in diameters; rounded to drop float noise such as 8.000000000000002.
+    transform: value => Number(((value - SPHERE_RADIUS) / SPHERE_DIAMETER).toPrecision(12))
   }
 };
 const caseColors = {
@@ -33,20 +80,8 @@ const pivSymbols = {
   E3: "triangle-up-open",
   E4: "diamond-open"
 };
-
-function parsePairs(file) {
-  return readFileSync(file, "utf-8")
-    .split(/\r?\n/)
-    .map(line => line.trim())
-    .filter(Boolean)
-    .map(line => {
-      const [x, y] = line.split(/[\s,;]+/).map(Number);
-      if (!Number.isFinite(x) || !Number.isFinite(y)) {
-        throw new Error(`Invalid numeric pair in ${file}: ${line}`);
-      }
-      return [x, y];
-    });
-}
+/** One dash per level, shared with the page's level vocabulary. */
+const levelDashes = { l2: "dot", l3: "dash", l4: "solid" };
 
 function traceFromPairs(pairs, { name, color, mode, dash, markerSymbol }) {
   return {
@@ -65,151 +100,83 @@ function writeJson(path, value) {
   writeFileSync(path, `${JSON.stringify(value, null, 2)}\n`);
 }
 
-function copyAsset(oldPath, newPath, extra = {}) {
-  const from = resolve(root, oldPath);
-  const to = resolve(outDir, newPath);
-  mkdirSync(dirname(to), { recursive: true });
-  copyFileSync(from, to);
-  return { oldPath, newPath, ...extra };
-}
+// ---- inputs -------------------------------------------------------------------
 
-function crc32(buffer) {
-  let crc = 0xffffffff;
-  for (const byte of buffer) {
-    crc ^= byte;
-    for (let bit = 0; bit < 8; bit += 1) {
-      crc = (crc >>> 1) ^ (0xedb88320 & -(crc & 1));
-    }
-  }
-  return (crc ^ 0xffffffff) >>> 0;
-}
+const { series, missing } = readCampaignSeries({
+  root,
+  campaignDir,
+  cases,
+  levels,
+  startHeight: START_HEIGHT
+});
+if (!series.length) throw new Error(`no campaign series found in ${campaignDir}`);
 
-function dosDateTime(date = new Date("2026-01-01T00:00:00Z")) {
-  const year = Math.max(date.getUTCFullYear(), 1980);
-  const dosTime = (date.getUTCHours() << 11) | (date.getUTCMinutes() << 5) | Math.floor(date.getUTCSeconds() / 2);
-  const dosDate = ((year - 1980) << 9) | ((date.getUTCMonth() + 1) << 5) | date.getUTCDate();
-  return { dosDate, dosTime };
-}
+// ---- assets -------------------------------------------------------------------
 
-function writeUInt16(value) {
-  const buffer = Buffer.alloc(2);
-  buffer.writeUInt16LE(value);
-  return buffer;
-}
-
-function writeUInt32(value) {
-  const buffer = Buffer.alloc(4);
-  buffer.writeUInt32LE(value >>> 0);
-  return buffer;
-}
-
-function createStoredZip(entries) {
-  const localParts = [];
-  const centralParts = [];
-  let offset = 0;
-  const { dosDate, dosTime } = dosDateTime();
-
-  for (const entry of entries) {
-    const name = Buffer.from(entry.name);
-    const data = entry.data;
-    const crc = crc32(data);
-    const localHeader = Buffer.concat([
-      writeUInt32(0x04034b50),
-      writeUInt16(20),
-      writeUInt16(0),
-      writeUInt16(0),
-      writeUInt16(dosTime),
-      writeUInt16(dosDate),
-      writeUInt32(crc),
-      writeUInt32(data.length),
-      writeUInt32(data.length),
-      writeUInt16(name.length),
-      writeUInt16(0),
-      name
-    ]);
-    localParts.push(localHeader, data);
-    centralParts.push(Buffer.concat([
-      writeUInt32(0x02014b50),
-      writeUInt16(20),
-      writeUInt16(20),
-      writeUInt16(0),
-      writeUInt16(0),
-      writeUInt16(dosTime),
-      writeUInt16(dosDate),
-      writeUInt32(crc),
-      writeUInt32(data.length),
-      writeUInt32(data.length),
-      writeUInt16(name.length),
-      writeUInt16(0),
-      writeUInt16(0),
-      writeUInt16(0),
-      writeUInt16(0),
-      writeUInt32(0),
-      writeUInt32(offset),
-      name
-    ]));
-    offset += localHeader.length + data.length;
-  }
-
-  const central = Buffer.concat(centralParts);
-  return Buffer.concat([
-    ...localParts,
-    central,
-    writeUInt32(0x06054b50),
-    writeUInt16(0),
-    writeUInt16(0),
-    writeUInt16(entries.length),
-    writeUInt16(entries.length),
-    writeUInt32(central.length),
-    writeUInt32(offset),
-    writeUInt16(0)
-  ]);
-}
-
-// Only the paths this script writes are rebuilt; the gallery stills under
-// media/gallery/ and their manifest entries stay. plots/ and downloads/ include
-// the lubrication material, which scripts/convert-sedimentation-lubrication.mjs
-// rebuilds afterwards.
+// Only the paths this script writes are rebuilt: the two curve folders, the
+// files directly under downloads/ (the ones present from the last run and the
+// ones this run will write) and the setup figure. The lubrication material under
+// plots/lubrication/ and downloads/lubrication/, the films and gallery stills
+// under media/, and all of their manifest entries stay where they are.
+const downloadNames = [
+  ...series.flatMap(run => Object.values(metrics).map(metric => campaignName(metric.prefix, run.caseId, run.level))),
+  "campaign_runs.csv",
+  ...cases.flatMap(caseId => [`ref_${caseId}.dat`, `case_${caseId}_h.csv`]),
+  "sedimentation.zip"
+];
+const downloadsDir = resolve(outDir, "downloads");
+const staleDownloads = existsSync(downloadsDir)
+  ? readdirSync(downloadsDir, { withFileTypes: true }).filter(entry => entry.isFile()).map(entry => entry.name)
+  : [];
 const preserved = resetGeneratedOutputs(
   outDir,
-  ["plots", "downloads", "media/sedimentation-setup.png"],
+  [
+    "plots/velocity",
+    "plots/position",
+    ...[...new Set([...staleDownloads, ...downloadNames])].map(name => `downloads/${name}`),
+    "media/sedimentation-setup.png"
+  ],
   { benchmarkId: "sedimentation" }
 );
 
 const entries = [];
 const zipEntries = [];
 
+function copyDownload(oldPath, name, label = name) {
+  const newPath = `downloads/${name}`;
+  const to = resolve(outDir, newPath);
+  mkdirSync(dirname(to), { recursive: true });
+  copyFileSync(resolve(root, oldPath), to);
+  entries.push({ oldPath, newPath, kind: "download", label });
+  zipEntries.push({ name: `sedimentation/${name}`, data: readFileSync(to) });
+}
+
 for (const [metricId, metric] of Object.entries(metrics)) {
   for (const caseId of cases) {
-    for (const level of levels) {
-      const angularName = `${metric.simPrefix}${caseId}${level === "l3" ? "_L3" : ""}.txt`;
-      const oldPath = `../ff-angular/src/assets/sedimentation/${angularName}`;
-      const source = resolve(root, oldPath);
-      const pairs = parsePairs(source).map(([x, y]) => [x, metric.transform(y)]);
-      const newPath = `plots/${metricId}/${caseId}-${level}.json`;
+    for (const run of series.filter(entry => entry.caseId === caseId)) {
+      const pairs = run[metricId].map(([x, y]) => [x, metric.transform(y)]);
+      const newPath = `plots/${metricId}/${caseId}-${run.level}.json`;
       writeJson(resolve(outDir, newPath), traceFromPairs(pairs, {
-        name: `${caseId} ${level.toUpperCase()}`,
+        name: `${caseId} ${levelTag(run.level)}`,
         color: caseColors[caseId],
         mode: "lines",
-        dash: level === "l3" ? "dot" : undefined
+        dash: levelDashes[run.level]
       }));
       entries.push({
-        oldPath,
+        oldPath: run.files[metricId],
         newPath,
         metric: metricId,
         seriesGroupId: caseId.toLowerCase(),
         kind: "code",
-        label: `${caseId} ${level.toUpperCase()} ${metric.label}`,
+        label: `${caseId} ${levelTag(run.level)} ${metric.label}`,
         sourceShape: "single-trace",
         derived: true
       });
     }
 
-    const pivName = metric.pivFile(caseId);
-    const pivOldPath = `scripts/source-data/sedimentation/${pivName}`;
-    const pivPairs = parsePairs(resolve(root, pivOldPath));
+    const pivOldPath = `${sourceDir}/${metric.pivFile(caseId)}`;
     const pivPath = `plots/${metricId}/${caseId}-piv.json`;
-    writeJson(resolve(outDir, pivPath), traceFromPairs(pivPairs, {
+    writeJson(resolve(outDir, pivPath), traceFromPairs(parsePairs(resolve(root, pivOldPath)), {
       name: `${caseId} PIV`,
       color: caseColors[caseId],
       mode: "markers",
@@ -228,47 +195,31 @@ for (const [metricId, metric] of Object.entries(metrics)) {
   }
 }
 
+for (const run of series) {
+  for (const metric of Object.values(metrics)) {
+    const name = campaignName(metric.prefix, run.caseId, run.level);
+    copyDownload(`${campaignDir}/${name}`, name);
+  }
+}
+copyDownload(runsCsv, "campaign_runs.csv");
+
 for (const caseId of cases) {
-  for (const level of levels) {
-    for (const metric of Object.values(metrics)) {
-      const angularName = `${metric.simPrefix}${caseId}${level === "l3" ? "_L3" : ""}.txt`;
-      const oldPath = `../ff-angular/src/assets/sedimentation/${angularName}`;
-      const newPath = `downloads/${angularName}`;
-      entries.push(copyAsset(oldPath, newPath, {
-        kind: "download",
-        label: angularName
-      }));
-      zipEntries.push({
-        name: `sedimentation/${angularName}`,
-        data: readFileSync(resolve(outDir, newPath))
-      });
-    }
+  for (const name of [`ref_${caseId}.dat`, `case_${caseId}_h.csv`]) {
+    copyDownload(`${sourceDir}/${name}`, name);
   }
 }
 
-for (const caseId of cases) {
-  for (const sourceName of [`ref_${caseId}.dat`, `case_${caseId}_h.csv`]) {
-    const oldPath = `scripts/source-data/sedimentation/${sourceName}`;
-    const newPath = `downloads/${sourceName}`;
-    entries.push(copyAsset(oldPath, newPath, {
-      kind: "download",
-      label: sourceName
-    }));
-    zipEntries.push({
-      name: `sedimentation/${sourceName}`,
-      data: readFileSync(resolve(outDir, newPath))
-    });
-  }
-}
-
-entries.push(copyAsset("../ff-angular/src/assets/sedimentation_setup.png", "media/sedimentation-setup.png", {
+const setupOldPath = `${sourceDir}/sedimentation-setup.png`;
+mkdirSync(resolve(outDir, "media"), { recursive: true });
+copyFileSync(resolve(root, setupOldPath), resolve(outDir, "media/sedimentation-setup.png"));
+entries.push({
+  oldPath: setupOldPath,
+  newPath: "media/sedimentation-setup.png",
   kind: "media",
   label: "Sedimentation experimental setup"
-}));
+});
 
-const zipPath = resolve(outDir, "downloads/sedimentation.zip");
-mkdirSync(dirname(zipPath), { recursive: true });
-writeFileSync(zipPath, createStoredZip(zipEntries));
+writeFileSync(resolve(outDir, "downloads/sedimentation.zip"), createDeflatedZip(zipEntries));
 entries.push({
   oldPath: "generated from sedimentation downloads",
   newPath: "downloads/sedimentation.zip",
@@ -278,4 +229,24 @@ entries.push({
 
 writeManifest(outDir, "sedimentation", entries, preserved);
 
-console.log(`Generated ${entries.length} sedimentation manifest entries in ${relative(root, outDir)}`);
+// ---- derived numbers the page quotes ----------------------------------------------
+
+writeJson(generatedPath, {
+  source: runsCsv,
+  levels,
+  runs: series.map(run => ({
+    case: run.caseId,
+    level: run.level,
+    steps: run.steps,
+    dtS: run.dt,
+    tEndS: run.tEnd,
+    peakVzMS: run.peakVz,
+    tPeakS: run.tPeak
+  })),
+  missing
+});
+
+console.log(
+  `Published ${series.length} campaign series (${missing.length} not exported yet); ` +
+    `${entries.length} manifest entries in ${relative(root, outDir)}`
+);

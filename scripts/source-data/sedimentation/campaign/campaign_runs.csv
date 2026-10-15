@@ -1,0 +1,13 @@
+case,level,rundir,slurm_job,binary,steps,dt_s,t_end_s,peak_vz_m_s,t_peak_s
+E1,L2,q2p1_dns_rundir_e1_l2,149878,/data/warehouse17/rmuenste/code/FF-EL/FeatFloWer/build-dns-pe-serial/applications/q2p1_bench_sedimentation/q2p1_bench_sedimentation,4300,0.0010d0,4.300,-0.035919,1.830
+E1,L3,q2p1_dns_rundir_e1_l3,137224,/data/warehouse17/rmuenste/code/FF-EL/FeatFloWer/build-dns-pe-serial/applications/q2p1_bench_sedimentation/q2p1_bench_sedimentation,4300,0.0010d0,4.300,-0.034839,1.896
+E1,L4,q2p1_dns_rundir_e1_l4,137228,/data/warehouse17/rmuenste/code/FF-EL/FeatFloWer/build-dns-pe-serial/applications/q2p1_bench_sedimentation/q2p1_bench_sedimentation,4300,0.0010d0,4.300,-0.034104,1.979
+E2,L2,q2p1_dns_rundir_e2_l2,137243,/data/warehouse17/rmuenste/code/FF-EL/FeatFloWer/build-dns-pe-serial/applications/q2p1_bench_sedimentation/q2p1_bench_sedimentation,2700,0.001d0,2.700,-0.059233,1.453
+E2,L3,q2p1_dns_rundir_e2_l3,137225,/data/warehouse17/rmuenste/code/FF-EL/FeatFloWer/build-dns-pe-serial/applications/q2p1_bench_sedimentation/q2p1_bench_sedimentation,2700,0.0010d0,2.700,-0.057523,1.505
+E2,L4,q2p1_dns_rundir_e2_l4,137245,/data/warehouse17/rmuenste/code/FF-EL/FeatFloWer/build-dns-pe-serial/applications/q2p1_bench_sedimentation/q2p1_bench_sedimentation,2700,0.001d0,2.700,-0.056228,1.519
+E3,L2,q2p1_dns_rundir_e3_l2,137244,/data/warehouse17/rmuenste/code/FF-EL/FeatFloWer/build-dns-pe-serial/applications/q2p1_bench_sedimentation/q2p1_bench_sedimentation,1800,0.001d0,1.800,-0.090227,1.166
+E3,L3,q2p1_dns_rundir_e3_l3,137226,/data/warehouse17/rmuenste/code/FF-EL/FeatFloWer/build-dns-pe-serial/applications/q2p1_bench_sedimentation/q2p1_bench_sedimentation,1800,0.0010d0,1.800,-0.087534,1.180
+E3,L4,q2p1_dns_rundir_e3_l4,137246,/data/warehouse17/rmuenste/code/FF-EL/FeatFloWer/build-dns-pe-serial/applications/q2p1_bench_sedimentation/q2p1_bench_sedimentation,1800,0.001d0,1.800,-0.085465,1.205
+E4,L2,q2p1_dns_rundir_e4_l2,137141,/data/warehouse17/rmuenste/code/FF-EL/FeatFloWer/build-dns-pe-serial/applications/q2p1_bench_sedimentation/q2p1_bench_sedimentation,1300,0.0010d0,1.300,-0.127632,0.938
+E4,L3,q2p1_dns_rundir_e4_l3,137142,/data/warehouse17/rmuenste/code/FF-EL/FeatFloWer/build-dns-pe-serial/applications/q2p1_bench_sedimentation/q2p1_bench_sedimentation,1300,0.0010d0,1.300,-0.123233,0.956
+E4,L4,q2p1_dns_rundir_e4_l4,137143,/data/warehouse17/rmuenste/code/FF-EL/FeatFloWer/build-dns-pe-serial/applications/q2p1_bench_sedimentation/q2p1_bench_sedimentation,1300,0.0010d0,1.300,-0.120335,0.980

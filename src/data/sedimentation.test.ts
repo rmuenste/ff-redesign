@@ -1,15 +1,24 @@
-import { readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
+import { availableSeriesGroups } from "../lib/comparison";
+import generatedRuns from "./generated/sedimentation-runs.json";
 import {
+  buildSedimentationLevelPlotSpecs,
+  buildSedimentationPlotSpecs,
   sedimentationBrennerBands,
   sedimentationDecomposition,
   sedimentationDecompositionSource,
+  sedimentationDownloads,
   sedimentationDtLadder,
+  sedimentationHasRun,
+  sedimentationLevelPlotSpecs,
+  sedimentationLevels,
   sedimentationLubricationCases,
   sedimentationLubricationRows,
   sedimentationLubricationSpecs,
   sedimentationPlotSpecs,
+  sedimentationRuns,
   sedimentationValidationRows,
   sedimentationValidationSource
 } from "./sedimentation";
@@ -25,22 +34,88 @@ function parseFirstPair(path: string) {
   return firstLine.split(/\s+/).map(Number) as [number, number];
 }
 
-describe("sedimentation converted Plotly data", () => {
-  it("creates 12 plot JSON files per metric", () => {
-    expect(readdirSync(resolve(SEDIMENTATION_DIR, "plots/velocity")).filter(file => file.endsWith(".json"))).toHaveLength(12);
-    expect(readdirSync(resolve(SEDIMENTATION_DIR, "plots/position")).filter(file => file.endsWith(".json"))).toHaveLength(12);
+const CAMPAIGN_DIR = resolve(process.cwd(), "scripts/source-data/sedimentation/campaign");
+const CASES = ["E1", "E2", "E3", "E4"] as const;
+const LEVELS = ["l2", "l3", "l4"] as const;
+const levelTag = (level: string) => level.toUpperCase();
+
+/** Pairs of the ladder that have not been exported. None since E1 at L2 landed. */
+const missingKeys = new Set(
+  (generatedRuns.missing as Array<{ case: string; level: string }>).map(entry => `${entry.case}-${entry.level}`)
+);
+
+describe("sedimentation campaign series", () => {
+  it("publishes every exported case/level pair and lists the rest as missing", () => {
+    expect(generatedRuns.source).toBe("scripts/source-data/sedimentation/campaign/campaign_runs.csv");
+    expect(generatedRuns.levels).toEqual([...LEVELS]);
+    for (const caseId of CASES) {
+      for (const level of LEVELS) {
+        const key = `${caseId}-${level}`;
+        const exported = existsSync(resolve(CAMPAIGN_DIR, `vel${caseId}_${levelTag(level)}.txt`));
+        expect(sedimentationHasRun(caseId, level), key).toBe(exported);
+        expect(missingKeys.has(key), key).toBe(!exported);
+      }
+    }
+    expect(sedimentationRuns.length + missingKeys.size).toBe(CASES.length * LEVELS.length);
+  });
+
+  it("has the full ladder: all four cases at L2, L3 and L4", () => {
+    for (const caseId of CASES) {
+      for (const level of LEVELS) expect(sedimentationHasRun(caseId, level), `${caseId} ${level}`).toBe(true);
+    }
+    expect(sedimentationRuns).toHaveLength(12);
+    expect(missingKeys.size).toBe(0);
+  });
+
+  it("writes one trace per published run plus the PIV reference, and nothing for an absent pair", () => {
+    for (const metric of ["velocity", "position"] as const) {
+      const files = readdirSync(resolve(SEDIMENTATION_DIR, "plots", metric)).filter(file => file.endsWith(".json"));
+      expect(files.sort()).toEqual(
+        [...sedimentationRuns.map(run => `${run.case}-${run.level}.json`), ...CASES.map(caseId => `${caseId}-piv.json`)].sort()
+      );
+      for (const key of missingKeys) expect(files).not.toContain(`${key}.json`);
+    }
   });
 
   it("converts simulation velocity without transforming values", () => {
-    const trace = readTrace("velocity", "E1-l2.json");
-    expect(trace.x[0]).toBe(0);
-    expect(trace.y[0]).toBe(-0.00131344);
+    const [x, y] = parseFirstPair(resolve(CAMPAIGN_DIR, "velE4_L4.txt"));
+    const trace = readTrace("velocity", "E4-l4.json");
+    expect(trace.x[0]).toBe(x);
+    expect(trace.y[0]).toBe(y);
     expect(trace.mode).toBe("lines");
   });
 
-  it("normalizes simulation position values", () => {
-    const trace = readTrace("position", "E1-l2.json");
-    expect(trace.y[0]).toBeCloseTo((0.127499 - 0.0075) / 0.015);
+  it("normalizes the sphere-centre height to the gap in diameters, starting at eight", () => {
+    for (const run of sedimentationRuns) {
+      const raw = parseFirstPair(resolve(CAMPAIGN_DIR, `pos${run.case}_${levelTag(run.level)}.txt`))[1];
+      const trace = readTrace("position", `${run.case}-${run.level}.json`);
+      expect(trace.y[0], `${run.case} ${run.level}`).toBeCloseTo((raw - 0.0075) / 0.015, 9);
+      expect(trace.y[0], `${run.case} ${run.level}`).toBeCloseTo(8, 9);
+    }
+  });
+
+  it("agrees with the run summary: one point per step, ending at t_end, peaking where it says", () => {
+    for (const run of sedimentationRuns) {
+      const velocity = readTrace("velocity", `${run.case}-${run.level}.json`);
+      const position = readTrace("position", `${run.case}-${run.level}.json`);
+      const label = `${run.case} ${run.level}`;
+      expect(velocity.x, label).toHaveLength(run.steps);
+      expect(position.x, label).toHaveLength(run.steps);
+      expect(velocity.x.at(-1), label).toBeCloseTo(run.tEndS, 9);
+      const peak = Math.min(...velocity.y);
+      expect(peak, label).toBeCloseTo(run.peakVzMS, 6);
+      expect(velocity.x[velocity.y.indexOf(peak)], label).toBeCloseTo(run.tPeakS, 9);
+    }
+  });
+
+  it("refines toward a limit: each refinement moves the peak less than the one before", () => {
+    // What the Results caption says; checked for every case with the full ladder.
+    for (const caseId of CASES) {
+      const peaks = LEVELS.map(level => sedimentationRuns.find(run => run.case === caseId && run.level === level)?.peakVzMS);
+      if (peaks.some(peak => peak === undefined)) continue;
+      const [l2, l3, l4] = peaks as number[];
+      expect(Math.abs(l4 - l3), caseId).toBeLessThan(Math.abs(l3 - l2));
+    }
   });
 
   it("preserves PIV velocity and position reference values", () => {
@@ -54,7 +129,7 @@ describe("sedimentation converted Plotly data", () => {
     expect(position.y[0]).toBe(pY);
   });
 
-  it("uses the Python-script marker mapping for PIV and line traces for simulations", () => {
+  it("uses the Python-script marker mapping for PIV and the level dash for simulations", () => {
     const expectedSymbols = {
       E1: "square-open",
       E2: "circle-open",
@@ -65,34 +140,143 @@ describe("sedimentation converted Plotly data", () => {
       expect(readTrace("velocity", `${caseId}-piv.json`).marker.symbol).toBe(symbol);
       expect(readTrace("position", `${caseId}-piv.json`).marker.symbol).toBe(symbol);
     }
-    const sim = readTrace("velocity", "E1-l3.json");
     expect(readTrace("velocity", "E1-piv.json").mode).toBe("markers");
-    expect(sim.mode).toBe("lines");
-    expect(sim.line.dash).toBe("dot");
+    const dashes = Object.fromEntries(sedimentationLevels.map(level => [level.id, level.dash]));
+    for (const run of sedimentationRuns) {
+      const sim = readTrace("velocity", `${run.case}-${run.level}.json`);
+      expect(sim.mode).toBe("lines");
+      expect(sim.line.dash, `${run.case} ${run.level}`).toBe(dashes[run.level]);
+    }
   });
 });
 
 describe("sedimentation plot specs", () => {
-  it("exposes velocity and position specs with eight groups each", () => {
+  const withoutE1L2 = sedimentationRuns.filter(run => !(run.case === "E1" && run.level === "l2"));
+
+  const assetExists = (path: string) =>
+    existsSync(resolve(SEDIMENTATION_DIR, path.replace(/^.*benchmark-assets\/sedimentation\//, "")));
+
+  it("shares the site's refinement vocabulary: L2-L4, coarse to fine, petrol/orange/green", () => {
+    expect(sedimentationLevels.map(level => level.label)).toEqual(["L2", "L3", "L4"]);
+    expect(sedimentationLevels.map(level => level.color)).toEqual([
+      "var(--tu-petrol-400)",
+      "var(--tu-orange-500)",
+      "var(--tu-green-400)"
+    ]);
+    expect(new Set(sedimentationLevels.map(level => level.dash)).size).toBe(3);
+  });
+
+  it("all-cases view: one group per case and per PIV reference, finest level by default", () => {
     expect(Object.keys(sedimentationPlotSpecs).sort()).toEqual(["position", "velocity"]);
     for (const spec of Object.values(sedimentationPlotSpecs)) {
       expect(spec.seriesGroups).toHaveLength(8);
       expect(spec.seriesGroups.filter(group => group.kind === "code")).toHaveLength(4);
       expect(spec.seriesGroups.filter(group => group.kind === "reference")).toHaveLength(4);
-      expect(spec.levelAxis?.defaultLevelId).toBe("l2");
+      expect(spec.levelAxis?.options.map(option => option.id)).toEqual([...LEVELS]);
+      expect(spec.levelAxis?.defaultLevelId).toBe("l4");
       expect(spec.seriesSelectorLabel).toBe("Cases & references");
     }
   });
 
-  it("keeps L3 simulation sources dotted and PIV references level-independent", () => {
+  it("all-cases view: a case has a source exactly at the levels it was run at", () => {
     const velocity = sedimentationPlotSpecs.velocity;
-    const sim = velocity.seriesGroups.find(group => group.id === "e1");
+    for (const caseId of CASES) {
+      const sim = velocity.seriesGroups.find(group => group.id === caseId.toLowerCase())!;
+      for (const level of LEVELS) {
+        const source = sim.levelSources?.[level];
+        expect(Boolean(source), `${caseId} ${level}`).toBe(sedimentationHasRun(caseId, level));
+        if (source) expect(assetExists(source.asset.path), source.asset.path).toBe(true);
+      }
+    }
     const piv = velocity.seriesGroups.find(group => group.id === "e1-piv");
-    expect(sim?.levelSources?.l3.dash).toBe("dot");
-    expect(sim?.levelSources?.l2.asset.path).toContain("E1-l2.json");
     expect(piv?.source?.asset.path).toContain("E1-piv.json");
     expect(piv?.markerSymbol).toBe("square-open");
     expect(piv?.levelSources).toBeUndefined();
+  });
+
+  it("all-cases view: an absent run drops its case from that level only", () => {
+    // The ladder is complete today; build the specs as they would be without E1 at L2.
+    const specs = buildSedimentationPlotSpecs(withoutE1L2);
+    const atL2 = availableSeriesGroups(specs.velocity, "l2").map(group => group.id);
+    expect(atL2).not.toContain("e1");
+    expect(atL2).toContain("e1-piv");
+    expect(atL2).toHaveLength(7);
+    expect(availableSeriesGroups(specs.velocity, "l3")).toHaveLength(8);
+    expect(availableSeriesGroups(specs.velocity, "l4")).toHaveLength(8);
+    expect(availableSeriesGroups(sedimentationPlotSpecs.velocity, "l2")).toHaveLength(8);
+  });
+
+  it("per-case view: the three levels and the PIV reference, case selector, E4 first", () => {
+    expect(Object.keys(sedimentationLevelPlotSpecs).sort()).toEqual(["position", "velocity"]);
+    for (const spec of Object.values(sedimentationLevelPlotSpecs)) {
+      expect(spec.comparisonAxis).toBe("level");
+      expect(spec.seriesGroups.map(group => group.id)).toEqual(["l2", "l3", "l4", "piv"]);
+      expect(spec.seriesGroups.map(group => group.label)).toEqual(["L2", "L3", "L4", "PIV"]);
+      expect(spec.defaultSeriesGroupIds).toEqual(["l2", "l3", "l4", "piv"]);
+      expect(spec.levelAxis?.options.map(option => option.label)).toEqual([...CASES]);
+      expect(spec.levelAxis?.defaultLevelId).toBe("e4");
+      for (const group of spec.seriesGroups.filter(entry => entry.kind === "level")) {
+        const level = sedimentationLevels.find(entry => entry.id === group.id)!;
+        expect(group.color).toBe(level.color);
+        for (const source of Object.values(group.levelSources!)) {
+          expect(source.dash).toBe(level.dash);
+          expect(assetExists(source.asset.path), source.asset.path).toBe(true);
+        }
+      }
+    }
+  });
+
+  it("per-case view: every case shows the levels it was run at, never an empty curve", () => {
+    for (const metric of ["velocity", "position"] as const) {
+      const spec = sedimentationLevelPlotSpecs[metric];
+      for (const caseId of CASES) {
+        const shown = availableSeriesGroups(spec, caseId.toLowerCase()).map(group => group.id);
+        expect(shown, `${metric} ${caseId}`).toEqual(["l2", "l3", "l4", "piv"]);
+      }
+      // Without E1 at L2, E1 shows L3, L4 and the PIV; the other cases are unchanged.
+      const partial = buildSedimentationLevelPlotSpecs(withoutE1L2)[metric];
+      expect(availableSeriesGroups(partial, "e1").map(group => group.id)).toEqual(["l3", "l4", "piv"]);
+      expect(availableSeriesGroups(partial, "e2").map(group => group.id)).toEqual(["l2", "l3", "l4", "piv"]);
+      expect(partial.seriesGroups.find(group => group.id === "l2")?.levelSources?.e1).toBeUndefined();
+    }
+  });
+});
+
+describe("sedimentation downloads", () => {
+  it("offers each published run's two series, the run summary and the PIV files, all on disk", () => {
+    const labels = sedimentationDownloads.map(item => item.label);
+    for (const run of sedimentationRuns) {
+      expect(labels).toContain(`vel${run.case}_${levelTag(run.level)}.txt`);
+      expect(labels).toContain(`pos${run.case}_${levelTag(run.level)}.txt`);
+    }
+    for (const key of missingKeys) {
+      const [caseId, level] = key.split("-");
+      expect(labels).not.toContain(`vel${caseId}_${levelTag(level)}.txt`);
+    }
+    expect(labels).toContain("campaign_runs.csv");
+    // No unsuffixed legacy names.
+    expect(labels.filter(label => /^(vel|pos)E\d\.txt$/.test(label))).toEqual([]);
+    for (const item of sedimentationDownloads) {
+      const path = item.href.replace(/^.*benchmark-assets\/sedimentation\//, "");
+      expect(existsSync(resolve(SEDIMENTATION_DIR, path)), item.href).toBe(true);
+    }
+  });
+
+  it("bundles the same files in sedimentation.zip", () => {
+    const zip = readFileSync(resolve(SEDIMENTATION_DIR, "downloads/sedimentation.zip"));
+    const names = new Set<string>();
+    // Central directory: signature 0x02014b50, name length at +28, name at +46.
+    for (let offset = zip.indexOf(Buffer.from([0x50, 0x4b, 0x01, 0x02])); offset >= 0; ) {
+      const length = zip.readUInt16LE(offset + 28);
+      names.add(zip.subarray(offset + 46, offset + 46 + length).toString());
+      offset = zip.indexOf(Buffer.from([0x50, 0x4b, 0x01, 0x02]), offset + 46 + length);
+    }
+    const expected = [
+      ...sedimentationRuns.flatMap(run => [`vel${run.case}_${levelTag(run.level)}.txt`, `pos${run.case}_${levelTag(run.level)}.txt`]),
+      "campaign_runs.csv",
+      ...CASES.flatMap(caseId => [`ref_${caseId}.dat`, `case_${caseId}_h.csv`])
+    ].map(name => `sedimentation/${name}`);
+    expect([...names].sort()).toEqual(expected.sort());
   });
 });
 

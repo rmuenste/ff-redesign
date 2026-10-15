@@ -1,6 +1,6 @@
 # Project State
 
-Last updated: 2026-09-22
+Last updated: 2026-10-15
 
 ## Current Migration Status
 
@@ -53,10 +53,43 @@ specified in [benchmark-template.md](benchmark-template.md).
 ## Particle Sedimentation Migration
 
 Particle Sedimentation is now the fourth migrated benchmark. The Angular static
-velocity and position result images were replaced by live Plotly plots generated
-from migrated simulation txt files and PIV reference files. The generated
-`sedimentation.zip` is built by the converter from the available migrated
-downloads, including simulation and PIV source files.
+velocity and position result images were replaced by live Plotly plots of the
+simulation series against the PIV reference files.
+
+### 2026-10-15: campaign curves at three mesh levels
+
+Every simulation curve on the page is now a DNS-campaign run, at L2, L3 and L4,
+the runs the Validation tab's ledger quotes. `scripts/convert-sedimentation-data.mjs`
+reads `scripts/source-data/sedimentation/campaign/` (`vel<CASE>_L<n>.txt`,
+`pos<CASE>_L<n>.txt`, `campaign_runs.csv`) and no longer needs a sibling checkout;
+the setup figure's source moved to `scripts/source-data/sedimentation/` for the same
+reason.
+
+- The ladder is complete: all four cases at all three levels, 12 runs. A
+  case/level pair is published once both of its series exist; a pair that is not
+  exported is logged and skipped, and the page then shows that case at the levels
+  it has (the per-case panel, the all-cases panel, the run table and the
+  downloads all follow `src/data/generated/sedimentation-runs.json`). Exporting
+  the two files and the `campaign_runs.csv` row and re-running the converter is
+  all a new run needs; E1 at L2 arrived that way.
+- Each published series is checked against its `campaign_runs.csv` row (step
+  count, end time, peak settling velocity and its time). The rules live in
+  `scripts/lib/sedimentation-campaign.mjs` and are tested on a fixture folder in
+  `src/data/sedimentation-campaign.test.ts`; the run table on the Results tab is
+  generated from the same file.
+- Results opens with a per-case refinement panel: case selector, velocity or
+  position, L2/L3/L4 overlaid on the PIV points. Levels use the site's refinement
+  vocabulary (petrol, orange, green coarse to fine, as on RB3 and FSI CSM3) plus
+  one dash per level (dot, dash, solid), which the all-cases panel reuses so a
+  level reads the same in both. The all-cases panel defaults to L4.
+- `ComparisonPanel` drops a series group that has no source at the selected
+  level-axis option (`availableSeriesGroups` in `src/lib/comparison.ts`) instead
+  of failing the whole panel; that is what lets a ladder have a missing rung.
+- Downloads are named `vel<CASE>_L<n>.txt` / `pos<CASE>_L<n>.txt` throughout, plus
+  `campaign_runs.csv`; `sedimentation.zip` is now deflated (`scripts/lib/zip.mjs`).
+- The core converter now owns only `plots/velocity`, `plots/position`, the files
+  directly under `downloads/` and the setup figure, so it no longer deletes the
+  lubrication companion's output; the two converters can be re-run in either order.
 
 ## Flow Around Cylinder 3D: the two cases made explicit
 

@@ -29,8 +29,13 @@ import {
   sedimentationLubricationSpecs,
   sedimentationPhysicalRows,
   sedimentationPlaybackSpeeds,
+  sedimentationCases,
+  sedimentationHasRun,
+  sedimentationLevelPlotSpecs,
+  sedimentationLevels,
   sedimentationPlotSpecs,
   sedimentationReferenceRows,
+  sedimentationRuns,
   sedimentationReferences,
   sedimentationDecomposition,
   sedimentationDtLadder,
@@ -44,7 +49,8 @@ import {
   type SedimentationDecompositionFit,
   type SedimentationDtRow,
   type SedimentationLubricationCase,
-  type SedimentationPhysicalRow
+  type SedimentationPhysicalRow,
+  type SedimentationRun
 } from "../data/sedimentation";
 
 function IntroductionTab() {
@@ -233,14 +239,94 @@ function CompositeVideoBlock() {
   );
 }
 
-function ResultsTab() {
+const levelLabel = (id: string) => sedimentationLevels.find(level => level.id === id)?.label ?? id.toUpperCase();
+
+/** Cases that do not have every level yet, as "E1 is shown at L3 and L4." */
+function partialLadderNote() {
+  const notes = sedimentationCases
+    .map(testCase => ({
+      id: testCase.id,
+      levels: sedimentationLevels.filter(level => sedimentationHasRun(testCase.id, level.id)).map(level => level.label)
+    }))
+    .filter(entry => entry.levels.length < sedimentationLevels.length)
+    .map(entry => `${entry.id} is shown at ${entry.levels.join(" and ")}.`);
+  return notes.length ? ` ${notes.join(" ")}` : "";
+}
+
+/** ", all with a time step of 1 ms" when the runs share one step, from the run summary. */
+function runTimeStepNote() {
+  const steps = [...new Set(sedimentationRuns.map(run => run.dtS))];
+  return steps.length === 1 ? `, all with a time step of ${steps[0] * 1000} ms` : "";
+}
+
+function ResultsTab({ onOpenValidation }: { onOpenValidation: () => void }) {
   return (
     <Section style={{ paddingTop: 40, paddingBottom: 100 }}>
       <div className="stack" style={{ gap: 28 }}>
         <div style={{ maxWidth: 900 }}>
-          <h3>Live sedimentation curves</h3>
+          <h3>Mesh refinement, case by case</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-            Velocity and normalized position are rendered from converted Plotly traces. The L2/L3 switch changes the simulation curves only; PIV markers remain the same reference data for each case.
+            Each case was run on three meshes, from the coarsest, L2, to the finest, L4. Pick a case to see its three
+            curves on top of the PIV measurements, as settling velocity or as the height of the sphere above the
+            bottom. The curves draw together as the mesh is refined: going from L3 to L4 moves the settling peak less
+            than going from L2 to L3.{partialLadderNote()}
+          </p>
+        </div>
+        <ComparisonPanel specs={sedimentationLevelPlotSpecs} defaultMetric="velocity" />
+
+        <div style={{ maxWidth: 900 }}>
+          <h3>The runs behind the curves</h3>
+          <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
+            Every curve on this tab is one of these runs{runTimeStepNote()}. The peak is the fastest
+            settling speed the sphere reaches on its way down. How far each run sits from the experiment is measured
+            case by case in the validation ledger.
+          </p>
+          <DataTable<SedimentationRun>
+            columns={[
+              { id: "case", header: "Case", render: row => <span style={{ fontWeight: 500 }}>{row.case}</span> },
+              { id: "level", header: "Level", render: row => levelLabel(row.level) },
+              {
+                id: "steps",
+                header: "Steps",
+                align: "right",
+                render: row => <span style={{ fontFamily: "var(--font-mono)" }}>{row.steps.toLocaleString("en-US")}</span>
+              },
+              {
+                id: "time",
+                header: "Simulated [s]",
+                align: "right",
+                render: row => <span style={{ fontFamily: "var(--font-mono)" }}>{row.tEndS.toFixed(2)}</span>
+              },
+              {
+                id: "peak",
+                header: "Peak speed [mm/s]",
+                align: "right",
+                render: row => (
+                  <span style={{ fontFamily: "var(--font-mono)" }}>{(-row.peakVzMS * 1000).toFixed(2)}</span>
+                )
+              },
+              {
+                id: "tpeak",
+                header: "Peak at [s]",
+                align: "right",
+                render: row => <span style={{ fontFamily: "var(--font-mono)" }}>{row.tPeakS.toFixed(3)}</span>
+              }
+            ]}
+            rows={sedimentationRuns}
+            getRowKey={row => `${row.case}-${row.level}`}
+          />
+          <div style={{ marginTop: 16 }}>
+            <Button variant="stroked" size="sm" onClick={onOpenValidation} trailing={<Icon name="arrow_forward" size={14} />}>
+              Validation ledger
+            </Button>
+          </div>
+        </div>
+
+        <div style={{ maxWidth: 900 }}>
+          <h3>All four cases at one level</h3>
+          <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
+            The same runs, with the four cases side by side at a single mesh level. The level switch changes the
+            simulation curves only; the PIV markers are the same measurements at every level.
           </p>
         </div>
         <ComparisonPanel specs={sedimentationPlotSpecs} defaultMetric="velocity" />
@@ -633,7 +719,7 @@ function ReferenceDataTab() {
           {
             type: "paragraph",
             text:
-              "Every downloadable sedimentation source file is a two-column text file. The live position plot normalizes simulation height as (raw - 0.0075) / 0.015; PIV position files are already normalized as h/d_p and are copied without transformation."
+              "The simulation series and the PIV references are two-column text files without a header, one simulation row per 1 ms time step. The position plots show the gap height in sphere diameters, h/d_p = (z - 0.0075) / 0.015 from the sphere-centre height z in metres; the PIV position files are already given as h/d_p. campaign_runs.csv summarises each run: its case and level, the number of steps, the time step, the simulated time, and the peak settling velocity with the time at which it occurs."
           }
         ]}
       />
@@ -690,13 +776,13 @@ export function ParticleSedimentationPage() {
                 Particle <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400, color: "var(--primary)" }}>Sedimentation</span>
               </h1>
               <p style={{ color: "var(--fg2)", fontSize: 15, margin: 0, maxWidth: 700, lineHeight: 1.55 }}>
-                A confined settling-sphere benchmark comparing FEM-FBM simulations at L2/L3 against PIV particle-motion measurements for four Reynolds-number regimes.
+                A confined settling-sphere benchmark comparing FEM-FBM simulations at three mesh levels, L2 to L4, against PIV particle-motion measurements for four Reynolds-number regimes.
               </p>
             </div>
             <div className="kpi-grid">
               <KpiBox label="Cases" value="4" />
               <KpiBox label="Re" value="1.5-31.9" />
-              <KpiBox label="Levels" value="2" />
+              <KpiBox label="Levels" value={String(sedimentationLevels.length)} />
               <KpiBox label="Metrics" value="2" />
               <KpiBox label="Particle" value="15 mm" />
               <KpiBox label="Tank" value="100x100x160" />
@@ -713,7 +799,7 @@ export function ParticleSedimentationPage() {
 
       {tab === "introduction" && <IntroductionTab />}
       {tab === "definition" && <DefinitionTab />}
-      {tab === "results" && <ResultsTab />}
+      {tab === "results" && <ResultsTab onOpenValidation={() => setTab("validation")} />}
       {tab === "lubrication" && (
         <LubricationTab onOpenViscometer={() => navigate("/benchmarks/numerical-viscometer")} />
       )}

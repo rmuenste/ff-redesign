@@ -1,6 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
+import { sedimentationRuns } from "./sedimentation";
 import type { AssetManifest } from "./types";
 
 const RB3_DIR = resolve(process.cwd(), "public/benchmark-assets/rb3");
@@ -212,11 +213,24 @@ describe("sedimentation asset manifest (public/benchmark-assets/sedimentation/ma
   );
   const lubricationEntries = sedimentationManifest.entries.filter(isLubrication);
 
-  it("has exactly the derived plot and copied asset entries planned for migration", () => {
+  it("has one derived plot per published run and PIV reference, and one download per source file", () => {
     expect(sedimentationManifest.benchmarkId).toBe("sedimentation");
-    expect(coreEntries).toHaveLength(54);
-    expect(coreEntries.filter(entry => entry.derived)).toHaveLength(24);
-    expect(coreEntries.filter(entry => !entry.derived)).toHaveLength(30);
+    const runs = sedimentationRuns.length;
+    // Plots: (runs + 4 PIV) per metric. Downloads: two series per run, the run
+    // summary, eight PIV files and the zip. Media: the setup figure and the films.
+    expect(coreEntries.filter(entry => entry.derived)).toHaveLength(2 * (runs + 4));
+    expect(coreEntries.filter(entry => entry.kind === "download")).toHaveLength(2 * runs + 1 + 8 + 1);
+    expect(coreEntries.filter(entry => entry.kind === "media")).toHaveLength(5);
+  });
+
+  it("points every core entry at its real source", () => {
+    for (const entry of coreEntries) {
+      if (entry.oldPath.startsWith("generated from")) continue;
+      expect(entry.oldPath.startsWith("scripts/source-data/sedimentation/"), entry.oldPath).toBe(true);
+      expect(existsSync(resolve(process.cwd(), entry.oldPath)), entry.oldPath).toBe(true);
+    }
+    const simulation = coreEntries.filter(entry => entry.kind === "code");
+    expect(simulation.every(entry => entry.oldPath.startsWith("scripts/source-data/sedimentation/campaign/"))).toBe(true);
   });
 
   it("carries the lubrication study the companion converter merges in", () => {
@@ -252,7 +266,7 @@ describe("sedimentation asset manifest (public/benchmark-assets/sedimentation/ma
 
   it("marks simulation plots as code and PIV plots as reference", () => {
     const plotEntries = coreEntries.filter(entry => entry.newPath.startsWith("plots/"));
-    expect(plotEntries).toHaveLength(24);
+    expect(plotEntries).toHaveLength(2 * (sedimentationRuns.length + 4));
     expect(plotEntries.filter(entry => /-piv\.json$/.test(entry.newPath)).every(entry => entry.kind === "reference")).toBe(true);
     expect(plotEntries.filter(entry => !/-piv\.json$/.test(entry.newPath)).every(entry => entry.kind === "code")).toBe(true);
   });

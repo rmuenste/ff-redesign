@@ -2,7 +2,7 @@
   "benchmarkId": "sedimentation",
   "entries": [
     {
-      "oldPath": "../ff-angular/src/assets/sedimentation/velE1.txt",
+      "oldPath": "scripts/source-data/sedimentation/campaign/velE1_L2.txt",
       "newPath": "plots/velocity/E1-l2.json",
       "metric": "velocity",
       "seriesGroupId": "e1",
@@ -12,12 +12,22 @@
       "derived": true
     },
     {
-      "oldPath": "../ff-angular/src/assets/sedimentation/velE1_L3.txt",
+      "oldPath": "scripts/source-data/sedimentation/campaign/velE1_L3.txt",
       "newPath": "plots/velocity/E1-l3.json",
       "metric": "velocity",
       "seriesGroupId": "e1",
       "kind": "code",
       "label": "E1 L3 Velocity",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/sedimentation/campaign/velE1_L4.txt",
+      "newPath": "plots/velocity/E1-l4.json",
+      "metric": "velocity",
+      "seriesGroupId": "e1",
+      "kind": "code",
+      "label": "E1 L4 Velocity",
       "sourceShape": "single-trace",
       "derived": true
     },
@@ -32,7 +42,7 @@
       "derived": true
     },
     {
-      "oldPath": "../ff-angular/src/assets/sedimentation/velE2.txt",
+      "oldPath": "scripts/source-data/sedimentation/campaign/velE2_L2.txt",
       "newPath": "plots/velocity/E2-l2.json",
       "metric": "velocity",
       "seriesGroupId": "e2",
@@ -42,12 +52,22 @@
       "derived": true
     },
     {
-      "oldPath": "../ff-angular/src/assets/sedimentation/velE2_L3.txt",
+      "oldPath": "scripts/source-data/sedimentation/campaign/velE2_L3.txt",
       "newPath": "plots/velocity/E2-l3.json",
       "metric": "velocity",
       "seriesGroupId": "e2",
       "kind": "code",
       "label": "E2 L3 Velocity",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/sedimentation/campaign/velE2_L4.txt",
+      "newPath": "plots/velocity/E2-l4.json",
+      "metric": "velocity",
+      "seriesGroupId": "e2",
+      "kind": "code",
+      "label": "E2 L4 Velocity",
       "sourceShape": "single-trace",
       "derived": true
     },
@@ -62,7 +82,7 @@
       "derived": true
     },
     {
-      "oldPath": "../ff-angular/src/assets/sedimentation/velE3.txt",
+      "oldPath": "scripts/source-data/sedimentation/campaign/velE3_L2.txt",
       "newPath": "plots/velocity/E3-l2.json",
       "metric": "velocity",
       "seriesGroupId": "e3",
@@ -72,12 +92,22 @@
       "derived": true
     },
     {
-      "oldPath": "../ff-angular/src/assets/sedimentation/velE3_L3.txt",
+      "oldPath": "scripts/source-data/sedimentation/campaign/velE3_L3.txt",
       "newPath": "plots/velocity/E3-l3.json",
       "metric": "velocity",
       "seriesGroupId": "e3",
       "kind": "code",
       "label": "E3 L3 Velocity",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/sedimentation/campaign/velE3_L4.txt",
+      "newPath": "plots/velocity/E3-l4.json",
+      "metric": "velocity",
+      "seriesGroupId": "e3",
+      "kind": "code",
+      "label": "E3 L4 Velocity",
       "sourceShape": "single-trace",
       "derived": true
     },
@@ -92,7 +122,7 @@
       "derived": true
     },
     {
-      "oldPath": "../ff-angular/src/assets/sedimentation/velE4.txt",
+      "oldPath": "scripts/source-data/sedimentation/campaign/velE4_L2.txt",
       "newPath": "plots/velocity/E4-l2.json",
       "metric": "velocity",
       "seriesGroupId": "e4",
@@ -102,12 +132,22 @@
       "derived": true
     },
     {
-      "oldPath": "../ff-angular/src/assets/sedimentation/velE4_L3.txt",
+      "oldPath": "scripts/source-data/sedimentation/campaign/velE4_L3.txt",
       "newPath": "plots/velocity/E4-l3.json",
       "metric": "velocity",
       "seriesGroupId": "e4",
       "kind": "code",
       "label": "E4 L3 Velocity",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/sedimentation/campaign/velE4_L4.txt",
+      "newPath": "plots/velocity/E4-l4.json",
+      "metric": "velocity",
+      "seriesGroupId": "e4",
+      "kind": "code",
+      "label": "E4 L4 Velocity",
       "sourceShape": "single-trace",
       "derived": true
     },
@@ -122,7 +162,7 @@
       "derived": true
     },
     {
-      "oldPath": "../ff-angular/src/assets/sedimentation/posE1.txt",
+      "oldPath": "scripts/source-data/sedimentation/campaign/posE1_L2.txt",
       "newPath": "plots/position/E1-l2.json",
       "metric": "position",
       "seriesGroupId": "e1",
@@ -132,12 +172,22 @@
       "derived": true
     },
     {
-      "oldPath": "../ff-angular/src/assets/sedimentation/posE1_L3.txt",
+      "oldPath": "scripts/source-data/sedimentation/campaign/posE1_L3.txt",
       "newPath": "plots/position/E1-l3.json",
       "metric": "position",
       "seriesGroupId": "e1",
       "kind": "code",
       "label": "E1 L3 Position",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/sedimentation/campaign/posE1_L4.txt",
+      "newPath": "plots/position/E1-l4.json",
+      "metric": "position",
+      "seriesGroupId": "e1",
+      "kind": "code",
+      "label": "E1 L4 Position",
       "sourceShape": "single-trace",
       "derived": true
     },
@@ -152,7 +202,7 @@
       "derived": true
     },
     {
-      "oldPath": "../ff-angular/src/assets/sedimentation/posE2.txt",
+      "oldPath": "scripts/source-data/sedimentation/campaign/posE2_L2.txt",
       "newPath": "plots/position/E2-l2.json",
       "metric": "position",
       "seriesGroupId": "e2",
@@ -162,12 +212,22 @@
       "derived": true
     },
     {
-      "oldPath": "../ff-angular/src/assets/sedimentation/posE2_L3.txt",
+      "oldPath": "scripts/source-data/sedimentation/campaign/posE2_L3.txt",
       "newPath": "plots/position/E2-l3.json",
       "metric": "position",
       "seriesGroupId": "e2",
       "kind": "code",
       "label": "E2 L3 Position",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/sedimentation/campaign/posE2_L4.txt",
+      "newPath": "plots/position/E2-l4.json",
+      "metric": "position",
+      "seriesGroupId": "e2",
+      "kind": "code",
+      "label": "E2 L4 Position",
       "sourceShape": "single-trace",
       "derived": true
     },
@@ -182,7 +242,7 @@
       "derived": true
     },
     {
-      "oldPath": "../ff-angular/src/assets/sedimentation/posE3.txt",
+      "oldPath": "scripts/source-data/sedimentation/campaign/posE3_L2.txt",
       "newPath": "plots/position/E3-l2.json",
       "metric": "position",
       "seriesGroupId": "e3",
@@ -192,12 +252,22 @@
       "derived": true
     },
     {
-      "oldPath": "../ff-angular/src/assets/sedimentation/posE3_L3.txt",
+      "oldPath": "scripts/source-data/sedimentation/campaign/posE3_L3.txt",
       "newPath": "plots/position/E3-l3.json",
       "metric": "position",
       "seriesGroupId": "e3",
       "kind": "code",
       "label": "E3 L3 Position",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/sedimentation/campaign/posE3_L4.txt",
+      "newPath": "plots/position/E3-l4.json",
+      "metric": "position",
+      "seriesGroupId": "e3",
+      "kind": "code",
+      "label": "E3 L4 Position",
       "sourceShape": "single-trace",
       "derived": true
     },
@@ -212,7 +282,7 @@
       "derived": true
     },
     {
-      "oldPath": "../ff-angular/src/assets/sedimentation/posE4.txt",
+      "oldPath": "scripts/source-data/sedimentation/campaign/posE4_L2.txt",
       "newPath": "plots/position/E4-l2.json",
       "metric": "position",
       "seriesGroupId": "e4",
@@ -222,12 +292,22 @@
       "derived": true
     },
     {
-      "oldPath": "../ff-angular/src/assets/sedimentation/posE4_L3.txt",
+      "oldPath": "scripts/source-data/sedimentation/campaign/posE4_L3.txt",
       "newPath": "plots/position/E4-l3.json",
       "metric": "position",
       "seriesGroupId": "e4",
       "kind": "code",
       "label": "E4 L3 Position",
+      "sourceShape": "single-trace",
+      "derived": true
+    },
+    {
+      "oldPath": "scripts/source-data/sedimentation/campaign/posE4_L4.txt",
+      "newPath": "plots/position/E4-l4.json",
+      "metric": "position",
+      "seriesGroupId": "e4",
+      "kind": "code",
+      "label": "E4 L4 Position",
       "sourceShape": "single-trace",
       "derived": true
     },
@@ -242,100 +322,154 @@
       "derived": true
     },
     {
-      "oldPath": "../ff-angular/src/assets/sedimentation/velE1.txt",
-      "newPath": "downloads/velE1.txt",
+      "oldPath": "scripts/source-data/sedimentation/campaign/velE1_L2.txt",
+      "newPath": "downloads/velE1_L2.txt",
       "kind": "download",
-      "label": "velE1.txt"
+      "label": "velE1_L2.txt"
     },
     {
-      "oldPath": "../ff-angular/src/assets/sedimentation/posE1.txt",
-      "newPath": "downloads/posE1.txt",
+      "oldPath": "scripts/source-data/sedimentation/campaign/posE1_L2.txt",
+      "newPath": "downloads/posE1_L2.txt",
       "kind": "download",
-      "label": "posE1.txt"
+      "label": "posE1_L2.txt"
     },
     {
-      "oldPath": "../ff-angular/src/assets/sedimentation/velE1_L3.txt",
+      "oldPath": "scripts/source-data/sedimentation/campaign/velE1_L3.txt",
       "newPath": "downloads/velE1_L3.txt",
       "kind": "download",
       "label": "velE1_L3.txt"
     },
     {
-      "oldPath": "../ff-angular/src/assets/sedimentation/posE1_L3.txt",
+      "oldPath": "scripts/source-data/sedimentation/campaign/posE1_L3.txt",
       "newPath": "downloads/posE1_L3.txt",
       "kind": "download",
       "label": "posE1_L3.txt"
     },
     {
-      "oldPath": "../ff-angular/src/assets/sedimentation/velE2.txt",
-      "newPath": "downloads/velE2.txt",
+      "oldPath": "scripts/source-data/sedimentation/campaign/velE1_L4.txt",
+      "newPath": "downloads/velE1_L4.txt",
       "kind": "download",
-      "label": "velE2.txt"
+      "label": "velE1_L4.txt"
     },
     {
-      "oldPath": "../ff-angular/src/assets/sedimentation/posE2.txt",
-      "newPath": "downloads/posE2.txt",
+      "oldPath": "scripts/source-data/sedimentation/campaign/posE1_L4.txt",
+      "newPath": "downloads/posE1_L4.txt",
       "kind": "download",
-      "label": "posE2.txt"
+      "label": "posE1_L4.txt"
     },
     {
-      "oldPath": "../ff-angular/src/assets/sedimentation/velE2_L3.txt",
+      "oldPath": "scripts/source-data/sedimentation/campaign/velE2_L2.txt",
+      "newPath": "downloads/velE2_L2.txt",
+      "kind": "download",
+      "label": "velE2_L2.txt"
+    },
+    {
+      "oldPath": "scripts/source-data/sedimentation/campaign/posE2_L2.txt",
+      "newPath": "downloads/posE2_L2.txt",
+      "kind": "download",
+      "label": "posE2_L2.txt"
+    },
+    {
+      "oldPath": "scripts/source-data/sedimentation/campaign/velE2_L3.txt",
       "newPath": "downloads/velE2_L3.txt",
       "kind": "download",
       "label": "velE2_L3.txt"
     },
     {
-      "oldPath": "../ff-angular/src/assets/sedimentation/posE2_L3.txt",
+      "oldPath": "scripts/source-data/sedimentation/campaign/posE2_L3.txt",
       "newPath": "downloads/posE2_L3.txt",
       "kind": "download",
       "label": "posE2_L3.txt"
     },
     {
-      "oldPath": "../ff-angular/src/assets/sedimentation/velE3.txt",
-      "newPath": "downloads/velE3.txt",
+      "oldPath": "scripts/source-data/sedimentation/campaign/velE2_L4.txt",
+      "newPath": "downloads/velE2_L4.txt",
       "kind": "download",
-      "label": "velE3.txt"
+      "label": "velE2_L4.txt"
     },
     {
-      "oldPath": "../ff-angular/src/assets/sedimentation/posE3.txt",
-      "newPath": "downloads/posE3.txt",
+      "oldPath": "scripts/source-data/sedimentation/campaign/posE2_L4.txt",
+      "newPath": "downloads/posE2_L4.txt",
       "kind": "download",
-      "label": "posE3.txt"
+      "label": "posE2_L4.txt"
     },
     {
-      "oldPath": "../ff-angular/src/assets/sedimentation/velE3_L3.txt",
+      "oldPath": "scripts/source-data/sedimentation/campaign/velE3_L2.txt",
+      "newPath": "downloads/velE3_L2.txt",
+      "kind": "download",
+      "label": "velE3_L2.txt"
+    },
+    {
+      "oldPath": "scripts/source-data/sedimentation/campaign/posE3_L2.txt",
+      "newPath": "downloads/posE3_L2.txt",
+      "kind": "download",
+      "label": "posE3_L2.txt"
+    },
+    {
+      "oldPath": "scripts/source-data/sedimentation/campaign/velE3_L3.txt",
       "newPath": "downloads/velE3_L3.txt",
       "kind": "download",
       "label": "velE3_L3.txt"
     },
     {
-      "oldPath": "../ff-angular/src/assets/sedimentation/posE3_L3.txt",
+      "oldPath": "scripts/source-data/sedimentation/campaign/posE3_L3.txt",
       "newPath": "downloads/posE3_L3.txt",
       "kind": "download",
       "label": "posE3_L3.txt"
     },
     {
-      "oldPath": "../ff-angular/src/assets/sedimentation/velE4.txt",
-      "newPath": "downloads/velE4.txt",
+      "oldPath": "scripts/source-data/sedimentation/campaign/velE3_L4.txt",
+      "newPath": "downloads/velE3_L4.txt",
       "kind": "download",
-      "label": "velE4.txt"
+      "label": "velE3_L4.txt"
     },
     {
-      "oldPath": "../ff-angular/src/assets/sedimentation/posE4.txt",
-      "newPath": "downloads/posE4.txt",
+      "oldPath": "scripts/source-data/sedimentation/campaign/posE3_L4.txt",
+      "newPath": "downloads/posE3_L4.txt",
       "kind": "download",
-      "label": "posE4.txt"
+      "label": "posE3_L4.txt"
     },
     {
-      "oldPath": "../ff-angular/src/assets/sedimentation/velE4_L3.txt",
+      "oldPath": "scripts/source-data/sedimentation/campaign/velE4_L2.txt",
+      "newPath": "downloads/velE4_L2.txt",
+      "kind": "download",
+      "label": "velE4_L2.txt"
+    },
+    {
+      "oldPath": "scripts/source-data/sedimentation/campaign/posE4_L2.txt",
+      "newPath": "downloads/posE4_L2.txt",
+      "kind": "download",
+      "label": "posE4_L2.txt"
+    },
+    {
+      "oldPath": "scripts/source-data/sedimentation/campaign/velE4_L3.txt",
       "newPath": "downloads/velE4_L3.txt",
       "kind": "download",
       "label": "velE4_L3.txt"
     },
     {
-      "oldPath": "../ff-angular/src/assets/sedimentation/posE4_L3.txt",
+      "oldPath": "scripts/source-data/sedimentation/campaign/posE4_L3.txt",
       "newPath": "downloads/posE4_L3.txt",
       "kind": "download",
       "label": "posE4_L3.txt"
+    },
+    {
+      "oldPath": "scripts/source-data/sedimentation/campaign/velE4_L4.txt",
+      "newPath": "downloads/velE4_L4.txt",
+      "kind": "download",
+      "label": "velE4_L4.txt"
+    },
+    {
+      "oldPath": "scripts/source-data/sedimentation/campaign/posE4_L4.txt",
+      "newPath": "downloads/posE4_L4.txt",
+      "kind": "download",
+      "label": "posE4_L4.txt"
+    },
+    {
+      "oldPath": "scripts/source-data/sedimentation/campaign/campaign_runs.csv",
+      "newPath": "downloads/campaign_runs.csv",
+      "kind": "download",
+      "label": "campaign_runs.csv"
     },
     {
       "oldPath": "scripts/source-data/sedimentation/ref_E1.dat",
@@ -386,10 +520,16 @@
       "label": "case_E4_h.csv"
     },
     {
-      "oldPath": "../ff-angular/src/assets/sedimentation_setup.png",
+      "oldPath": "scripts/source-data/sedimentation/sedimentation-setup.png",
       "newPath": "media/sedimentation-setup.png",
       "kind": "media",
       "label": "Sedimentation experimental setup"
+    },
+    {
+      "oldPath": "generated from sedimentation downloads",
+      "newPath": "downloads/sedimentation.zip",
+      "kind": "download",
+      "label": "sedimentation.zip"
     },
     {
       "oldPath": "generated from blender_viz/ten_cate_movie/four_cases_render.mp4",
@@ -414,12 +554,6 @@
       "newPath": "media/ten-cate-four-columns-poster.webp",
       "kind": "media",
       "label": "Four sedimentation cases with panels, poster frame"
-    },
-    {
-      "oldPath": "generated from sedimentation downloads",
-      "newPath": "downloads/sedimentation.zip",
-      "kind": "download",
-      "label": "sedimentation.zip"
     },
     {
       "oldPath": "scripts/source-data/sedimentation/lubrication/approach_E1_base.csv",

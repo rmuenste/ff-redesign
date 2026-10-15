@@ -157,7 +157,7 @@ const ratioSpec: PlotSpec = {
       RUNG_COLORS.perpendicular
     ),
     group("ratio", "oberbeck", "Oberbeck Y^A / X^A", "reference", "var(--fg1)"),
-    group("ratio", "band", "Primary gate band, +/- 2%", "reference", "var(--fg3)", "trace-array")
+    group("ratio", "band", "Tolerance band, +/- 2%", "reference", "var(--fg3)", "trace-array")
   ],
   defaultSeriesGroupIds: ["res-9", "res-19", "oberbeck", "band"],
   compareModes: ["overlay"],
@@ -184,7 +184,7 @@ const absolutesSpec: PlotSpec = {
     group("absolutes", "parallel-19", "Parallel, 2b/h = 19.0", "level", "#7bd88f"),
     group("absolutes", "perpendicular-19", "Perpendicular, 2b/h = 19.0", "level", "#c9a5f5"),
     group("absolutes", "exact", "a X^A / a Y^A", "reference", "var(--fg1)"),
-    group("absolutes", "band", "Secondary gate band, +/- 3%", "reference", "var(--fg3)", "trace-array")
+    group("absolutes", "band", "Tolerance band, +/- 3%", "reference", "var(--fg3)", "trace-array")
   ],
   defaultSeriesGroupIds: [
     "parallel-9",
@@ -203,7 +203,7 @@ const absolutesSpec: PlotSpec = {
 
 const rungLevelAxis = {
   id: "rung",
-  label: "Ladder rung",
+  label: "Configuration",
   options: oberbeckRungs.map(rung => ({
     id: rung.id,
     label: rung.short,
@@ -295,7 +295,7 @@ export const oberbeckParameterRows: OberbeckParameterRow[] = [
   },
   {
     symbol: "R_s",
-    quantity: "Volume-matched sphere radius (the D1.1 body)",
+    quantity: "Volume-matched sphere radius",
     value: String(oberbeckCell.sphereRadius.toFixed(6))
   },
   { symbol: "f", quantity: "Uniform driving body force, +z", value: oberbeckCell.force.toExponential(0) },
@@ -311,51 +311,40 @@ export const oberbeckParameterRows: OberbeckParameterRow[] = [
   { symbol: "-", quantity: "Orientations", value: "Parallel, perpendicular, 45 degrees" }
 ];
 
-export interface OberbeckGateRow {
-  gate: string;
+export interface OberbeckToleranceRow {
   quantity: string;
-  band: string;
-  measured: string;
-  verdict: string;
+  reference: string;
+  tolerance: string;
+  result: string;
 }
 
 /**
- * The gates as the case specification states them, each with the value the closing
- * rung returned. Every measured entry is the generated one, so the table cannot
- * drift from the series it summarises.
+ * What the case compares, against which reference and with which tolerance, each
+ * with the value the half-size body returned. Every result is the generated one,
+ * so the table cannot drift from the series it summarises.
  */
-export const oberbeckGateRows: OberbeckGateRow[] = [
+export const oberbeckToleranceRows: OberbeckToleranceRow[] = [
   {
-    gate: "Anisotropy ratio (primary)",
-    quantity: "R_h(perp) / R_h(par) vs Y^A / X^A",
-    band: "+/- 2%",
-    measured: `${oberbeckClosingRung.ratio.toFixed(5)} (${percent(oberbeckClosingRung.deviation)})`,
-    verdict: "PASS"
+    quantity: "Anisotropy ratio R_h(perp) / R_h(par)",
+    reference: `Y^A / X^A = ${oberbeckResistance.ratio.toFixed(5)}`,
+    tolerance: "+/- 2%",
+    result: `${oberbeckClosingRung.ratio.toFixed(5)} (${percent(oberbeckClosingRung.deviation)})`
   },
   {
-    gate: "Absolute radii (secondary)",
-    quantity: "R_h vs a X^A and a Y^A",
-    band: "+/- 3%",
-    measured: oberbeckClosingRung.orientations
+    quantity: "Absolute radii R_h, parallel / perpendicular",
+    reference: "a X^A and a Y^A",
+    tolerance: "+/- 3%",
+    result: oberbeckClosingRung.orientations
       .map(entry => percent(entry.deviationCorrected))
-      .join(" / "),
-    verdict: "PASS"
+      .join(" / ")
   },
   {
-    gate: "Torque null",
-    quantity: "|T| / (a |F|), every run",
-    band: "< 1e-3",
-    measured: oberbeckClosingRung.orientations
+    quantity: "Torque |T| / (a |F|), parallel / perpendicular",
+    reference: "0 at any orientation",
+    tolerance: "< 1e-3",
+    result: oberbeckClosingRung.orientations
       .map(entry => entry.torqueNull.toExponential(1))
-      .join(" / "),
-    verdict: "PASS"
-  },
-  {
-    gate: "Sphere regression anchor",
-    quantity: "Drag coefficient K of the volume-matched sphere",
-    band: "5 digits",
-    measured: `${oberbeckAnchor.K.toFixed(4)} (${percent(oberbeckAnchor.deviation, 3)})`,
-    verdict: "PASS"
+      .join(" / ")
   }
 ];
 
@@ -380,7 +369,7 @@ export const oberbeckReferences = [
 ];
 
 const runDescriptions: Record<string, string> = {
-  v0: "sphere regression anchor at L3",
+  v0: "volume-matched sphere at L3",
   v1: "axis parallel to the force, L3, full-size body",
   v2: "axis perpendicular to the force, L3, full-size body",
   v3b: "axis at 45 degrees, L3, full-size body",
@@ -395,8 +384,8 @@ const dataFiles: Array<{ name: string; description: string }> = [
     name: `run_${run}.csv`,
     description: `Wrench and superficial-velocity history of the ${detail}, every time step`
   })),
-  { name: "runs.csv", description: "Which solver run supplied which orientation of which rung" },
-  { name: "rungs.csv", description: "Refinement level, mesh spacing and body scale per rung of the ladder" },
+  { name: "runs.csv", description: "Which solver run supplied which orientation of which configuration" },
+  { name: "rungs.csv", description: "Refinement level, mesh spacing and body scale of each configuration" },
   {
     name: "gates.csv",
     description: "Hydrodynamic radii, Oberbeck targets, deviations and torque nulls, per orientation"
@@ -415,12 +404,12 @@ export const oberbeckDownloads: DownloadItem[] = [
   {
     label: `${OBERBECK_ID}.zip`,
     href: benchmarkAssetPath(OBERBECK_ID, `downloads/${OBERBECK_ID}.zip`),
-    description: "All run series, the derived tables and the DNS campaign datasheet"
+    description: "All run series, the derived tables and the DNS validation datasheet"
   },
   {
     label: "dns_validation_datasheet.csv",
     href: benchmarkAssetPath(OBERBECK_ID, "downloads/dns_validation_datasheet.csv"),
-    description: "Complete DNS campaign claim ledger, one row per quantitative claim"
+    description: "The DNS validation datasheet, one row per quantitative result"
   },
   ...dataFiles.map(file => ({
     label: file.name,
@@ -436,9 +425,9 @@ export const oberbeckReferenceRows = [
     columns: "time, F_x, F_y, F_z, T_x, T_y, T_z, U_sup, U_fluid, fluid_fraction"
   },
   { fileType: "Run table", pattern: "runs.csv", columns: "run, rung, orientation, label, rundir" },
-  { fileType: "Ladder table", pattern: "rungs.csv", columns: "rung, label, short, level, h, scale" },
+  { fileType: "Configuration table", pattern: "rungs.csv", columns: "rung, label, short, level, h, scale" },
   {
-    fileType: "Gate report",
+    fileType: "Results table",
     pattern: "gates.csv",
     columns: "rung, level, thin_axis_resolution, image_parameter, orientation, R_h, target, deviation, torque_null, ratio"
   },

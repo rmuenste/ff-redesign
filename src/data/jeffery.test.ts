@@ -8,7 +8,7 @@ import {
   jefferyControl,
   jefferyControlSpecs,
   jefferyDownloads,
-  jefferyGateRows,
+  jefferyToleranceRows,
   jefferyH4,
   jefferyH8,
   jefferyOrbitSpecs,
@@ -342,12 +342,12 @@ describe("Jeffery plot assets", () => {
     }
   });
 
-  it("keeps the published gate table in step with the generated numbers", () => {
-    expect(jefferyGateRows).toHaveLength(6);
-    const period = jefferyGateRows.find(row => row.gate.startsWith("Period"));
-    expect(period?.measured).toContain(jefferyH8.analysis.periodGamma!.toFixed(4));
-    expect(period?.measured).toContain(percent(jefferyH8.analysis.periodDeviation!));
-    for (const row of jefferyGateRows) expect(row.verdict).toBe("PASS");
+  it("keeps the published tolerance table in step with the generated numbers", () => {
+    expect(jefferyToleranceRows).toHaveLength(6);
+    const period = jefferyToleranceRows.find(row => row.quantity.startsWith("Period"));
+    expect(period?.reference).toContain(jefferyClosedForm.periodGamma.toFixed(5));
+    expect(period?.result).toContain(jefferyH8.analysis.periodGamma!.toFixed(4));
+    expect(period?.result).toContain(percent(jefferyH8.analysis.periodDeviation!));
   });
 });
 

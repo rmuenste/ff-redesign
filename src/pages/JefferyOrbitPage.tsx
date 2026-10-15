@@ -21,7 +21,6 @@ import {
   jefferyControl,
   jefferyControlSpecs,
   jefferyDownloads,
-  jefferyGateRows,
   jefferyH4,
   jefferyH8,
   jefferyOrbitSpecs,
@@ -32,13 +31,14 @@ import {
   jefferyReferences,
   jefferyRuns,
   jefferySeamWindow,
+  jefferyToleranceRows,
   jefferyWall,
   jefferyWallModel,
   percent,
   points,
-  type JefferyGateRow,
   type JefferyParameterRow,
-  type JefferyRun
+  type JefferyRun,
+  type JefferyToleranceRow
 } from "../data/jeffery";
 
 const PERIOD_TARGET = jefferyClosedForm.periodGamma.toFixed(5);
@@ -96,7 +96,7 @@ function IntroductionTab() {
           {
             type: "paragraph",
             text:
-              "This is the second non-spherical case in the DNS validation campaign, and the first in which torque does anything. The spheroid case before it held its body fixed and checked that the hydrodynamic torque on it was zero — a null, which a method can pass by not computing torque at all. Here the body is free to rotate, so the whole rotational path is under test end to end: the fluid torque on the immersed surface, the rigid-body angular update, the orientation integration, and the axis that comes back out. The orbit is the integral of all of it over a hundred and twenty time units."
+              "This is the second non-spherical case among the DNS benchmarks, and the first in which torque does anything. The Oberbeck spheroid case holds its body fixed and compares the hydrodynamic torque on it with zero — a null, which a method can satisfy by not computing torque at all. Here the body is free to rotate, so the whole rotational path is under test end to end: the fluid torque on the immersed surface, the rigid-body angular update, the orientation integration, and the axis that comes back out. The orbit is the integral of all of it over a hundred and twenty time units."
           },
           {
             type: "paragraph",
@@ -105,20 +105,20 @@ function IntroductionTab() {
                 jefferyH8.analysis.orient.rmsResidual * 100
               ).toFixed(2)} per cent of gammadot and the orbit staying in its plane to ${jefferyH8.analysis.maxAxisY.toExponential(
                 1
-              )} (row d62_v1b_orbit).`
+              )}.`
           },
-          { type: "heading", level: 3, text: "The walls, and why they get their own rung" },
+          { type: "heading", level: 3, text: "The walls, and why they get their own run" },
           {
             type: "paragraph",
             text:
-              `A tenth of a per cent is a small number, but a number that small is only meaningful once you know what is in it. Shear in a box is shear between walls, and walls are the one thing Jeffery's unbounded solution does not have. So the case carries a required second rung: the same body, the same shear rate, the same streamwise and spanwise periods, and half the box height. Halving the clearance lengthened the period to ${H4_PERIOD}, ${H4_DEV} — a shift of ${points(jefferyWall.shift)}. The walls retard the orbit, the effect shrinks as they move away, and the ladder converges toward Jeffery rather than away from him.`
+              `A tenth of a per cent is a small number, but a number that small is only meaningful once you know what is in it. Shear in a box is shear between walls, and walls are the one thing Jeffery's unbounded solution does not have. So the case carries a second run: the same body, the same shear rate, the same streamwise and spanwise periods, and half the box height. Halving the clearance lengthened the period to ${H4_PERIOD}, ${H4_DEV} — a shift of ${points(jefferyWall.shift)}. The walls retard the orbit, the effect shrinks as they move away, and the period converges toward Jeffery's rather than away from it.`
           },
           {
             type: "paragraph",
             text:
               `Extrapolated to no walls at all, the residual is ${percent(CUBIC.intercept)} on an image-dipole scaling and ${percent(
                 SQUARE.intercept
-              )} on a slower one — either way a wall systematic of one to two tenths of a point inside the certified number, and a clearance-free residual no larger than the resolution and finite-Reynolds share. Through both of those shifts the rate waveform stays on Jeffery's curve. A period that drifts while the shape holds is the signature of a clock effect, not a physics error, and it is exactly the picture the figures are built to show.`
+              )} on a slower one — either way a wall systematic of one to two tenths of a point inside the measured period, and a clearance-free residual no larger than the resolution and finite-Reynolds share. Through both of those shifts the rate waveform stays on Jeffery's curve. A period that drifts while the shape holds is the signature of a clock effect, not a physics error, and it is exactly the picture the figures are built to show.`
           }
         ]}
       />
@@ -139,7 +139,7 @@ function DefinitionTab() {
           {
             type: "paragraph",
             text:
-              `A prolate spheroid of aspect ratio ${jefferyH8.re} — semi-axes a = ${jefferyH8.a}, b = c = ${jefferyH8.b} — sits at the centre of a planar Couette box of ${jefferyH8.box.x} by ${jefferyH8.box.y} by H, periodic along the flow and spanwise directions, with the walls at z = +/-H/2 driven in opposite directions at +/- gammadot H / 2. That makes the undisturbed flow a linear shear of rate gammadot = ${jefferyH8.gammadot} with its vorticity along +y, and the shear Reynolds number on the semi-major axis is gammadot a^2 / nu = ${jefferyH8.reynolds}. The box is planar by decision, not convenience: Jeffery's solution is for linear shear, and the curvature of an annular viscometer would contaminate the gate it is supposed to close.`
+              `A prolate spheroid of aspect ratio ${jefferyH8.re} — semi-axes a = ${jefferyH8.a}, b = c = ${jefferyH8.b} — sits at the centre of a planar Couette box of ${jefferyH8.box.x} by ${jefferyH8.box.y} by H, periodic along the flow and spanwise directions, with the walls at z = +/-H/2 driven in opposite directions at +/- gammadot H / 2. That makes the undisturbed flow a linear shear of rate gammadot = ${jefferyH8.gammadot} with its vorticity along +y, and the shear Reynolds number on the semi-major axis is gammadot a^2 / nu = ${jefferyH8.reynolds}. The box is planar by decision, not convenience: Jeffery's solution is for linear shear, and the curvature of an annular viscometer would contaminate the comparison it is meant to make.`
           },
           {
             type: "paragraph",
@@ -166,13 +166,13 @@ function DefinitionTab() {
           {
             type: "paragraph",
             text:
-              `The rate waveform is a centred difference of phi, and it is gated twice: once on its extrema, whose ratio must be r_e^2, and once against orientation, by binning the rate into ${jefferyOrientBins} bins of phi mod pi and comparing each bin with Jeffery's rate at the bin centre. The second gate is the one that matters. Extrema alone accept an orbit shifted by a quarter turn — one that runs fastest exactly where Jeffery runs slowest — and that failure mode is only visible when the rate is read against where the body is pointing.`
+              `The rate waveform is a centred difference of phi, and it is compared twice: once on its extrema, whose ratio must be r_e^2, and once against orientation, by binning the rate into ${jefferyOrientBins} bins of phi mod pi and comparing each bin with Jeffery's rate at the bin centre. The second comparison is the one that matters. Extrema alone accept an orbit shifted by a quarter turn — one that runs fastest exactly where Jeffery runs slowest — and that failure mode is only visible when the rate is read against where the body is pointing.`
           },
           { type: "heading", level: 3, text: "Segments" },
           {
             type: "paragraph",
             text:
-              `Each orbit run is ${jefferyH8.segments} twenty-four-hour segments on two nodes of the production cluster, and the restarts carry the orientation across the seam. The body does restart a segment with zero angular velocity and spins back up within tau_rot, so samples in the ${jefferySeamWindow}-time-unit window after each restart are masked out of the waveform. The period is unaffected either way: the half-periods that straddle a seam agree with the ones that do not to ${seamSpread.toExponential(
+              `Each orbit run is computed in ${jefferyH8.segments} segments, and the restarts carry the orientation across the seam. The body does restart a segment with zero angular velocity and spins back up within tau_rot, so samples in the ${jefferySeamWindow}-time-unit window after each restart are masked out of the waveform. The period is unaffected either way: the half-periods that straddle a seam agree with the ones that do not to ${seamSpread.toExponential(
                 0
               )} time units.`
           }
@@ -200,25 +200,25 @@ function DefinitionTab() {
         </div>
 
         <div>
-          <h3>Gates</h3>
-          <DataTable<JefferyGateRow>
+          <h3>What is compared, and the tolerance</h3>
+          <DataTable<JefferyToleranceRow>
             columns={[
-              { id: "gate", header: "Gate", render: row => <span style={{ fontWeight: 500 }}>{row.gate}</span> },
-              { id: "quantity", header: "Quantity", render: row => row.quantity },
-              { id: "band", header: "Band", align: "right", render: row => <Mono>{row.band}</Mono> },
+              { id: "quantity", header: "Quantity", render: row => <span style={{ fontWeight: 500 }}>{row.quantity}</span> },
+              { id: "reference", header: "Reference", render: row => row.reference },
+              { id: "tolerance", header: "Tolerance", align: "right", render: row => <Mono>{row.tolerance}</Mono> },
               {
-                id: "measured",
-                header: "Default clearance",
+                id: "result",
+                header: "Result",
                 align: "right",
                 render: row => (
                   <span style={{ fontFamily: "var(--font-mono)", fontWeight: 500, whiteSpace: "nowrap" }}>
-                    {row.measured}
+                    {row.result}
                   </span>
                 )
               }
             ]}
-            rows={jefferyGateRows}
-            getRowKey={row => row.gate}
+            rows={jefferyToleranceRows}
+            getRowKey={row => row.quantity}
           />
           <p style={{ color: "var(--fg2)", fontSize: 13, lineHeight: 1.6, marginTop: 12 }}>
             The rotation sense is checked separately and is not a band: with the vorticity along +y the
@@ -268,7 +268,7 @@ function OrbitTab() {
       </div>
 
       <div style={{ marginTop: 36, maxWidth: 1040 }}>
-        <h3>The orbit gates, both clearances</h3>
+        <h3>The orbit against Jeffery, both clearances</h3>
         <DataTable<JefferyRun>
           columns={[
             {
@@ -335,7 +335,7 @@ function OrbitTab() {
           fast through the gradient direction, which is the way round Jeffery requires — and the way round
           a quarter-turn-shifted orbit would not be. The orbit plane is neutrally stable at these
           Reynolds numbers, and the out-of-plane component stays below{" "}
-          {worstAxisY.toExponential(1)} against a gate of 0.02.
+          {worstAxisY.toExponential(1)} against a tolerance of 0.02.
         </p>
       </div>
 
@@ -368,7 +368,7 @@ function ClearanceTab() {
       <div className="stack" style={{ maxWidth: 900, gap: 20 }}>
         <h3 style={{ margin: 0 }}>Halving the clearance, changing one thing</h3>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
-          The second rung keeps the body, the aspect ratio, the shear rate, the time step and the
+          The second run keeps the body, the aspect ratio, the shear rate, the time step and the
           streamwise and spanwise periods, and halves the box height. The wall speed halves with it, which
           is what holds gammadot fixed. One parameter moves: how far the walls stand from the body, from{" "}
           {jefferyH8.clearanceAxes} semi-major axes to {jefferyH4.clearanceAxes}.
@@ -390,7 +390,7 @@ function ClearanceTab() {
             Two clearances support two straight lines, one per scaling law, and the clearance-free period
             is where each of them crosses zero. An image-dipole law falling as (a/l)^3 puts it at{" "}
             {percent(CUBIC.intercept)}; a slower (a/l)^2 law puts it at {percent(SQUARE.intercept)}. The
-            bracket, not the fit, is the claim: the wall systematic carried by the certified number is one
+            bracket, not the fit, is the claim: the wall systematic carried by the measured period is one
             to two tenths of a percentage point, and what is left when the walls are gone is the size of
             the resolution and finite-Reynolds share.
           </p>
@@ -403,7 +403,7 @@ function ClearanceTab() {
       <p style={{ color: "var(--fg2)", lineHeight: 1.65, maxWidth: 900, marginTop: 20 }}>
         The abscissa is the body's semi-major axis over its distance to the wall, so the left edge is an
         unbounded fluid and reading the frame right to left is the extrapolation. On the absolute frame
-        both rungs sit deep inside the three-per-cent band; switch to the zoomed excess to see the two
+        both clearances sit deep inside the three-per-cent band; switch to the zoomed excess to see the two
         laws separate, which they only do below the clearances actually run.
       </p>
 
@@ -446,8 +446,8 @@ function ClearanceTab() {
             The half-clearance box is not quite the same mesh. Read from each run's own resolution
             record, the two meshes differ by {resolutionGap} in thin-axis resolution (2b/h{" "}
             {jefferyH8.thinAxisResolution.toFixed(1)} vs {jefferyH4.thinAxisResolution.toFixed(1)}), far
-            too small to produce the {points(jefferyWall.shift)} shift — the spheroid-drag refinement
-            ladder that precedes this case moved its ratio by 1e-4 under a doubling of the mesh — so the
+            too small to produce the {points(jefferyWall.shift)} shift — on the Oberbeck spheroid-drag case a
+            doubling of the mesh moved the anisotropy ratio by 1e-4 — so the
             shift is the wall effect. The bodies are resolved by {jefferyH8.insideDofs} and{" "}
             {jefferyH4.insideDofs} interior degrees of freedom respectively, and{" "}
             {jefferyControlRun.insideDofs} for the sphere control.
@@ -466,7 +466,7 @@ function ClearanceTab() {
             {jefferyH4.analysis.rate.modulation.toFixed(3)} against an exact{" "}
             {jefferyClosedForm.modulation}. A body that is turning through the right shape at the wrong
             speed is a body whose clock the walls have touched — which is the reading, and the reason the
-            rung was required rather than optional.
+            second clearance was run.
           </p>
         </div>
       </div>
@@ -483,7 +483,7 @@ function ControlTab() {
           At aspect ratio one Jeffery's orbit degenerates into something with no shape left in it: a
           sphere in a shear flow spins steadily at half the vorticity, omega_y = +gammadot/2, forever and uniformly.
           There is no period to measure and no waveform to fit. That makes it the ideal control — it
-          certifies the torque-to-rotation chain against an exact, shape-free number before the spheroid
+          tests the torque-to-rotation chain against an exact, shape-free number before the spheroid
           is asked to do anything more interesting.
         </p>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
@@ -507,7 +507,7 @@ function ControlTab() {
             The sphere's {percent(jefferyControl.deviation)} and the orbit's {H8_DEV} are the same kind of
             number, with the same sign, from the same fixture at the same resolution — a rotation rate
             slightly too slow, so a clock slightly too long. The control therefore does double duty: it
-            certifies the chain, and it sets the scale of the discretisation share in the orbit's period
+            tests the chain, and it sets the scale of the discretisation share in the orbit's period
             excess, which is what makes the clearance-free residual of {percent(CUBIC.intercept)} to{" "}
             {percent(SQUARE.intercept)} a credible remainder rather than an unexplained one.
           </p>
@@ -536,7 +536,7 @@ function ReferenceDataTab() {
           {
             type: "paragraph",
             text:
-              "The run files are the raw record of each simulation: one line per time step, carrying the unit vector along the body's symmetry axis, neither smoothed nor resampled. The orbit runs are concatenations of three segments each, with the overlap a restart replays trimmed away; the restart times themselves travel in the run table, so any masking this page applies can be reproduced or rejected. Alongside them, the gate report carries the derived periods and waveform statistics, the crossings file carries the times the period is read from, the bin file carries the orientation-resolved waveform, and the extrapolation file carries the two wall laws. All quantities are nondimensional in campaign box units with unit viscosity. The bundle also contains the DNS campaign datasheet, plus an extract of the rows that concern this benchmark."
+              "The run files are the raw record of each simulation: one line per time step, carrying the unit vector along the body's symmetry axis, neither smoothed nor resampled. The orbit runs are concatenations of three segments each, with the overlap a restart replays trimmed away; the restart times themselves travel in the run table, so any masking this page applies can be reproduced or rejected. Alongside them, the results table carries the derived periods and waveform statistics, the crossings file carries the times the period is read from, the bin file carries the orientation-resolved waveform, and the extrapolation file carries the two wall laws. All quantities are nondimensional in box units with unit viscosity. The bundle also contains the DNS validation datasheet, plus an extract of the rows that concern this benchmark."
           }
         ]}
       />
@@ -622,7 +622,7 @@ export function JefferyOrbitPage() {
               </h1>
               <p style={{ color: "var(--fg2)", fontSize: 15, margin: 0, maxWidth: 700, lineHeight: 1.55 }}>
                 A prolate spheroid tumbling freely in planar Couette flow, measured against
-                Jeffery&apos;s 1922 closed form — and a wall-clearance rung that turns the period residual
+                Jeffery&apos;s 1922 closed form — and a second wall clearance that turns the period residual
                 from an unknown into a quantity.
               </p>
             </div>

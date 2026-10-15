@@ -276,49 +276,45 @@ export const viscometerParameterRows: ViscometerParameterRow[] = [
   { symbol: "dt", quantity: "Time step", value: "5e-3 (spin-up of the empty cell at 5e-2)" }
 ];
 
-export interface ViscometerGateRow {
-  gate: string;
+export interface ViscometerToleranceRow {
+  quantity: string;
   reference: string;
-  measured: string;
-  deviation: string;
   tolerance: string;
+  result: string;
 }
 
 /**
- * The four acceptance gates of the empty instrument. Every reference and every
- * measured value is the generated one, so the table cannot drift from the series.
+ * What the empty instrument is compared against, with the tolerance and the
+ * result. Every reference and every result is the generated one, so the table
+ * cannot drift from the series.
  */
-export const viscometerGateRows: ViscometerGateRow[] = [
+export const viscometerToleranceRows: ViscometerToleranceRow[] = [
   {
-    gate: "Analytic torque",
-    reference: viscometerInstrument.torqueExact.toFixed(4),
-    measured: viscometerBaseline.torqueDna.toFixed(4),
-    deviation: percent(viscometerGates.torque, 3),
-    tolerance: "+/- 3%"
+    quantity: "Torque on the bob",
+    reference: `${viscometerInstrument.torqueExact.toFixed(4)}, analytic`,
+    tolerance: "+/- 3%",
+    result: `${viscometerBaseline.torqueDna.toFixed(4)} (${percent(viscometerGates.torque, 3)})`
   },
   {
-    gate: "Azimuthal velocity profile",
+    quantity: "Azimuthal velocity profile",
     reference: "exact Couette",
-    measured: `mean ${(viscometerProfile.mean_rel_error * 100).toFixed(2)}%, max ${(
-      viscometerProfile.max_rel_error * 100
-    ).toFixed(1)}%`,
+    tolerance: "pointwise agreement",
     // An error magnitude, not a signed deviation, so it carries no sign.
-    deviation: `${(viscometerProfile.mean_rel_error * 100).toFixed(2)}%`,
-    tolerance: "pointwise agreement"
+    result: `mean ${(viscometerProfile.mean_rel_error * 100).toFixed(2)}%, max ${(
+      viscometerProfile.max_rel_error * 100
+    ).toFixed(1)}%`
   },
   {
-    gate: "Estimator concordance",
-    reference: viscometerInstrument.transposeCorrection.toFixed(4),
-    measured: viscometerBaseline.gap.toFixed(4),
-    deviation: percent(viscometerBaseline.gapDeviation, 3),
-    tolerance: "+/- 3%"
+    quantity: "Offset between the two estimators",
+    reference: `${viscometerInstrument.transposeCorrection.toFixed(4)}, analytic`,
+    tolerance: "+/- 3%",
+    result: `${viscometerBaseline.gap.toFixed(4)} (${percent(viscometerBaseline.gapDeviation, 3)})`
   },
   {
-    gate: "Corrected reaction estimator",
-    reference: viscometerInstrument.torqueExact.toFixed(4),
-    measured: viscometerGates.correctedTorque.toFixed(4),
-    deviation: percent(viscometerGates.correctedDeviation, 4),
-    tolerance: "+/- 3%"
+    quantity: "Corrected reaction estimator",
+    reference: `${viscometerInstrument.torqueExact.toFixed(4)}, analytic`,
+    tolerance: "+/- 3%",
+    result: `${viscometerGates.correctedTorque.toFixed(4)} (${percent(viscometerGates.correctedDeviation, 4)})`
   }
 ];
 
@@ -386,9 +382,9 @@ const dataFiles: Array<{ name: string; description: string }> = [
     name: `lubpairs_${pair.run.replace("_lub", "")}.csv`,
     description: `Per-step near-contact film counts at phi = ${pair.phi.toFixed(2)}`
   })),
-  { name: "rungs.csv", description: "Plateau window, cloud size, lubrication switch and governing closure per rung" },
+  { name: "rungs.csv", description: "Plateau window, cloud size, lubrication switch and governing closure per run" },
   { name: "composites.csv", description: "Closure targets composed over the measured concentration field" },
-  { name: "velocity_profile.csv", description: "Azimuthal velocity profile gate against the exact Couette solution" }
+  { name: "velocity_profile.csv", description: "Azimuthal velocity profile compared against the exact Couette solution" }
 ];
 
 export const viscometerDownloads: DownloadItem[] = [
@@ -400,7 +396,7 @@ export const viscometerDownloads: DownloadItem[] = [
   {
     label: "dns_validation_datasheet.csv",
     href: benchmarkAssetPath("numerical-viscometer", "downloads/dns_validation_datasheet.csv"),
-    description: "Complete DNS campaign claim ledger, one row per quantitative claim"
+    description: "The DNS validation datasheet, one row per quantitative result"
   },
   ...dataFiles.map(file => ({
     label: file.name,
@@ -431,7 +427,7 @@ export const viscometerReferenceRows = [
     columns: "phi, closure, eta_composite, gate"
   },
   {
-    fileType: "Profile gate",
+    fileType: "Velocity profile",
     pattern: "velocity_profile.csv",
     columns: "quantity, value"
   }

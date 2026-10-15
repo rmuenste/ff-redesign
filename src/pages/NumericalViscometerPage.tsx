@@ -22,7 +22,6 @@ import {
   viscometerBaseline,
   viscometerDownloads,
   viscometerEinstein,
-  viscometerGateRows,
   viscometerGatedLadder,
   viscometerGates,
   viscometerInstrument,
@@ -36,14 +35,15 @@ import {
   viscometerReferenceRows,
   viscometerReferences,
   viscometerRestart,
+  viscometerToleranceRows,
   viscometerTorqueSpecs,
   viscometerViscositySpecs,
-  type ViscometerGateRow,
   type ViscometerGatedRung,
   type ViscometerLadderRow,
   type ViscometerPair,
   type ViscometerParameterRow,
-  type ViscometerRung
+  type ViscometerRung,
+  type ViscometerToleranceRow
 } from "../data/numerical-viscometer";
 
 const T_EXACT_LONG = viscometerInstrument.torqueExact.toFixed(4);
@@ -98,7 +98,7 @@ function IntroductionTab() {
           {
             type: "paragraph",
             text:
-              "With the empty cell certified, the effective viscosity of a suspension is a ratio of two readings taken with the same instrument: the torque needed to turn the bob through the suspension, over the torque needed to turn it through the pure fluid."
+              "With the empty cell calibrated, the effective viscosity of a suspension is a ratio of two readings taken with the same instrument: the torque needed to turn the bob through the suspension, over the torque needed to turn it through the pure fluid."
           },
           { type: "equation", value: "$\\eta = \\frac{T(\\phi)}{T(0)}$", block: true },
           {
@@ -110,7 +110,7 @@ function IntroductionTab() {
           {
             type: "paragraph",
             text:
-              `Einstein's law is first order in concentration, so it has an expiry date. The ladder walks up to ${"φ"} = ${PHI_MAX}, where the instrument reads ${ETA_MAX} — more than seventy per cent above the pure fluid — and at every rung the measurement lands on the closure that governs it: Einstein while particles are effectively alone, Batchelor once they interact in pairs, and a concentrated closure past the point where that series expires. Three regimes, no tuned parameter, one instrument. Every rung was then run twice over, to price what the mesh leaves out of the films between nearly touching spheres.`
+              `Einstein's law is first order in concentration, so it has an expiry date. The concentration series walks up to ${"φ"} = ${PHI_MAX}, where the instrument reads ${ETA_MAX} — more than seventy per cent above the pure fluid — and at every concentration the measurement lands on the closure that governs it: Einstein while particles are effectively alone, Batchelor once they interact in pairs, and a concentrated closure past the point where that series expires. Three regimes, no tuned parameter, one instrument. Every concentration was also run with a sub-grid lubrication model switched on, to price what the mesh leaves out of the films between nearly touching spheres.`
           }
         ]}
       />
@@ -207,7 +207,7 @@ function DefinitionTab() {
             Every number on this page is a plateau statistic of the torque history: the mean over the settled
             window, with its scatter about that mean. A suspension and the empty cell it is divided by are averaged
             over the same window of time after the restart — t = {viscometerEinstein.window[0]}–
-            {viscometerEinstein.window[1]} for the {"φ"} = {PHI} rung, once the seeding transient has run out — so
+            {viscometerEinstein.window[1]} for the {"φ"} = {PHI} suspension, once the seeding transient has run out — so
             the ratio compares two readings taken at the same time step and at the same point in the instrument's
             life.
           </p>
@@ -226,13 +226,13 @@ function BaselineTab() {
           Nothing is suspended in the gap; the bob simply turns until the flow is steady. The cell is spun up to
           that state at a coarse time step and then continued at the time step the suspensions use, and it is the
           continued run that is read: every T(0) on this page comes from it, over the same window as the reading
-          it normalises. Four gates then decide whether the instrument may be used: the torque it reports, the
+          it normalises. Four comparisons say whether the instrument can be trusted: the torque it reports, the
           velocity field it produces, the agreement between its two independent torque estimators, and the
-          steadiness of the reading. All four pass, with wide margins.
+          steadiness of the reading. All four land well inside their tolerances.
         </p>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
           The torque plateaus at {viscometerBaseline.torqueDna.toFixed(4)} against the analytic {T_EXACT_LONG},
-          a deviation of {percent(viscometerGates.torque, 3)} on a gate of three per cent. The azimuthal
+          a deviation of {percent(viscometerGates.torque, 3)} against a tolerance of three per cent. The azimuthal
           velocity profile, read off the spun-up field, follows the exact Couette solution to a pointwise mean
           error of {(viscometerGates.profileMeanError * 100).toFixed(2)} per cent, with the prescribed values on
           the bob and the outer wall reproduced exactly. And the reading is steady: over the whole averaging
@@ -242,10 +242,10 @@ function BaselineTab() {
       </div>
 
       <div style={{ marginTop: 32, maxWidth: 900 }}>
-        <h3>Acceptance gates</h3>
-        <DataTable<ViscometerGateRow>
+        <h3>What is compared, and the tolerance</h3>
+        <DataTable<ViscometerToleranceRow>
           columns={[
-            { id: "gate", header: "Gate", render: row => <span style={{ fontWeight: 500 }}>{row.gate}</span> },
+            { id: "quantity", header: "Quantity", render: row => <span style={{ fontWeight: 500 }}>{row.quantity}</span> },
             {
               id: "reference",
               header: "Reference",
@@ -253,28 +253,22 @@ function BaselineTab() {
               render: row => <span style={{ fontFamily: "var(--font-mono)" }}>{row.reference}</span>
             },
             {
-              id: "measured",
-              header: "Measured",
-              align: "right",
-              render: row => <span style={{ fontFamily: "var(--font-mono)" }}>{row.measured}</span>
-            },
-            {
-              id: "deviation",
-              header: "Deviation",
-              align: "right",
-              render: row => (
-                <span style={{ fontFamily: "var(--font-mono)", fontWeight: 500 }}>{row.deviation}</span>
-              )
-            },
-            {
               id: "tolerance",
               header: "Tolerance",
               align: "right",
               render: row => <span style={{ color: "var(--fg3)", fontSize: 12 }}>{row.tolerance}</span>
+            },
+            {
+              id: "result",
+              header: "Result",
+              align: "right",
+              render: row => (
+                <span style={{ fontFamily: "var(--font-mono)", fontWeight: 500 }}>{row.result}</span>
+              )
             }
           ]}
-          rows={viscometerGateRows}
-          getRowKey={row => row.gate}
+          rows={viscometerToleranceRows}
+          getRowKey={row => row.quantity}
         />
       </div>
 
@@ -313,23 +307,23 @@ function LadderTab() {
       <div className="stack" style={{ maxWidth: 900, gap: 20 }}>
         <h3 style={{ margin: 0 }}>Three concentrations, three closures</h3>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
-          Each rung is a fresh suspension seeded into the certified Couette field of the empty instrument by random
+          Each concentration is a fresh suspension seeded into the steady Couette field of the empty instrument by random
           sequential addition, held half a diameter clear of both walls, density-matched closely enough that gravity
           can be switched off entirely. There is no settling to confound the reading — only shear. The number the
           instrument returns is the ratio of the torque it takes to turn the bob through the suspension to the torque
           it takes to turn it through the pure fluid.
         </p>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
-          The interest is in what the ladder walks through. Einstein&apos;s law is first order in concentration and
+          The interest is in what the series walks through. Einstein&apos;s law is first order in concentration and
           stops being enough once particles start to feel each other; Batchelor&apos;s second-order term takes over,
-          and past that the series itself expires and a concentrated closure is needed. Each rung lands on the closure
+          and past that the series itself expires and a concentrated closure is needed. Each concentration lands on the closure
           valid at its own concentration, and overshoots the one it has outgrown — which is the same statement read
           twice.
         </p>
       </div>
 
       <div style={{ marginTop: 32, maxWidth: 980 }}>
-        <h3>The ladder</h3>
+        <h3>The measurements</h3>
         <DataTable<ViscometerGatedRung>
           columns={[
             {
@@ -378,7 +372,7 @@ function LadderTab() {
           getRowKey={row => row.run}
         />
         <p style={{ color: "var(--fg2)", fontSize: 13, lineHeight: 1.6, marginTop: 12 }}>
-          Every rung within {LADDER_WORST} per cent of the closure that governs it, on an acceptance band of three,
+          Every concentration within {LADDER_WORST} per cent of the closure that governs it, against a tolerance of three,
           with no tuned parameter anywhere in the chain. The targets are composites: the closure evaluated
           pointwise over the concentration field the run itself produced, which is what accounts for the
           particle-free layers at the two walls.
@@ -391,7 +385,7 @@ function LadderTab() {
       <p style={{ color: "var(--fg2)", lineHeight: 1.65, maxWidth: 900, marginTop: 20 }}>
         The dashed curves are the plain closures, each evaluated at a single volume fraction. They are orientation
         only, and they sit above the measurements for a reason the page has already given: a real cell carries
-        particle-free layers at its walls, so the instrument reads less than a uniform suspension would. The gate
+        particle-free layers at its walls, so the instrument reads less than a uniform suspension would. The
         targets are the open diamonds — the same closures composed over the measured concentration field.
       </p>
 
@@ -400,7 +394,7 @@ function LadderTab() {
           <h3>Where each closure runs out</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
             A closure outside its range does not fail quietly here; it is exceeded by a margin the instrument
-            resolves. That is the ladder&apos;s second reading, and it is what makes the agreements above
+            resolves. That is the series&apos; second reading, and it is what makes the agreements above
             non-trivial.
           </p>
           <DataTable<{ id: string; phi: string; closure: string; target: string; deviation: string; verdict: string }>
@@ -447,7 +441,7 @@ function LadderTab() {
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
             The offset between the two torque estimators is predicted to depend only on the enclosed, particle-free
             hole volume — so however many spheres crowd the gap, and whether or not the lubrication model is running,
-            it should not move. It does not. Across every loaded rung of the ladder it is measured at{" "}
+            it should not move. It does not. Across every loaded run it is measured at{" "}
             {CORRECTION} to five significant digits, the largest departure from the analytic value being{" "}
             {percent(
               viscometerLoadedRungs.reduce(
@@ -463,7 +457,7 @@ function LadderTab() {
             columns={[
               {
                 id: "rung",
-                header: "Rung",
+                header: "Suspension",
                 render: row => (
                   <span style={{ fontFamily: "var(--font-mono)" }}>
                     phi = {row.phi.toFixed(2)}
@@ -490,12 +484,12 @@ function LadderTab() {
         </div>
 
         <div>
-          <h3>Status of the ladder</h3>
+          <h3>Each concentration and its reference</h3>
           <DataTable<ViscometerLadderRow>
             columns={[
               {
                 id: "label",
-                header: "Rung",
+                header: "Concentration",
                 render: row => (
                   <span style={{ fontFamily: "var(--font-mono)", fontWeight: 500 }}>{row.label}</span>
                 )
@@ -522,15 +516,15 @@ function LubricationTab({ onOpenSedimentation }: { onOpenSedimentation: () => vo
       <div className="stack" style={{ maxWidth: 900, gap: 20 }}>
         <h3 style={{ margin: 0 }}>What the unresolved film is worth</h3>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
-          Every rung above was measured with the fluid solver alone. At eight to nine elements per diameter the
+          Every concentration above was measured with the fluid solver alone. At eight to nine elements per diameter the
           squeeze film between two nearly touching spheres is not resolved, and the question is what that costs. The
           rigid-body engine carries a sub-grid lubrication model for exactly this, in the deficit form that adds only
           what the resolved flow is missing, armed at a gap of two grid cells.
         </p>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
-          All three rungs were therefore run twice. Same cloud, particle for particle; same deck; same binary.
-          The single difference between the members of each pair is one switch in the rigid-body configuration. That
-          makes the difference in viscosity an attribution rather than a comparison.
+          All three concentrations were therefore run twice, from the same cloud, particle for particle, with the
+          same settings. The single difference between the members of each pair is one switch in the rigid-body
+          configuration. That makes the difference in viscosity an attribution rather than a comparison.
         </p>
         <div
           style={{
@@ -622,24 +616,24 @@ function LubricationTab({ onOpenSedimentation }: { onOpenSedimentation: () => vo
             everywhere — a numerical offset rather than a film. Instead it falls away with the films themselves:
             over a factor of four in concentration, a factor of {viscometerPairDecay.eta.toFixed(1)} per halving
             against {viscometerPairDecay.pairs.toFixed(1)} for the film count. What the model adds follows how
-            often two surfaces are close, the contribution decaying the more gently of the two, so the thinnest
-            rung keeps a little more of its correction than the film count alone would grant it. That is what a
+            often two surfaces are close, the contribution decaying the more gently of the two, so the most dilute
+            suspension keeps a little more of its correction than the film count alone would grant it. That is what a
             lubrication term should do, and it is the cleanest available evidence that the model is doing the right
             thing at suspension scale.
           </p>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
             The practical reading for anyone choosing a resolution: at {"φ"} = {dilute.phi.toFixed(2)} the
             unresolved film is worth under half a per cent and at {"φ"} = {middle.phi.toFixed(2)} still under one,
-            so through the dilute half of the ladder it can reasonably be neglected; by{" "}
+            so through the dilute half of the series it can reasonably be neglected; by{" "}
             {"φ"} = {dense.phi.toFixed(2)} it is approaching three, and a suspension viscosity quoted without it is
             low by about that much at this resolution.
           </p>
         </div>
 
         <div>
-          <h3>The model, and where it was certified</h3>
+          <h3>The model at single-particle scale</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-            The same model is gated at single-particle scale on the settling-sphere benchmark, against an exact
+            The same model is tested at single-particle scale on the settling-sphere benchmark, against an exact
             wall-approach solution and against the classical experiment. That is where the deficit form is chosen
             and quantified; this page is where it is used in anger.
           </p>
@@ -665,7 +659,7 @@ function ReferenceDataTab() {
           {
             type: "paragraph",
             text:
-              "The torque histories are the raw record of each run: one line per time step, carrying the time and both torque estimators, neither smoothed nor trimmed. Alongside them, the lubrication files carry the solver's per-step count of near-contact films, the run table carries the plateau window, the matched window of the empty cell and the switch settings of every rung, the closure file carries the targets composed from the measured concentration field, and the profile file carries the velocity-profile gate. All quantities are nondimensional with unit sphere diameter, and torques are signed about the axis of rotation. The bundle also contains the DNS campaign datasheet."
+              "The torque histories are the raw record of each run: one line per time step, carrying the time and both torque estimators, neither smoothed nor trimmed. Alongside them, the lubrication files carry the solver's per-step count of near-contact films, the run table carries the plateau window, the matched window of the empty cell and the switch settings of every run, the closure file carries the targets composed from the measured concentration field, and the profile file carries the velocity-profile comparison. All quantities are nondimensional with unit sphere diameter, and torques are signed about the axis of rotation. The bundle also contains the DNS validation datasheet."
           }
         ]}
       />
@@ -699,7 +693,7 @@ export function NumericalViscometerPage() {
     { id: "introduction", label: "Introduction" },
     { id: "definition", label: "Definition" },
     { id: "baseline", label: "Baseline" },
-    { id: "ladder", label: "Concentration Ladder" },
+    { id: "ladder", label: "Concentration Series" },
     { id: "lubrication", label: "Lubrication" },
     { id: "reference-data", label: "Reference Data" }
   ];
@@ -750,17 +744,17 @@ export function NumericalViscometerPage() {
                 </span>
               </h1>
               <p style={{ color: "var(--fg2)", fontSize: 15, margin: 0, maxWidth: 700, lineHeight: 1.55 }}>
-                A Couette cell with an exact analytic torque, calibrated empty and then walked up a concentration
-                ladder that lands on Einstein, Batchelor and Krieger-Dougherty in turn.
+                A Couette cell with an exact analytic torque, calibrated empty and then loaded at three
+                concentrations that land on Einstein, Batchelor and Krieger-Dougherty in turn.
               </p>
             </div>
             <div className="kpi-grid">
-              <KpiBox label="Ladder rungs" value={String(viscometerGatedLadder.length)} />
+              <KpiBox label="Concentrations" value={String(viscometerGatedLadder.length)} />
               <KpiBox label="Spheres" value={`225–${viscometerPhi20.particles}`} />
               <KpiBox label="Subdomains" value="108" />
               <KpiBox label="eta at phi = 0.20" value={ETA_MAX} good />
               <KpiBox
-                label="Worst gate deviation"
+                label="Largest deviation"
                 value={percent(
                   viscometerGatedLadder.reduce(
                     (worst, rung) =>

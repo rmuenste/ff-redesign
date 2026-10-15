@@ -274,7 +274,7 @@ export const hinderedDownloads: DownloadItem[] = [
   {
     label: "dns_validation_datasheet.csv",
     href: benchmarkAssetPath("hindered-settling", "downloads/dns_validation_datasheet.csv"),
-    description: "Complete DNS campaign claim ledger, one row per quantitative claim"
+    description: "The DNS validation datasheet, one row per quantitative result"
   },
   ...[...tableFiles, ...historyFiles].map(file => ({
     label: file.name,

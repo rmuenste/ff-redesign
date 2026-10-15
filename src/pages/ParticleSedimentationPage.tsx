@@ -385,7 +385,7 @@ function ResultsTab() {
             finest configurations match those published simulations to within one per cent, but those simulations
             used a calibrated hydrodynamic radius at a single resolution (the input radius adjusted so that the
             sphere&apos;s drag matched the exact value), which makes them a different kind of computation from the
-            refinement study on this page; the PIV measurements remain the reference it is measured against.
+            refinement study on this page. The PIV measurements remain the reference it is measured against.
           </p>
           <div
             style={{

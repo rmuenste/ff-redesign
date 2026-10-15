@@ -3611,8 +3611,6 @@
     "dash": "dash"
   },
   "marker": {
-    "color": "#7bd88f",
-    "symbol": "triangle-up",
-    "size": 8
+    "color": "#7bd88f"
   }
 }

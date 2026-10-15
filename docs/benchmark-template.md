@@ -367,10 +367,12 @@ writes its own `src/data/generated/<id>-<code>.json`, and gives its downloads na
 no other file of the benchmark has (`feat3_velE1_L2.txt`, not a second
 `velE1_L2.txt`: the reference-data index keys on file names). The core converter
 must own its own curves by file too, so the scripts run in any order and leave
-the manifest identical. On the page a second code is a second series group,
-encoded as on the rising bubble pages: its own marker (FeatFloWer diamond,
-FEAT3 triangle) and its own colour where colour is not already taken by the level
-or the case, legend entries named `<Code> <level>`.
+the manifest identical. On the page a second code is a second series group
+with legend entries named `<Code> <level>`. Where colour is free, the code gets its
+own colour and marker as on the rising bubble pages; where colour already carries
+the level or the case (Particle Sedimentation), the code is the line style:
+FeatFloWer solid, the second code dashed, and no markers on the curves (they hide
+the gaps of a dashed line). See design-system.md, Comparison Model.
 
 Gallery stills (`media/gallery/*.webp`, a width ladder, no PNG masters) are
 recorded in the manifest as `kind: "media"` with an `oldPath` of

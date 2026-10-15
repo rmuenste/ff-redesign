@@ -2611,8 +2611,6 @@
     "dash": "dash"
   },
   "marker": {
-    "color": "#ef6f6c",
-    "symbol": "triangle-up",
-    "size": 8
+    "color": "#ef6f6c"
   }
 }

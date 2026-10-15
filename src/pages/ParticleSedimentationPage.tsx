@@ -305,9 +305,9 @@ function ResultsTab() {
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
             Each case was run on three meshes, from the coarsest, L2, to the finest, L4. Pick a case to see both
             codes at all three levels on top of the PIV measurements, as settling velocity or as the height of the
-            sphere above the bottom. Colour and line style give the mesh level and the marker gives the code, a
-            diamond for FeatFloWer and a triangle for FEAT3, so each level is a pair of curves in one colour; untick
-            any of the six to thin the chart out. For both codes the curves draw together as the mesh is refined:
+            sphere above the bottom. Colour gives the mesh level and the line style the code, solid for FeatFloWer
+            and dashed for FEAT3, so each level is a solid and a dashed curve in one colour; untick any of the six
+            to thin the chart out. For both codes the curves draw together as the mesh is refined:
             going from L3 to L4 moves the settling peak less than going from L2 to L3.{partialLadderNote()}
           </p>
         </div>
@@ -472,8 +472,8 @@ function ResultsTab() {
         <div style={{ maxWidth: 900 }}>
           <h3>All four cases at one level</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-            The same runs, with the four cases side by side at a single mesh level. Each case has a FeatFloWer and a
-            FEAT3 curve in its colour, again told apart by the marker. The level switch changes the simulation
+            The same runs, with the four cases side by side at a single mesh level. Each case has two curves in its
+            colour, solid for FeatFloWer and dashed for FEAT3. The level switch changes the simulation
             curves only; the PIV markers are the same measurements at every level.
           </p>
         </div>

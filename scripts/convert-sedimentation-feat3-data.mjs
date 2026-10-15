@@ -47,7 +47,7 @@ import {
   caseColors,
   cellsAcrossDiameter,
   gapHeight,
-  levelDashes,
+  codeDashes,
   levelTag,
   readCampaignSeries
 } from "./lib/sedimentation-campaign.mjs";
@@ -55,8 +55,6 @@ import { createDeflatedZip } from "./lib/zip.mjs";
 
 const CODE = "feat3";
 const LABEL = "FEAT3";
-const MARKER = "triangle-up";
-const MARKER_SIZE = 8;
 const root = resolve(import.meta.dirname, "..");
 const sourceDir = "scripts/source-data/sedimentation/feat3";
 const runsCsvName = "feat3_runs.csv";
@@ -126,9 +124,8 @@ for (const [metricId, metric] of Object.entries(metrics)) {
       type: "scatter",
       mode: "lines",
       name: `${LABEL} ${run.caseId} ${levelTag(run.level)}`,
-      line: { color, dash: levelDashes[run.level] },
-      // A triangle reads smaller than FeatFloWer's diamond at the same size.
-      marker: { color, symbol: MARKER, size: MARKER_SIZE }
+      line: { color, dash: codeDashes.feat3 },
+      marker: { color }
     });
     entries.push({
       oldPath: run.files[metricId],

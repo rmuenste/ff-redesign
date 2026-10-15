@@ -14,6 +14,7 @@ import {
   buildSedimentationLevelPlotSpecs,
   buildSedimentationPlotSpecs,
   sedimentationBrennerBands,
+  sedimentationCodes,
   sedimentationDecomposition,
   sedimentationDecompositionSource,
   sedimentationDownloads,
@@ -141,7 +142,7 @@ describe("sedimentation campaign series", () => {
     expect(position.y[0]).toBe(pY);
   });
 
-  it("uses the Python-script marker mapping for PIV and the level dash for simulations", () => {
+  it("uses the Python-script marker mapping for PIV and a solid line for FeatFloWer", () => {
     const expectedSymbols = {
       E1: "square-open",
       E2: "circle-open",
@@ -153,11 +154,11 @@ describe("sedimentation campaign series", () => {
       expect(readTrace("position", `${caseId}-piv.json`).marker.symbol).toBe(symbol);
     }
     expect(readTrace("velocity", "E1-piv.json").mode).toBe("markers");
-    const dashes = Object.fromEntries(sedimentationLevels.map(level => [level.id, level.dash]));
+    // The line style is the code: every FeatFloWer curve is solid.
     for (const run of sedimentationRuns) {
       const sim = readTrace("velocity", `${run.case}-${run.level}.json`);
       expect(sim.mode).toBe("lines");
-      expect(sim.line.dash, `${run.case} ${run.level}`).toBe(dashes[run.level]);
+      expect(sim.line.dash, `${run.case} ${run.level}`).toBe("solid");
     }
   });
 });
@@ -178,7 +179,13 @@ describe("sedimentation plot specs", () => {
       "var(--tu-orange-500)",
       "var(--tu-green-400)"
     ]);
-    expect(new Set(sedimentationLevels.map(level => level.dash)).size).toBe(3);
+  });
+
+  it("encodes the code as line style: FeatFloWer solid, FEAT3 dashed", () => {
+    expect(sedimentationCodes.map(code => [code.label, code.dash])).toEqual([
+      ["FeatFloWer", "solid"],
+      ["FEAT3", "dash"]
+    ]);
   });
 
   it("all-cases view: one group per case and code, one per PIV reference, finest level by default", () => {
@@ -252,8 +259,9 @@ describe("sedimentation plot specs", () => {
       for (const group of spec.seriesGroups.filter(entry => entry.kind === "level")) {
         const level = sedimentationLevels.find(entry => group.id.endsWith(entry.id))!;
         expect(group.color).toBe(level.color);
+        const dash = group.id.startsWith("feat3-") ? "dash" : "solid";
         for (const source of Object.values(group.levelSources!)) {
-          expect(source.dash).toBe(level.dash);
+          expect(source.dash).toBe(dash);
           expect(assetExists(source.asset.path), source.asset.path).toBe(true);
         }
       }
@@ -565,7 +573,7 @@ describe("sedimentation FEAT3 series", () => {
       expect(position.y[0], label).toBeCloseTo((z0 - 0.0075) / 0.015, 9);
       expect(position.y[0], label).toBeCloseTo(8, 9);
       expect(velocity.name).toBe(`FEAT3 ${run.case} ${levelTag(run.level)}`);
-      expect(velocity.marker.symbol).toBe("triangle-up");
+      expect(velocity.line.dash).toBe("dash");
     }
   });
 
@@ -655,29 +663,28 @@ describe("sedimentation comparison panels with two codes", () => {
     ]);
   });
 
-  it("per-case panel: a level keeps its colour and dash for both codes; the marker tells the codes apart", () => {
+  it("per-case panel: a level keeps its colour for both codes; solid is FeatFloWer, dashed is FEAT3", () => {
     const entries = legend(traces(sedimentationLevelPlotSpecs.velocity, "e1"));
     for (const level of sedimentationLevels) {
       const pair = entries.filter(trace => trace.name.endsWith(` ${level.label}`));
       expect(pair.map(trace => trace.name), level.id).toEqual([`FeatFloWer ${level.label}`, `FEAT3 ${level.label}`]);
       expect(new Set(pair.map(trace => trace.line.color)).size, level.id).toBe(1);
-      expect(pair.map(trace => trace.line.dash), level.id).toEqual([level.dash, level.dash]);
-      expect(pair.map(trace => trace.marker.symbol), level.id).toEqual(["diamond", "triangle-up"]);
-      expect(pair.every(trace => trace.mode === "lines+markers"), level.id).toBe(true);
+      expect(pair.map(trace => trace.line.dash), level.id).toEqual(["solid", "dash"]);
+      // The legend entry is the line itself, so it shows the line style.
+      expect(pair.every(trace => trace.mode === "lines"), level.id).toBe(true);
     }
   });
 
-  it("per-case panel: each code's full curve is drawn, with its markers interleaved with the other code's", () => {
+  it("per-case panel: one full line per curve, no marker overlays", () => {
     const built = traces(sedimentationLevelPlotSpecs.velocity, "e3");
     const run = sedimentationFeat3Runs.find(entry => entry.case === "E3" && entry.level === "l3")!;
-    const lines = built.filter(trace => trace.mode === "lines" && trace.name.endsWith("L3"));
-    expect(lines.map(trace => trace.x.length)).toEqual([run.steps, run.steps]);
-    const markers = built.filter(trace => trace.mode === "markers" && trace.name.endsWith("L3"));
-    const [featflower, feat3] = markers.map(trace => trace.x);
-    expect(featflower.length).toBeGreaterThan(10);
-    // FEAT3's markers sit half an interval after FeatFloWer's, never on the same instant.
-    expect(feat3[0] - featflower[0]).toBeCloseTo((featflower[1] - featflower[0]) / 2, 9);
-    expect(feat3.some(x => featflower.includes(x))).toBe(false);
+    const lines = built.filter(trace => trace.name.endsWith("L3"));
+    expect(lines.map(trace => [trace.mode, trace.x.length])).toEqual([
+      ["lines", run.steps],
+      ["lines", run.steps]
+    ]);
+    // Six simulation curves and the PIV, one trace each.
+    expect(built).toHaveLength(7);
   });
 
   it("all-cases panel: at the selected level both codes' curves for every case sit over the PIV", () => {
@@ -690,10 +697,8 @@ describe("sedimentation comparison panels with two codes", () => {
       for (const caseId of CASES) {
         const pair = legend(built).filter(trace => trace.name.startsWith(`${caseId} F`));
         expect(new Set(pair.map(trace => trace.line.color)).size, caseId).toBe(1);
-        expect(pair.map(trace => trace.marker.symbol), caseId).toEqual(["diamond", "triangle-up"]);
-        // Dash is the level, as in the per-case panel.
-        const dash = sedimentationLevels.find(entry => entry.id === level)!.dash;
-        expect(pair.map(trace => trace.line.dash), caseId).toEqual([dash, dash]);
+        // Line style is the code, as in the per-case panel.
+        expect(pair.map(trace => trace.line.dash), caseId).toEqual(["solid", "dash"]);
       }
       // The FEAT3 curves come from FEAT3's files at that level.
       const feat3 = built.find(trace => trace.mode === "lines" && trace.name === "E2 FEAT3")!;

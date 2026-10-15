@@ -3608,7 +3608,7 @@
   "name": "E3 L3",
   "line": {
     "color": "#7bd88f",
-    "dash": "dash"
+    "dash": "solid"
   },
   "marker": {
     "color": "#7bd88f"

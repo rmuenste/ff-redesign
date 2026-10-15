@@ -5408,7 +5408,7 @@
   "name": "E2 L2",
   "line": {
     "color": "#f5b84b",
-    "dash": "dot"
+    "dash": "solid"
   },
   "marker": {
     "color": "#f5b84b"

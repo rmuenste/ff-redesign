@@ -24,9 +24,9 @@ export const LEVELS = ["l2", "l3", "l4"];
 /** Gap height in diameters from the raw centre height; rounded to drop float noise such as 8.000000000000002. */
 export const gapHeight = z => Number(((z - SPHERE_RADIUS) / SPHERE_DIAMETER).toPrecision(12));
 
-/** Curve colour per case and dash per level, shared by every code's plot files. */
+/** Curve colour per case, shared by every code's plot files; the line style is the code's. */
 export const caseColors = { E1: "#5fb8ff", E2: "#f5b84b", E3: "#7bd88f", E4: "#ef6f6c" };
-export const levelDashes = { l2: "dot", l3: "dash", l4: "solid" };
+export const codeDashes = { featflower: "solid", feat3: "dash" };
 
 export const levelTag = level => level.toUpperCase();
 export const campaignName = (prefix, caseId, level) => `${prefix}${caseId}_${levelTag(level)}.txt`;

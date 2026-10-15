@@ -158,16 +158,16 @@ charts and run table with FeatFloWer.
   whole curve folders; core, lubrication and FEAT3 converters produce an identical
   manifest in any run order. Not wired into `package.json`: the build does not run
   converters.
-- Encoding: colour and dash stay the level on the per-case panel, and colour the
-  case plus dash the level on the all-cases panel (PR #20). The code is the marker,
-  as on the rising bubble pages (FeatFloWer diamond, FEAT3 triangle), sampled about
-  twenty times per curve with FEAT3's half an interval later so the two interleave.
-  New `PlotSource.markerSampleOffset` and `markerInLegend` (a one-point legend proxy,
-  so a legend entry shows line, dash and marker together; Plotly omits data-less
-  traces from the legend).
+- Encoding: colour keeps its meaning (level on the per-case panel, case on the
+  all-cases panel); the line style is the code, FeatFloWer solid and FEAT3 dashed,
+  on both panels and in the plot files. Dash-as-level from PR #20 is gone: it
+  duplicated the level colour on the per-case panel, and the all-cases panel shows
+  one level at a time. A first version told the codes apart by marker only (same
+  colour, same dash); the owner could not tell them apart, and on a dashed line the
+  markers hid the gaps, so there are no marker overlays.
 - The per-case panel shows both codes at all three levels by default (seven legend
   entries, level-major: FeatFloWer L2, FEAT3 L2, ...). Each level is a same-coloured
-  pair, so the code gap reads inside a pair and refinement across colours, on one
+  solid/dashed pair, so the code gap reads inside a pair and refinement across colours, on one
   chart. Both gaps are 1-3 % at the peak here, so neither swamps the other; a split
   into a codes mode and a levels mode was not needed (it would also have needed a
   second selector beside the case selector). The series checkboxes thin the chart.

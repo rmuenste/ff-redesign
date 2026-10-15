@@ -25,40 +25,32 @@ export const sedimentationCases: Array<{ id: SedimentationCaseId; label: string;
 /**
  * The mesh levels, coarse to fine. Colours follow the site's refinement
  * vocabulary (Rising Bubble 3D, FSI CSM3): petrol for the coarsest, orange for
- * the middle, green for the finest. The dash repeats the level on every plot of
- * the page, so a level reads the same whether colour carries the level or the case.
- * Both codes ran on the same meshes, so a level is the same number of cells
- * across the sphere diameter for each.
+ * the middle, green for the finest. Both codes ran on the same meshes, so a level
+ * is the same number of cells across the sphere diameter for each.
  */
 export const sedimentationLevels: Array<{
   id: SedimentationLevelId;
   label: string;
   detail: string;
   color: string;
-  dash: string;
   cellsAcrossDiameter: number;
 }> = [
-  { id: "l2", label: "L2", detail: "Coarse", color: "var(--tu-petrol-400)", dash: "dot", cellsAcrossDiameter: 11.4 },
-  { id: "l3", label: "L3", detail: "Medium", color: "var(--tu-orange-500)", dash: "dash", cellsAcrossDiameter: 23.9 },
-  { id: "l4", label: "L4", detail: "Fine", color: "var(--tu-green-400)", dash: "solid", cellsAcrossDiameter: 49.1 }
+  { id: "l2", label: "L2", detail: "Coarse", color: "var(--tu-petrol-400)", cellsAcrossDiameter: 11.4 },
+  { id: "l3", label: "L3", detail: "Medium", color: "var(--tu-orange-500)", cellsAcrossDiameter: 23.9 },
+  { id: "l4", label: "L4", detail: "Fine", color: "var(--tu-green-400)", cellsAcrossDiameter: 49.1 }
 ];
 
 export type SedimentationCodeId = "featflower" | "feat3";
 
 /**
- * The two codes. As on the rising bubble pages, a code is told apart by its
- * marker (FeatFloWer diamond, FEAT3 triangle) and named in the legend; colour
- * and dash stay with the level and the case. FEAT3's markers sit half an
- * interval after FeatFloWer's, so the two interleave instead of stacking.
+ * The two codes. The line style is the code, on every plot of the page:
+ * FeatFloWer solid, FEAT3 dashed; colour stays with the level (per-case panel)
+ * or the case (all-cases panel), and the legend names the code. No markers on
+ * the curves: on a dashed line they hid the gaps that make it read as dashed.
  */
-export const sedimentationCodes: Array<{
-  id: SedimentationCodeId;
-  label: string;
-  markerSymbol: string;
-  markerPhase: number;
-}> = [
-  { id: "featflower", label: "FeatFloWer", markerSymbol: "diamond", markerPhase: 0 },
-  { id: "feat3", label: "FEAT3", markerSymbol: "triangle-up", markerPhase: 0.5 }
+export const sedimentationCodes: Array<{ id: SedimentationCodeId; label: string; dash: string }> = [
+  { id: "featflower", label: "FeatFloWer", dash: "solid" },
+  { id: "feat3", label: "FEAT3", dash: "dash" }
 ];
 
 /** One run, as summarised in its code's run table (campaign_runs.csv, feat3_runs.csv). */
@@ -112,15 +104,11 @@ const codeStyle = Object.fromEntries(sedimentationCodes.map(code => [code.id, co
   (typeof sedimentationCodes)[number]
 >;
 
-/**
- * Case colour and PIV marker, and the spacing of the code markers along a curve:
- * about twenty per curve over each case's simulated time (one row per 1 ms step).
- */
-const caseMeta: Record<SedimentationCaseId, { color: string; markerSymbol: string; markerEvery: number }> = {
-  E1: { color: "#5fb8ff", markerSymbol: "square-open", markerEvery: 200 },
-  E2: { color: "#f5b84b", markerSymbol: "circle-open", markerEvery: 130 },
-  E3: { color: "#7bd88f", markerSymbol: "triangle-up-open", markerEvery: 90 },
-  E4: { color: "#ef6f6c", markerSymbol: "diamond-open", markerEvery: 60 }
+const caseMeta: Record<SedimentationCaseId, { color: string; markerSymbol: string }> = {
+  E1: { color: "#5fb8ff", markerSymbol: "square-open" },
+  E2: { color: "#f5b84b", markerSymbol: "circle-open" },
+  E3: { color: "#7bd88f", markerSymbol: "triangle-up-open" },
+  E4: { color: "#ef6f6c", markerSymbol: "diamond-open" }
 };
 
 function sedimentationPlotPath(
@@ -139,14 +127,10 @@ function sedimentationSource(
   level: SedimentationLevelId,
   code: SedimentationCodeId
 ): PlotSource {
-  const every = caseMeta[caseId].markerEvery;
   return {
     kind: "single-trace",
     asset: { path: sedimentationPlotPath(metric, caseId, level, code) },
-    dash: levelStyle[level].dash,
-    markerSampleEvery: every,
-    markerSampleOffset: Math.round(every * codeStyle[code].markerPhase),
-    markerInLegend: true
+    dash: codeStyle[code].dash
   };
 }
 
@@ -165,7 +149,7 @@ const caseAxis = {
   defaultLevelId: "e4"
 };
 
-/* ---- All four cases at one level: colour is the case, dash the level, marker the code ---- */
+/* ---- All four cases at one level: colour is the case, line style the code ---- */
 
 /** FeatFloWer keeps the bare case id it had before FEAT3 joined; FEAT3 adds a suffix. */
 const simulationGroupId = (testCase: SedimentationCaseId, code: SedimentationCodeId) =>
@@ -182,7 +166,7 @@ function simulationGroup(
     label: `${testCase} ${codeStyle[code].label}`,
     kind: "code",
     color: caseMeta[testCase].color,
-    markerSymbol: codeStyle[code].markerSymbol,
+    dash: codeStyle[code].dash,
     levelSources: Object.fromEntries(
       sedimentationLevels
         .filter(level => sedimentationHasRun(testCase, level.id, runs))
@@ -255,7 +239,7 @@ export function buildSedimentationPlotSpecs(runsByCode: SedimentationRunsByCode)
 
 export const sedimentationPlotSpecs = buildSedimentationPlotSpecs(sedimentationRunsByCode);
 
-/* ---- One case, both codes at every level: colour and dash are the level, marker the code ---- */
+/* ---- One case, both codes at every level: colour is the level, line style the code ---- */
 
 function caseSimulationGroup(
   metric: SedimentationMetricId,
@@ -268,8 +252,7 @@ function caseSimulationGroup(
     label: `${codeStyle[code].label} ${level.label}`,
     kind: "level",
     color: level.color,
-    dash: level.dash,
-    markerSymbol: codeStyle[code].markerSymbol,
+    dash: codeStyle[code].dash,
     levelSources: Object.fromEntries(
       sedimentationCases
         .filter(testCase => sedimentationHasRun(testCase.id, level.id, runs))
@@ -295,10 +278,10 @@ function casePivGroup(metric: SedimentationMetricId): SeriesGroup {
 
 /**
  * The per-case specs: one plot per case, both codes at every level over the PIV,
- * all shown by default. Colour and dash carry the level, so each level is a
- * same-coloured pair of curves told apart by marker: the gap between the codes
- * reads inside a pair, refinement across the colours. Groups run level by level,
- * FeatFloWer then FEAT3, so the legend lists the same pairs.
+ * all shown by default. Colour carries the level and line style the code, so each
+ * level is a same-coloured pair, one solid (FeatFloWer) and one dashed (FEAT3):
+ * the gap between the codes reads inside a pair, refinement across the colours.
+ * Groups run level by level, FeatFloWer then FEAT3, so the legend lists the same pairs.
  */
 export function buildSedimentationLevelPlotSpecs(runsByCode: SedimentationRunsByCode): Record<SedimentationMetricId, PlotSpec> {
   return Object.fromEntries(

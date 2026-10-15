@@ -46,7 +46,7 @@ import {
   campaignName,
   caseColors,
   gapHeight,
-  levelDashes,
+  codeDashes,
   levelTag,
   parsePairs,
   readCampaignSeries
@@ -171,7 +171,7 @@ for (const [metricId, metric] of Object.entries(metrics)) {
         name: `${caseId} ${levelTag(run.level)}`,
         color: caseColors[caseId],
         mode: "lines",
-        dash: levelDashes[run.level]
+        dash: codeDashes.featflower
       }));
       entries.push({
         oldPath: run.files[metricId],

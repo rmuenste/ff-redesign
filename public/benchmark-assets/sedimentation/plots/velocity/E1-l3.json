@@ -8608,7 +8608,7 @@
   "name": "E1 L3",
   "line": {
     "color": "#5fb8ff",
-    "dash": "dash"
+    "dash": "solid"
   },
   "marker": {
     "color": "#5fb8ff"

@@ -14,10 +14,9 @@ export interface RawTrace {
   type?: string;
   mode?: string;
   name?: string | null;
-  marker?: { color?: string; symbol?: string; size?: number };
+  marker?: { color?: string; symbol?: string };
   line?: { color?: string; dash?: string };
   showlegend?: boolean;
-  legendgroup?: string;
 }
 
 /** A trace ready to hand to Plotly, with resolved colour/dash/name. */
@@ -217,46 +216,23 @@ function styleTrace(
 
   if (!source.markerSampleEvery || source.markerSampleEvery <= 0) return [lineTrace];
 
-  const symbol = group.markerSymbol ?? trace.marker?.symbol;
-  const markers: PlotlyTrace = {
-    ...trace,
-    x: sample(trace.x, source.markerSampleEvery, source.markerSampleOffset),
-    y: sample(trace.y, source.markerSampleEvery, source.markerSampleOffset),
-    name,
-    mode: "markers",
-    line: { ...line },
-    marker: { ...trace.marker, color, symbol },
-    showlegend: false
-  };
-  if (!source.markerInLegend) return [lineTrace, markers];
-
-  // The legend entry is a proxy drawn as line + marker: a single point on top of
-  // the first sampled marker, so it adds nothing visible to the chart (Plotly
-  // leaves a trace without data out of the legend). The full line and its sampled
-  // markers stay out of the legend but share its legend group, so a legend click
-  // still toggles the whole curve.
-  const legendgroup = `${group.id}:${variant.id}`;
-  const anchor = markers.x.length ? 0 : -1;
   return [
-    { ...lineTrace, showlegend: false, legendgroup },
-    { ...markers, legendgroup },
+    lineTrace,
     {
-      x: anchor < 0 ? trace.x.slice(0, 1) : markers.x.slice(0, 1),
-      y: anchor < 0 ? trace.y.slice(0, 1) : markers.y.slice(0, 1),
-      type: trace.type ?? "scatter",
+      ...trace,
+      x: sample(trace.x, source.markerSampleEvery),
+      y: sample(trace.y, source.markerSampleEvery),
       name,
-      mode: "lines+markers",
-      line,
-      marker: { ...trace.marker, color, symbol },
-      showlegend,
-      legendgroup
+      mode: "markers",
+      line: { ...line },
+      marker: { ...trace.marker, color, symbol: group.markerSymbol ?? trace.marker?.symbol },
+      showlegend: false
     }
   ];
 }
 
-function sample(values: number[], every: number, offset = 0) {
-  const first = ((offset % every) + every) % every;
-  return values.filter((_, index) => index % every === first);
+function sample(values: number[], every: number) {
+  return values.filter((_, index) => index % every === 0);
 }
 
 /** Resolved theme tokens for the plot chrome; callers pass values read from the
@@ -309,8 +285,8 @@ export function comparisonLayout(
   // the same amount, so the plot area keeps its height.
   // Plotly wraps a horizontal legend at the plot-area width, and each entry is its
   // symbol (40px) plus `entrywidth` plus a 5px gap, so half the plot area less
-  // those makes exactly two entries a row. Legend groups (see `markerInLegend`)
-  // would add a 10px gap under every row; it is dropped here.
+  // those makes exactly two entries a row. Legend groups would add a 10px gap
+  // under every row; it is dropped here.
   const right = options.narrow ? 12 : 20;
   const plotAreaWidth = (options.width ?? 320) - 54 - right;
   const legend = options.narrow

@@ -3608,11 +3608,9 @@
   "name": "FEAT3 E3 L4",
   "line": {
     "color": "#7bd88f",
-    "dash": "solid"
+    "dash": "dash"
   },
   "marker": {
-    "color": "#7bd88f",
-    "symbol": "triangle-up",
-    "size": 8
+    "color": "#7bd88f"
   }
 }

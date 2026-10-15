@@ -572,7 +572,11 @@ selectable **series**. A series has a `kind`:
 This single component compares codes for benchmarks that have multi-code data, and
 mesh levels for those that do not, degrading gracefully to a single series. Series
 are **always backed by real assets** — never generated. FeatFloWer is highlighted
-with `--primary`. Only the `overlay` compare mode is implemented. `diff` (against a
+with `--primary`. Codes are told apart by colour (and marker) where colour is free,
+as on the rising bubble pages. Where colour already carries the mesh level or the
+case, the line style is the code: FeatFloWer solid, a second code dashed (`dash`,
+not `dot`), with no marker overlays on the curves, and the legend names the code
+(Particle Sedimentation: FeatFloWer and FEAT3). Only the `overlay` compare mode is implemented. `diff` (against a
 baseline) and `small-multiples` are typed in `CompareMode` for later use but not
 built.
 

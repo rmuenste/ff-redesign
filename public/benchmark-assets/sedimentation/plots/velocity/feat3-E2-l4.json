@@ -5408,11 +5408,9 @@
   "name": "FEAT3 E2 L4",
   "line": {
     "color": "#f5b84b",
-    "dash": "solid"
+    "dash": "dash"
   },
   "marker": {
-    "color": "#f5b84b",
-    "symbol": "triangle-up",
-    "size": 8
+    "color": "#f5b84b"
   }
 }

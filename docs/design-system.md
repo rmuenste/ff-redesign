@@ -552,8 +552,9 @@ Plot styling should preserve:
 - Primary highlight for FeatFloWer.
 - Series (code or level), metric, baseline, and export controls adjacent to the plot.
 - Legend beside the curves, except when the plot column is narrower than
-  `NARROW_PLOT_WIDTH` (560px, i.e. phones): then it sits under the x-axis in
-  horizontal rows and the bottom margin grows with the number of rows. The
+  `NARROW_PLOT_WIDTH` (560px, i.e. phones): then it sits at the bottom of the
+  figure, two entries a row, and the bottom margin and the figure height grow
+  with the number of rows, so the plot area keeps its height. The
   comparison panel measures its own column with a `ResizeObserver` in an
   effect, so the prerendered shell never reads layout.
 
@@ -571,7 +572,11 @@ selectable **series**. A series has a `kind`:
 This single component compares codes for benchmarks that have multi-code data, and
 mesh levels for those that do not, degrading gracefully to a single series. Series
 are **always backed by real assets** — never generated. FeatFloWer is highlighted
-with `--primary`. Only the `overlay` compare mode is implemented. `diff` (against a
+with `--primary`. Codes are told apart by colour (and marker) where colour is free,
+as on the rising bubble pages. Where colour already carries the mesh level or the
+case, the line style is the code: FeatFloWer solid, a second code dashed (`dash`,
+not `dot`), with no marker overlays on the curves, and the legend names the code
+(Particle Sedimentation: FeatFloWer and FEAT3). Only the `overlay` compare mode is implemented. `diff` (against a
 baseline) and `small-multiples` are typed in `CompareMode` for later use but not
 built.
 

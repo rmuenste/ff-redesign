@@ -1,16 +1,25 @@
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
-import { availableSeriesGroups } from "../lib/comparison";
+import {
+  availableSeriesGroups,
+  buildComparisonTraces,
+  deriveTraceVariants,
+  expandSource,
+  type LoadedGroup
+} from "../lib/comparison";
+import generatedFeat3 from "./generated/sedimentation-feat3.json";
 import generatedRuns from "./generated/sedimentation-runs.json";
 import {
   buildSedimentationLevelPlotSpecs,
   buildSedimentationPlotSpecs,
   sedimentationBrennerBands,
+  sedimentationCodes,
   sedimentationDecomposition,
   sedimentationDecompositionSource,
   sedimentationDownloads,
   sedimentationDtLadder,
+  sedimentationFeat3Runs,
   sedimentationHasRun,
   sedimentationLevelPlotSpecs,
   sedimentationLevels,
@@ -22,6 +31,7 @@ import {
   sedimentationValidationRows,
   sedimentationValidationSource
 } from "./sedimentation";
+import type { PlotSpec } from "./types";
 
 const SEDIMENTATION_DIR = resolve(process.cwd(), "public/benchmark-assets/sedimentation");
 
@@ -69,7 +79,10 @@ describe("sedimentation campaign series", () => {
 
   it("writes one trace per published run plus the PIV reference, and nothing for an absent pair", () => {
     for (const metric of ["velocity", "position"] as const) {
-      const files = readdirSync(resolve(SEDIMENTATION_DIR, "plots", metric)).filter(file => file.endsWith(".json"));
+      // FeatFloWer's own curves; the feat3-*.json files beside them are the FEAT3 converter's.
+      const files = readdirSync(resolve(SEDIMENTATION_DIR, "plots", metric)).filter(
+        file => file.endsWith(".json") && !file.startsWith("feat3-")
+      );
       expect(files.sort()).toEqual(
         [...sedimentationRuns.map(run => `${run.case}-${run.level}.json`), ...CASES.map(caseId => `${caseId}-piv.json`)].sort()
       );
@@ -129,7 +142,7 @@ describe("sedimentation campaign series", () => {
     expect(position.y[0]).toBe(pY);
   });
 
-  it("uses the Python-script marker mapping for PIV and the level dash for simulations", () => {
+  it("uses the Python-script marker mapping for PIV and a solid line for FeatFloWer", () => {
     const expectedSymbols = {
       E1: "square-open",
       E2: "circle-open",
@@ -141,17 +154,20 @@ describe("sedimentation campaign series", () => {
       expect(readTrace("position", `${caseId}-piv.json`).marker.symbol).toBe(symbol);
     }
     expect(readTrace("velocity", "E1-piv.json").mode).toBe("markers");
-    const dashes = Object.fromEntries(sedimentationLevels.map(level => [level.id, level.dash]));
+    // The line style is the code: every FeatFloWer curve is solid.
     for (const run of sedimentationRuns) {
       const sim = readTrace("velocity", `${run.case}-${run.level}.json`);
       expect(sim.mode).toBe("lines");
-      expect(sim.line.dash, `${run.case} ${run.level}`).toBe(dashes[run.level]);
+      expect(sim.line.dash, `${run.case} ${run.level}`).toBe("solid");
     }
   });
 });
 
 describe("sedimentation plot specs", () => {
-  const withoutE1L2 = sedimentationRuns.filter(run => !(run.case === "E1" && run.level === "l2"));
+  const withoutE1L2 = {
+    featflower: sedimentationRuns.filter(run => !(run.case === "E1" && run.level === "l2")),
+    feat3: sedimentationFeat3Runs
+  };
 
   const assetExists = (path: string) =>
     existsSync(resolve(SEDIMENTATION_DIR, path.replace(/^.*benchmark-assets\/sedimentation\//, "")));
@@ -163,18 +179,30 @@ describe("sedimentation plot specs", () => {
       "var(--tu-orange-500)",
       "var(--tu-green-400)"
     ]);
-    expect(new Set(sedimentationLevels.map(level => level.dash)).size).toBe(3);
   });
 
-  it("all-cases view: one group per case and per PIV reference, finest level by default", () => {
+  it("encodes the code as line style: FeatFloWer solid, FEAT3 dashed", () => {
+    expect(sedimentationCodes.map(code => [code.label, code.dash])).toEqual([
+      ["FeatFloWer", "solid"],
+      ["FEAT3", "dash"]
+    ]);
+  });
+
+  it("all-cases view: one group per case and code, one per PIV reference, finest level by default", () => {
     expect(Object.keys(sedimentationPlotSpecs).sort()).toEqual(["position", "velocity"]);
     for (const spec of Object.values(sedimentationPlotSpecs)) {
-      expect(spec.seriesGroups).toHaveLength(8);
-      expect(spec.seriesGroups.filter(group => group.kind === "code")).toHaveLength(4);
+      expect(spec.seriesGroups).toHaveLength(12);
+      expect(spec.seriesGroups.filter(group => group.kind === "code")).toHaveLength(8);
       expect(spec.seriesGroups.filter(group => group.kind === "reference")).toHaveLength(4);
+      // Each case's two codes side by side, then the PIV: legend rows read as colour pairs.
+      expect(spec.seriesGroups.map(group => group.label)).toEqual([
+        ...CASES.flatMap(caseId => [`${caseId} FeatFloWer`, `${caseId} FEAT3`]),
+        ...CASES.map(caseId => `${caseId} PIV`)
+      ]);
+      expect(spec.defaultSeriesGroupIds).toEqual(spec.seriesGroups.map(group => group.id));
       expect(spec.levelAxis?.options.map(option => option.id)).toEqual([...LEVELS]);
       expect(spec.levelAxis?.defaultLevelId).toBe("l4");
-      expect(spec.seriesSelectorLabel).toBe("Cases & references");
+      expect(spec.seriesSelectorLabel).toBe("Cases, codes & references");
     }
   });
 
@@ -199,27 +227,41 @@ describe("sedimentation plot specs", () => {
     const specs = buildSedimentationPlotSpecs(withoutE1L2);
     const atL2 = availableSeriesGroups(specs.velocity, "l2").map(group => group.id);
     expect(atL2).not.toContain("e1");
+    // The other code's curve for the same case and level stays.
+    expect(atL2).toContain("e1-feat3");
     expect(atL2).toContain("e1-piv");
-    expect(atL2).toHaveLength(7);
-    expect(availableSeriesGroups(specs.velocity, "l3")).toHaveLength(8);
-    expect(availableSeriesGroups(specs.velocity, "l4")).toHaveLength(8);
-    expect(availableSeriesGroups(sedimentationPlotSpecs.velocity, "l2")).toHaveLength(8);
+    expect(atL2).toHaveLength(11);
+    expect(availableSeriesGroups(specs.velocity, "l3")).toHaveLength(12);
+    expect(availableSeriesGroups(specs.velocity, "l4")).toHaveLength(12);
+    expect(availableSeriesGroups(sedimentationPlotSpecs.velocity, "l2")).toHaveLength(12);
   });
 
-  it("per-case view: the three levels and the PIV reference, case selector, E4 first", () => {
+  const PER_CASE_IDS = ["l2", "feat3-l2", "l3", "feat3-l3", "l4", "feat3-l4", "piv"];
+
+  it("per-case view: both codes at the three levels and the PIV reference, case selector, E4 first", () => {
     expect(Object.keys(sedimentationLevelPlotSpecs).sort()).toEqual(["position", "velocity"]);
     for (const spec of Object.values(sedimentationLevelPlotSpecs)) {
       expect(spec.comparisonAxis).toBe("level");
-      expect(spec.seriesGroups.map(group => group.id)).toEqual(["l2", "l3", "l4", "piv"]);
-      expect(spec.seriesGroups.map(group => group.label)).toEqual(["L2", "L3", "L4", "PIV"]);
-      expect(spec.defaultSeriesGroupIds).toEqual(["l2", "l3", "l4", "piv"]);
+      expect(spec.seriesGroups.map(group => group.id)).toEqual(PER_CASE_IDS);
+      expect(spec.seriesGroups.map(group => group.label)).toEqual([
+        "FeatFloWer L2",
+        "FEAT3 L2",
+        "FeatFloWer L3",
+        "FEAT3 L3",
+        "FeatFloWer L4",
+        "FEAT3 L4",
+        "PIV"
+      ]);
+      // Both codes are shown by default.
+      expect(spec.defaultSeriesGroupIds).toEqual(PER_CASE_IDS);
       expect(spec.levelAxis?.options.map(option => option.label)).toEqual([...CASES]);
       expect(spec.levelAxis?.defaultLevelId).toBe("e4");
       for (const group of spec.seriesGroups.filter(entry => entry.kind === "level")) {
-        const level = sedimentationLevels.find(entry => entry.id === group.id)!;
+        const level = sedimentationLevels.find(entry => group.id.endsWith(entry.id))!;
         expect(group.color).toBe(level.color);
+        const dash = group.id.startsWith("feat3-") ? "dash" : "solid";
         for (const source of Object.values(group.levelSources!)) {
-          expect(source.dash).toBe(level.dash);
+          expect(source.dash).toBe(dash);
           expect(assetExists(source.asset.path), source.asset.path).toBe(true);
         }
       }
@@ -231,12 +273,13 @@ describe("sedimentation plot specs", () => {
       const spec = sedimentationLevelPlotSpecs[metric];
       for (const caseId of CASES) {
         const shown = availableSeriesGroups(spec, caseId.toLowerCase()).map(group => group.id);
-        expect(shown, `${metric} ${caseId}`).toEqual(["l2", "l3", "l4", "piv"]);
+        expect(shown, `${metric} ${caseId}`).toEqual(PER_CASE_IDS);
       }
-      // Without E1 at L2, E1 shows L3, L4 and the PIV; the other cases are unchanged.
+      // Without FeatFloWer's E1 at L2, E1 loses that one curve; FEAT3's E1 L2 and
+      // the other cases are unchanged.
       const partial = buildSedimentationLevelPlotSpecs(withoutE1L2)[metric];
-      expect(availableSeriesGroups(partial, "e1").map(group => group.id)).toEqual(["l3", "l4", "piv"]);
-      expect(availableSeriesGroups(partial, "e2").map(group => group.id)).toEqual(["l2", "l3", "l4", "piv"]);
+      expect(availableSeriesGroups(partial, "e1").map(group => group.id)).toEqual(PER_CASE_IDS.filter(id => id !== "l2"));
+      expect(availableSeriesGroups(partial, "e2").map(group => group.id)).toEqual(PER_CASE_IDS);
       expect(partial.seriesGroups.find(group => group.id === "l2")?.levelSources?.e1).toBeUndefined();
     }
   });
@@ -457,5 +500,210 @@ describe("sub-grid lubrication study (gate D2.2 G3)", () => {
     expect(blob).not.toMatch(/\bjobs?\s+\d/i);
     // Bare scheduler ids left behind once the keyword is gone are just as internal.
     expect(blob).not.toMatch(/\b1[34]\d{4}\b/);
+  });
+});
+
+const FEAT3_SOURCE = resolve(process.cwd(), "scripts/source-data/sedimentation/feat3");
+
+/** Every file name in a zip's central directory. */
+function zipNames(path: string) {
+  const zip = readFileSync(path);
+  const names: string[] = [];
+  const signature = Buffer.from([0x50, 0x4b, 0x01, 0x02]);
+  for (let offset = zip.indexOf(signature); offset >= 0; ) {
+    const length = zip.readUInt16LE(offset + 28);
+    names.push(zip.subarray(offset + 46, offset + 46 + length).toString());
+    offset = zip.indexOf(signature, offset + 46 + length);
+  }
+  return names;
+}
+
+describe("sedimentation FEAT3 series", () => {
+  const feat3Missing = generatedFeat3.missing as Array<{ case: string; level: string }>;
+
+  it("is generated from feat3_runs.csv and has all four cases at L2, L3 and L4", () => {
+    expect(generatedFeat3.source).toBe("scripts/source-data/sedimentation/feat3/feat3_runs.csv");
+    expect(generatedFeat3.label).toBe("FEAT3");
+    expect(generatedFeat3.levels).toEqual([...LEVELS]);
+    expect(feat3Missing).toEqual([]);
+    expect(sedimentationFeat3Runs.map(run => `${run.case}-${run.level}`)).toEqual(
+      CASES.flatMap(caseId => LEVELS.map(level => `${caseId}-${level}`))
+    );
+    for (const run of sedimentationFeat3Runs) {
+      expect(existsSync(resolve(FEAT3_SOURCE, `vel${run.case}_${levelTag(run.level)}.txt`))).toBe(true);
+    }
+  });
+
+  it("ran on the FeatFloWer meshes with the same time step and simulated time", () => {
+    for (const run of sedimentationFeat3Runs) {
+      const label = `${run.case} ${run.level}`;
+      const level = sedimentationLevels.find(entry => entry.id === run.level)!;
+      expect(run.cellsAcrossDiameter.toFixed(1), label).toBe(level.cellsAcrossDiameter.toFixed(1));
+      const featflower = sedimentationRuns.find(entry => entry.case === run.case && entry.level === run.level)!;
+      expect(run.dtS, label).toBe(featflower.dtS);
+      expect(run.steps, label).toBe(featflower.steps);
+      expect(run.tEndS, label).toBeCloseTo(featflower.tEndS, 9);
+    }
+    expect(sedimentationLevels.map(level => level.cellsAcrossDiameter)).toEqual([11.4, 23.9, 49.1]);
+  });
+
+  it("writes one feat3-*.json curve per run and metric, next to FeatFloWer's", () => {
+    for (const metric of ["velocity", "position"] as const) {
+      const files = readdirSync(resolve(SEDIMENTATION_DIR, "plots", metric)).filter(file => file.startsWith("feat3-"));
+      expect(files.sort()).toEqual(sedimentationFeat3Runs.map(run => `feat3-${run.case}-${run.level}.json`).sort());
+    }
+  });
+
+  it("agrees with its run table: one point per step, peak where it says, gap height starting at eight", () => {
+    for (const run of sedimentationFeat3Runs) {
+      const label = `${run.case} ${run.level}`;
+      const velocity = readTrace("velocity", `feat3-${run.case}-${run.level}.json`);
+      const position = readTrace("position", `feat3-${run.case}-${run.level}.json`);
+      expect(velocity.x, label).toHaveLength(run.steps);
+      expect(position.x, label).toHaveLength(run.steps);
+      expect(velocity.x[0], label).toBeCloseTo(0.001, 12);
+      expect(velocity.x.at(-1), label).toBeCloseTo(run.tEndS, 9);
+      const peak = Math.min(...velocity.y);
+      expect(peak, label).toBeCloseTo(run.peakVzMS, 6);
+      expect(velocity.x[velocity.y.indexOf(peak)], label).toBeCloseTo(run.tPeakS, 9);
+      // Velocity is copied unchanged; position is normalised like FeatFloWer's.
+      const [, v0] = parseFirstPair(resolve(FEAT3_SOURCE, `vel${run.case}_${levelTag(run.level)}.txt`));
+      const [, z0] = parseFirstPair(resolve(FEAT3_SOURCE, `pos${run.case}_${levelTag(run.level)}.txt`));
+      expect(velocity.y[0], label).toBe(v0);
+      expect(position.y[0], label).toBeCloseTo((z0 - 0.0075) / 0.015, 9);
+      expect(position.y[0], label).toBeCloseTo(8, 9);
+      expect(velocity.name).toBe(`FEAT3 ${run.case} ${levelTag(run.level)}`);
+      expect(velocity.line.dash).toBe("dash");
+    }
+  });
+
+  it("refines toward a limit too: each refinement moves the peak less than the one before", () => {
+    // The Results caption says this for both codes.
+    for (const caseId of CASES) {
+      const [l2, l3, l4] = LEVELS.map(
+        level => sedimentationFeat3Runs.find(run => run.case === caseId && run.level === level)!.peakVzMS
+      );
+      expect(Math.abs(l4 - l3), caseId).toBeLessThan(Math.abs(l3 - l2));
+    }
+  });
+
+  it("offers every series, the run table and the bundle under downloads/feat3/, with distinct names", () => {
+    const feat3 = sedimentationDownloads.filter(item => item.href.includes("downloads/feat3/"));
+    expect(feat3.map(item => item.label).sort()).toEqual(
+      [
+        ...sedimentationFeat3Runs.flatMap(run => [
+          `feat3_vel${run.case}_${levelTag(run.level)}.txt`,
+          `feat3_pos${run.case}_${levelTag(run.level)}.txt`
+        ]),
+        "feat3_runs.csv",
+        "sedimentation-feat3.zip"
+      ].sort()
+    );
+    for (const item of feat3) {
+      const path = item.href.replace(/^.*benchmark-assets\/sedimentation\//, "");
+      expect(existsSync(resolve(SEDIMENTATION_DIR, path)), item.href).toBe(true);
+    }
+    // No file name is offered twice on the page (the reference-data index keys on names).
+    const names = sedimentationDownloads.map(item => item.href.replace(/^.*\//, ""));
+    expect(new Set(names).size).toBe(names.length);
+    // The series are the source files, byte for byte.
+    expect(readFileSync(resolve(SEDIMENTATION_DIR, "downloads/feat3/feat3_velE4_L3.txt"))).toEqual(
+      readFileSync(resolve(FEAT3_SOURCE, "velE4_L3.txt"))
+    );
+  });
+
+  it("bundles the same files in sedimentation-feat3.zip", () => {
+    const expected = [
+      ...sedimentationFeat3Runs.flatMap(run => [
+        `feat3_vel${run.case}_${levelTag(run.level)}.txt`,
+        `feat3_pos${run.case}_${levelTag(run.level)}.txt`
+      ]),
+      "feat3_runs.csv"
+    ].map(name => `sedimentation-feat3/${name}`);
+    expect(zipNames(resolve(SEDIMENTATION_DIR, "downloads/feat3/sedimentation-feat3.zip")).sort()).toEqual(expected.sort());
+    // The core bundle stays FeatFloWer's.
+    expect(zipNames(resolve(SEDIMENTATION_DIR, "downloads/sedimentation.zip")).some(name => /feat3/i.test(name))).toBe(false);
+  });
+});
+
+describe("sedimentation comparison panels with two codes", () => {
+  /** Load a group's source for one level-axis option from the published files, as the panel would. */
+  function load(spec: PlotSpec, option: string): LoadedGroup[] {
+    return availableSeriesGroups(spec, option).map(group => {
+      const source = group.levelSources?.[option] ?? group.source!;
+      const raw = JSON.parse(
+        readFileSync(resolve(SEDIMENTATION_DIR, source.asset.path.replace(/^.*benchmark-assets\/sedimentation\//, "")), "utf-8")
+      );
+      const rawTraces = expandSource(raw, source);
+      return { group, source, rawTraces, variants: deriveTraceVariants(rawTraces, group.variantStrategy) };
+    });
+  }
+
+  function traces(spec: PlotSpec, option: string) {
+    const loaded = load(spec, option);
+    return buildComparisonTraces(spec, loaded, {
+      selectedGroupIds: spec.defaultSeriesGroupIds,
+      selectedVariantIds: ["0"],
+      compareMode: "overlay"
+    });
+  }
+
+  const legend = (built: ReturnType<typeof traces>) => built.filter(trace => trace.showlegend);
+
+  it("per-case panel: both codes at every level over the PIV, seven legend entries", () => {
+    const built = traces(sedimentationLevelPlotSpecs.velocity, "e4");
+    expect(legend(built).map(trace => trace.name)).toEqual([
+      "FeatFloWer L2",
+      "FEAT3 L2",
+      "FeatFloWer L3",
+      "FEAT3 L3",
+      "FeatFloWer L4",
+      "FEAT3 L4",
+      "PIV"
+    ]);
+  });
+
+  it("per-case panel: a level keeps its colour for both codes; solid is FeatFloWer, dashed is FEAT3", () => {
+    const entries = legend(traces(sedimentationLevelPlotSpecs.velocity, "e1"));
+    for (const level of sedimentationLevels) {
+      const pair = entries.filter(trace => trace.name.endsWith(` ${level.label}`));
+      expect(pair.map(trace => trace.name), level.id).toEqual([`FeatFloWer ${level.label}`, `FEAT3 ${level.label}`]);
+      expect(new Set(pair.map(trace => trace.line.color)).size, level.id).toBe(1);
+      expect(pair.map(trace => trace.line.dash), level.id).toEqual(["solid", "dash"]);
+      // The legend entry is the line itself, so it shows the line style.
+      expect(pair.every(trace => trace.mode === "lines"), level.id).toBe(true);
+    }
+  });
+
+  it("per-case panel: one full line per curve, no marker overlays", () => {
+    const built = traces(sedimentationLevelPlotSpecs.velocity, "e3");
+    const run = sedimentationFeat3Runs.find(entry => entry.case === "E3" && entry.level === "l3")!;
+    const lines = built.filter(trace => trace.name.endsWith("L3"));
+    expect(lines.map(trace => [trace.mode, trace.x.length])).toEqual([
+      ["lines", run.steps],
+      ["lines", run.steps]
+    ]);
+    // Six simulation curves and the PIV, one trace each.
+    expect(built).toHaveLength(7);
+  });
+
+  it("all-cases panel: at the selected level both codes' curves for every case sit over the PIV", () => {
+    for (const level of LEVELS) {
+      const built = traces(sedimentationPlotSpecs.position, level);
+      expect(legend(built).map(trace => trace.name)).toEqual([
+        ...CASES.flatMap(caseId => [`${caseId} FeatFloWer`, `${caseId} FEAT3`]),
+        ...CASES.map(caseId => `${caseId} PIV`)
+      ]);
+      for (const caseId of CASES) {
+        const pair = legend(built).filter(trace => trace.name.startsWith(`${caseId} F`));
+        expect(new Set(pair.map(trace => trace.line.color)).size, caseId).toBe(1);
+        // Line style is the code, as in the per-case panel.
+        expect(pair.map(trace => trace.line.dash), caseId).toEqual(["solid", "dash"]);
+      }
+      // The FEAT3 curves come from FEAT3's files at that level.
+      const feat3 = built.find(trace => trace.mode === "lines" && trace.name === "E2 FEAT3")!;
+      const run = sedimentationFeat3Runs.find(entry => entry.case === "E2" && entry.level === level)!;
+      expect(feat3.x).toHaveLength(run.steps);
+    }
   });
 });

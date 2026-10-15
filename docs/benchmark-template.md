@@ -357,6 +357,23 @@ Template: `scripts/convert-hindered-settling-data.mjs`. A converter:
 Run it by hand with `node scripts/convert-<id>-data.mjs`; the build does not run
 converters. Commit what it generates.
 
+**Companion converters.** Material that a second script adds to an existing
+benchmark folder (a study, or a second code's results) comes from a companion,
+`scripts/convert-<id>-<topic>.mjs`; for a code, `scripts/convert-<id>-<code>-data.mjs`
+reading `scripts/source-data/<id>/<code>/` (`convert-sedimentation-feat3-data.mjs`).
+It declares only its own paths to `resetGeneratedOutputs` (`plots/<metric>/<code>-*.json`
+by file, `downloads/<code>/`), merges into the same manifest with `writeManifest`,
+writes its own `src/data/generated/<id>-<code>.json`, and gives its downloads names
+no other file of the benchmark has (`feat3_velE1_L2.txt`, not a second
+`velE1_L2.txt`: the reference-data index keys on file names). The core converter
+must own its own curves by file too, so the scripts run in any order and leave
+the manifest identical. On the page a second code is a second series group
+with legend entries named `<Code> <level>`. Where colour is free, the code gets its
+own colour and marker as on the rising bubble pages; where colour already carries
+the level or the case (Particle Sedimentation), the code is the line style:
+FeatFloWer solid, the second code dashed, and no markers on the curves (they hide
+the gaps of a dashed line). See design-system.md, Comparison Model.
+
 Gallery stills (`media/gallery/*.webp`, a width ladder, no PNG masters) are
 recorded in the manifest as `kind: "media"` with an `oldPath` of
 `generated from blender_viz/website_assets/...`.

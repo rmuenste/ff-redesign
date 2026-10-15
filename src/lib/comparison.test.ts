@@ -7,6 +7,8 @@ import {
   comparisonLayout,
   deriveTraceVariants,
   expandSource,
+  LEGEND_ROW_PX,
+  legendRows,
   type LoadedGroup,
   type RawTrace
 } from "./comparison";
@@ -235,12 +237,17 @@ describe("comparisonLayout", () => {
   });
 
   it("moves the legend under the chart on a narrow column and reserves a row per two entries", () => {
-    const four = comparisonLayout(spec, {}, { narrow: true, legendEntries: 4 });
-    expect(four.legend).toMatchObject({ orientation: "h", x: 0, xanchor: "left", yanchor: "top" });
-    expect(four.legend.y).toBeLessThan(0);
+    const four = comparisonLayout(spec, {}, { narrow: true, legendEntries: 4, width: 310 });
+    // Pinned to the bottom of the figure, never riding up into the x-axis title.
+    expect(four.legend).toMatchObject({ orientation: "h", x: 0, xanchor: "left", y: 0, yref: "container", yanchor: "bottom" });
+    // Two entries a row: each is a 40px symbol, its entry width and a 5px gap,
+    // and Plotly wraps at the plot-area width (310 - 54 - 12 = 244).
+    expect(four.legend).toMatchObject({ entrywidthmode: "pixels", entrywidth: 76, tracegroupgap: 0 });
+    expect(2 * (40 + 76 + 5)).toBeLessThanOrEqual(310 - four.margin.l - four.margin.r);
     expect(four.margin.b).toBe(96);
     expect(comparisonLayout(spec, {}, { narrow: true, legendEntries: 1 }).margin.b).toBe(76);
     expect(comparisonLayout(spec, {}, { narrow: true, legendEntries: 5 }).margin.b).toBe(116);
+    expect(comparisonLayout(spec, {}, { narrow: true, legendEntries: 7 }).margin.b).toBe(56 + LEGEND_ROW_PX * legendRows(7));
     // The side legend is untouched by the entry count.
     expect(comparisonLayout(spec, {}, { narrow: false, legendEntries: 5 }).margin.b).toBe(48);
   });

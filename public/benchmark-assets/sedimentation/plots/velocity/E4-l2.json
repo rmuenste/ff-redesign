@@ -2608,7 +2608,7 @@
   "name": "E4 L2",
   "line": {
     "color": "#ef6f6c",
-    "dash": "dot"
+    "dash": "solid"
   },
   "marker": {
     "color": "#ef6f6c"

@@ -5408,7 +5408,7 @@
   "name": "E2 L3",
   "line": {
     "color": "#f5b84b",
-    "dash": "dash"
+    "dash": "solid"
   },
   "marker": {
     "color": "#f5b84b"

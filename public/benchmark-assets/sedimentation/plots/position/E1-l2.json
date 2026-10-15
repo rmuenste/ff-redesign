@@ -8608,7 +8608,7 @@
   "name": "E1 L2",
   "line": {
     "color": "#5fb8ff",
-    "dash": "dot"
+    "dash": "solid"
   },
   "marker": {
     "color": "#5fb8ff"

@@ -28,12 +28,13 @@ import {
   sedimentationPhysicalRows,
   sedimentationPlaybackSpeeds,
   sedimentationCases,
+  sedimentationCodes,
   sedimentationHasRun,
   sedimentationLevelPlotSpecs,
   sedimentationLevels,
   sedimentationPlotSpecs,
   sedimentationReferenceRows,
-  sedimentationRuns,
+  sedimentationRunsByCode,
   sedimentationReferences,
   sedimentationDecomposition,
   sedimentationDtLadder,
@@ -46,6 +47,7 @@ import {
   type SedimentationDecompositionFit,
   type SedimentationDtRow,
   type SedimentationLubricationCase,
+  type SedimentationCodeId,
   type SedimentationPhysicalRow,
   type SedimentationRun
 } from "../data/sedimentation";
@@ -59,7 +61,7 @@ function IntroductionTab() {
           {
             type: "paragraph",
             text:
-              "This benchmark examines the sedimentation of a single spherical particle in a confined tank. It validates particulate-flow methods against experiments and lattice-Boltzmann simulations of a sphere settling through silicone oil over particle Reynolds numbers from 1.5 to 31.9."
+              "This benchmark examines the sedimentation of a single spherical particle in a confined tank. It validates particulate-flow methods against experiments on a sphere settling through silicone oil over particle Reynolds numbers from 1.5 to 31.9; the same study also reports lattice-Boltzmann simulations of these cases."
           },
           {
             type: "paragraph",
@@ -238,35 +240,75 @@ function CompositeVideoBlock() {
 
 const levelLabel = (id: string) => sedimentationLevels.find(level => level.id === id)?.label ?? id.toUpperCase();
 
-/** Cases that do not have every level yet, as "E1 is shown at L3 and L4." */
+const allRuns = sedimentationCodes.flatMap(code => sedimentationRunsByCode[code.id]);
+
+/** Cases a code does not have at every level yet, as "FEAT3 has E1 at L3 and L4." */
 function partialLadderNote() {
-  const notes = sedimentationCases
-    .map(testCase => ({
-      id: testCase.id,
-      levels: sedimentationLevels.filter(level => sedimentationHasRun(testCase.id, level.id)).map(level => level.label)
-    }))
-    .filter(entry => entry.levels.length < sedimentationLevels.length)
-    .map(entry => `${entry.id} is shown at ${entry.levels.join(" and ")}.`);
+  const notes = sedimentationCodes.flatMap(code =>
+    sedimentationCases
+      .map(testCase => ({
+        id: testCase.id,
+        levels: sedimentationLevels
+          .filter(level => sedimentationHasRun(testCase.id, level.id, sedimentationRunsByCode[code.id]))
+          .map(level => level.label)
+      }))
+      .filter(entry => entry.levels.length < sedimentationLevels.length)
+      .map(entry =>
+        entry.levels.length
+          ? `${code.label} has ${entry.id} at ${entry.levels.join(" and ")}.`
+          : `${code.label} has no ${entry.id} curve yet.`
+      )
+  );
   return notes.length ? ` ${notes.join(" ")}` : "";
 }
 
-/** ", all with a time step of 1 ms" when the runs share one step, from the run summary. */
+/** ", all with a time step of 1 ms" when the runs share one step, from the run summaries. */
 function runTimeStepNote() {
-  const steps = [...new Set(sedimentationRuns.map(run => run.dtS))];
+  const steps = [...new Set(allRuns.map(run => run.dtS))];
   return steps.length === 1 ? `, all with a time step of ${steps[0] * 1000} ms` : "";
 }
+
+/** One row of the run table: a run of either code, with the mesh it ran on. */
+interface RunRow extends SedimentationRun {
+  code: SedimentationCodeId;
+}
+
+/** Both codes' runs, case by case and level by level, FeatFloWer first in each pair. */
+const runRows: RunRow[] = sedimentationCases.flatMap(testCase =>
+  sedimentationLevels.flatMap(level =>
+    sedimentationCodes.flatMap(code =>
+      sedimentationRunsByCode[code.id]
+        .filter(run => run.case === testCase.id && run.level === level.id)
+        .map(run => ({ ...run, code: code.id }))
+    )
+  )
+);
+
+const codeLabel = (id: SedimentationCodeId) => sedimentationCodes.find(code => code.id === id)?.label ?? id;
+const cellsAcross = (level: string) => sedimentationLevels.find(entry => entry.id === level)?.cellsAcrossDiameter;
 
 function ResultsTab() {
   return (
     <Section style={{ paddingTop: 40, paddingBottom: 100 }}>
       <div className="stack" style={{ gap: 28 }}>
         <div style={{ maxWidth: 900 }}>
+          <h3>Two codes</h3>
+          <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
+            The four cases on this tab were computed with FeatFloWer and again with FEAT3, the newest member of the
+            FEATFLOW family, on the same meshes and with the same time step. Both codes&apos; curves share the two
+            charts below and both are listed in the run table, so they can be compared level by level against the
+            same PIV measurements.
+          </p>
+        </div>
+        <div style={{ maxWidth: 900 }}>
           <h3>Mesh refinement, case by case</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-            Each case was run on three meshes, from the coarsest, L2, to the finest, L4. Pick a case to see its three
-            curves on top of the PIV measurements, as settling velocity or as the height of the sphere above the
-            bottom. The curves draw together as the mesh is refined: going from L3 to L4 moves the settling peak less
-            than going from L2 to L3.{partialLadderNote()}
+            Each case was run on three meshes, from the coarsest, L2, to the finest, L4. Pick a case to see both
+            codes at all three levels on top of the PIV measurements, as settling velocity or as the height of the
+            sphere above the bottom. Colour gives the mesh level and the line style the code, solid for FeatFloWer
+            and dashed for FEAT3, so each level is a solid and a dashed curve in one colour; untick any of the six
+            to thin the chart out. For both codes the curves draw together as the mesh is refined:
+            going from L3 to L4 moves the settling peak less than going from L2 to L3.{partialLadderNote()}
           </p>
         </div>
         <ComparisonPanel specs={sedimentationLevelPlotSpecs} defaultMetric="velocity" />
@@ -275,12 +317,20 @@ function ResultsTab() {
           <h3>The runs behind the curves</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
             Every curve on this tab is one of these runs{runTimeStepNote()}. The peak is the fastest
-            settling speed the sphere reaches on its way down.
+            settling speed the sphere reaches on its way down. Both codes ran on the same meshes, so a level has the
+            same number of mesh cells across the sphere diameter for each.
           </p>
-          <DataTable<SedimentationRun>
+          <DataTable<RunRow>
             columns={[
               { id: "case", header: "Case", render: row => <span style={{ fontWeight: 500 }}>{row.case}</span> },
               { id: "level", header: "Level", render: row => levelLabel(row.level) },
+              { id: "code", header: "Code", render: row => codeLabel(row.code) },
+              {
+                id: "cells",
+                header: "Cells across diameter",
+                align: "right",
+                render: row => <span style={{ fontFamily: "var(--font-mono)" }}>{cellsAcross(row.level)?.toFixed(1)}</span>
+              },
               {
                 id: "steps",
                 header: "Steps",
@@ -308,15 +358,15 @@ function ResultsTab() {
                 render: row => <span style={{ fontFamily: "var(--font-mono)" }}>{row.tPeakS.toFixed(3)}</span>
               }
             ]}
-            rows={sedimentationRuns}
-            getRowKey={row => `${row.case}-${row.level}`}
+            rows={runRows}
+            getRowKey={row => `${row.case}-${row.level}-${row.code}`}
           />
         </div>
 
         <div className="stack" style={{ maxWidth: 900, gap: 20 }}>
           <h3 style={{ margin: 0 }}>What convergence looks like on this benchmark</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
-            The settling peak was measured across three mesh levels for all four cases. Refinement is not monotone:
+            For FeatFloWer, the settling peak was measured across three mesh levels for all four cases. Refinement is not monotone:
             coarse meshes overshoot the peak by three to four per cent, the finest meshes undershoot by around two, and
             the intermediate level lands close to the reference partly because the two errors cancel. The practical
             consequence is that agreement at one resolution is not evidence of convergence, and mesh resolution should
@@ -330,12 +380,12 @@ function ResultsTab() {
           </p>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
             The lowest-Reynolds case is the hard one: it sits about three per cent below the experiment at the
-            intermediate level and moves further away under refinement. That gap is not specific to this solver. The
-            same discrepancy appears in the original paper, whose own lattice-Boltzmann result is about five per cent
-            below its own experiment for that case; our finest configurations agree with those published simulations
-            to within one per cent across all four cases. Agreement with the experiment to within two per cent is out
-            of reach for any simulation there, so for this case the paper&apos;s simulations are as much a reference as
-            its measurements.
+            intermediate level and moves further away under refinement. The paper&apos;s own lattice-Boltzmann
+            simulation of this case also fell short of its measurement. Across all four cases, FeatFloWer&apos;s
+            finest configurations match those published simulations to within one per cent, but those simulations
+            used a calibrated hydrodynamic radius at a single resolution (the input radius adjusted so that the
+            sphere&apos;s drag matched the exact value), which makes them a different kind of computation from the
+            refinement study on this page. The PIV measurements remain the reference it is measured against.
           </p>
           <div
             style={{
@@ -422,8 +472,9 @@ function ResultsTab() {
         <div style={{ maxWidth: 900 }}>
           <h3>All four cases at one level</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-            The same runs, with the four cases side by side at a single mesh level. The level switch changes the
-            simulation curves only; the PIV markers are the same measurements at every level.
+            The same runs, with the four cases side by side at a single mesh level. Each case has two curves in its
+            colour, solid for FeatFloWer and dashed for FEAT3. The level switch changes the simulation
+            curves only; the PIV markers are the same measurements at every level.
           </p>
         </div>
         <ComparisonPanel specs={sedimentationPlotSpecs} defaultMetric="velocity" />
@@ -432,7 +483,7 @@ function ResultsTab() {
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
             The same four cases on one shared clock, from t = 0 to 4.30 s, with the columns left to right E1, E2, E3,
             E4. Beneath them the settling velocity and the sphere height of all four cases are drawn up to the current
-            instant, against the PIV measurements, so every point on the curves above can be traced back to the flow
+            instant, against the PIV measurements, so every point on the FeatFloWer curves above can be traced back to the flow
             that produced it. The film plays at physical real time by default; the 2x and 4x settings slow it down
             without changing anything in the data. Each column holds its last image once that case has settled &mdash;
             E4 from t = 1.30 s, E3 from 1.80 s, E2 from 2.70 s &mdash; which is what keeps the four on one clock.
@@ -509,8 +560,8 @@ function LubricationTab({ onOpenViscometer }: { onOpenViscometer: () => void }) 
         <h3>With the model switched on</h3>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
           The two lowest-Reynolds cases of this benchmark were run again with the model in its production
-          configuration. Everything else is the same as in the E1 and E2 runs; the single difference is that
-          lubrication is switched on. The baselines are therefore the very curves on the Results tab, which makes the
+          configuration. Everything else is the same as in the FeatFloWer E1 and E2 runs; the single difference is
+          that lubrication is switched on. The baselines are therefore the very FeatFloWer curves on the Results tab, which makes the
           pair a controlled comparison rather than two similar simulations.
         </p>
       </div>
@@ -682,7 +733,12 @@ function ReferenceDataTab() {
           {
             type: "paragraph",
             text:
-              "The simulation series and the PIV references are two-column text files without a header, one simulation row per 1 ms time step. The position plots show the gap height in sphere diameters, h/d_p = (z - 0.0075) / 0.015 from the sphere-centre height z in metres; the PIV position files are already given as h/d_p. campaign_runs.csv summarises each run: its case and level, the number of steps, the time step, the simulated time, and the peak settling velocity with the time at which it occurs."
+              "The simulation series and the PIV references are two-column text files without a header, one simulation row per 1 ms time step. The position plots show the gap height in sphere diameters, h/d_p = (z - 0.0075) / 0.015 from the sphere-centre height z in metres; the PIV position files are already given as h/d_p. campaign_runs.csv summarises each FeatFloWer run: its case and level, the number of steps, the time step, the simulated time, and the peak settling velocity with the time at which it occurs."
+          },
+          {
+            type: "paragraph",
+            text:
+              "The FEAT3 series come in the same two-column format, one row per 1 ms step, as feat3_velE*_L*.txt and feat3_posE*_L*.txt, with the same normalisation for the position plots. feat3_runs.csv summarises the FEAT3 runs in the same way and adds the number of mesh cells across the sphere diameter; sedimentation-feat3.zip bundles all of them."
           }
         ]}
       />
@@ -738,14 +794,14 @@ export function ParticleSedimentationPage() {
                 Particle <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400, color: "var(--primary)" }}>Sedimentation</span>
               </h1>
               <p style={{ color: "var(--fg2)", fontSize: 15, margin: 0, maxWidth: 700, lineHeight: 1.55 }}>
-                A confined settling-sphere benchmark comparing FEM-FBM simulations at three mesh levels, L2 to L4, against PIV particle-motion measurements for four Reynolds-number regimes.
+                A confined settling-sphere benchmark comparing two codes, FeatFloWer and FEAT3, at three mesh levels, L2 to L4, against PIV particle-motion measurements for four Reynolds-number regimes.
               </p>
             </div>
             <div className="kpi-grid">
               <KpiBox label="Cases" value="4" />
               <KpiBox label="Re" value="1.5-31.9" />
               <KpiBox label="Levels" value={String(sedimentationLevels.length)} />
-              <KpiBox label="Metrics" value="2" />
+              <KpiBox label="Codes" value={String(sedimentationCodes.length)} />
               <KpiBox label="Particle" value="15 mm" />
               <KpiBox label="Tank" value="100x100x160" />
             </div>

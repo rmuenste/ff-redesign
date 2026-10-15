@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
-import { sedimentationRuns } from "./sedimentation";
+import { sedimentationFeat3Runs, sedimentationRuns } from "./sedimentation";
 import type { AssetManifest } from "./types";
 
 const RB3_DIR = resolve(process.cwd(), "public/benchmark-assets/rb3");
@@ -203,15 +203,19 @@ describe("rb2 asset manifest (public/benchmark-assets/rb2/manifest.json)", () =>
 });
 
 describe("sedimentation asset manifest (public/benchmark-assets/sedimentation/manifest.json)", () => {
-  // The lubrication material is built by a companion converter that merges into
-  // this manifest, so the counts are split: the core migration entries, and the
-  // ones owned by scripts/convert-sedimentation-lubrication.mjs.
+  // The lubrication material and the FEAT3 curves are built by companion
+  // converters that merge into this manifest, so the counts are split: the core
+  // entries, the ones owned by scripts/convert-sedimentation-lubrication.mjs and
+  // the ones owned by scripts/convert-sedimentation-feat3-data.mjs.
   const isLubrication = (entry: { newPath: string }) =>
     entry.newPath.startsWith("plots/lubrication/") || entry.newPath.startsWith("downloads/lubrication/");
+  const isFeat3 = (entry: { newPath: string }) =>
+    /^plots\/(velocity|position)\/feat3-/.test(entry.newPath) || entry.newPath.startsWith("downloads/feat3/");
   const coreEntries = sedimentationManifest.entries.filter(
-    entry => !isLubrication(entry) && !isGallery(entry)
+    entry => !isLubrication(entry) && !isFeat3(entry) && !isGallery(entry)
   );
   const lubricationEntries = sedimentationManifest.entries.filter(isLubrication);
+  const feat3Entries = sedimentationManifest.entries.filter(isFeat3);
 
   it("has one derived plot per published run and PIV reference, and one download per source file", () => {
     expect(sedimentationManifest.benchmarkId).toBe("sedimentation");
@@ -244,6 +248,23 @@ describe("sedimentation asset manifest (public/benchmark-assets/sedimentation/ma
     }
     expect(plots.filter(entry => entry.seriesGroupId === "piv").every(entry => entry.kind === "reference")).toBe(true);
     expect(lubricationEntries.filter(entry => entry.kind === "download")).toHaveLength(7);
+  });
+
+  it("carries the FEAT3 curves and downloads the companion converter merges in", () => {
+    const runs = sedimentationFeat3Runs.length;
+    const plots = feat3Entries.filter(entry => entry.newPath.startsWith("plots/"));
+    // One curve per run and metric, no PIV of its own (the core converter's is shared).
+    expect(plots).toHaveLength(2 * runs);
+    for (const entry of plots) {
+      expect(entry.kind, entry.newPath).toBe("code");
+      expect(entry.derived, entry.newPath).toBe(true);
+      expect(entry.seriesGroupId, entry.newPath).toMatch(/^e[1-4]-feat3$/);
+      expect(entry.oldPath.startsWith("scripts/source-data/sedimentation/feat3/"), entry.oldPath).toBe(true);
+      expect(existsSync(resolve(process.cwd(), entry.oldPath)), entry.oldPath).toBe(true);
+    }
+    // Two series per run, the run table and the bundle.
+    expect(feat3Entries.filter(entry => entry.kind === "download")).toHaveLength(2 * runs + 1 + 1);
+    expect(feat3Entries).toHaveLength(2 * runs + 2 * runs + 2);
   });
 
   it("derives the lubrication plots from curated series, never from a rundir path", () => {

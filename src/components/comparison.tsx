@@ -6,6 +6,8 @@ import {
   comparisonLayout,
   deriveTraceVariants,
   expandSource,
+  LEGEND_ROW_PX,
+  legendRows,
   NARROW_PLOT_WIDTH,
   type ComparisonLayoutColors,
   type LoadedGroup
@@ -24,23 +26,22 @@ const COMPARE_MODE_LABELS: Record<CompareMode, string> = {
 };
 
 /**
- * Whether the element is narrower than NARROW_PLOT_WIDTH, tracked through
- * resizes. Read in an effect, so the first paint (and the prerendered shell,
- * which has no window) never touches layout; until then it reports false and
- * the plot renders with the desktop legend.
+ * The element's width, tracked through resizes. Read in an effect, so the first
+ * paint (and the prerendered shell, which has no window) never touches layout;
+ * until then it reports undefined and the plot renders with the desktop legend.
  */
-function useNarrowColumn(ref: React.RefObject<HTMLElement | null>) {
-  const [narrow, setNarrow] = useState(false);
+function useElementWidth(ref: React.RefObject<HTMLElement | null>) {
+  const [width, setWidth] = useState<number | undefined>(undefined);
   useEffect(() => {
     const element = ref.current;
     if (!element || typeof ResizeObserver === "undefined") return;
-    const update = () => setNarrow(element.clientWidth < NARROW_PLOT_WIDTH);
+    const update = () => setWidth(element.clientWidth);
     update();
     const observer = new ResizeObserver(update);
     observer.observe(element);
     return () => observer.disconnect();
   }, [ref]);
-  return narrow;
+  return width;
 }
 
 function resolveCssVar(value: string): string {
@@ -189,7 +190,10 @@ export function ComparisonPanel({
   const toggleVariant = toggle(setSelectedVariantIds);
 
   const plotColumn = useRef<HTMLElement>(null);
-  const narrow = useNarrowColumn(plotColumn);
+  const columnWidth = useElementWidth(plotColumn);
+  const narrow = columnWidth !== undefined && columnWidth < NARROW_PLOT_WIDTH;
+  const plotBox = useRef<HTMLDivElement>(null);
+  const plotWidth = useElementWidth(plotBox);
   const legendEntries = traces.filter(trace => trace.showlegend !== false).length;
 
   return (
@@ -262,20 +266,25 @@ export function ComparisonPanel({
 
       <main ref={plotColumn} style={{ minWidth: 0 }}>
         <PlotPanel title={spec.title} meta={`${traces.length} Plotly traces · real ${spec.metric} JSON`}>
-          {loading && <div style={{ color: "var(--fg2)" }}>Loading plot data...</div>}
-          {error && <div style={{ color: "var(--warn)" }}>{error}</div>}
-          {buildError && <div style={{ color: "var(--warn)" }}>{buildError}</div>}
-          {!loading && !error && !buildError && (
-            <Suspense fallback={<div style={{ color: "var(--fg2)" }}>Loading Plotly...</div>}>
-              <Plot
-                data={traces}
-                layout={comparisonLayout(spec, layoutColors(), { narrow, legendEntries })}
-                config={{ responsive: true, displaylogo: false }}
-                useResizeHandler
-                style={{ width: "100%", height: "var(--plot-h)" }}
-              />
-            </Suspense>
-          )}
+          <div ref={plotBox} style={{ minWidth: 0 }}>
+            {loading && <div style={{ color: "var(--fg2)" }}>Loading plot data...</div>}
+            {error && <div style={{ color: "var(--warn)" }}>{error}</div>}
+            {buildError && <div style={{ color: "var(--warn)" }}>{buildError}</div>}
+            {!loading && !error && !buildError && (
+              <Suspense fallback={<div style={{ color: "var(--fg2)" }}>Loading Plotly...</div>}>
+                <Plot
+                  data={traces}
+                  layout={comparisonLayout(spec, layoutColors(), { narrow, legendEntries, width: plotWidth })}
+                  config={{ responsive: true, displaylogo: false }}
+                  useResizeHandler
+                  style={{
+                    width: "100%",
+                    height: narrow ? `calc(var(--plot-h) + ${LEGEND_ROW_PX * legendRows(legendEntries)}px)` : "var(--plot-h)"
+                  }}
+                />
+              </Suspense>
+            )}
+          </div>
         </PlotPanel>
       </main>
     </div>

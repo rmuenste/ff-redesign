@@ -61,7 +61,7 @@ function IntroductionTab() {
           {
             type: "paragraph",
             text:
-              "This benchmark examines the sedimentation of a single spherical particle in a confined tank. It validates particulate-flow methods against experiments and lattice-Boltzmann simulations of a sphere settling through silicone oil over particle Reynolds numbers from 1.5 to 31.9."
+              "This benchmark examines the sedimentation of a single spherical particle in a confined tank. It validates particulate-flow methods against experiments on a sphere settling through silicone oil over particle Reynolds numbers from 1.5 to 31.9; the same study also reports lattice-Boltzmann simulations of these cases."
           },
           {
             type: "paragraph",
@@ -380,12 +380,10 @@ function ResultsTab() {
           </p>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
             The lowest-Reynolds case is the hard one: it sits about three per cent below the experiment at the
-            intermediate level and moves further away under refinement. That gap is not specific to FeatFloWer. The
-            same discrepancy appears in the original paper, whose own lattice-Boltzmann result is about five per cent
-            below its own experiment for that case; FeatFloWer&apos;s finest configurations agree with those published simulations
-            to within one per cent across all four cases. Agreement with the experiment to within two per cent is out
-            of reach for any simulation there, so for this case the paper&apos;s simulations are as much a reference as
-            its measurements.
+            intermediate level and moves further away under refinement. The paper&apos;s own lattice-Boltzmann
+            simulation of this case also fell short of its measurement. Those runs used a hydrodynamic radius
+            calibrated so that the sphere&apos;s drag matched the exact value, at a single resolution, so they are not
+            compared with the refinement study here.
           </p>
           <div
             style={{

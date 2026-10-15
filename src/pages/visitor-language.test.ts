@@ -221,6 +221,17 @@ describe("visitor language on the DNS pages", () => {
     }
   });
 
+  it("sedimentation: no numbers against the paper's lattice-Boltzmann simulations", () => {
+    // Those were single-resolution runs with a calibrated hydrodynamic radius, not
+    // comparable with an uncalibrated refinement study; mentioning them is fine.
+    const copy = pageCopy("sedimentation").replace(/\s+/g, " ");
+    expect(copy).not.toMatch(/published simulations|as much a reference/i);
+    for (const sentence of copy.split(/(?<=\.)\s/).filter(text => /lattice-Boltzmann|LBM/i.test(text))) {
+      // Reynolds numbers and the citation are fine; a deviation or an agreement is not.
+      expect(sentence, sentence).not.toMatch(/per ?cent|%|to within|agree/i);
+    }
+  });
+
   for (const id of Object.keys(PAGES)) {
     const copy = pageCopy(id);
 

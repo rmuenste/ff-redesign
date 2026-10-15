@@ -1,7 +1,6 @@
-import type { DownloadItem, ValidationRow } from "../components";
+import type { DownloadItem } from "../components";
 import { benchmarkAssetPath } from "./assets";
 import generated from "./generated/numerical-viscometer.json";
-import generatedValidation from "./generated/numerical-viscometer-validation.json";
 import type { PlotSource, PlotSpec, SeriesGroup } from "./types";
 
 export type ViscometerMetricId = "torque" | "viscosity" | "pairs";
@@ -342,16 +341,6 @@ export const viscometerLadderRows: ViscometerLadderRow[] = [
     detail: `${rung.particles} spheres, against the ${closureName(rung.closure)} composite`
   }))
 ];
-
-/* ---------------- Validation ---------------- */
-
-/**
- * Generated from the DNS validation datasheet by
- * scripts/convert-numerical-viscometer-data.mjs. Never edit by hand — correct the
- * datasheet and re-run the converter.
- */
-export const viscometerValidationRows = generatedValidation.rows as ValidationRow[];
-export const viscometerValidationSource = generatedValidation.source;
 
 /* ---------------- References and downloads ---------------- */
 

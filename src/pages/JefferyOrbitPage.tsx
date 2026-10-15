@@ -12,8 +12,7 @@ import {
   ReferenceList,
   Section,
   Tabs,
-  useTabParam,
-  ValidationLedger
+  useTabParam
 } from "../components";
 import { JefferySchematic } from "../components/jeffery-schematic";
 import {
@@ -33,7 +32,6 @@ import {
   jefferyReferences,
   jefferyRuns,
   jefferySeamWindow,
-  jefferyValidationRows,
   jefferyWall,
   jefferyWallModel,
   percent,
@@ -70,10 +68,6 @@ const seamSpread = Math.max(
 
 function Mono({ children }: { children: ReactNode }) {
   return <span style={{ fontFamily: "var(--font-mono)" }}>{children}</span>;
-}
-
-function Row({ children }: { children: ReactNode }) {
-  return <span className="code-inline">{children}</span>;
 }
 
 function IntroductionTab() {
@@ -382,8 +376,7 @@ function ClearanceTab() {
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
           The period lengthens, from {H8_PERIOD} to {H4_PERIOD} — {H8_DEV} to {H4_DEV} of Jeffery, a shift
           of {points(jefferyWall.shift)}. The sign is the informative part: the walls slow the orbit down,
-          and moving them away brings it back toward the unbounded solution rather than past it
-          (<Row>d62_v2_clearance</Row>).
+          and moving them away brings it back toward the unbounded solution rather than past it.
         </p>
         <div
           style={{
@@ -457,7 +450,7 @@ function ClearanceTab() {
             ladder that precedes this case moved its ratio by 1e-4 under a doubling of the mesh — so the
             shift is the wall effect. The bodies are resolved by {jefferyH8.insideDofs} and{" "}
             {jefferyH4.insideDofs} interior degrees of freedom respectively, and{" "}
-            {jefferyControlRun.insideDofs} for the sphere control (<Row>d62_resolution_pinned</Row>).
+            {jefferyControlRun.insideDofs} for the sphere control.
           </p>
         </div>
 
@@ -499,7 +492,7 @@ function ControlTab() {
           at the edge of the one-per-cent band, with no drift over the settled tail and a spin that is
           uniform to {jefferyControl.modulation.toFixed(3)}. The excess is attributed to the fictitious-
           boundary discretisation at this resolution; wall and image corrections in this box are four
-          orders of magnitude smaller (<Row>d62_v0b_spin</Row>).
+          orders of magnitude smaller.
         </p>
       </div>
 
@@ -535,48 +528,6 @@ function ControlTab() {
   );
 }
 
-function ValidationTab() {
-  return (
-    <Section style={{ paddingTop: 40, paddingBottom: 100 }}>
-      <div style={{ maxWidth: 900, marginBottom: 28 }}>
-        <h3>Validation ledger</h3>
-        <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-          One row per quantitative claim, generated from the campaign datasheet that is offered in full
-          under Reference Data and reproduced as the campaign wrote it, apart from internal run
-          identifiers. Every gate on this page is against a closed-form solution rather than another
-          simulation: Jeffery's period and waveform for the orbit, the exact half-vorticity spin for the
-          sphere, and a measured-not-assumed shift for the walls.
-        </p>
-      </div>
-      <ValidationLedger rows={jefferyValidationRows} />
-      <div className="stack" style={{ marginTop: 36, maxWidth: 900, gap: 20 }}>
-        <div>
-          <h3>Controlled comparison</h3>
-          <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-            The two orbit runs share the body, the aspect ratio, the shear rate, the time step, the
-            binary and the analysis. Exactly one thing differs between them — the height of the box, and
-            with it the distance from the body to the wall. The sphere control shares the box with the
-            default-clearance orbit and differs only in the shape of the body. Each comparison moves one
-            thing.
-          </p>
-        </div>
-        <div>
-          <h3>How the numbers were derived</h3>
-          <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-            Every period, waveform statistic, orientation bin and extrapolation on this page is recomputed
-            at build time from the published orientation traces by the same procedure as the campaign's
-            own analysis tool, and Jeffery's targets — T·gammadot = {PERIOD_TARGET}, a modulation of{" "}
-            {jefferyClosedForm.modulation}, rates of {jefferyClosedForm.slow} and{" "}
-            {jefferyClosedForm.fast} — are evaluated from the aspect ratio and the shear rate rather than
-            transcribed. A test pins the re-derivation against the tool's printed report, down to the
-            individual pi-crossing times, so the two cannot drift apart silently.
-          </p>
-        </div>
-      </div>
-    </Section>
-  );
-}
-
 function ReferenceDataTab() {
   return (
     <Section narrow style={{ paddingTop: 40, paddingBottom: 100 }}>
@@ -585,7 +536,7 @@ function ReferenceDataTab() {
           {
             type: "paragraph",
             text:
-              "The run files are the raw record of each simulation: one line per time step, carrying the unit vector along the body's symmetry axis, neither smoothed nor resampled. The orbit runs are concatenations of three segments each, with the overlap a restart replays trimmed away; the restart times themselves travel in the run table, so any masking this page applies can be reproduced or rejected. Alongside them, the gate report carries the derived periods and waveform statistics, the crossings file carries the times the period is read from, the bin file carries the orientation-resolved waveform, and the extrapolation file carries the two wall laws. All quantities are nondimensional in campaign box units with unit viscosity. The bundle also contains the campaign datasheet from which the validation ledger is generated, plus the extract of just the rows this page publishes."
+              "The run files are the raw record of each simulation: one line per time step, carrying the unit vector along the body's symmetry axis, neither smoothed nor resampled. The orbit runs are concatenations of three segments each, with the overlap a restart replays trimmed away; the restart times themselves travel in the run table, so any masking this page applies can be reproduced or rejected. Alongside them, the gate report carries the derived periods and waveform statistics, the crossings file carries the times the period is read from, the bin file carries the orientation-resolved waveform, and the extrapolation file carries the two wall laws. All quantities are nondimensional in campaign box units with unit viscosity. The bundle also contains the DNS campaign datasheet, plus an extract of the rows that concern this benchmark."
           }
         ]}
       />
@@ -621,7 +572,6 @@ export function JefferyOrbitPage() {
     { id: "orbit", label: "The Orbit" },
     { id: "clearance", label: "Wall Clearance" },
     { id: "control", label: "Sphere Control" },
-    { id: "validation", label: "Validation" },
     { id: "reference-data", label: "Reference Data" }
   ];
   const [tab, setTab] = useTabParam(tabs.map(item => item.id), "introduction");
@@ -699,7 +649,6 @@ export function JefferyOrbitPage() {
       {tab === "orbit" && <OrbitTab />}
       {tab === "clearance" && <ClearanceTab />}
       {tab === "control" && <ControlTab />}
-      {tab === "validation" && <ValidationTab />}
       {tab === "reference-data" && <ReferenceDataTab />}
     </div>
   );

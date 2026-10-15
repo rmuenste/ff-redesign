@@ -1,7 +1,6 @@
-import type { DownloadItem, ValidationRow } from "../components";
+import type { DownloadItem } from "../components";
 import { benchmarkAssetPath } from "./assets";
 import generated from "./generated/hindered-settling.json";
-import generatedValidation from "./generated/hindered-settling-validation.json";
 import type { PlotSource, PlotSpec, SeriesGroup } from "./types";
 
 export type HinderedMetricId = "collapse" | "history";
@@ -235,16 +234,6 @@ export const hinderedRegimeRows: HinderedRegimeRow[] = [
     law: "Enhanced, U/u_t > 1 — no Richardson-Zaki form"
   }
 ];
-
-/* ---------------- Validation ---------------- */
-
-/**
- * Generated from the DNS validation datasheet by
- * scripts/convert-hindered-settling-data.mjs. Never edit by hand — correct the
- * datasheet and re-run the converter.
- */
-export const hinderedValidationRows = generatedValidation.rows as ValidationRow[];
-export const hinderedValidationSource = generatedValidation.source;
 
 /* ---------------- References and downloads ---------------- */
 

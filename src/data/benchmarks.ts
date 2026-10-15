@@ -69,7 +69,7 @@ export const benchmarks: BenchmarkMeta[] = [
     summary:
       "A particulate-flow benchmark comparing the motion of a settling sphere and induced flow field against experimental data.",
     thumb: "sediment",
-    tabs: ["Introduction", "Definition", "Results", "Lubrication", "Validation", "Reference Data"],
+    tabs: ["Introduction", "Definition", "Results", "Lubrication", "Reference Data"],
     comparisonAxis: "code",
     status: "active"
   },
@@ -105,7 +105,7 @@ export const benchmarks: BenchmarkMeta[] = [
     summary:
       "Two settling spheres reproduce the classical Fortes sequence: the trailing sphere drafts in the leader's wake, the pair touches, tumbles, and separates with the roles exchanged.",
     thumb: "dkt-pair",
-    tabs: ["Introduction", "Definition", "Results", "Contact Model", "Validation", "Reference Data"],
+    tabs: ["Introduction", "Definition", "Results", "Contact Model", "Reference Data"],
     comparisonAxis: "code",
     status: "active"
   },
@@ -122,7 +122,7 @@ export const benchmarks: BenchmarkMeta[] = [
     summary:
       "Clouds of 20 to 120 spheres settling in a walled column collapse onto a Richardson-Zaki power law, with an exponent that a wide-column control attributes to the confinement rather than to the suspension.",
     thumb: "particle",
-    tabs: ["Introduction", "Definition", "Results", "Confinement", "Validation", "Reference Data"],
+    tabs: ["Introduction", "Definition", "Results", "Confinement", "Reference Data"],
     comparisonAxis: "code",
     status: "active"
   },
@@ -146,7 +146,6 @@ export const benchmarks: BenchmarkMeta[] = [
       "Baseline",
       "Concentration Ladder",
       "Lubrication",
-      "Validation",
       "Reference Data"
     ],
     comparisonAxis: "code",
@@ -172,7 +171,6 @@ export const benchmarks: BenchmarkMeta[] = [
       "Ratio Ladder",
       "Absolute Drag",
       "Steadiness",
-      "Validation",
       "Reference Data"
     ],
     comparisonAxis: "level",
@@ -198,7 +196,6 @@ export const benchmarks: BenchmarkMeta[] = [
       "The Orbit",
       "Wall Clearance",
       "Sphere Control",
-      "Validation",
       "Reference Data"
     ],
     comparisonAxis: "level",

@@ -4,7 +4,7 @@
 //   oberbeck/runs.csv        one row per solver run: rung, orientation, rundir
 //   oberbeck/rungs.csv       one row per rung of the ladder: level, mesh spacing, body scale
 //   oberbeck/run_<id>.csv    the run's own time series, one line per time step
-//   dns/dns_validation_datasheet.csv   the campaign's claim ledger
+//   dns/dns_validation_datasheet.csv   the campaign datasheet (offered as a download)
 //
 // run_<id>.csv is the merge of two solver protocol files from the campaign
 // rundir — particle_force.log (the FBM wrench on the body) and bulk_flow.log
@@ -30,14 +30,12 @@
 // Outputs:
 //   public/benchmark-assets/oberbeck-spheroid-drag/   Plotly traces, downloads, manifest
 //   src/data/generated/oberbeck.json                  resistance functions, rungs, gates
-//   src/data/generated/oberbeck-validation.json       Validation-tab rows
 //
 // Run with: node scripts/convert-oberbeck-data.mjs
 import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, relative, resolve } from "node:path";
 import { parseCsvRecords } from "./lib/csv.mjs";
 import { resetGeneratedOutputs, writeManifest } from "./lib/output-dir.mjs";
-import { buildLedger, readDatasheet } from "./lib/validation-ledger.mjs";
 import { createStoredZip } from "./lib/zip.mjs";
 
 const BENCHMARK = "oberbeck-spheroid-drag";
@@ -624,18 +622,16 @@ emitCsv(
   }
 );
 
-// ---- validation ledger ------------------------------------------------------
-// Generated from the datasheet, never hand-written.
+// ---- datasheet downloads ---------------------------------------------------
+// The page has no Validation tab (removed 2026-10-15); the campaign datasheet is
+// still offered under Reference Data, together with an extract of the rows that
+// concern this benchmark.
 //
-// Selection policy
-// ----------------
-// Published: the two implementation gates that had to pass before any production
-// run (the rigid-body library fix and the case setup, both certified by
-// byte-identical sphere twins), the sphere regression anchor, the in-situ check
-// that the imaged body really is a spheroid, the three rungs of the ratio ladder,
-// the off-diagonal observable, and the review that priced the plateau window.
-// That is every row carrying a number this page quotes. The datasheet download
-// under Reference Data carries the campaign's wider record.
+// Extract selection: the two implementation gates that had to pass before any
+// production run (the rigid-body library fix and the case setup), the sphere
+// regression anchor, the in-situ check that the imaged body really is a
+// spheroid, the three rungs of the ratio ladder, the off-diagonal observable,
+// and the review that priced the plateau window.
 const PUBLISHED = [
   "pe_ellfix_twin",
   "d61_setup_twin",
@@ -647,22 +643,16 @@ const PUBLISHED = [
   "d61_v5_halfsize",
   "d61_review_corrections"
 ];
-const published = new Set(PUBLISHED);
 
 const datasheetName = "dns_validation_datasheet.csv";
 const datasheetSource = `scripts/source-data/dns/${datasheetName}`;
-const records = readDatasheet(resolve(root, datasheetSource));
-const ledger = buildLedger(records, record => published.has(record.case.trim()));
-if (ledger.length !== PUBLISHED.length) {
-  throw new Error(`ledger selected ${ledger.length} rows, expected ${PUBLISHED.length}`);
-}
 
 copyFileSync(resolve(root, datasheetSource), resolve(outDir, `downloads/${datasheetName}`));
 entries.push({ oldPath: datasheetSource, newPath: `downloads/${datasheetName}`, kind: "download", label: datasheetName });
 zipEntries.push({ name: `${BENCHMARK}/${datasheetName}`, data: readFileSync(resolve(outDir, `downloads/${datasheetName}`)) });
 
-// The page's own ledger as a standalone file: the same rows, in the same order,
-// straight out of the datasheet without the sanitiser's run-id stripping.
+// The extract as a standalone file: the selected rows, in the order above,
+// straight out of the datasheet.
 const datasheetRows = parseCsvRecords(readFileSync(resolve(root, datasheetSource), "utf-8"));
 const header = ["suite", "case", "quantity", "expected", "expected_source", "measured", "rel_error", "tolerance", "verdict"];
 const quote = value => `"${String(value).replace(/"/g, '""')}"`;
@@ -698,12 +688,6 @@ writeJson(resolve(generatedDir, "oberbeck.json"), {
   rungs
 });
 
-writeJson(resolve(generatedDir, "oberbeck-validation.json"), {
-  source: datasheetSource,
-  generatedBy: "scripts/convert-oberbeck-data.mjs",
-  rows: ledger
-});
-
 console.log(
   `Generated ${entries.length} ${BENCHMARK} manifest entries in ${relative(root, outDir)}, ` +
     `X^A = ${XA.toFixed(6)}, Y^A = ${YA.toFixed(6)}, Y/X = ${RATIO_TARGET.toFixed(5)}, ` +
@@ -714,5 +698,5 @@ console.log(
     `closing absolutes ${byId["l4-half"].orientations
       .map(entry => `${entry.id} ${(entry.deviationCorrected * 100).toFixed(2)}%`)
       .join(" / ")}, ` +
-    `and ${ledger.length} validation rows`
+    `and ${PUBLISHED.length} datasheet rows in the extract`
 );

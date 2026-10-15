@@ -15,8 +15,6 @@ import {
   jefferyOrbits,
   jefferyOrientBins,
   jefferyRuns,
-  jefferyValidationRows,
-  jefferyValidationSource,
   jefferyWall,
   jefferyWallModel,
   percent,
@@ -353,51 +351,19 @@ describe("Jeffery plot assets", () => {
   });
 });
 
-describe("Jeffery validation ledger", () => {
-  it("is generated from the curated datasheet, not hand-written", () => {
-    expect(jefferyValidationSource).toBe("scripts/source-data/dns/dns_validation_datasheet.csv");
-    expect(jefferyValidationRows).toHaveLength(5);
-  });
-
-  it("selects the D6.2 rows in campaign order and uses the campaign vocabulary", () => {
-    const allowed = new Set(["PASS", "RECORDED", "RESOLVED", "FAIL", "OPEN"]);
-    expect(jefferyValidationRows.map(row => row.case)).toEqual([
+describe("Jeffery datasheet extract", () => {
+  // The page no longer renders these rows (its Validation tab was removed on
+  // 2026-10-15); the extract stays a Reference Data download.
+  it("carries the benchmark's datasheet rows, verbatim and in order", () => {
+    const extract = readFileSync(resolve(DIR, "downloads/jeffery_validation_rows.csv"), "utf-8");
+    const lines = extract.trimEnd().split("\n");
+    expect(lines).toHaveLength(5 + 1);
+    expect(lines.slice(1).map(line => line.split(",")[1].replace(/"/g, ""))).toEqual([
       "d62_g0_smoke",
       "d62_v0b_spin",
       "d62_v1b_orbit",
       "d62_v2_clearance",
       "d62_resolution_pinned"
     ]);
-    for (const row of jefferyValidationRows) {
-      expect(row.suite).toBe("d6_nonspherical");
-      expect(allowed.has(row.verdict), `${row.case}: ${row.verdict}`).toBe(true);
-      expect(row.measured.length, row.case).toBeGreaterThan(0);
-    }
-    // Every gate passes; the fifth row is the bookkeeping correction that
-    // supersedes the resolution figure the clearance row's caveat quotes.
-    for (const row of jefferyValidationRows.filter(entry => entry.case !== "d62_resolution_pinned")) {
-      expect(row.verdict, row.case).toBe("PASS");
-    }
-    const pinned = jefferyValidationRows.find(row => row.case === "d62_resolution_pinned");
-    expect(pinned?.verdict).toBe("RESOLVED");
-    expect(pinned?.measured).toContain(jefferyH8.thinAxisResolution.toFixed(3));
-    expect(pinned?.measured).toContain(jefferyH4.thinAxisResolution.toFixed(3));
-  });
-
-  it("strips internal scheduler job ids from the campaign prose", () => {
-    const blob = JSON.stringify(jefferyValidationRows);
-    expect(blob).not.toMatch(/\bjobs?\s+\d/i);
-    // The measured values the page quotes survive the sanitiser intact.
-    expect(jefferyValidationRows.find(row => row.case === "d62_v2_clearance")?.measured).toContain(
-      jefferyH4.analysis.periodGamma!.toFixed(4)
-    );
-    expect(jefferyValidationRows.find(row => row.case === "d62_v1b_orbit")?.measured).toContain(
-      jefferyH8.analysis.periodGamma!.toFixed(4)
-    );
-  });
-
-  it("publishes the same rows as the standalone ledger extract", () => {
-    const extract = readFileSync(resolve(DIR, "downloads/jeffery_validation_rows.csv"), "utf-8");
-    for (const row of jefferyValidationRows) expect(extract).toContain(`"${row.case}"`);
   });
 });

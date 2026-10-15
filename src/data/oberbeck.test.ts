@@ -17,8 +17,6 @@ import {
   oberbeckRatioSpecs,
   oberbeckResistance,
   oberbeckRungs,
-  oberbeckValidationRows,
-  oberbeckValidationSource,
   percent
 } from "./oberbeck";
 
@@ -269,15 +267,14 @@ describe("Oberbeck plot assets", () => {
   });
 });
 
-describe("Oberbeck validation ledger", () => {
-  it("is generated from the curated datasheet, not hand-written", () => {
-    expect(oberbeckValidationSource).toBe("scripts/source-data/dns/dns_validation_datasheet.csv");
-    expect(oberbeckValidationRows).toHaveLength(9);
-  });
-
-  it("selects the D6.1 rows in campaign order and uses the campaign vocabulary", () => {
-    const allowed = new Set(["PASS", "RECORDED", "RESOLVED", "FAIL", "OPEN"]);
-    expect(oberbeckValidationRows.map(row => row.case)).toEqual([
+describe("Oberbeck datasheet extract", () => {
+  // The page no longer renders these rows (its Validation tab was removed on
+  // 2026-10-15); the extract stays a Reference Data download.
+  it("carries the benchmark's datasheet rows, verbatim and in order", () => {
+    const extract = readFileSync(resolve(DIR, "downloads/oberbeck_validation_rows.csv"), "utf-8");
+    const lines = extract.trimEnd().split("\n");
+    expect(lines).toHaveLength(9 + 1);
+    expect(lines.slice(1).map(line => line.split(",")[1].replace(/"/g, ""))).toEqual([
       "pe_ellfix_twin",
       "d61_setup_twin",
       "d61_v0_anchor",
@@ -288,31 +285,5 @@ describe("Oberbeck validation ledger", () => {
       "d61_v5_halfsize",
       "d61_review_corrections"
     ]);
-    for (const row of oberbeckValidationRows) {
-      expect(row.suite).toBe("d6_nonspherical");
-      expect(allowed.has(row.verdict), `${row.case}: ${row.verdict}`).toBe(true);
-      expect(row.measured.length, row.case).toBeGreaterThan(0);
-    }
-    // The rung that closes the primary gate, and the review that priced it.
-    expect(oberbeckValidationRows.find(row => row.case === "d61_v5_halfsize")?.verdict).toBe("PASS");
-    expect(oberbeckValidationRows.find(row => row.case === "d61_review_corrections")?.verdict).toBe(
-      "RESOLVED"
-    );
-  });
-
-  it("strips internal scheduler job ids without eating a decimal", () => {
-    const blob = JSON.stringify(oberbeckValidationRows);
-    expect(blob).not.toMatch(/\bjobs?\s+\d/i);
-    // The semi-axis the closing rung quotes begins with the campaign's own job-id
-    // digits after the decimal point; it must survive the sanitiser intact.
-    expect(oberbeckValidationRows.find(row => row.case === "d61_v5_halfsize")?.quantity).toContain(
-      `a=${oberbeckL4Half.a.toFixed(6)}`
-    );
-  });
-
-  it("publishes the same rows as the standalone ledger extract", () => {
-    const extract = readFileSync(resolve(DIR, "downloads/oberbeck_validation_rows.csv"), "utf-8");
-    for (const row of oberbeckValidationRows) expect(extract).toContain(`"${row.case}"`);
-    expect(extract.trimEnd().split("\n")).toHaveLength(oberbeckValidationRows.length + 1);
   });
 });

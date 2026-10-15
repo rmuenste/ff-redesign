@@ -12,8 +12,7 @@ import {
   ReferenceList,
   Section,
   Tabs,
-  useTabParam,
-  ValidationLedger
+  useTabParam
 } from "../components";
 import { OberbeckSchematic } from "../components/oberbeck-schematic";
 import {
@@ -35,7 +34,6 @@ import {
   oberbeckReferences,
   oberbeckRungs,
   oberbeckResistance,
-  oberbeckValidationRows,
   orientationLabel,
   percent,
   type OberbeckGateRow,
@@ -70,10 +68,6 @@ const closingLongWindow = oberbeckClosingRung.sensitivity[oberbeckClosingRung.se
 
 function Mono({ children }: { children: ReactNode }) {
   return <span style={{ fontFamily: "var(--font-mono)" }}>{children}</span>;
-}
-
-function Row({ children }: { children: ReactNode }) {
-  return <span className="code-inline">{children}</span>;
 }
 
 function IntroductionTab() {
@@ -309,7 +303,7 @@ function RatioTab() {
       <div className="stack" style={{ maxWidth: 900, gap: 20 }}>
         <h3 style={{ margin: 0 }}>Three rungs, two factors</h3>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
-          The anisotropy ratio is the primary gate, and it was measured three times. Two rungs keep the
+          The anisotropy ratio is the headline result, and it was measured three times. Two rungs keep the
           full-size body and differ only in the mesh; the third keeps the finer mesh and halves the body. That
           is a two-factor design with one factor moved at a time, and it is what turns a marginal first reading
           into an attributed one.
@@ -335,8 +329,7 @@ function RatioTab() {
             the periodic array is not isotropic about it: the two orientations are corrected by different
             amounts, and the ratio inherits the difference. The compact cell's{" "}
             {percent(oberbeckL4Full.deviation)} is therefore quantified cell physics, not method error — and
-            the campaign wrote the collapse down as a prediction before the closing rung was run
-            (<Row>d61_v4_resolution</Row>, confirmed by <Row>d61_v5_halfsize</Row>).
+            the collapse was predicted before the half-size body was run.
           </p>
         </div>
       </div>
@@ -382,9 +375,10 @@ function AbsolutesTab() {
       <div className="stack" style={{ maxWidth: 900, gap: 20 }}>
         <h3 style={{ margin: 0 }}>Each orientation against its own resistance function</h3>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
-          The ratio is the gate that matters, because the lattice correction and the discretisation bias mostly
-          cancel in it. The absolute radii carry both, and are gated at three per cent instead of two. They are
-          worth reading anyway, because they say something the ratio cannot: whether the method converges.
+          The ratio is the number that matters, because the lattice correction and the discretisation bias
+          mostly cancel in it. The absolute radii carry both, so their tolerance is three per cent instead of
+          two. They are worth reading anyway, because they say something the ratio cannot: whether the method
+          converges.
         </p>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
           They do. Doubling the mesh at full body size moves the parallel orientation from{" "}
@@ -394,7 +388,7 @@ function AbsolutesTab() {
           {percent(oberbeckOrientation(oberbeckL4Full, "perpendicular").deviationCorrected)}, both toward zero.
           At the closing rung they are {percent(closingPar.deviationCorrected)} and{" "}
           {percent(closingPerp.deviationCorrected)} — inside the band with no effective-radius correction
-          applied at all (<Row>d61_v5_halfsize</Row>). The sphere-derived effective-radius model was tried and
+          applied at all. The sphere-derived effective-radius model was tried and
           does not transfer per axis; the page quotes the uncorrected numbers because they do not need it.
         </p>
       </div>
@@ -442,7 +436,7 @@ function AbsolutesTab() {
         <p style={{ color: "var(--fg2)", fontSize: 13, lineHeight: 1.6, marginTop: 12 }}>
           Radii carry the imaged-volume correction each run reports for itself; targets are a·X^A and a·Y^A at
           that rung's body size. The torque null is the measured moment in units of the drag moment scale —
-          nowhere larger than {worstTorqueNull.toExponential(1)} against a gate of 1e-3, and a factor of ten
+          nowhere larger than {worstTorqueNull.toExponential(1)} against a tolerance of 1e-3, and a factor of ten
           smaller again at the finer level.
         </p>
       </div>
@@ -462,8 +456,8 @@ function AbsolutesTab() {
             <Mono>+5.86°</Mono> against an unbounded prediction of{" "}
             <Mono>+{oberbeckOblique.predictedTilt.toFixed(2)}°</Mono> — the right sign, the transverse
             component symmetry demands at machine zero, and a magnitude inflated by the same finite-cell
-            anisotropy that owns the ratio residual above. Recorded rather than gated; the quantitative band
-            waits on a half-size variant of this orientation (<Row>d61_v3b_transverse</Row>).
+            anisotropy that owns the ratio residual above. It is reported as a qualitative check; a
+            quantitative comparison would need the half-size body in this orientation as well.
           </p>
         </div>
       </div>
@@ -511,8 +505,7 @@ function SteadinessTab() {
             &minus;0.3 to &minus;0.4 per cent depending on where the window is placed, robustly inside the
             two-per-cent band but not pinned to a third digit. The half-size body is the reason: its drag is
             still climbing at {percent(closingPar.trend, 2)} per time unit at t = 4, where the full-size runs
-            are flat to within a few hundredths. An extended run would be needed to settle the last digit
-            (<Row>d61_review_corrections</Row>).
+            are flat to within a few hundredths. An extended run would be needed to settle the last digit.
           </p>
           <DataTable<(typeof sensitivityRows)[number]>
             columns={[
@@ -557,8 +550,7 @@ function SteadinessTab() {
             getRowKey={row => row.id}
           />
           <p style={{ color: "var(--fg2)", fontSize: 13, lineHeight: 1.6, marginTop: 12 }}>
-            A window of zero is the last sample, which is the reading every recorded campaign number was taken
-            at. The transient is shared between the two orientations of a rung, which is why the ratio is far
+            A window of zero is the last sample, which is the reading every other number on this page uses. The transient is shared between the two orientations of a rung, which is why the ratio is far
             less sensitive to it than the individual radii would be.
           </p>
         </div>
@@ -566,52 +558,11 @@ function SteadinessTab() {
         <div>
           <h3>The sphere the fixture is anchored on</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-            Before the spheroid was run at all, the volume-matched sphere was re-measured in the identical
-            rundir on the current binary. It returns a drag coefficient of {oberbeckAnchor.K.toFixed(4)}{" "}
-            against the certified {oberbeckAnchor.certified}, a deviation of{" "}
-            {percent(oberbeckAnchor.deviation, 3)}, with the steady force identical to every printed digit of
-            the certified log across a change of machine, compiler and some forty commits of code
-            (<Row>d61_v0_anchor</Row>). Whatever the spheroid rungs report, the fixture underneath them has not
-            moved.
-          </p>
-        </div>
-      </div>
-    </Section>
-  );
-}
-
-function ValidationTab() {
-  return (
-    <Section style={{ paddingTop: 40, paddingBottom: 100 }}>
-      <div style={{ maxWidth: 900, marginBottom: 28 }}>
-        <h3>Validation ledger</h3>
-        <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-          One row per quantitative claim, generated from the campaign datasheet that is offered in full under
-          Reference Data and reproduced as the campaign wrote it, apart from internal run identifiers. The
-          ladder is gated against a closed-form prediction rather than another simulation: Oberbeck's
-          resistance functions for the ratio and the absolutes, and an exact symmetry statement for the torque
-          null.
-        </p>
-      </div>
-      <ValidationLedger rows={oberbeckValidationRows} />
-      <div className="stack" style={{ marginTop: 36, maxWidth: 900, gap: 20 }}>
-        <div>
-          <h3>Controlled comparison</h3>
-          <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-            The two orientations of a rung share the mesh, the partitioning, the binary, the driving force and
-            the time step. The only difference between them is the direction the body's axis points, which is
-            what makes their ratio a measurement of the shape rather than of the cell or the code. Between
-            rungs exactly one further thing changes — the mesh spacing, or the body size, never both.
-          </p>
-        </div>
-        <div>
-          <h3>How the numbers were derived</h3>
-          <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-            Every radius, ratio, deviation and torque null on this page is recomputed at build time from the
-            published run series by the same procedure as the campaign's own analysis tool, and the references
-            — X^A = {XA}, Y^A = {YA} and their ratio {TARGET} — are evaluated from the aspect ratio rather than
-            transcribed. A test pins the re-derivation against the tool's printed report, so the two cannot
-            drift apart silently.
+            Before the spheroid was run at all, the volume-matched sphere was measured again in the identical
+            cell. It returns a drag coefficient of {oberbeckAnchor.K.toFixed(4)} against{" "}
+            {oberbeckAnchor.certified} from the periodic-array drag benchmark, a deviation of{" "}
+            {percent(oberbeckAnchor.deviation, 3)}, with the steady force unchanged to every printed digit.
+            Whatever the spheroid measurements show, the setup underneath them has not moved.
           </p>
         </div>
       </div>
@@ -627,7 +578,7 @@ function ReferenceDataTab() {
           {
             type: "paragraph",
             text:
-              "The run files are the raw record of each simulation: one line per time step, carrying the full wrench on the body, the cell's superficial velocity and the fluid fraction the alpha field realised, neither smoothed nor trimmed. Alongside them, the run and ladder tables say which run supplied which orientation of which rung, the gate report carries the derived radii and deviations, and the window table carries the plateau sensitivity. All quantities are nondimensional with unit cell edge and unit viscosity, and forces and torques are signed in the cell frame. The bundle also contains the campaign datasheet from which the validation ledger is generated, plus the extract of just the rows this page publishes."
+              "The run files are the raw record of each simulation: one line per time step, carrying the full wrench on the body, the cell's superficial velocity and the fluid fraction the alpha field realised, neither smoothed nor trimmed. Alongside them, the run and ladder tables say which run supplied which orientation of which rung, the gate report carries the derived radii and deviations, and the window table carries the plateau sensitivity. All quantities are nondimensional with unit cell edge and unit viscosity, and forces and torques are signed in the cell frame. The bundle also contains the DNS campaign datasheet, plus an extract of the rows that concern this benchmark."
           }
         ]}
       />
@@ -663,7 +614,6 @@ export function OberbeckSpheroidDragPage() {
     { id: "ratio", label: "Ratio Ladder" },
     { id: "absolutes", label: "Absolute Drag" },
     { id: "steadiness", label: "Steadiness" },
-    { id: "validation", label: "Validation" },
     { id: "reference-data", label: "Reference Data" }
   ];
   const [tab, setTab] = useTabParam(tabs.map(item => item.id), "introduction");
@@ -748,7 +698,6 @@ export function OberbeckSpheroidDragPage() {
       {tab === "ratio" && <RatioTab />}
       {tab === "absolutes" && <AbsolutesTab />}
       {tab === "steadiness" && <SteadinessTab />}
-      {tab === "validation" && <ValidationTab />}
       {tab === "reference-data" && <ReferenceDataTab />}
     </div>
   );

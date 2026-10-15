@@ -1,7 +1,6 @@
-import type { DownloadItem, ValidationRow } from "../components";
+import type { DownloadItem } from "../components";
 import { benchmarkAssetPath } from "./assets";
 import generated from "./generated/jeffery.json";
-import generatedValidation from "./generated/jeffery-validation.json";
 import type { PlotSource, PlotSpec, SeriesGroup } from "./types";
 
 export const JEFFERY_ID = "jeffery-orbit";
@@ -458,15 +457,6 @@ export const jefferyGateRows: JefferyGateRow[] = [
   }
 ];
 
-/* ---------------- Validation ---------------- */
-
-/**
- * Generated from the DNS validation datasheet by scripts/convert-jeffery-data.mjs.
- * Never edit by hand — correct the datasheet and re-run the converter.
- */
-export const jefferyValidationRows = generatedValidation.rows as ValidationRow[];
-export const jefferyValidationSource = generatedValidation.source;
-
 /* ---------------- References and downloads ---------------- */
 
 export const jefferyReferences = [
@@ -512,7 +502,7 @@ const dataFiles: Array<{ name: string; description: string }> = [
   },
   {
     name: "jeffery_validation_rows.csv",
-    description: "The datasheet rows this page's validation ledger publishes, verbatim"
+    description: "The datasheet rows that concern this benchmark, verbatim"
   }
 ];
 
@@ -520,7 +510,7 @@ export const jefferyDownloads: DownloadItem[] = [
   {
     label: `${JEFFERY_ID}.zip`,
     href: benchmarkAssetPath(JEFFERY_ID, `downloads/${JEFFERY_ID}.zip`),
-    description: "All orientation traces, the derived gate tables and the validation datasheet"
+    description: "All orientation traces, the derived tables and the DNS campaign datasheet"
   },
   {
     label: "dns_validation_datasheet.csv",
@@ -568,7 +558,7 @@ export const jefferyReferenceRows = [
     columns: "model, exponent, slope, clearance_free_period_deviation"
   },
   {
-    fileType: "Ledger extract",
+    fileType: "Datasheet extract",
     pattern: "jeffery_validation_rows.csv",
     columns: "suite, case, quantity, expected, expected_source, measured, rel_error, tolerance, verdict"
   }

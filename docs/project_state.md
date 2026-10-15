@@ -50,6 +50,33 @@ specified in [benchmark-template.md](benchmark-template.md).
   every route, so GitHub Pages returns 200 for deep links. Benchmark tabs are
   deep-linkable with `?tab=<id>`.
 
+## 2026-10-15: Validation tabs dropped from the DNS pages
+
+The owner reviewed the Oberbeck page and found its Validation tab read like an
+internal document published by accident: raw datasheet rows plus method narrative
+("controlled comparison", "how the numbers were derived"). The tab is gone from all
+six pages that had one (SED, DKT, HS, NV, OBK, JEF), together with the
+Lubrication tab's embedded ledger on SED, the run table's "Validation ledger"
+button and every prose pointer to the tab. Old `?tab=validation` links fall back to
+the Introduction tab; `e2e/mobile-layout.spec.ts` checks that.
+
+- SED's convergence reading, the Table II reference note, the time-step study and
+  the fitted error split moved onto the Results tab in plain language; the
+  `stepsize_` configuration note and the earlier stability-floor history were
+  dropped as procedure.
+- The controlled-comparison and how-derived subsections were dropped everywhere;
+  their visitor-facing facts were already on the Introduction, Definition or
+  results tabs.
+- On OBK the results captions lost their datasheet case ids and the
+  gate/certified/rundir/binary wording; on JEF the case ids.
+- `src/data/generated/{dkt,hindered-settling,numerical-viscometer,oberbeck,jeffery}-validation.json`
+  and the converter code that wrote them are removed, since nothing else read
+  them. `sedimentation-validation.json` stays: it also carries the time-step study
+  and the error split. The datasheet downloads, the OBK and JEF extract CSVs and
+  every zip are byte-identical.
+- `src/pages/hero.test.ts` now checks each page's tab row against the registry
+  and that no page renders a ledger.
+
 ## Particle Sedimentation Migration
 
 Particle Sedimentation is now the fourth migrated benchmark. The Angular static
@@ -59,7 +86,7 @@ simulation series against the PIV reference files.
 ### 2026-10-15: campaign curves at three mesh levels
 
 Every simulation curve on the page is now a DNS-campaign run, at L2, L3 and L4,
-the runs the Validation tab's ledger quotes. `scripts/convert-sedimentation-data.mjs`
+the runs the campaign datasheet quotes. `scripts/convert-sedimentation-data.mjs`
 reads `scripts/source-data/sedimentation/campaign/` (`vel<CASE>_L<n>.txt`,
 `pos<CASE>_L<n>.txt`, `campaign_runs.csv`) and no longer needs a sibling checkout;
 the setup figure's source moved to `scripts/source-data/sedimentation/` for the same
@@ -159,7 +186,8 @@ benchmarks reuse:
 
 - A `suite` facet on the benchmark registry, so DNS entries are filterable
   alongside Model and Dim.
-- `VerdictChip` and `ValidationLedger`, plus a `Validation` tab pattern.
+- `VerdictChip` and `ValidationLedger`, plus a `Validation` tab pattern (retired
+  2026-10-15, see below).
 - A generated validation ledger: `scripts/lib/validation-ledger.mjs` reads the
   curated campaign datasheet (`scripts/source-data/dns/`) and emits
   `src/data/generated/<id>-validation.json`. Ledger rows are never hand-written.
@@ -283,6 +311,6 @@ Remaining DNS candidates, in rough order of readiness:
   that blocked it was fixed on 2026-08-03 and the benchmark is closed; the
   post-fix ladder converges to Hasimoto's analytic value within -0.4 to -0.6%.
   The defect itself (periodic faces silently solved traction-free until the
-  campaign caught it) belongs in that page's Validation ledger.
+  campaign caught it) belongs in the campaign datasheet, not in the page prose.
 - **Beetstra drag correlation** — needs surface-plot support, or a decomposition
   into per-solid-fraction line families, before it fits the comparison model.

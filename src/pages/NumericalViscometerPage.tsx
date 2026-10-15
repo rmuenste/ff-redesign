@@ -13,8 +13,7 @@ import {
   ReferenceList,
   Section,
   Tabs,
-  useTabParam,
-  ValidationLedger
+  useTabParam
 } from "../components";
 import { ViscometerSchematic } from "../components/viscometer-schematic";
 import {
@@ -38,7 +37,6 @@ import {
   viscometerReferences,
   viscometerRestart,
   viscometerTorqueSpecs,
-  viscometerValidationRows,
   viscometerViscositySpecs,
   type ViscometerGateRow,
   type ViscometerGatedRung,
@@ -48,7 +46,6 @@ import {
   type ViscometerRung
 } from "../data/numerical-viscometer";
 
-const T_EXACT = viscometerInstrument.torqueExact.toFixed(2);
 const T_EXACT_LONG = viscometerInstrument.torqueExact.toFixed(4);
 const CORRECTION = viscometerInstrument.transposeCorrection.toFixed(3);
 const ETA = viscometerEinstein.eta.toFixed(4);
@@ -660,46 +657,6 @@ function LubricationTab({ onOpenSedimentation }: { onOpenSedimentation: () => vo
   );
 }
 
-function ValidationTab() {
-  return (
-    <Section style={{ paddingTop: 40, paddingBottom: 100 }}>
-      <div style={{ maxWidth: 900, marginBottom: 28 }}>
-        <h3>Validation ledger</h3>
-        <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-          One row per quantitative claim, generated from the campaign datasheet that is offered in full under
-          Reference Data and reproduced as the campaign wrote it, apart from internal run identifiers. Every
-          rung of the instrument is gated against a prediction rather than against another simulation: the
-          empty cell against the exact annular-Couette torque, each suspension against the closure valid at its
-          concentration, composed over its own measured concentration field.
-        </p>
-      </div>
-      <ValidationLedger rows={viscometerValidationRows} />
-      <div className="stack" style={{ marginTop: 36, maxWidth: 900, gap: 20 }}>
-        <div>
-          <h3>Controlled comparison</h3>
-          <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-            The two readings that form {"η"} are the same instrument. They share the mesh, the partitioning, the
-            binary, the operating point and the time step; both continue from the empty cell's own converged
-            field, and both are averaged over the same window of time after that restart. The only variable
-            between them is the presence of the {N_PARTICLES} spheres, which is what makes the ratio a
-            measurement of the suspension and not of the cell.
-          </p>
-        </div>
-        <div>
-          <h3>How the numbers were derived</h3>
-          <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-            Every torque, plateau and deviation on this page is recomputed at build time from the published
-            torque histories, and the analytic references — the exact torque {T_EXACT_LONG} and the transpose
-            correction {CORRECTION} — are recomputed from the geometry on the Definition tab. Nothing is
-            transcribed, so a corrected run table propagates to the prose. The gate percentages the ledger
-            quotes are the campaign's own, taken against its rounded reference {T_EXACT}.
-          </p>
-        </div>
-      </div>
-    </Section>
-  );
-}
-
 function ReferenceDataTab() {
   return (
     <Section narrow style={{ paddingTop: 40, paddingBottom: 100 }}>
@@ -708,7 +665,7 @@ function ReferenceDataTab() {
           {
             type: "paragraph",
             text:
-              "The torque histories are the raw record of each run: one line per time step, carrying the time and both torque estimators, neither smoothed nor trimmed. Alongside them, the lubrication files carry the solver's per-step count of near-contact films, the run table carries the plateau window, the matched window of the empty cell and the switch settings of every rung, the closure file carries the targets composed from the measured concentration field, and the profile file carries the velocity-profile gate. All quantities are nondimensional with unit sphere diameter, and torques are signed about the axis of rotation. The bundle also contains the campaign datasheet from which the validation ledger is generated."
+              "The torque histories are the raw record of each run: one line per time step, carrying the time and both torque estimators, neither smoothed nor trimmed. Alongside them, the lubrication files carry the solver's per-step count of near-contact films, the run table carries the plateau window, the matched window of the empty cell and the switch settings of every rung, the closure file carries the targets composed from the measured concentration field, and the profile file carries the velocity-profile gate. All quantities are nondimensional with unit sphere diameter, and torques are signed about the axis of rotation. The bundle also contains the DNS campaign datasheet."
           }
         ]}
       />
@@ -744,7 +701,6 @@ export function NumericalViscometerPage() {
     { id: "baseline", label: "Baseline" },
     { id: "ladder", label: "Concentration Ladder" },
     { id: "lubrication", label: "Lubrication" },
-    { id: "validation", label: "Validation" },
     { id: "reference-data", label: "Reference Data" }
   ];
   const [tab, setTab] = useTabParam(tabs.map(item => item.id), "introduction");
@@ -837,7 +793,6 @@ export function NumericalViscometerPage() {
           }
         />
       )}
-      {tab === "validation" && <ValidationTab />}
       {tab === "reference-data" && <ReferenceDataTab />}
     </div>
   );

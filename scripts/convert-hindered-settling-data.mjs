@@ -5,7 +5,7 @@
 //   hindered-settling/ladder_wide.csv      the same for the 12d control column
 //   hindered-settling/terminal_velocity.csv single-particle reference per column
 //   hindered-settling/history_*.dat        two-column settling histories (t, U/u_t)
-//   dns/dns_validation_datasheet.csv       the campaign's claim ledger
+//   dns/dns_validation_datasheet.csv       the campaign datasheet (offered as a download)
 //
 // The ladder statistics are produced by tools/d32_ladder_analysis.py in the
 // FeatFloWer repository (plateau window t = 15-25, radius 0.5, cross-section area
@@ -16,14 +16,12 @@
 // Outputs:
 //   public/benchmark-assets/hindered-settling/       Plotly traces, downloads, manifest
 //   src/data/generated/hindered-settling.json        tables and fitted exponents
-//   src/data/generated/hindered-settling-validation.json  Validation-tab rows
 //
 // Run with: node scripts/convert-hindered-settling-data.mjs
 import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, relative, resolve } from "node:path";
 import { parseCsvRecords } from "./lib/csv.mjs";
 import { resetGeneratedOutputs, writeManifest } from "./lib/output-dir.mjs";
-import { buildLedger, readDatasheet } from "./lib/validation-ledger.mjs";
 import { createStoredZip } from "./lib/zip.mjs";
 
 const root = resolve(import.meta.dirname, "..");
@@ -335,29 +333,8 @@ writeJson(resolve(generatedDir, "hindered-settling.json"), {
   roweBand: ROWE_BAND
 });
 
-// ---- validation ledger ------------------------------------------------------
-// Generated from the datasheet, never hand-written.
-//
-// Selection policy
-// ----------------
-// Published: the single-particle reference, the closed phi ladder and the
-// wide-column attribution verdict — the three rows that carry the result as it
-// stands. Withheld: the N=40 pathfinder, superseded by the full ladder, and the
-// design row for the wide column, which records submission logistics rather than a
-// measurement. The datasheet download under Reference Data carries every row.
-const PUBLISHED = new Set(["d32_ut_ref", "d32_phi_ladder", "d32_wide_attribution"]);
-
-const records = readDatasheet(resolve(root, datasheetSource));
-const ledger = buildLedger(records, record => PUBLISHED.has(record.case.trim()));
-
-writeJson(resolve(generatedDir, "hindered-settling-validation.json"), {
-  source: datasheetSource,
-  generatedBy: "scripts/convert-hindered-settling-data.mjs",
-  rows: ledger
-});
-
 console.log(
   `Generated ${entries.length} hindered-settling manifest entries in ${relative(root, outDir)}, ` +
     `RZ exponent n = ${fit.n.toFixed(2)} (rms ${fit.rms.toFixed(3)}, ${fit.count} runs), ` +
-    `wide two-rung slope n = ${wideSlope.n.toFixed(2)}, and ${ledger.length} validation rows`
+    `and wide two-rung slope n = ${wideSlope.n.toFixed(2)}`
 );

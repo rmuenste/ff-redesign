@@ -9,8 +9,6 @@ import {
   hinderedReynoldsRange,
   hinderedRoweBand,
   hinderedTerminalByColumn,
-  hinderedValidationRows,
-  hinderedValidationSource,
   hinderedWideRows,
   hinderedWideSlope,
   swarmReynolds
@@ -125,34 +123,3 @@ describe("hindered-settling plot assets", () => {
   });
 });
 
-describe("hindered-settling validation ledger", () => {
-  it("is generated from the curated datasheet, not hand-written", () => {
-    expect(hinderedValidationSource).toBe("scripts/source-data/dns/dns_validation_datasheet.csv");
-    expect(hinderedValidationRows.length).toBeGreaterThanOrEqual(3);
-  });
-
-  it("selects only D3.2 cases and uses the campaign verdict vocabulary", () => {
-    const allowed = new Set(["PASS", "RECORDED", "RESOLVED", "FAIL", "OPEN"]);
-    for (const row of hinderedValidationRows) {
-      expect(row.case.startsWith("d32_"), row.case).toBe(true);
-      expect(allowed.has(row.verdict), `${row.case}: ${row.verdict}`).toBe(true);
-      expect(row.measured.length, row.case).toBeGreaterThan(0);
-    }
-  });
-
-  it("publishes the closure rows and withholds the pathfinder and the design row", () => {
-    const cases = hinderedValidationRows.map(row => row.case);
-    expect(cases).toContain("d32_phi_ladder");
-    expect(cases).toContain("d32_wide_attribution");
-    expect(cases).toContain("d32_ut_ref");
-    expect(cases).not.toContain("d32_n40_smoke");
-    expect(cases).not.toContain("d32_wide_design");
-  });
-
-  it("strips internal scheduler job ids from published prose", () => {
-    const blob = JSON.stringify(hinderedValidationRows);
-    expect(blob).not.toMatch(/\bjobs?\s+\d/i);
-    // Partial ids left behind by a naive strip are just as internal.
-    expect(blob).not.toMatch(/\b\d{5,7}\s*[-+/]\s*\d/);
-  });
-});

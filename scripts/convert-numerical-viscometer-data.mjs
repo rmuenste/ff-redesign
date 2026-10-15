@@ -10,7 +10,7 @@
 //                                              from the spun-up state at dt = 0.005
 //   numerical-viscometer/rungs.csv             one row per rung of the phi ladder
 //   numerical-viscometer/velocity_profile.csv  the profile gate, measured off the VTK frame
-//   dns/dns_validation_datasheet.csv           the campaign's claim ledger
+//   dns/dns_validation_datasheet.csv           the campaign datasheet (offered as a download)
 //
 // The torque histories are the VISC_TORQUE_DNA and VISC_TORQUE_RES records of
 // each run's own solver protocol (_data/prot.txt in the campaign rundirs), one
@@ -46,13 +46,11 @@
 // Outputs:
 //   public/benchmark-assets/numerical-viscometer/      Plotly traces, downloads, manifest
 //   src/data/generated/numerical-viscometer.json       instrument, rungs and fits
-//   src/data/generated/numerical-viscometer-validation.json  Validation-tab rows
 //
 // Run with: node scripts/convert-numerical-viscometer-data.mjs
 import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, relative, resolve } from "node:path";
 import { parseCsvRecords } from "./lib/csv.mjs";
-import { buildLedger, readDatasheet } from "./lib/validation-ledger.mjs";
 import { createStoredZip } from "./lib/zip.mjs";
 import { resetGeneratedOutputs, writeManifest } from "./lib/output-dir.mjs";
 
@@ -709,41 +707,6 @@ writeJson(resolve(generatedDir, "numerical-viscometer.json"), {
   profile
 });
 
-// ---- validation ledger ------------------------------------------------------
-// Generated from the datasheet, never hand-written.
-//
-// Selection policy
-// ----------------
-// Published: the empty cell continued at the suspension time step, which is the
-// T(0) of every ratio on the page and certifies the instrument against the
-// analytic torque; the restated concentration ladder, whose three rungs are read
-// against that matched-window baseline; and all three lubrication pairs in their
-// settled form. Withheld: the spun-up cell's own gate row and the three original
-// rung rows, which the ladder row supersedes as absolute viscosities, and the
-// first-segment readings of the pairs, whose windows were taken before the
-// lubricated microstructure had relaxed and which the settled rows supersede.
-// The datasheet download under Reference Data carries every row of the campaign,
-// superseded ones included.
-// Listed in the order the page reads them: instrument, ladder, pairs.
-const PUBLISHED = [
-  "d52_v26e_dt_control",
-  "d52_l3_ladder_restated",
-  "d52_v21L_settled",
-  "d52_v22L_settled",
-  "d52_v23L_settled"
-];
-
-const records = readDatasheet(resolve(root, datasheetSource));
-const ledger = buildLedger(records, record => PUBLISHED.includes(record.case.trim())).sort(
-  (a, b) => PUBLISHED.indexOf(a.case) - PUBLISHED.indexOf(b.case)
-);
-
-writeJson(resolve(generatedDir, "numerical-viscometer-validation.json"), {
-  source: datasheetSource,
-  generatedBy: "scripts/convert-numerical-viscometer-data.mjs",
-  rows: ledger
-});
-
 console.log(
   `Generated ${entries.length} numerical-viscometer manifest entries in ${relative(root, outDir)}, ` +
     `T_exact = ${TORQUE_EXACT.toFixed(4)}, transpose correction = ${TRANSPOSE_CORRECTION.toFixed(4)}, ` +
@@ -753,6 +716,5 @@ console.log(
       .map(rung => `phi=${rung.phi.toFixed(2)} eta=${rung.eta.toFixed(4)} (${(rung.deviationComposite * 100).toFixed(2)}%)`)
       .join(", ")}, ` +
     `lubrication delta ${pairs.map(pair => `${(pair.delta * 100).toFixed(2)}%`).join(" / ")} ` +
-    `(decay ${pairDecay.eta.toFixed(1)}x vs pair count ${pairDecay.pairs.toFixed(1)}x), ` +
-    `and ${ledger.length} validation rows`
+    `(decay ${pairDecay.eta.toFixed(1)}x vs pair count ${pairDecay.pairs.toFixed(1)}x)`
 );

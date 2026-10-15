@@ -12,8 +12,7 @@ import {
   ReferenceList,
   Section,
   Tabs,
-  useTabParam,
-  ValidationLedger
+  useTabParam
 } from "../components";
 import {
   hinderedConfinedRows,
@@ -28,7 +27,6 @@ import {
   hinderedReynoldsRange,
   hinderedRoweBand,
   hinderedTerminalByColumn,
-  hinderedValidationRows,
   hinderedWideRows,
   hinderedWideSlope,
   hinderedWindow,
@@ -331,42 +329,6 @@ function ConfinementTab() {
   );
 }
 
-function ValidationTab() {
-  return (
-    <Section style={{ paddingTop: 40, paddingBottom: 100 }}>
-      <div style={{ maxWidth: 900, marginBottom: 28 }}>
-        <h3>Validation ledger</h3>
-        <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-          One row per quantitative claim, generated from the campaign datasheet that is offered in full under
-          Reference Data. There is no experimental reference for this configuration, so the ladder is gated on
-          internal consistency — the quality of the power-law collapse and the seed scatter — and the attribution is
-          gated on mechanism. Rows marked RECORDED document behaviour that was measured and kept but not gated.
-        </p>
-      </div>
-      <ValidationLedger rows={hinderedValidationRows} />
-      <div className="stack" style={{ marginTop: 36, maxWidth: 900, gap: 20 }}>
-        <div>
-          <h3>Controlled comparison</h3>
-          <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-            The wide-column runs reuse the narrow-column particle positions unchanged and share the binary, the deck
-            lineage, the resolution and the plateau window. The vessel cross-section is the only variable, which is
-            what makes the change of sign in U/u_t an attribution rather than a correlation.
-          </p>
-        </div>
-        <div>
-          <h3>How the numbers were derived</h3>
-          <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-            Every plateau statistic on this page comes from the campaign's own analysis of the per-step particle
-            records, over the window {WINDOW}, and the published tables are the input to the fit shown on the Results
-            tab rather than a transcription of it. The exponent, its residual and the wide-column slope are recomputed
-            from those tables whenever the site is built, so a corrected run table propagates to the prose.
-          </p>
-        </div>
-      </div>
-    </Section>
-  );
-}
-
 function ReferenceDataTab() {
   return (
     <Section narrow style={{ paddingTop: 40, paddingBottom: 100 }}>
@@ -375,7 +337,7 @@ function ReferenceDataTab() {
           {
             type: "paragraph",
             text:
-              "The run tables carry one row per simulation: cloud size, seed, plateau velocity and its variation over the settled window, both concentration measures, and the inter-particle velocity spread. The settling histories are two-column text files sampled every fifth time step. All quantities are nondimensional with unit sphere diameter. The bundle also contains the campaign datasheet from which the validation ledger is generated."
+              "The run tables carry one row per simulation: cloud size, seed, plateau velocity and its variation over the settled window, both concentration measures, and the inter-particle velocity spread. The settling histories are two-column text files sampled every fifth time step. All quantities are nondimensional with unit sphere diameter. The bundle also contains the DNS campaign datasheet."
           }
         ]}
       />
@@ -402,7 +364,6 @@ export function HinderedSettlingPage() {
     { id: "definition", label: "Definition" },
     { id: "results", label: "Results" },
     { id: "confinement", label: "Confinement" },
-    { id: "validation", label: "Validation" },
     { id: "reference-data", label: "Reference Data" }
   ];
   const [tab, setTab] = useTabParam(tabs.map(item => item.id), "introduction");
@@ -460,7 +421,6 @@ export function HinderedSettlingPage() {
       {tab === "definition" && <DefinitionTab />}
       {tab === "results" && <ResultsTab />}
       {tab === "confinement" && <ConfinementTab />}
-      {tab === "validation" && <ValidationTab />}
       {tab === "reference-data" && <ReferenceDataTab />}
     </div>
   );

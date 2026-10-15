@@ -3,7 +3,7 @@
 // Inputs (curated under scripts/source-data/):
 //   jeffery/runs.csv       one row per solver run: geometry, shear, mask, rundir
 //   jeffery/run_<id>.csv   that run's own DNS_PART_AXIS trace, one line per step
-//   dns/dns_validation_datasheet.csv   the campaign's claim ledger
+//   dns/dns_validation_datasheet.csv   the campaign datasheet (offered as a download)
 //
 // run_<id>.csv is the solver's per-step orientation record, extracted verbatim
 // from the run log: the unit vector along the body's symmetry axis at every time
@@ -35,14 +35,12 @@
 // Outputs:
 //   public/benchmark-assets/jeffery-orbit/   Plotly traces, downloads, manifest
 //   src/data/generated/jeffery.json          runs, gates, wall models
-//   src/data/generated/jeffery-validation.json   Validation-tab rows
 //
 // Run with: node scripts/convert-jeffery-data.mjs
 import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, relative, resolve } from "node:path";
 import { parseCsvRecords } from "./lib/csv.mjs";
 import { resetGeneratedOutputs, writeManifest } from "./lib/output-dir.mjs";
-import { buildLedger, readDatasheet } from "./lib/validation-ledger.mjs";
 import { createStoredZip } from "./lib/zip.mjs";
 
 const BENCHMARK = "jeffery-orbit";
@@ -788,19 +786,11 @@ emitCsv(
   { oldPath: DERIVED, label: "wall_extrapolation.csv" }
 );
 
-// ---- validation ledger -------------------------------------------------------
-// Generated from the datasheet, never hand-written.
-//
-// Selection policy
-// ----------------
-// Published: the structural smoke test that had to pass before any production
-// run, the sphere spin control, the orbit itself, the wall-clearance rung that
-// closes the family, and the row that pins the thin-axis resolution from the
-// runs' own records. That last one is here because the ledger renders the
-// campaign's rows verbatim: the clearance row's own caveat quotes the case
-// specification's pre-mesh estimate, and the resolution row is what supersedes
-// it. Together they are every row carrying a number this page quotes. The
-// datasheet download under Reference Data carries the campaign's wider record.
+// ---- datasheet downloads ---------------------------------------------------
+// The page has no Validation tab (removed 2026-10-15); the campaign datasheet is
+// still offered under Reference Data, together with an extract of the rows that
+// concern this benchmark: the structural smoke test, the sphere spin control,
+// the orbit, the wall-clearance rung and the thin-axis resolution row.
 const PUBLISHED = [
   "d62_g0_smoke",
   "d62_v0b_spin",
@@ -808,15 +798,9 @@ const PUBLISHED = [
   "d62_v2_clearance",
   "d62_resolution_pinned"
 ];
-const published = new Set(PUBLISHED);
 
 const datasheetName = "dns_validation_datasheet.csv";
 const datasheetSource = `scripts/source-data/dns/${datasheetName}`;
-const records = readDatasheet(resolve(root, datasheetSource));
-const ledger = buildLedger(records, record => published.has(record.case.trim()));
-if (ledger.length !== PUBLISHED.length) {
-  throw new Error(`ledger selected ${ledger.length} rows, expected ${PUBLISHED.length}`);
-}
 
 copyFileSync(resolve(root, datasheetSource), resolve(outDir, `downloads/${datasheetName}`));
 entries.push({
@@ -830,8 +814,8 @@ zipEntries.push({
   data: readFileSync(resolve(outDir, `downloads/${datasheetName}`))
 });
 
-// The page's own ledger as a standalone file: the same rows, in the same order,
-// straight out of the datasheet without the sanitiser's run-id stripping.
+// The extract as a standalone file: the selected rows, in the order above,
+// straight out of the datasheet.
 const datasheetRows = parseCsvRecords(readFileSync(resolve(root, datasheetSource), "utf-8"));
 const header = [
   "suite",
@@ -887,12 +871,6 @@ writeJson(resolve(generatedDir, "jeffery.json"), {
   runs: runs.map(stripSeries)
 });
 
-writeJson(resolve(generatedDir, "jeffery-validation.json"), {
-  source: datasheetSource,
-  generatedBy: "scripts/convert-jeffery-data.mjs",
-  rows: ledger
-});
-
 console.log(
   `Generated ${entries.length} ${BENCHMARK} manifest entries in ${relative(root, outDir)}, ` +
     `Jeffery T gammadot = ${periodJeffery.toFixed(5)}, ` +
@@ -909,5 +887,5 @@ console.log(
     `clearance-free ${wall.models
       .map(model => `${model.label} ${(model.intercept * 100).toFixed(2)}%`)
       .join(" / ")}, ` +
-    `and ${ledger.length} validation rows`
+    `and ${PUBLISHED.length} datasheet rows in the extract`
 );

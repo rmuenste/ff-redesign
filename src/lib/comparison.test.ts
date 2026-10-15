@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
+  availableSeriesGroups,
   buildComparisonTraces,
   comparisonLayout,
   deriveTraceVariants,
@@ -318,4 +319,33 @@ describe("RB3 variant alignment across levels", () => {
       }
     }
   );
+});
+
+describe("availableSeriesGroups", () => {
+  const single = (path: string) => ({ kind: "single-trace" as const, asset: { path } });
+  const spec: PlotSpec = {
+    id: "ladder",
+    title: "Ladder",
+    metric: "velocity",
+    comparisonAxis: "level",
+    seriesGroups: [
+      // A ladder rung that exists for case b only.
+      { id: "coarse", label: "L2", kind: "level", color: "red", levelSources: { b: single("b-l2.json") }, variantStrategy: { kind: "single-trace" } },
+      { id: "fine", label: "L3", kind: "level", color: "blue", levelSources: { a: single("a-l3.json"), b: single("b-l3.json") }, variantStrategy: { kind: "single-trace" } },
+      { id: "ref", label: "Reference", kind: "reference", color: "black", source: single("ref.json"), variantStrategy: { kind: "single-trace" } }
+    ],
+    defaultSeriesGroupIds: ["coarse", "fine", "ref"],
+    levelAxis: { id: "case", label: "Case", options: [{ id: "a", label: "A" }, { id: "b", label: "B" }], defaultLevelId: "a" },
+    compareModes: ["overlay"],
+    defaultCompareMode: "overlay"
+  };
+
+  it("drops a group with no source at the selected option instead of failing", () => {
+    expect(availableSeriesGroups(spec, "a").map(group => group.id)).toEqual(["fine", "ref"]);
+    expect(availableSeriesGroups(spec, "b").map(group => group.id)).toEqual(["coarse", "fine", "ref"]);
+  });
+
+  it("keeps every group when no level option is selected", () => {
+    expect(availableSeriesGroups(spec).map(group => group.id)).toEqual(["coarse", "fine", "ref"]);
+  });
 });

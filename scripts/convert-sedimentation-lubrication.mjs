@@ -2,14 +2,12 @@
 // (campaign gate D2.2 G3).
 //
 // Companion to scripts/convert-sedimentation-data.mjs, which builds the core
-// plot assets; kept separate for the same reason the validation converter is —
-// the plot converter reads a sibling checkout that is not part of this
-// repository, so it cannot be re-run here, while this material must stay
-// rebuildable. Because both write into the same benchmark directory, this script
-// MERGES into the existing manifest: it rebuilds only what it owns (every path
-// under plots/lubrication/ and downloads/lubrication/) and keeps its entries where
-// they were, ahead of anything added after them. Run it after the plot converter,
-// never before.
+// plot assets. Both write into the same benchmark directory and each MERGES into
+// the existing manifest: this script rebuilds only what it owns (every path under
+// plots/lubrication/ and downloads/lubrication/) and keeps its entries where they
+// were, ahead of anything added after them; the core converter leaves these paths
+// alone. The two can therefore be re-run independently, once the core converter
+// has written the manifest.
 //
 // Inputs (curated under scripts/source-data/sedimentation/lubrication/):
 //   approach_E{1,2}_base.csv   bottom-approach window, lubrication OFF

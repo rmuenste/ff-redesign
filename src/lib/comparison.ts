@@ -44,6 +44,19 @@ const VARIANT_DASHES = ["solid", "dot", "dash", "dashdot"] as const;
 const VARIANT_COLORS = ["dodgerblue", "orange", "green", "red"] as const;
 
 /**
+ * The series groups that have data at the selected level-axis option. A group
+ * with per-option `levelSources` but no entry for the selected option has no
+ * curve there (for example one run of a ladder that does not exist), so it is
+ * left out of the plot and of the series selector rather than failing the
+ * panel. Groups with a single level-independent `source` are always available.
+ */
+export function availableSeriesGroups(spec: PlotSpec, selectedLevelId?: string): SeriesGroup[] {
+  return spec.seriesGroups.filter(
+    group => !selectedLevelId || !group.levelSources || group.levelSources[selectedLevelId] !== undefined
+  );
+}
+
+/**
  * Normalise a loaded asset payload into a flat list of traces.
  * - `single-trace` / `trace-array`: the JSON is already an array of traces.
  * - `segmented-shape`: each trace's points are split into contiguous segments of

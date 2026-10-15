@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import type { CompareMode, PlotSource, PlotSpec, SeriesGroup, TraceVariant } from "../data/types";
 import {
+  availableSeriesGroups,
   buildComparisonTraces,
   comparisonLayout,
   deriveTraceVariants,
@@ -82,7 +83,7 @@ function useComparisonData(spec: PlotSpec, selectedLevelId?: string) {
     setGroups([]);
 
     Promise.all(
-      spec.seriesGroups.map(async group => {
+      availableSeriesGroups(spec, selectedLevelId).map(async group => {
         const source = resolveSource(group, selectedLevelId);
         if (!source) throw new Error(`Missing source for ${group.label}.`);
         const response = await fetch(source.asset.path, { signal: controller.signal });
@@ -135,6 +136,7 @@ export function ComparisonPanel({
     : undefined;
 
   const { groups, loading, error } = useComparisonData(spec, activeLevelId);
+  const availableGroups = useMemo(() => availableSeriesGroups(spec, activeLevelId), [spec, activeLevelId]);
 
   // Variant options come from whichever loaded group exposes the most variants.
   const variantOptions = useMemo<TraceVariant[]>(
@@ -218,9 +220,9 @@ export function ComparisonPanel({
           </Group>
         )}
 
-        {spec.seriesGroups.length > 1 && (
+        {availableGroups.length > 1 && (
           <Group label={spec.seriesSelectorLabel ?? (spec.comparisonAxis === "level" ? "Refinement levels" : "Codes")}>
-            {spec.seriesGroups.map(group => (
+            {availableGroups.map(group => (
               <CheckRow
                 key={group.id}
                 checked={selectedGroupIds.includes(group.id)}

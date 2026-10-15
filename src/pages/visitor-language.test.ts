@@ -221,15 +221,20 @@ describe("visitor language on the DNS pages", () => {
     }
   });
 
-  it("sedimentation: no numbers against the paper's lattice-Boltzmann simulations", () => {
-    // Those were single-resolution runs with a calibrated hydrodynamic radius, not
-    // comparable with an uncalibrated refinement study; mentioning them is fine.
+  it("sedimentation: numeric agreement with the paper's simulations names their calibration", () => {
+    // Those were single-resolution runs with a calibrated hydrodynamic radius, a
+    // different kind of computation from an uncalibrated refinement study. A
+    // sentence that states numeric agreement with them must say so itself, and
+    // they are never called a reference on a par with the measurements.
     const copy = pageCopy("sedimentation").replace(/\s+/g, " ");
-    expect(copy).not.toMatch(/published simulations|as much a reference/i);
-    for (const sentence of copy.split(/(?<=\.)\s/).filter(text => /lattice-Boltzmann|LBM/i.test(text))) {
-      // Reynolds numbers and the citation are fine; a deviation or an agreement is not.
-      expect(sentence, sentence).not.toMatch(/per ?cent|%|to within|agree/i);
-    }
+    expect(copy).not.toMatch(/as much a reference/i);
+    const agreements = copy
+      .split(/(?<=\.)\s/)
+      .filter(sentence => /lattice-Boltzmann|LBM|published simulations|paper.{0,12}simulations/i.test(sentence))
+      .filter(sentence => /per ?cent|%|to within|agree|match/i.test(sentence));
+    // The E1 paragraph's one-per-cent match is the one such sentence today.
+    expect(agreements.some(sentence => /to within one per cent/.test(sentence))).toBe(true);
+    for (const sentence of agreements) expect(sentence, sentence).toMatch(/calibrated hydrodynamic radius/);
   });
 
   for (const id of Object.keys(PAGES)) {

@@ -381,9 +381,11 @@ function ResultsTab() {
           <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
             The lowest-Reynolds case is the hard one: it sits about three per cent below the experiment at the
             intermediate level and moves further away under refinement. The paper&apos;s own lattice-Boltzmann
-            simulation of this case also fell short of its measurement. Those runs used a hydrodynamic radius
-            calibrated so that the sphere&apos;s drag matched the exact value, at a single resolution, so they are not
-            compared with the refinement study here.
+            simulation of this case also fell short of its measurement. Across all four cases, FeatFloWer&apos;s
+            finest configurations match those published simulations to within one per cent, but those simulations
+            used a calibrated hydrodynamic radius at a single resolution (the input radius adjusted so that the
+            sphere&apos;s drag matched the exact value), which makes them a different kind of computation from the
+            refinement study on this page; the PIV measurements remain the reference it is measured against.
           </p>
           <div
             style={{

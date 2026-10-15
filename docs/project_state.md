@@ -181,14 +181,16 @@ charts and run table with FeatFloWer.
   KPI became "Codes", the catalogue summary mentions two codes, and the Reference
   Data tab describes the FEAT3 files. The convergence discussion and the
   lubrication baselines are scoped to FeatFloWer, which they are about.
-- No quantitative comparison with ten Cate's lattice-Boltzmann results (owner
-  decision): those were single-resolution runs with a calibrated hydrodynamic
-  radius, a different kind of computation from an uncalibrated refinement study.
-  The E1 paragraph on Results now says only, qualitatively, that the paper's own
-  simulation also fell short of its measurement; the one-per-cent agreement claim
-  and "as much a reference as its measurements" are gone, and the Introduction no
-  longer says the page validates against those simulations. Guarded in
-  `src/pages/visitor-language.test.ts`.
+- Ten Cate's lattice-Boltzmann results (owner decision): those were single-resolution
+  runs with a calibrated hydrodynamic radius, a different kind of computation from
+  an uncalibrated refinement study. The E1 paragraph on Results keeps that the
+  paper's own simulation also fell short of its measurement for E1, and keeps the
+  one-per-cent match of FeatFloWer's finest configurations with those simulations,
+  qualified in the same sentence by their calibration and single resolution;
+  "as much a reference as its measurements" is gone, as is the Introduction's claim
+  that the page validates against those simulations. The PIV measurements are the
+  only reference the page measures against, and no LBM numbers are in any table.
+  Guarded in `src/pages/visitor-language.test.ts`.
 
 ## Flow Around Cylinder 3D: the two cases made explicit
 

@@ -11,8 +11,8 @@ Two existing pages are the reference implementations:
   a reference time series to download. Use it for any benchmark in the DFG /
   CFD Benchmarking Project tradition.
 - **Hindered Settling** (`/benchmarks/hindered-settling`) — the smallest complete
-  DNS-validation page: a generated data pipeline, a validation ledger, a gallery
-  still. Use it for anything from the DNS campaign.
+  DNS-validation page: a generated data pipeline, the campaign datasheet as a
+  download, a gallery still. Use it for anything from the DNS campaign.
 
 The most recent end-to-end addition, commit `e142bd8` (Jeffery Orbit), shows
 every file a new benchmark touches.
@@ -47,7 +47,7 @@ Rules:
   `?tab=reference-data`, and `src/data/reference-data.test.ts` checks that link.
 - The results tab may carry a more specific label when that reads better, for
   example *The Orbit* (Jeffery), *Ratio Ladder* (Oberbeck), *Baseline* +
-  *Concentration Ladder* (Viscometer), or *FSI Tests* next to the FSI page's
+  *Concentration Series* (Viscometer), or *FSI Tests* next to the FSI page's
   *CFD Tests* and *CSM Tests*. There must be at least one tab whose job
   is to display results.
 - The default tab is `introduction`.
@@ -60,7 +60,6 @@ These go between the results tab(s) and **Reference Data**, except
 | Label | When to use | Example |
 |---|---|---|
 | Further result tabs | One tab per distinct study or experiment: a sensitivity, a control run, a second physical effect. | *Lubrication* (SED, NV), *Contact Model* (DKT), *Confinement* (HS), *Wall Clearance*, *Sphere Control* (JEF), *Absolute Drag*, *Steadiness* (OBK) |
-| **Validation** | Every benchmark with rows in the DNS campaign datasheet. Holds the `ValidationLedger` generated from it. | all *DNS validation* pages, and SED (a core benchmark that carries campaign metrology) |
 | **Conclusion and Bibliography** | Classical benchmarks with a closing discussion and a longer bibliography. Goes last, after Reference Data. | FAC3 |
 
 Current tab sets, for orientation:
@@ -69,13 +68,55 @@ Current tab sets, for orientation:
 FAC3   Introduction · Definition · Results · Reference Data · Conclusion and Bibliography
 RB3    Introduction · Definition · Results · Reference Data
 FSI    Introduction · Definition · FSI Tests · CFD Tests · CSM Tests · Reference Data
-SED    Introduction · Definition · Results · Lubrication · Validation · Reference Data
-HS     Introduction · Definition · Results · Confinement · Validation · Reference Data
-JEF    Introduction · Definition · The Orbit · Wall Clearance · Sphere Control · Validation · Reference Data
+SED    Introduction · Definition · Results · Lubrication · Reference Data
+HS     Introduction · Definition · Results · Confinement · Reference Data
+JEF    Introduction · Definition · The Orbit · Wall Clearance · Sphere Control · Reference Data
 ```
 
+There is no **Validation** tab. Until 2026-10-15 the DNS pages carried one: the
+campaign datasheet rows as a `ValidationLedger`, plus notes on how the numbers were
+produced. It read as an internal record rather than a result, so it was dropped.
+The datasheet stays a Reference Data download; a number or explanation a visitor
+needs goes on a results tab, in plain language, without gate, rung, twin, pin,
+job-id or tool vocabulary.
+
+### Visitor language
+
+Every tab is written for a visitor: what was measured, and how far it sits from
+its reference. No procedure narrative and no campaign bookkeeping. This covers all
+readable text, including captions, KPI labels, table headers, callouts, schematic
+labels, hero chips, download descriptions and the data modules that hold copy.
+
+- Do not use: *certified*, *certification*, *twin*, *bitwise*, *byte-identical*,
+  *gate(d)*, *pin(ned)* in the code-version sense, *binary*, *commit*, *rundir*,
+  *job* or job numbers, datasheet case ids (`d61_v5_halfsize`, `e4_l3_dt0p5`),
+  *protocol*, *verdict*, *RECORDED* / *RESOLVED* / *PASS* as labels, *owner*,
+  *review*, *erratum*, *superseded*, *staged*, *cluster*, machine names,
+  *campaign*, or *anchor* in the regression sense.
+- *Rung* and *ladder* only where the page's own structure is a ladder the visitor
+  is looking at: Oberbeck's *Ratio Ladder* tab and its table. Elsewhere, Oberbeck's
+  other tabs included, say run, configuration, concentration, cloud size, clearance
+  or mesh level.
+- Each page stands alone. A term gets a one-clause definition at first use
+  (resistance function, hydrodynamic radius, solid fraction, 2a/L, 2b/h), and no
+  sentence relies on knowing another DNS case or the order the cases were run in.
+  Say "production resolution" or "closing run" only after saying what it is, or
+  better, give the number (cells across the thin axis).
+- A pass/fail table is a tolerance table, *What is compared, and the tolerance*,
+  with the columns Quantity, Reference, Tolerance, Result.
+- A sentence whose only content is that something was checked, re-run or found
+  unchanged against an earlier state is regression bookkeeping and stays off the
+  page. When the identity is itself the result shown, say it plainly (*the same
+  force to every printed digit*).
+- Column headers of downloadable files are quoted as the files have them, even
+  when they carry internal names.
+
+`src/pages/visitor-language.test.ts` greps the copy of the DNS pages for this list.
+Add a new DNS page to its `PAGES` map.
+
 The `tabs` array in the registry entry (section 3) is not read by the page, which
-declares its own tab list. Keep the two in sync by hand; no test checks it yet.
+declares its own tab list. `src/pages/hero.test.ts` checks that the two agree and
+that no page declares a Validation tab.
 
 ### What goes in each tab
 
@@ -128,11 +169,6 @@ same steps (Jeffery: *Fixture* = 1, *The observable* = 4, *Segments* = 5).
 - One paragraph on what the files contain and their units / nondimensionalisation.
 - A file-format table (quantity · pattern · columns). FAC3 uses column · quantity.
 - `<DownloadTable items={<id>Downloads} />`, where the zip bundle comes first.
-
-**Validation** (`<Section>`, full width; benchmarks with campaign datasheet rows)
-- A paragraph on how the ledger is gated, `<ValidationLedger rows={...} />`,
-  then short subsections on the controlled comparison and how the numbers were
-  derived.
 
 ### The hero
 
@@ -191,7 +227,7 @@ public/benchmark-assets/<id>/
                                           bundle of text files with createDeflatedZip)
     media/                                figures, videos, media/gallery/*.webp stills
 src/data/generated/<id>.json              derived numbers (fits, tables) — never edited by hand
-src/data/generated/<id>-validation.json   ledger rows (DNS)                          — never edited by hand
+src/data/generated/sedimentation-validation.json  SED's time-step study and error split — never edited by hand
 src/data/<id>.tsx                         data module: PlotSpecs, table rows, downloads, references
 src/data/<id>.test.ts                     pins the data and derived numbers
 src/pages/<Name>Page.tsx                  the page
@@ -313,10 +349,10 @@ Template: `scripts/convert-hindered-settling-data.mjs`. A converter:
 5. writes `src/data/generated/<id>.json` (derived numbers)
 6. DNS only: appends the benchmark's rows to
    `scripts/source-data/dns/dns_validation_datasheet.csv` (append, do not
-   replace), then writes `src/data/generated/<id>-validation.json` via
-   `buildLedger(records, predicate)` from `scripts/lib/validation-ledger.mjs`. A
-   `PUBLISHED` set of case ids selects which rows are shown, with a comment that
-   explains the selection.
+   replace) and copies the datasheet into `downloads/` and the zip. A converter
+   may also write an extract of the rows that concern its benchmark
+   (`oberbeck_validation_rows.csv`, `jeffery_validation_rows.csv`). The rows are
+   offered as downloads only; no page renders them.
 
 Run it by hand with `node scripts/convert-<id>-data.mjs`; the build does not run
 converters. Commit what it generates.
@@ -356,6 +392,7 @@ These tests list benchmarks explicitly and fail until the new one is added:
 | `src/data/assets.test.ts` | a manifest `describe` block (every `newPath` exists, every file on disk is mapped, metric set); if there is a gallery still, add it to the "gallery stills" list |
 | `src/data/gallery.test.ts` | if there is a gallery still: order, families, neighbours |
 | `src/pages/gallery-page.test.ts` | if there is a gallery still: the cross-link list |
+| `src/pages/visitor-language.test.ts` | DNS pages: `PAGES` entry (page, data module, schematic, generated file) |
 
 Add these:
 

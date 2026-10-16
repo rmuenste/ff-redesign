@@ -1,6 +1,5 @@
-import type { DownloadItem, ValidationRow } from "../components";
+import type { DownloadItem } from "../components";
 import { benchmarkAssetPath } from "./assets";
-import generatedValidation from "./generated/dkt-validation.json";
 import type { PlotSource, PlotSpec, SeriesGroup } from "./types";
 
 export type DktMetricId = "tilt" | "separation" | "trajectory" | "velocity-leader" | "velocity-trailer";
@@ -140,15 +139,6 @@ export const dktSequenceRows: DktPhaseRow[] = [
   { phase: "Role exchange", time: "t = 40", observation: "Separation 2.84 d at 107 deg; the former trailer now leads and falls faster, -0.401 against -0.337." }
 ];
 
-/* ---------------- Validation ---------------- */
-
-/**
- * Generated from the DNS validation datasheet by scripts/convert-dkt-data.mjs.
- * Never edit by hand — correct the datasheet and re-run the converter.
- */
-export const dktValidationRows = generatedValidation.rows as ValidationRow[];
-export const dktValidationSource = generatedValidation.source;
-
 /* ---------------- References and downloads ---------------- */
 
 export const dktReferences = [
@@ -188,7 +178,7 @@ export const dktDownloads: DownloadItem[] = [
   {
     label: "dns_validation_datasheet.csv",
     href: benchmarkAssetPath("dkt", "downloads/dns_validation_datasheet.csv"),
-    description: "Complete DNS campaign claim ledger, one row per quantitative claim"
+    description: "The DNS validation datasheet, one row per quantitative result"
   },
   ...runFiles.flatMap(run =>
     seriesStems.map(series => ({

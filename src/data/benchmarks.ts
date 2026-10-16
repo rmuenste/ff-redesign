@@ -65,11 +65,11 @@ export const benchmarks: BenchmarkMeta[] = [
     model: "Particulate",
     dimension: "3D",
     reynolds: "1.5-31.9",
-    levels: 2,
+    levels: 3,
     summary:
       "A particulate-flow benchmark comparing the motion of a settling sphere and induced flow field against experimental data.",
     thumb: "sediment",
-    tabs: ["Introduction", "Definition", "Results", "Lubrication", "Validation", "Reference Data"],
+    tabs: ["Introduction", "Definition", "Results", "Lubrication", "Reference Data"],
     comparisonAxis: "code",
     status: "active"
   },
@@ -105,7 +105,7 @@ export const benchmarks: BenchmarkMeta[] = [
     summary:
       "Two settling spheres reproduce the classical Fortes sequence: the trailing sphere drafts in the leader's wake, the pair touches, tumbles, and separates with the roles exchanged.",
     thumb: "dkt-pair",
-    tabs: ["Introduction", "Definition", "Results", "Contact Model", "Validation", "Reference Data"],
+    tabs: ["Introduction", "Definition", "Results", "Contact Model", "Reference Data"],
     comparisonAxis: "code",
     status: "active"
   },
@@ -122,7 +122,7 @@ export const benchmarks: BenchmarkMeta[] = [
     summary:
       "Clouds of 20 to 120 spheres settling in a walled column collapse onto a Richardson-Zaki power law, with an exponent that a wide-column control attributes to the confinement rather than to the suspension.",
     thumb: "particle",
-    tabs: ["Introduction", "Definition", "Results", "Confinement", "Validation", "Reference Data"],
+    tabs: ["Introduction", "Definition", "Results", "Confinement", "Reference Data"],
     comparisonAxis: "code",
     status: "active"
   },
@@ -138,15 +138,14 @@ export const benchmarks: BenchmarkMeta[] = [
     reynolds: "0.5",
     levels: 3,
     summary:
-      "A Couette cell with an exact analytic torque, calibrated empty and then walked up a concentration ladder whose rungs land on Einstein, Batchelor and Krieger-Dougherty in turn.",
+      "A Couette cell with an exact analytic torque, calibrated empty and then loaded at three concentrations that land on Einstein, Batchelor and Krieger-Dougherty in turn.",
     thumb: "annulus",
     tabs: [
       "Introduction",
       "Definition",
       "Baseline",
-      "Concentration Ladder",
+      "Concentration Series",
       "Lubrication",
-      "Validation",
       "Reference Data"
     ],
     comparisonAxis: "code",
@@ -164,7 +163,7 @@ export const benchmarks: BenchmarkMeta[] = [
     reynolds: "3e-3",
     levels: 2,
     summary:
-      "A prolate spheroid held fixed in a periodic Stokes cell, measured end-on and broadside against Oberbeck's exact resistance functions, with a ladder that attributes the residual to the finite cell rather than to the method.",
+      "A prolate spheroid held fixed in a periodic Stokes cell, measured end-on and broadside against Oberbeck's exact resistance functions, with three runs that attribute the residual to the finite cell rather than to the method.",
     thumb: "spheroid",
     tabs: [
       "Introduction",
@@ -172,7 +171,6 @@ export const benchmarks: BenchmarkMeta[] = [
       "Ratio Ladder",
       "Absolute Drag",
       "Steadiness",
-      "Validation",
       "Reference Data"
     ],
     comparisonAxis: "level",
@@ -190,7 +188,7 @@ export const benchmarks: BenchmarkMeta[] = [
     reynolds: "0.05",
     levels: 2,
     summary:
-      "A prolate spheroid tumbling freely in planar Couette flow, gated on the period and the whole rate waveform of Jeffery's 1922 closed form, with a wall-clearance rung that measures the boundary systematic instead of assuming it away.",
+      "A prolate spheroid tumbling freely in planar Couette flow, measured against the period and the whole rate waveform of Jeffery's 1922 closed form, with a second wall clearance that measures the boundary systematic instead of assuming it away.",
     thumb: "spheroid-shear",
     tabs: [
       "Introduction",
@@ -198,7 +196,6 @@ export const benchmarks: BenchmarkMeta[] = [
       "The Orbit",
       "Wall Clearance",
       "Sphere Control",
-      "Validation",
       "Reference Data"
     ],
     comparisonAxis: "level",

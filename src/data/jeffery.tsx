@@ -1,7 +1,6 @@
-import type { DownloadItem, ValidationRow } from "../components";
+import type { DownloadItem } from "../components";
 import { benchmarkAssetPath } from "./assets";
 import generated from "./generated/jeffery.json";
-import generatedValidation from "./generated/jeffery-validation.json";
 import type { PlotSource, PlotSpec, SeriesGroup } from "./types";
 
 export const JEFFERY_ID = "jeffery-orbit";
@@ -259,7 +258,7 @@ const periodSpec: PlotSpec = {
     group("period", "cubic", "Image dipole, (a/l)^3", "reference", SERIES_COLORS.h4),
     group("period", "square", "Conservative, (a/l)^2", "reference", SERIES_COLORS.h4Alt),
     group("period", "jeffery", "Jeffery, unbounded", "reference", "var(--fg1)"),
-    group("period", "band", "Period gate band, +/- 3%", "reference", "var(--fg3)", "trace-array")
+    group("period", "band", "Tolerance band, +/- 3%", "reference", "var(--fg3)", "trace-array")
   ],
   defaultSeriesGroupIds: ["dns", "cubic", "square", "jeffery", "band"],
   compareModes: ["overlay"],
@@ -361,22 +360,22 @@ export const jefferyParameterRows: JefferyParameterRow[] = [
   { symbol: "nu = mu", quantity: "Kinematic and dynamic viscosity", value: "1" },
   {
     symbol: "l / a",
-    quantity: "Wall-to-centre clearance in semi-major axes, the two rungs",
+    quantity: "Wall-to-centre clearance in semi-major axes, the two clearances",
     value: `${jefferyH8.clearanceAxes} and ${jefferyH4.clearanceAxes}`
   },
   {
     symbol: "h_min",
-    quantity: "Finest cell spacing at the body, the two rungs",
+    quantity: "Finest cell spacing at the body, the two clearances",
     value: `${jefferyH8.hMin} and ${jefferyH4.hMin}`
   },
   {
     symbol: "2b/h",
-    quantity: "Elements across the thin axis, the two rungs",
+    quantity: "Elements across the thin axis, the two clearances",
     value: `${jefferyH8.thinAxisResolution.toFixed(1)} and ${jefferyH4.thinAxisResolution.toFixed(1)}`
   },
   {
     symbol: "-",
-    quantity: "Fluid degrees of freedom inside the body, the two rungs",
+    quantity: "Fluid degrees of freedom inside the body, the two clearances",
     value: `${jefferyH8.insideDofs} and ${jefferyH4.insideDofs}`
   },
   { symbol: "dt", quantity: "Time step", value: String(jefferyH8.dt) },
@@ -394,78 +393,62 @@ export const jefferyParameterRows: JefferyParameterRow[] = [
   }
 ];
 
-export interface JefferyGateRow {
-  gate: string;
+export interface JefferyToleranceRow {
   quantity: string;
-  band: string;
-  measured: string;
-  verdict: string;
+  reference: string;
+  tolerance: string;
+  result: string;
 }
 
 /**
- * The gates as the case specification states them, each with the value the
- * default-clearance orbit returned. Every measured entry is the generated one,
- * so the table cannot drift from the traces it summarises.
+ * What the case compares, against which reference and with which tolerance, each
+ * with the value the default-clearance orbit returned. Every result is the
+ * generated one, so the table cannot drift from the traces it summarises.
  */
-export const jefferyGateRows: JefferyGateRow[] = [
+export const jefferyToleranceRows: JefferyToleranceRow[] = [
   {
-    gate: "Sphere spin (control)",
-    quantity: "(dphi/dt) / gammadot of a sphere in the same box, vs −1/2",
-    band: "+/- 1%",
-    measured: `${jefferyControl.spin.toFixed(5)} (${percent(jefferyControl.deviation)})`,
-    verdict: "PASS"
+    quantity: "Sphere spin (dphi/dt) / gammadot, same box",
+    reference: "−1/2, exact",
+    tolerance: "+/- 1%",
+    result: `${jefferyControl.spin.toFixed(5)} (${percent(jefferyControl.deviation)})`
   },
   {
-    gate: "Period (primary)",
-    quantity: `T gammadot vs 2 pi (r_e + 1/r_e) = ${jefferyClosedForm.periodGamma.toFixed(5)}`,
-    band: "+/- 3%",
-    measured: `${jefferyH8.analysis.periodGamma!.toFixed(4)} (${percent(
+    quantity: "Period T gammadot",
+    reference: `2 pi (r_e + 1/r_e) = ${jefferyClosedForm.periodGamma.toFixed(5)}`,
+    tolerance: "+/- 3%",
+    result: `${jefferyH8.analysis.periodGamma!.toFixed(4)} (${percent(
       jefferyH8.analysis.periodDeviation!
-    )})`,
-    verdict: "PASS"
+    )})`
   },
   {
-    gate: "Waveform",
-    quantity: "Fast/slow modulation of |dphi/dt| vs r_e^2",
-    band: "+/- 5%",
-    measured: `${jefferyH8.analysis.rate.modulation.toFixed(3)} (${percent(
+    quantity: "Fast/slow modulation of |dphi/dt|",
+    reference: "r_e^2",
+    tolerance: "+/- 5%",
+    result: `${jefferyH8.analysis.rate.modulation.toFixed(3)} (${percent(
       jefferyH8.analysis.rate.modulationDeviation
-    )})`,
-    verdict: "PASS"
+    )})`
   },
   {
-    gate: "Orientation-resolved rate",
-    quantity: "rate(phi~0) / rate(phi~pi/2) vs 1 / r_e^2, and the rms bin residual",
-    band: "+/- 10%, rms < 3%",
-    measured: `${percent(jefferyH8.analysis.orient.placementDeviation!)}, rms ${(
+    quantity: "rate(phi~0) / rate(phi~pi/2), and the rms bin residual",
+    reference: "1 / r_e^2",
+    tolerance: "+/- 10%, rms < 3%",
+    result: `${percent(jefferyH8.analysis.orient.placementDeviation!)}, rms ${(
       jefferyH8.analysis.orient.rmsResidual * 100
-    ).toFixed(2)}%`,
-    verdict: "PASS"
+    ).toFixed(2)}%`
   },
   {
-    gate: "Orbit plane",
-    quantity: "max |a_y| over the whole trace",
-    band: "< 0.02",
-    measured: jefferyH8.analysis.maxAxisY.toExponential(1),
-    verdict: "PASS"
+    quantity: "Orbit plane, max |a_y| over the whole trace",
+    reference: "0",
+    tolerance: "< 0.02",
+    result: jefferyH8.analysis.maxAxisY.toExponential(1)
   },
   {
-    gate: "Wall clearance (required)",
-    quantity: "Period shift between the two clearances, monotone toward Jeffery",
-    band: "measured",
-    measured: `${points(jefferyWall.shift)} at half the clearance`,
-    verdict: "PASS"
+    quantity: "Period shift between the two clearances",
+    reference: "monotone toward Jeffery",
+    tolerance: "measured",
+    result: `${points(jefferyWall.shift)} at half the clearance`
   }
 ];
-
-/* ---------------- Validation ---------------- */
-
-/**
- * Generated from the DNS validation datasheet by scripts/convert-jeffery-data.mjs.
- * Never edit by hand — correct the datasheet and re-run the converter.
- */
-export const jefferyValidationRows = generatedValidation.rows as ValidationRow[];
-export const jefferyValidationSource = generatedValidation.source;
 
 /* ---------------- References and downloads ---------------- */
 
@@ -508,11 +491,11 @@ const dataFiles: Array<{ name: string; description: string }> = [
   },
   {
     name: "wall_extrapolation.csv",
-    description: "The two wall laws fitted to the clearance ladder and read back at zero clearance"
+    description: "The two wall laws fitted to the two clearances and read back at zero clearance"
   },
   {
     name: "jeffery_validation_rows.csv",
-    description: "The datasheet rows this page's validation ledger publishes, verbatim"
+    description: "The datasheet rows that concern this benchmark, verbatim"
   }
 ];
 
@@ -520,12 +503,12 @@ export const jefferyDownloads: DownloadItem[] = [
   {
     label: `${JEFFERY_ID}.zip`,
     href: benchmarkAssetPath(JEFFERY_ID, `downloads/${JEFFERY_ID}.zip`),
-    description: "All orientation traces, the derived gate tables and the validation datasheet"
+    description: "All orientation traces, the derived tables and the DNS validation datasheet"
   },
   {
     label: "dns_validation_datasheet.csv",
     href: benchmarkAssetPath(JEFFERY_ID, "downloads/dns_validation_datasheet.csv"),
-    description: "Complete DNS campaign claim ledger, one row per quantitative claim"
+    description: "The DNS validation datasheet, one row per quantitative result"
   },
   ...dataFiles.map(file => ({
     label: file.name,
@@ -547,7 +530,7 @@ export const jefferyReferenceRows = [
       "run, label, short, role, case, a, b, re, gammadot, box_x, box_y, box_h, coarse_box, h_min, inside_dofs, dt, tmin, seams, segments, rundir"
   },
   {
-    fileType: "Gate report",
+    fileType: "Results table",
     pattern: "gates.csv",
     columns:
       "run, case, aspect_ratio, box_height, clearance_semi_major_axes, h_min, thin_axis_resolution, inside_dofs, T_gammadot, period_deviation, modulation, orientation_placement, rms_waveform_residual, max_axis_y"
@@ -568,7 +551,7 @@ export const jefferyReferenceRows = [
     columns: "model, exponent, slope, clearance_free_period_deviation"
   },
   {
-    fileType: "Ledger extract",
+    fileType: "Datasheet extract",
     pattern: "jeffery_validation_rows.csv",
     columns: "suite, case, quantity, expected, expected_source, measured, rel_error, tolerance, verdict"
   }

@@ -115,8 +115,11 @@ for (const viewport of VIEWPORTS) {
       expectNoOverflow(await horizontalOverflow(page));
     });
 
-    test("the validation ledger fits", async ({ page }) => {
+    test("a retired ?tab=validation link lands on the Introduction tab", async ({ page }) => {
+      // The DNS pages dropped their Validation tabs on 2026-10-15; links shared
+      // before then must still open a page, not an empty tab body.
       await page.goto("/benchmarks/drafting-kissing-tumbling?tab=validation");
+      await expect(page.getByRole("tab", { name: "Introduction" })).toHaveAttribute("aria-selected", "true");
       expectNoOverflow(await horizontalOverflow(page));
     });
   });

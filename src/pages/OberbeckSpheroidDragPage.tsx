@@ -12,17 +12,14 @@ import {
   ReferenceList,
   Section,
   Tabs,
-  useTabParam,
-  ValidationLedger
+  useTabParam
 } from "../components";
 import { OberbeckSchematic } from "../components/oberbeck-schematic";
 import {
   oberbeckAbsolutesSpecs,
-  oberbeckAnchor,
   oberbeckCell,
   oberbeckClosingRung,
   oberbeckDownloads,
-  oberbeckGateRows,
   oberbeckHistorySpecs,
   oberbeckL3Full,
   oberbeckL4Full,
@@ -35,13 +32,13 @@ import {
   oberbeckReferences,
   oberbeckRungs,
   oberbeckResistance,
-  oberbeckValidationRows,
+  oberbeckToleranceRows,
   orientationLabel,
   percent,
-  type OberbeckGateRow,
   type OberbeckOrientationId,
   type OberbeckParameterRow,
-  type OberbeckRung
+  type OberbeckRung,
+  type OberbeckToleranceRow
 } from "../data/oberbeck";
 
 const XA = oberbeckResistance.XA.toFixed(6);
@@ -72,10 +69,6 @@ function Mono({ children }: { children: ReactNode }) {
   return <span style={{ fontFamily: "var(--font-mono)" }}>{children}</span>;
 }
 
-function Row({ children }: { children: ReactNode }) {
-  return <span className="code-inline">{children}</span>;
-}
-
 function IntroductionTab() {
   return (
     <Section narrow style={{ paddingTop: 40, paddingBottom: 80 }}>
@@ -96,29 +89,29 @@ function IntroductionTab() {
           {
             type: "paragraph",
             text:
-              `At aspect ratio two — the shape this benchmark uses — those functions are X^A = ${XA} along the symmetry axis and Y^A = ${YA} across it, and the quantity the benchmark is really about is their ratio, Y^A / X^A = ${TARGET}. Broadside costs about fourteen and a half per cent more than end-on, and that number is a property of the shape alone.`
+              `Here a is the long semi-axis of the body, U the speed of the flow past it, and X^A and Y^A are the resistance functions — the drag in units of the Stokes drag on a sphere of radius a — for flow along the symmetry axis and across it. At aspect ratio two, the long axis twice the short one — the shape this benchmark uses — they are X^A = ${XA} and Y^A = ${YA}, and the quantity the benchmark is really about is their ratio, Y^A / X^A = ${TARGET}. Broadside costs about fourteen and a half per cent more than end-on, and that number is a property of the shape alone.`
           },
           { type: "heading", level: 3, text: "Why the anisotropy and not the drag" },
           {
             type: "paragraph",
             text:
-              "This is the first non-spherical case in the DNS validation campaign, and it inherits its fixture wholesale from the periodic-array drag benchmark that precedes it: one body held fixed at the centre of a triply periodic cube, the flow driven by a uniform body force. That fixture has a property worth stating plainly, because it decides what can be measured. At steady state the net force on the body is fixed by momentum balance — it must equal the driving force times the cell volume, whatever the body is and however it is turned. The anisotropy cannot show up in the force. It shows up in the flow the cell has to develop to carry that force, and so in the hydrodynamic radius each orientation implies."
+              "The body is held fixed at the centre of a cube that repeats periodically in all three directions, and the fluid is driven past it by a uniform body force. That setup has a property worth stating plainly, because it decides what can be measured. At steady state the net force on the body is fixed by momentum balance — it must equal the driving force times the cell volume, whatever the body is and however it is turned. The anisotropy cannot show up in the force. It shows up in the flow the cell has to develop to carry that force: the superficial velocity, the mean speed of the fluid through the cell."
           },
           {
             type: "paragraph",
             text:
-              `Two runs, then: the same body held with its long axis along the driving force, and held across it. Each returns a hydrodynamic radius through the Hasimoto inversion for a periodic array, and the ratio of the two is compared with ${TARGET}. The lattice correction and most of the discretisation bias are common to both orientations and cancel there, which is why the ratio is the primary gate and the absolute radii are the secondary one.`
-          },
-          { type: "heading", level: 3, text: "A ladder with a prediction in it" },
-          {
-            type: "paragraph",
-            text:
-              `Measured at production resolution the ratio came out ${oberbeckL3Full.ratio.toFixed(5)} — ${percent(oberbeckL3Full.deviation)}, just outside the two-per-cent band. Doubling the mesh moved it to ${oberbeckL4Full.ratio.toFixed(5)}: identical to four digits, so the excess is not a discretisation error. What it is instead is a property of the cell. The body is long enough that its own periodic images lie closer along its axis than across it, and the lattice therefore sees the two orientations differently. That reading makes a falsifiable prediction — halve the body in the same cell and the excess should collapse — and the closing rung confirms it: ${CLOSING}, ${CLOSING_DEV} from Oberbeck, with the absolute radii landing within one and a half per cent of a·X^A and a·Y^A and no effective-radius correction applied.`
+              "That velocity is turned into a length, the hydrodynamic radius. The drag on a sphere in a periodic cubic array is known in closed form (Hasimoto 1959) as a function of the sphere radius and the solid fraction, the share of the cell volume the sphere fills. For the spheroid, the measured drag and velocity are put into that relation and it is solved for the radius of the sphere that would produce them; that radius is the hydrodynamic radius of the spheroid in that orientation. The formula is on the Definition tab."
           },
           {
             type: "paragraph",
             text:
-              "The review of the torque path that preceded this work fixed four ellipsoid defects in the rigid-body library before any production run; all are covered by unit tests, and the fix was certified by a byte-identical sphere twin."
+              `Two runs, then: the same body held with its long axis along the driving force, and held across it. The ratio of their hydrodynamic radii is compared with ${TARGET}, Oberbeck's exact Stokes-flow value for this aspect ratio. The effect of the periodic lattice and most of the discretisation error are common to both orientations and cancel in the ratio, which is why the ratio is the primary comparison and the absolute radii are the secondary one.`
+          },
+          { type: "heading", level: 3, text: "Three runs and a prediction" },
+          {
+            type: "paragraph",
+            text:
+              `With ${THIN_PRODUCTION} mesh cells across the body's thin axis the ratio came out ${oberbeckL3Full.ratio.toFixed(5)} — ${percent(oberbeckL3Full.deviation)}, just outside the two-per-cent tolerance. Doubling the mesh, to ${THIN} cells across the thin axis, moved it to ${oberbeckL4Full.ratio.toFixed(5)}: identical to four digits, so the excess is not a discretisation error. What it is instead is a property of the cell. The body's length relative to the cell edge, 2a/L = ${oberbeckL3Full.imageParameter.toFixed(3)}, is large enough that its own periodic copies lie closer along its long axis than across it, so the periodic lattice acts differently on the two orientations. That reading makes a falsifiable prediction — halve the body in the same cell, which halves 2a/L to ${oberbeckL4Half.imageParameter.toFixed(3)}, and the excess should collapse — and the half-size body, same cell and same ${oberbeckL4Half.thinAxisResolution.toFixed(1)} cells across its thin axis, confirms it: ${CLOSING}, ${CLOSING_DEV} from Oberbeck's value, with the absolute radii landing within one and a half per cent of a·X^A and a·Y^A and no empirical correction to the radius applied.`
           }
         ]}
       />
@@ -135,20 +128,20 @@ function DefinitionTab() {
     <Section narrow style={{ paddingTop: 40, paddingBottom: 80 }}>
       <ContentRenderer
         blocks={[
-          { type: "heading", level: 3, text: "Fixture" },
+          { type: "heading", level: 3, text: "Setup" },
           {
             type: "paragraph",
             text:
               `A prolate spheroid of aspect ratio ${oberbeckCell.aspectRatio} is held fixed at the centre of a triply periodic cube of unit edge, and the flow is driven by a uniform body force of ${oberbeckCell.force.toExponential(
                 0
-              )} in the z direction. The Reynolds number is about 3e-3, so this is Stokes flow in all but name. Holding the body fixed is deliberate: it removes insertion transients and keeps the torque arm unambiguous under periodicity, and it leaves the free-motion problem to a later case.`
+              )} in the z direction. The Reynolds number is about 3e-3, so this is Stokes flow in all but name. Holding the body fixed is deliberate: there is no start-up motion of the body to wait out, and the lever arm of the torque stays unambiguous under periodicity.`
           },
           {
             type: "paragraph",
             text:
-              `The body is volume-matched to the sphere of the periodic-array drag benchmark, radius ${oberbeckCell.sphereRadius.toFixed(
+              `The body has the volume of a sphere of radius ${oberbeckCell.sphereRadius.toFixed(
                 6
-              )}, so the lattice correction has the same magnitude here as it does there and the same analysis machinery applies unchanged. That gives semi-axes a = ${oberbeckL3Full.a.toFixed(
+              )}, so it fills the same share of the cell as that sphere would. That gives semi-axes a = ${oberbeckL3Full.a.toFixed(
                 6
               )} and b = c = ${oberbeckL3Full.b.toFixed(6)} for the full-size body.`
           }
@@ -161,15 +154,15 @@ function DefinitionTab() {
           {
             type: "paragraph",
             text:
-              `A spheroid has two length scales and only the smaller one matters for the mesh: the thin axis is what has to be resolved. At the production level the body spans ${THIN_PRODUCTION} elements across its thin diameter, which is the resolution the campaign's sphere cases are certified at; the refinement rung doubles that to ${THIN}. The closing rung halves the body at the finer level, which brings the thin-axis resolution back to ${oberbeckL4Half.thinAxisResolution.toFixed(
+              `A spheroid has two length scales and only the smaller one matters for the mesh: the thin axis is what has to be resolved. The thin-axis resolution 2b/h counts mesh cells across the body's thin diameter 2b, h being the mesh spacing. On the coarser mesh (level L3) the full-size body spans ${THIN_PRODUCTION} cells across its thin diameter; the finer mesh (level L4) doubles that to ${THIN}. The half-size body on the finer mesh is back at ${oberbeckL4Half.thinAxisResolution.toFixed(
                 1
-              )} while halving how much of the cell the body occupies — the two factors are varied one at a time.`
+              )} cells while its length relative to the cell edge, 2a/L, halves from ${oberbeckL3Full.imageParameter.toFixed(3)} to ${oberbeckL4Half.imageParameter.toFixed(3)} — the two factors are varied one at a time.`
           },
           { type: "heading", level: 3, text: "The observable" },
           {
             type: "paragraph",
             text:
-              "The steady wrench on the body and the cell's superficial velocity are read from the run's own protocol files. The drag and the velocity give a hydrodynamic radius by inverting Hasimoto's periodic-array drag law self-consistently — the solid fraction in that law is itself set by the radius being solved for — and the two orientations' radii are what the gates compare."
+              "The steady force and torque on the body and the cell's superficial velocity, the mean speed of the fluid through the cell, are read from the run's own output. The drag and the velocity give a hydrodynamic radius R_h — the radius of the sphere that, in the same periodic cubic array, would feel the same drag at the same velocity — by solving Hasimoto's drag law for a periodic array of spheres. The solid fraction φ in that law, the share of the cell volume the sphere fills, is itself set by the radius being solved for, so the relation is solved self-consistently. The two orientations' radii are what is compared."
           },
           {
             type: "equation",
@@ -180,7 +173,7 @@ function DefinitionTab() {
           {
             type: "paragraph",
             text:
-              "The alpha field images a body of very slightly the wrong volume, and each run reports the fluid fraction it actually realised, so that error is folded back into the radius rather than ignored — the same correction the sphere ladder uses. No effective-radius correction is applied anywhere on this page."
+              "The solver marks the body on the mesh with a volume-fraction field, which represents a body of very slightly the wrong volume; each run reports the fluid fraction it actually realised, so that error is folded back into the radius rather than ignored. No other correction to the radius is applied anywhere on this page."
           }
         ]}
       />
@@ -210,36 +203,35 @@ function DefinitionTab() {
         </div>
 
         <div>
-          <h3>Gates</h3>
-          <DataTable<OberbeckGateRow>
+          <h3>What is compared, and the tolerance</h3>
+          <DataTable<OberbeckToleranceRow>
             columns={[
-              { id: "gate", header: "Gate", render: row => <span style={{ fontWeight: 500 }}>{row.gate}</span> },
-              { id: "quantity", header: "Quantity", render: row => row.quantity },
+              { id: "quantity", header: "Quantity", render: row => <span style={{ fontWeight: 500 }}>{row.quantity}</span> },
+              { id: "reference", header: "Reference", render: row => row.reference },
               {
-                id: "band",
-                header: "Band",
+                id: "tolerance",
+                header: "Tolerance",
                 align: "right",
-                render: row => <Mono>{row.band}</Mono>
+                render: row => <Mono>{row.tolerance}</Mono>
               },
               {
-                id: "measured",
-                header: "Closing rung",
+                id: "result",
+                header: "Result, half-size body",
                 align: "right",
                 render: row => (
                   <span style={{ fontFamily: "var(--font-mono)", fontWeight: 500, whiteSpace: "nowrap" }}>
-                    {row.measured}
+                    {row.result}
                   </span>
                 )
               }
             ]}
-            rows={oberbeckGateRows}
-            getRowKey={row => row.gate}
+            rows={oberbeckToleranceRows}
+            getRowKey={row => row.quantity}
           />
           <p style={{ color: "var(--fg2)", fontSize: 13, lineHeight: 1.6, marginTop: 12 }}>
-            The torque gate is free and orientation-independent: any ellipsoid in uniform Stokes flow feels no
+            The torque comparison is free and orientation-independent: any ellipsoid in uniform Stokes flow feels no
             torque about its centre, at any orientation, and the body sits in a lattice mirror plane so
-            periodisation does not spoil it. It is the only rotational observable this case carries, and the
-            first in the campaign to exercise that path at all.
+            periodisation does not spoil it. It is the only rotational observable this case carries.
           </p>
         </div>
       </div>
@@ -309,7 +301,7 @@ function RatioTab() {
       <div className="stack" style={{ maxWidth: 900, gap: 20 }}>
         <h3 style={{ margin: 0 }}>Three rungs, two factors</h3>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
-          The anisotropy ratio is the primary gate, and it was measured three times. Two rungs keep the
+          The anisotropy ratio is the headline result, and it was measured three times. Two rungs keep the
           full-size body and differ only in the mesh; the third keeps the finer mesh and halves the body. That
           is a two-factor design with one factor moved at a time, and it is what turns a marginal first reading
           into an attributed one.
@@ -335,8 +327,7 @@ function RatioTab() {
             the periodic array is not isotropic about it: the two orientations are corrected by different
             amounts, and the ratio inherits the difference. The compact cell's{" "}
             {percent(oberbeckL4Full.deviation)} is therefore quantified cell physics, not method error — and
-            the campaign wrote the collapse down as a prediction before the closing rung was run
-            (<Row>d61_v4_resolution</Row>, confirmed by <Row>d61_v5_halfsize</Row>).
+            the collapse was predicted before the half-size body was run.
           </p>
         </div>
       </div>
@@ -382,9 +373,10 @@ function AbsolutesTab() {
       <div className="stack" style={{ maxWidth: 900, gap: 20 }}>
         <h3 style={{ margin: 0 }}>Each orientation against its own resistance function</h3>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
-          The ratio is the gate that matters, because the lattice correction and the discretisation bias mostly
-          cancel in it. The absolute radii carry both, and are gated at three per cent instead of two. They are
-          worth reading anyway, because they say something the ratio cannot: whether the method converges.
+          The ratio is the number that matters, because the lattice correction and the discretisation bias
+          mostly cancel in it. The absolute radii carry both, so their tolerance is three per cent instead of
+          two. They are worth reading anyway, because they say something the ratio cannot: whether the method
+          converges.
         </p>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
           They do. Doubling the mesh at full body size moves the parallel orientation from{" "}
@@ -392,10 +384,11 @@ function AbsolutesTab() {
           {percent(oberbeckOrientation(oberbeckL4Full, "parallel").deviationCorrected)} and the perpendicular
           one from {percent(oberbeckOrientation(oberbeckL3Full, "perpendicular").deviationCorrected)} to{" "}
           {percent(oberbeckOrientation(oberbeckL4Full, "perpendicular").deviationCorrected)}, both toward zero.
-          At the closing rung they are {percent(closingPar.deviationCorrected)} and{" "}
-          {percent(closingPerp.deviationCorrected)} — inside the band with no effective-radius correction
-          applied at all (<Row>d61_v5_halfsize</Row>). The sphere-derived effective-radius model was tried and
-          does not transfer per axis; the page quotes the uncorrected numbers because they do not need it.
+          For the half-size body they are {percent(closingPar.deviationCorrected)} and{" "}
+          {percent(closingPerp.deviationCorrected)} — inside the band with no correction of the radius applied
+          at all. A correction of the radius by a fixed fraction of the mesh spacing, which works for a sphere,
+          does not carry over to a body with two different semi-axes, so none is applied here; the uncorrected
+          numbers do not need it.
         </p>
       </div>
 
@@ -405,7 +398,7 @@ function AbsolutesTab() {
           columns={[
             {
               id: "rung",
-              header: "Rung",
+              header: "Configuration",
               render: row => <span style={{ fontFamily: "var(--font-mono)", fontWeight: 500 }}>{row.rung}</span>
             },
             { id: "orientation", header: "Orientation", render: row => row.orientation },
@@ -441,8 +434,8 @@ function AbsolutesTab() {
         />
         <p style={{ color: "var(--fg2)", fontSize: 13, lineHeight: 1.6, marginTop: 12 }}>
           Radii carry the imaged-volume correction each run reports for itself; targets are a·X^A and a·Y^A at
-          that rung's body size. The torque null is the measured moment in units of the drag moment scale —
-          nowhere larger than {worstTorqueNull.toExponential(1)} against a gate of 1e-3, and a factor of ten
+          that configuration's body size. The torque null is the measured moment in units of the drag moment scale —
+          nowhere larger than {worstTorqueNull.toExponential(1)} against a tolerance of 1e-3, and a factor of ten
           smaller again at the finer level.
         </p>
       </div>
@@ -462,8 +455,8 @@ function AbsolutesTab() {
             <Mono>+5.86°</Mono> against an unbounded prediction of{" "}
             <Mono>+{oberbeckOblique.predictedTilt.toFixed(2)}°</Mono> — the right sign, the transverse
             component symmetry demands at machine zero, and a magnitude inflated by the same finite-cell
-            anisotropy that owns the ratio residual above. Recorded rather than gated; the quantitative band
-            waits on a half-size variant of this orientation (<Row>d61_v3b_transverse</Row>).
+            anisotropy that owns the ratio residual above. It is reported as a qualitative check; a
+            quantitative comparison would need the half-size body in this orientation as well.
           </p>
         </div>
       </div>
@@ -506,13 +499,12 @@ function SteadinessTab() {
           <h3>Window sensitivity, honestly</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
             Re-reading the ratio as a trailing mean over windows of up to two time units moves it by a few
-            hundredths of a per cent at the two full-size rungs and from {percent(oberbeckClosingRung.deviation)}{" "}
-            to {percent(closingLongWindow.deviation)} at the closing one. The closing result is therefore
+            hundredths of a per cent for the two full-size bodies and from {percent(oberbeckClosingRung.deviation)}{" "}
+            to {percent(closingLongWindow.deviation)} for the half-size one. The half-size result is therefore
             &minus;0.3 to &minus;0.4 per cent depending on where the window is placed, robustly inside the
-            two-per-cent band but not pinned to a third digit. The half-size body is the reason: its drag is
+            two-per-cent band but not fixed to a third digit. The half-size body is the reason: its drag is
             still climbing at {percent(closingPar.trend, 2)} per time unit at t = 4, where the full-size runs
-            are flat to within a few hundredths. An extended run would be needed to settle the last digit
-            (<Row>d61_review_corrections</Row>).
+            are flat to within a few hundredths. An extended run would be needed to settle the last digit.
           </p>
           <DataTable<(typeof sensitivityRows)[number]>
             columns={[
@@ -557,63 +549,11 @@ function SteadinessTab() {
             getRowKey={row => row.id}
           />
           <p style={{ color: "var(--fg2)", fontSize: 13, lineHeight: 1.6, marginTop: 12 }}>
-            A window of zero is the last sample, which is the reading every recorded campaign number was taken
-            at. The transient is shared between the two orientations of a rung, which is why the ratio is far
+            A window of zero is the last sample, which is the reading every other number on this page uses. The transient is shared between the two orientations of a configuration, which is why the ratio is far
             less sensitive to it than the individual radii would be.
           </p>
         </div>
 
-        <div>
-          <h3>The sphere the fixture is anchored on</h3>
-          <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-            Before the spheroid was run at all, the volume-matched sphere was re-measured in the identical
-            rundir on the current binary. It returns a drag coefficient of {oberbeckAnchor.K.toFixed(4)}{" "}
-            against the certified {oberbeckAnchor.certified}, a deviation of{" "}
-            {percent(oberbeckAnchor.deviation, 3)}, with the steady force identical to every printed digit of
-            the certified log across a change of machine, compiler and some forty commits of code
-            (<Row>d61_v0_anchor</Row>). Whatever the spheroid rungs report, the fixture underneath them has not
-            moved.
-          </p>
-        </div>
-      </div>
-    </Section>
-  );
-}
-
-function ValidationTab() {
-  return (
-    <Section style={{ paddingTop: 40, paddingBottom: 100 }}>
-      <div style={{ maxWidth: 900, marginBottom: 28 }}>
-        <h3>Validation ledger</h3>
-        <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-          One row per quantitative claim, generated from the campaign datasheet that is offered in full under
-          Reference Data and reproduced as the campaign wrote it, apart from internal run identifiers. The
-          ladder is gated against a closed-form prediction rather than another simulation: Oberbeck's
-          resistance functions for the ratio and the absolutes, and an exact symmetry statement for the torque
-          null.
-        </p>
-      </div>
-      <ValidationLedger rows={oberbeckValidationRows} />
-      <div className="stack" style={{ marginTop: 36, maxWidth: 900, gap: 20 }}>
-        <div>
-          <h3>Controlled comparison</h3>
-          <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-            The two orientations of a rung share the mesh, the partitioning, the binary, the driving force and
-            the time step. The only difference between them is the direction the body's axis points, which is
-            what makes their ratio a measurement of the shape rather than of the cell or the code. Between
-            rungs exactly one further thing changes — the mesh spacing, or the body size, never both.
-          </p>
-        </div>
-        <div>
-          <h3>How the numbers were derived</h3>
-          <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-            Every radius, ratio, deviation and torque null on this page is recomputed at build time from the
-            published run series by the same procedure as the campaign's own analysis tool, and the references
-            — X^A = {XA}, Y^A = {YA} and their ratio {TARGET} — are evaluated from the aspect ratio rather than
-            transcribed. A test pins the re-derivation against the tool's printed report, so the two cannot
-            drift apart silently.
-          </p>
-        </div>
       </div>
     </Section>
   );
@@ -627,7 +567,7 @@ function ReferenceDataTab() {
           {
             type: "paragraph",
             text:
-              "The run files are the raw record of each simulation: one line per time step, carrying the full wrench on the body, the cell's superficial velocity and the fluid fraction the alpha field realised, neither smoothed nor trimmed. Alongside them, the run and ladder tables say which run supplied which orientation of which rung, the gate report carries the derived radii and deviations, and the window table carries the plateau sensitivity. All quantities are nondimensional with unit cell edge and unit viscosity, and forces and torques are signed in the cell frame. The bundle also contains the campaign datasheet from which the validation ledger is generated, plus the extract of just the rows this page publishes."
+              "The run files are the raw record of each simulation: one line per time step, carrying the full wrench on the body, the cell's superficial velocity and the fluid fraction the run realised, neither smoothed nor trimmed. Alongside them, the run and configuration tables say which run supplied which orientation of which configuration, the results table carries the derived radii and deviations, and the window table carries the plateau sensitivity. All quantities are nondimensional with unit cell edge and unit viscosity, and forces and torques are signed in the cell frame. The bundle also contains the DNS validation datasheet, plus an extract of the rows that concern this benchmark."
           }
         ]}
       />
@@ -663,7 +603,6 @@ export function OberbeckSpheroidDragPage() {
     { id: "ratio", label: "Ratio Ladder" },
     { id: "absolutes", label: "Absolute Drag" },
     { id: "steadiness", label: "Steadiness" },
-    { id: "validation", label: "Validation" },
     { id: "reference-data", label: "Reference Data" }
   ];
   const [tab, setTab] = useTabParam(tabs.map(item => item.id), "introduction");
@@ -714,12 +653,12 @@ export function OberbeckSpheroidDragPage() {
               </h1>
               <p style={{ color: "var(--fg2)", fontSize: 15, margin: 0, maxWidth: 700, lineHeight: 1.55 }}>
                 A prolate spheroid held fixed in a periodic Stokes cell, measured end-on and broadside against
-                Oberbeck&apos;s 1876 resistance functions — and a ladder that attributes the residual to the
+                Oberbeck&apos;s 1876 resistance functions — and three runs that attribute the residual to the
                 cell rather than the method.
               </p>
             </div>
             <div className="kpi-grid">
-              <KpiBox label="Ladder rungs" value={String(oberbeckRungs.length)} />
+              <KpiBox label="Configurations" value={String(oberbeckRungs.length)} />
               <KpiBox label="Aspect ratio" value={String(oberbeckCell.aspectRatio)} />
               <KpiBox label="Thin axis 2b/h" value={THIN_PRODUCTION} />
               <KpiBox label="Ratio vs Oberbeck" value={CLOSING_DEV} good />
@@ -748,7 +687,6 @@ export function OberbeckSpheroidDragPage() {
       {tab === "ratio" && <RatioTab />}
       {tab === "absolutes" && <AbsolutesTab />}
       {tab === "steadiness" && <SteadinessTab />}
-      {tab === "validation" && <ValidationTab />}
       {tab === "reference-data" && <ReferenceDataTab />}
     </div>
   );

@@ -168,7 +168,7 @@ export function ReferenceDataPage() {
         summary={
           <>
             Every published reference dataset in one place: experimental and literature references, curated
-            simulation series, and the campaign ledgers behind the validation tables. Grouped by benchmark, with
+            simulation series, and the DNS campaign datasheet. Grouped by benchmark, with
             each group linking back to the page that defines and uses it.
           </>
         }

@@ -12,8 +12,7 @@ import {
   ReferenceList,
   Section,
   Tabs,
-  useTabParam,
-  ValidationLedger
+  useTabParam
 } from "../components";
 import { DktSchematic } from "../components/dkt-schematic";
 import {
@@ -25,7 +24,6 @@ import {
   dktReferenceRows,
   dktReferences,
   dktSequenceRows,
-  dktValidationRows,
   type DktLadderRow,
   type DktParameterRow,
   type DktPhaseRow
@@ -73,7 +71,7 @@ function IntroductionTab() {
             {
               type: "paragraph",
               text:
-                "Tumbling is a symmetry-breaking instability, so trajectories after contact amplify small perturbations and a pointwise comparison against experiment would not be meaningful. The benchmark is therefore gated on mechanism: whether the phase sequence appears at all, and whether the kissing time is reproducible. Post-tumbling behaviour is recorded qualitatively."
+                "Tumbling is a symmetry-breaking instability, so trajectories after contact amplify small perturbations and a pointwise comparison against experiment would not be meaningful. The benchmark is therefore judged on mechanism: whether the phase sequence appears at all, and whether the kissing time is reproducible. Post-tumbling behaviour is described qualitatively."
             },
             {
               type: "paragraph",
@@ -140,13 +138,12 @@ function DefinitionTab() {
         </div>
 
         <div>
-          <h3>Resolution ladder</h3>
+          <h3>Mesh resolutions</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
             D/h counts Q2 elements per sphere diameter. Velocity nodes sit at half that spacing, so nodal
             resolutions quoted in the lattice-Boltzmann and immersed-boundary literature should be halved before
-            comparison. The published trajectories are computed on the first rung; the second was computed to check
-            that the drafting and kissing phases are resolution-independent, and the third is prepared and awaits the
-            compute allocation it needs.
+            comparison. The published trajectories are computed at D/h = 8; the run at D/h = 16 shows that the
+            drafting and kissing phases are resolution-independent.
           </p>
           <DataTable<DktLadderRow>
             columns={[
@@ -243,46 +240,6 @@ function ContactModelTab() {
   );
 }
 
-function ValidationTab() {
-  return (
-    <Section style={{ paddingTop: 40, paddingBottom: 100 }}>
-      <div style={{ maxWidth: 900, marginBottom: 28 }}>
-        <h3>Validation ledger</h3>
-        <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-          One row per quantitative claim, generated from the campaign datasheet that is offered in full under
-          Reference Data. This benchmark is gated on mechanism rather than on a numeric tolerance, so a verdict
-          records whether the expected physical behaviour was observed, not whether a number landed inside a band.
-          Rows marked RECORDED document behaviour that was measured and kept but not gated. Claims that later
-          measurement superseded are not republished here; the downloadable datasheet carries the campaign's full
-          record.
-        </p>
-      </div>
-      <ValidationLedger rows={dktValidationRows} />
-      <div className="stack" style={{ marginTop: 36, maxWidth: 900, gap: 20 }}>
-        <div>
-          <h3>Controlled comparison</h3>
-          <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-            The frictional and frictionless runs at D/h = 8 share an initial condition, a mesh and a time step, and
-            differ only in two contact coefficients. Their published tilt and separation series agree to the last
-            printed digit for all 725 samples through drafting, they touch at the same t = 18.03, and they first
-            differ at t = 18.13 — the first sample after contact. This isolates the contact model as the only cause
-            of the difference in outcome.
-          </p>
-        </div>
-        <div>
-          <h3>Reproducibility audit</h3>
-          <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-            Every number on this page is re-derived from the raw solver output rather than transcribed. That audit
-            corrected the recorded kissing time for the offset case from 19.7 to 18.0 — the earlier figure was a
-            stale reading whose source could not be recovered — and it changed the reading of the result, which is
-            that the kissing time is near resolution-independent. The correction is itself a ledger row above.
-          </p>
-        </div>
-      </div>
-    </Section>
-  );
-}
-
 function ReferenceDataTab() {
   return (
     <Section narrow style={{ paddingTop: 40, paddingBottom: 100 }}>
@@ -291,7 +248,7 @@ function ReferenceDataTab() {
           {
             type: "paragraph",
             text:
-              "Each file is a two-column text file, sampled every fifth time step from the solver's per-step particle record. Distances are in sphere diameters and times and velocities are nondimensional. The bundle also contains the campaign datasheet from which the validation ledger is generated."
+              "Each file is a two-column text file, sampled every fifth time step from the solver's per-step particle record. Distances are in sphere diameters and times and velocities are nondimensional. The bundle also contains the DNS validation datasheet."
           }
         ]}
       />
@@ -319,7 +276,6 @@ export function DraftingKissingTumblingPage() {
     { id: "definition", label: "Definition" },
     { id: "results", label: "Results" },
     { id: "contact-model", label: "Contact Model" },
-    { id: "validation", label: "Validation" },
     { id: "reference-data", label: "Reference Data" }
   ];
   const [tab, setTab] = useTabParam(tabs.map(item => item.id), "introduction");
@@ -377,7 +333,6 @@ export function DraftingKissingTumblingPage() {
       {tab === "definition" && <DefinitionTab />}
       {tab === "results" && <ResultsTab />}
       {tab === "contact-model" && <ContactModelTab />}
-      {tab === "validation" && <ValidationTab />}
       {tab === "reference-data" && <ReferenceDataTab />}
     </div>
   );

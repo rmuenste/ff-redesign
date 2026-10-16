@@ -12,8 +12,7 @@ import {
   ReferenceList,
   Section,
   Tabs,
-  useTabParam,
-  ValidationLedger
+  useTabParam
 } from "../components";
 import {
   hinderedConfinedRows,
@@ -28,7 +27,6 @@ import {
   hinderedReynoldsRange,
   hinderedRoweBand,
   hinderedTerminalByColumn,
-  hinderedValidationRows,
   hinderedWideRows,
   hinderedWideSlope,
   hinderedWindow,
@@ -83,7 +81,7 @@ function IntroductionTab() {
           {
             type: "paragraph",
             text:
-              `Fitted through the origin — a vanishing cloud must settle at the single-particle velocity — the ladder returns n = ${EXPONENT} with a root-mean-square residual of ${COLLAPSE_RMS} over all twelve runs. The collapse is excellent and the exponent is far above the unbounded band of ${ROWE}, which is the result this page is about.`
+              `Fitted through the origin — a vanishing cloud must settle at the single-particle velocity — the fit returns n = ${EXPONENT} with a root-mean-square residual of ${COLLAPSE_RMS} over all twelve runs. The collapse is excellent and the exponent is far above the unbounded band of ${ROWE}, which is the result this page is about.`
           },
           { type: "heading", level: 3, text: "What the extra hindrance is" },
           {
@@ -182,7 +180,7 @@ function DefinitionTab() {
             run. The narrow column gives u_t = {confined.ut.toFixed(4)} and the wide column{" "}
             {wide.ut.toFixed(4)} ± {wide.utStd?.toFixed(4)} — a difference well inside one standard deviation, so an
             isolated particle is not measurably retarded by the walls at this Reynolds number. The swarm Reynolds
-            numbers on the ladder run from {RE_RANGE}.
+            numbers of the cloud runs range from {RE_RANGE}.
           </p>
         </div>
       </div>
@@ -241,12 +239,12 @@ function ResultsTab() {
     <Section style={{ paddingTop: 40, paddingBottom: 100 }}>
       <div className="stack" style={{ gap: 28 }}>
         <div style={{ maxWidth: 900 }}>
-          <h3>Hindered-settling ladder</h3>
+          <h3>Hindered settling across four cloud sizes</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
             Twelve runs: four cloud sizes, three random seeds each. The collapse is plotted in the coordinates the
             power law is fitted in, so the fit is the straight line through the origin and the unbounded Rowe/RZ band
             is the pair of shallower dashed lines below it. The settling histories show the plateau each point is read
-            from; the velocity spread inside a cloud grows with concentration but saturates in time at every rung, so
+            from; the velocity spread inside a cloud grows with concentration but saturates in time at every cloud size, so
             no run drifts into runaway clustering.
           </p>
         </div>
@@ -290,7 +288,7 @@ function ConfinementTab() {
           </p>
         </div>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
-          The control that establishes this repeats the ladder's clouds, particle for particle, in a column of four
+          The control that establishes this repeats the narrow-column clouds, particle for particle, in a column of four
           times the cross-section. Two measurements separate the candidate mechanisms. First, a single sphere settles
           at {confined.ut.toFixed(4)} in the narrow column against {wide.ut.toFixed(4)} ±{" "}
           {wide.utStd?.toFixed(4)} in the wide one — inside one standard deviation, so per-particle wall drag is ruled
@@ -300,7 +298,7 @@ function ConfinementTab() {
           Second, the same clouds change sign. In the wide column they settle at U/u_t = {wideMean(40).toFixed(2)} at
           N = 40 and {wideMean(120).toFixed(2)} at N = 120 — enhanced rather than hindered, and growing with cloud
           size, where the narrow column hinders them more and more over the same range. Fitting the Richardson-Zaki
-          form to those two rungs returns a negative exponent, n = {hinderedWideSlope.n.toFixed(2)} against the cloud's
+          form to those two cloud sizes returns a negative exponent, n = {hinderedWideSlope.n.toFixed(2)} against the cloud's
           own envelope concentration, which is simply the statement that the form does not apply. The sign does not
           depend on how the cloud concentration is defined.
         </p>
@@ -331,42 +329,6 @@ function ConfinementTab() {
   );
 }
 
-function ValidationTab() {
-  return (
-    <Section style={{ paddingTop: 40, paddingBottom: 100 }}>
-      <div style={{ maxWidth: 900, marginBottom: 28 }}>
-        <h3>Validation ledger</h3>
-        <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-          One row per quantitative claim, generated from the campaign datasheet that is offered in full under
-          Reference Data. There is no experimental reference for this configuration, so the ladder is gated on
-          internal consistency — the quality of the power-law collapse and the seed scatter — and the attribution is
-          gated on mechanism. Rows marked RECORDED document behaviour that was measured and kept but not gated.
-        </p>
-      </div>
-      <ValidationLedger rows={hinderedValidationRows} />
-      <div className="stack" style={{ marginTop: 36, maxWidth: 900, gap: 20 }}>
-        <div>
-          <h3>Controlled comparison</h3>
-          <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-            The wide-column runs reuse the narrow-column particle positions unchanged and share the binary, the deck
-            lineage, the resolution and the plateau window. The vessel cross-section is the only variable, which is
-            what makes the change of sign in U/u_t an attribution rather than a correlation.
-          </p>
-        </div>
-        <div>
-          <h3>How the numbers were derived</h3>
-          <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-            Every plateau statistic on this page comes from the campaign's own analysis of the per-step particle
-            records, over the window {WINDOW}, and the published tables are the input to the fit shown on the Results
-            tab rather than a transcription of it. The exponent, its residual and the wide-column slope are recomputed
-            from those tables whenever the site is built, so a corrected run table propagates to the prose.
-          </p>
-        </div>
-      </div>
-    </Section>
-  );
-}
-
 function ReferenceDataTab() {
   return (
     <Section narrow style={{ paddingTop: 40, paddingBottom: 100 }}>
@@ -375,7 +337,7 @@ function ReferenceDataTab() {
           {
             type: "paragraph",
             text:
-              "The run tables carry one row per simulation: cloud size, seed, plateau velocity and its variation over the settled window, both concentration measures, and the inter-particle velocity spread. The settling histories are two-column text files sampled every fifth time step. All quantities are nondimensional with unit sphere diameter. The bundle also contains the campaign datasheet from which the validation ledger is generated."
+              "The run tables carry one row per simulation: cloud size, seed, plateau velocity and its variation over the settled window, both concentration measures, and the inter-particle velocity spread. The settling histories are two-column text files sampled every fifth time step. All quantities are nondimensional with unit sphere diameter. The bundle also contains the DNS validation datasheet."
           }
         ]}
       />
@@ -402,7 +364,6 @@ export function HinderedSettlingPage() {
     { id: "definition", label: "Definition" },
     { id: "results", label: "Results" },
     { id: "confinement", label: "Confinement" },
-    { id: "validation", label: "Validation" },
     { id: "reference-data", label: "Reference Data" }
   ];
   const [tab, setTab] = useTabParam(tabs.map(item => item.id), "introduction");
@@ -460,7 +421,6 @@ export function HinderedSettlingPage() {
       {tab === "definition" && <DefinitionTab />}
       {tab === "results" && <ResultsTab />}
       {tab === "confinement" && <ConfinementTab />}
-      {tab === "validation" && <ValidationTab />}
       {tab === "reference-data" && <ReferenceDataTab />}
     </div>
   );

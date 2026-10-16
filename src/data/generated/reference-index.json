@@ -770,21 +770,21 @@
       "benchmarkId": "sedimentation",
       "files": [
         {
-          "name": "velE1.txt",
-          "path": "downloads/velE1.txt",
-          "label": "velE1.txt",
+          "name": "velE1_L2.txt",
+          "path": "downloads/velE1_L2.txt",
+          "label": "velE1_L2.txt",
           "format": "ASCII",
-          "bytes": 76979,
-          "sha1": "c9533d887eeac68055164107923a72997974344f",
+          "bytes": 99499,
+          "sha1": "46cb0751662cddb9aa40c9222dc2ebfd435a5310",
           "shared": false
         },
         {
-          "name": "posE1.txt",
-          "path": "downloads/posE1.txt",
-          "label": "posE1.txt",
+          "name": "posE1_L2.txt",
+          "path": "downloads/posE1_L2.txt",
+          "label": "posE1_L2.txt",
           "format": "ASCII",
-          "bytes": 71003,
-          "sha1": "0820040fb6712479d247a86d964462884b34a8fc",
+          "bytes": 93964,
+          "sha1": "812f7253afdaf5fb54dd026bcd8aa98e8540b99a",
           "shared": false
         },
         {
@@ -792,8 +792,8 @@
           "path": "downloads/velE1_L3.txt",
           "label": "velE1_L3.txt",
           "format": "ASCII",
-          "bytes": 76726,
-          "sha1": "a522d27ed1c93c7a958bd8c51e1186b40ce51e2d",
+          "bytes": 99230,
+          "sha1": "ba4323e8497fddd17d14d31699a248604b1ff9c0",
           "shared": false
         },
         {
@@ -801,26 +801,44 @@
           "path": "downloads/posE1_L3.txt",
           "label": "posE1_L3.txt",
           "format": "ASCII",
-          "bytes": 70880,
-          "sha1": "81face47a101655acba944ff2f60f22820613756",
+          "bytes": 93850,
+          "sha1": "4ea2104c8d6dd443e26b6b546dfca2a540fe78c5",
           "shared": false
         },
         {
-          "name": "velE2.txt",
-          "path": "downloads/velE2.txt",
-          "label": "velE2.txt",
+          "name": "velE1_L4.txt",
+          "path": "downloads/velE1_L4.txt",
+          "label": "velE1_L4.txt",
           "format": "ASCII",
-          "bytes": 51664,
-          "sha1": "ac57a0dd44a774e2517bbd670b11fc41e40708c4",
+          "bytes": 99004,
+          "sha1": "7640b19dc2ddeb70a72aee588e44dc2718218786",
           "shared": false
         },
         {
-          "name": "posE2.txt",
-          "path": "downloads/posE2.txt",
-          "label": "posE2.txt",
+          "name": "posE1_L4.txt",
+          "path": "downloads/posE1_L4.txt",
+          "label": "posE1_L4.txt",
           "format": "ASCII",
-          "bytes": 47508,
-          "sha1": "854bc2b01f6d4ec4d74b307d10aead9704688ba3",
+          "bytes": 93457,
+          "sha1": "b478b8b53ca295d0e0441308dd9c4f98d564e6cc",
+          "shared": false
+        },
+        {
+          "name": "velE2_L2.txt",
+          "path": "downloads/velE2_L2.txt",
+          "label": "velE2_L2.txt",
+          "format": "ASCII",
+          "bytes": 62408,
+          "sha1": "74dea775fef122337ee880737a69ec2d29b557bc",
+          "shared": false
+        },
+        {
+          "name": "posE2_L2.txt",
+          "path": "downloads/posE2_L2.txt",
+          "label": "posE2_L2.txt",
+          "format": "ASCII",
+          "bytes": 58988,
+          "sha1": "45dbfc6a7baf894711c170deeae30f98568233c3",
           "shared": false
         },
         {
@@ -828,8 +846,8 @@
           "path": "downloads/velE2_L3.txt",
           "label": "velE2_L3.txt",
           "format": "ASCII",
-          "bytes": 51068,
-          "sha1": "7a1b071fbf7b30a962ab9ce1a578de98e771684b",
+          "bytes": 62247,
+          "sha1": "b9528a63114dab9879a45e42c143847bd1bcf8a6",
           "shared": false
         },
         {
@@ -837,26 +855,44 @@
           "path": "downloads/posE2_L3.txt",
           "label": "posE2_L3.txt",
           "format": "ASCII",
-          "bytes": 47448,
-          "sha1": "c4bad1ee49e64d4fc5420176656cd48312336281",
+          "bytes": 58908,
+          "sha1": "9c7ab15ecf8ef61afa1d82cb342ae38a08ffc766",
           "shared": false
         },
         {
-          "name": "velE3.txt",
-          "path": "downloads/velE3.txt",
-          "label": "velE3.txt",
+          "name": "velE2_L4.txt",
+          "path": "downloads/velE2_L4.txt",
+          "label": "velE2_L4.txt",
           "format": "ASCII",
-          "bytes": 45491,
-          "sha1": "2931baee86c0ebd5fb697ece5dd0d4c851eb844a",
+          "bytes": 62266,
+          "sha1": "5af6923d5b3002fe6d4bda61c4351353aaf3f7f7",
           "shared": false
         },
         {
-          "name": "posE3.txt",
-          "path": "downloads/posE3.txt",
-          "label": "posE3.txt",
+          "name": "posE2_L4.txt",
+          "path": "downloads/posE2_L4.txt",
+          "label": "posE2_L4.txt",
           "format": "ASCII",
-          "bytes": 41696,
-          "sha1": "82283de97c8ccba665c2be02900f974b7904bff0",
+          "bytes": 57691,
+          "sha1": "e30d9e19342725feadb520624b7f053c2fb5aab3",
+          "shared": false
+        },
+        {
+          "name": "velE3_L2.txt",
+          "path": "downloads/velE3_L2.txt",
+          "label": "velE3_L2.txt",
+          "format": "ASCII",
+          "bytes": 41443,
+          "sha1": "f01654c11e5998f65d2233adf10ed704531c909c",
+          "shared": false
+        },
+        {
+          "name": "posE3_L2.txt",
+          "path": "downloads/posE3_L2.txt",
+          "label": "posE3_L2.txt",
+          "format": "ASCII",
+          "bytes": 39242,
+          "sha1": "ca49c2b0e6cff68ee6f34b0e279575bc910485ec",
           "shared": false
         },
         {
@@ -864,8 +900,8 @@
           "path": "downloads/velE3_L3.txt",
           "label": "velE3_L3.txt",
           "format": "ASCII",
-          "bytes": 44985,
-          "sha1": "a41e74a6e9e4cc9084ea617e50e812faf6b1018a",
+          "bytes": 41435,
+          "sha1": "fdc99ca10fe3e3d16e821fcb093c0dabdb816224",
           "shared": false
         },
         {
@@ -873,26 +909,44 @@
           "path": "downloads/posE3_L3.txt",
           "label": "posE3_L3.txt",
           "format": "ASCII",
-          "bytes": 41602,
-          "sha1": "27db552e7e7ef3c49f84077d25da8a4e0dae9a3a",
+          "bytes": 39155,
+          "sha1": "f74b5af2d41eccc65be5ae00037e151155d8c9f3",
           "shared": false
         },
         {
-          "name": "velE4.txt",
-          "path": "downloads/velE4.txt",
-          "label": "velE4.txt",
+          "name": "velE3_L4.txt",
+          "path": "downloads/velE3_L4.txt",
+          "label": "velE3_L4.txt",
           "format": "ASCII",
-          "bytes": 21004,
-          "sha1": "116b4a58bc16c15b56b782700385e24946260480",
+          "bytes": 41585,
+          "sha1": "5527dbb69af03864f78fe63446e7acb2a2f425c5",
           "shared": false
         },
         {
-          "name": "posE4.txt",
-          "path": "downloads/posE4.txt",
-          "label": "posE4.txt",
+          "name": "posE3_L4.txt",
+          "path": "downloads/posE3_L4.txt",
+          "label": "posE3_L4.txt",
           "format": "ASCII",
-          "bytes": 20371,
-          "sha1": "a34ef7b3c9516ad97dae5066aeb09e016da6be05",
+          "bytes": 37874,
+          "sha1": "471390c8f8988a69080aeb9503e9fff7ffe73618",
+          "shared": false
+        },
+        {
+          "name": "velE4_L2.txt",
+          "path": "downloads/velE4_L2.txt",
+          "label": "velE4_L2.txt",
+          "format": "ASCII",
+          "bytes": 28918,
+          "sha1": "80ba7fc51e487be2a6d15207520a06cc9639fee2",
+          "shared": false
+        },
+        {
+          "name": "posE4_L2.txt",
+          "path": "downloads/posE4_L2.txt",
+          "label": "posE4_L2.txt",
+          "format": "ASCII",
+          "bytes": 28260,
+          "sha1": "86e8466d509d18e78027b2fce60d86225bf9f158",
           "shared": false
         },
         {
@@ -900,8 +954,8 @@
           "path": "downloads/velE4_L3.txt",
           "label": "velE4_L3.txt",
           "format": "ASCII",
-          "bytes": 21102,
-          "sha1": "21f740ea5ae96e57df2658dcb217e1478927f580",
+          "bytes": 29063,
+          "sha1": "21b6f7a986e57584de8e894a6562f4e8ecf63651",
           "shared": false
         },
         {
@@ -909,8 +963,35 @@
           "path": "downloads/posE4_L3.txt",
           "label": "posE4_L3.txt",
           "format": "ASCII",
-          "bytes": 20294,
-          "sha1": "e02ab21cee1b86bf6047f3d2e7d02cfd5af2157d",
+          "bytes": 28184,
+          "sha1": "422b87a65596be4e95b1ac0f116bfca9f41638f2",
+          "shared": false
+        },
+        {
+          "name": "velE4_L4.txt",
+          "path": "downloads/velE4_L4.txt",
+          "label": "velE4_L4.txt",
+          "format": "ASCII",
+          "bytes": 29140,
+          "sha1": "1383abe0c20cbbe52a7a4b53c94651829ae0b391",
+          "shared": false
+        },
+        {
+          "name": "posE4_L4.txt",
+          "path": "downloads/posE4_L4.txt",
+          "label": "posE4_L4.txt",
+          "format": "ASCII",
+          "bytes": 27433,
+          "sha1": "d61893ad6925605087ca3586d2fd4ac1300e15ff",
+          "shared": false
+        },
+        {
+          "name": "campaign_runs.csv",
+          "path": "downloads/campaign_runs.csv",
+          "label": "campaign_runs.csv",
+          "format": "CSV",
+          "bytes": 2507,
+          "sha1": "569b99c45d931f9d80fb7941b2e3a504b139ace4",
           "shared": false
         },
         {
@@ -990,8 +1071,8 @@
           "path": "downloads/sedimentation.zip",
           "label": "sedimentation.zip",
           "format": "ZIP archive",
-          "bytes": 761776,
-          "sha1": "8ac9f479a600cd77266f4836b32bfd2cc24e17ed",
+          "bytes": 444189,
+          "sha1": "1221aa284b2d989bb07d1a4c1d9c3a3b0831fd23",
           "shared": false
         },
         {
@@ -1077,7 +1158,7 @@
   ],
   "totals": {
     "benchmarks": 10,
-    "files": 112,
-    "bytes": 20718509
+    "files": 121,
+    "bytes": 21006852
   }
 }

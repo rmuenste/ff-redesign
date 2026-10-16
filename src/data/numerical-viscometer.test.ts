@@ -5,7 +5,7 @@ import {
   percent,
   viscometerBaseline,
   viscometerEinstein,
-  viscometerGateRows,
+  viscometerToleranceRows,
   viscometerGatedLadder,
   viscometerGates,
   viscometerInstrument,
@@ -18,8 +18,6 @@ import {
   viscometerRestart,
   viscometerRungs,
   viscometerTorqueSpecs,
-  viscometerValidationRows,
-  viscometerValidationSource,
   viscometerViscositySpecs
 } from "./numerical-viscometer";
 
@@ -202,15 +200,17 @@ describe("numerical-viscometer plateau statistics", () => {
     expect(viscometerPairDecay.etaExponent / viscometerPairDecay.pairsExponent).toBeGreaterThan(0.7);
   });
 
-  it("keeps every published gate row in step with the generated numbers", () => {
-    const torqueGate = viscometerGateRows.find(row => row.gate === "Analytic torque");
-    expect(torqueGate?.reference).toBe(viscometerInstrument.torqueExact.toFixed(4));
-    expect(torqueGate?.measured).toBe(viscometerBaseline.torqueDna.toFixed(4));
-    expect(torqueGate?.deviation).toBe(percent(viscometerGates.torque, 3));
-    const gapGate = viscometerGateRows.find(row => row.gate === "Estimator concordance");
-    expect(gapGate?.measured).toBe(viscometerBaseline.gap.toFixed(4));
-    expect(gapGate?.deviation).toBe(percent(viscometerBaseline.gapDeviation, 3));
-    expect(viscometerGateRows).toHaveLength(4);
+  it("keeps every published tolerance row in step with the generated numbers", () => {
+    const torque = viscometerToleranceRows.find(row => row.quantity === "Torque on the bob");
+    expect(torque?.reference).toContain(viscometerInstrument.torqueExact.toFixed(4));
+    expect(torque?.result).toBe(
+      `${viscometerBaseline.torqueDna.toFixed(4)} (${percent(viscometerGates.torque, 3)})`
+    );
+    const gap = viscometerToleranceRows.find(row => row.quantity === "Offset between the two estimators");
+    expect(gap?.result).toBe(
+      `${viscometerBaseline.gap.toFixed(4)} (${percent(viscometerBaseline.gapDeviation, 3)})`
+    );
+    expect(viscometerToleranceRows).toHaveLength(4);
   });
 });
 
@@ -326,47 +326,3 @@ describe("numerical-viscometer plot assets", () => {
   });
 });
 
-describe("numerical-viscometer validation ledger", () => {
-  it("is generated from the curated datasheet, not hand-written", () => {
-    expect(viscometerValidationSource).toBe("scripts/source-data/dns/dns_validation_datasheet.csv");
-    expect(viscometerValidationRows).toHaveLength(5);
-  });
-
-  it("selects only the D5.1 rungs and uses the campaign verdict vocabulary", () => {
-    const allowed = new Set(["PASS", "RECORDED", "RESOLVED", "FAIL", "OPEN"]);
-    expect(viscometerValidationRows.map(row => row.case)).toEqual([
-      "d52_v26e_dt_control",
-      "d52_l3_ladder_restated",
-      "d52_v21L_settled",
-      "d52_v22L_settled",
-      "d52_v23L_settled"
-    ]);
-    // The spun-up cell's gate row and the original rung rows are superseded by the
-    // restated ladder, and the first-segment pair readings by the settled rows; all
-    // are published only inside the downloadable datasheet.
-    for (const superseded of [
-      "d52_v20_baseline",
-      "d52_v21_einstein",
-      "d52_v22_phi10",
-      "d52_v23_phi20",
-      "d52_v21L_submitted",
-      "d52_v22L_lubpair",
-      "d52_v23L_lubpair"
-    ]) {
-      expect(viscometerValidationRows.map(row => row.case)).not.toContain(superseded);
-    }
-    for (const row of viscometerValidationRows) {
-      expect(row.suite).toBe("d5_rheology");
-      expect(allowed.has(row.verdict), `${row.case}: ${row.verdict}`).toBe(true);
-      expect(row.measured.length, row.case).toBeGreaterThan(0);
-    }
-  });
-
-  it("strips internal scheduler job ids from published prose", () => {
-    const blob = JSON.stringify(viscometerValidationRows);
-    expect(blob).not.toMatch(/\bjobs?\s+\d/i);
-    // The runs behind this page, by scheduler id. Step counts written as
-    // "10000/10000" are content, so the guard names the ids rather than a shape.
-    expect(blob).not.toMatch(/\b1[34]\d{4}\b/);
-  });
-});

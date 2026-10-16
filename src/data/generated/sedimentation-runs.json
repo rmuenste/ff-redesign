@@ -1,0 +1,119 @@
+{
+  "source": "scripts/source-data/sedimentation/campaign/campaign_runs.csv",
+  "levels": [
+    "l2",
+    "l3",
+    "l4"
+  ],
+  "runs": [
+    {
+      "case": "E1",
+      "level": "l2",
+      "steps": 4300,
+      "dtS": 0.001,
+      "tEndS": 4.3,
+      "peakVzMS": -0.035919,
+      "tPeakS": 1.83
+    },
+    {
+      "case": "E1",
+      "level": "l3",
+      "steps": 4300,
+      "dtS": 0.001,
+      "tEndS": 4.3,
+      "peakVzMS": -0.034839,
+      "tPeakS": 1.896
+    },
+    {
+      "case": "E1",
+      "level": "l4",
+      "steps": 4300,
+      "dtS": 0.001,
+      "tEndS": 4.3,
+      "peakVzMS": -0.034104,
+      "tPeakS": 1.979
+    },
+    {
+      "case": "E2",
+      "level": "l2",
+      "steps": 2700,
+      "dtS": 0.001,
+      "tEndS": 2.7,
+      "peakVzMS": -0.059233,
+      "tPeakS": 1.453
+    },
+    {
+      "case": "E2",
+      "level": "l3",
+      "steps": 2700,
+      "dtS": 0.001,
+      "tEndS": 2.7,
+      "peakVzMS": -0.057523,
+      "tPeakS": 1.505
+    },
+    {
+      "case": "E2",
+      "level": "l4",
+      "steps": 2700,
+      "dtS": 0.001,
+      "tEndS": 2.7,
+      "peakVzMS": -0.056228,
+      "tPeakS": 1.519
+    },
+    {
+      "case": "E3",
+      "level": "l2",
+      "steps": 1800,
+      "dtS": 0.001,
+      "tEndS": 1.8,
+      "peakVzMS": -0.090227,
+      "tPeakS": 1.166
+    },
+    {
+      "case": "E3",
+      "level": "l3",
+      "steps": 1800,
+      "dtS": 0.001,
+      "tEndS": 1.8,
+      "peakVzMS": -0.087534,
+      "tPeakS": 1.18
+    },
+    {
+      "case": "E3",
+      "level": "l4",
+      "steps": 1800,
+      "dtS": 0.001,
+      "tEndS": 1.8,
+      "peakVzMS": -0.085465,
+      "tPeakS": 1.205
+    },
+    {
+      "case": "E4",
+      "level": "l2",
+      "steps": 1300,
+      "dtS": 0.001,
+      "tEndS": 1.3,
+      "peakVzMS": -0.127632,
+      "tPeakS": 0.938
+    },
+    {
+      "case": "E4",
+      "level": "l3",
+      "steps": 1300,
+      "dtS": 0.001,
+      "tEndS": 1.3,
+      "peakVzMS": -0.123233,
+      "tPeakS": 0.956
+    },
+    {
+      "case": "E4",
+      "level": "l4",
+      "steps": 1300,
+      "dtS": 0.001,
+      "tEndS": 1.3,
+      "peakVzMS": -0.120335,
+      "tPeakS": 0.98
+    }
+  ],
+  "missing": []
+}

@@ -4,9 +4,7 @@ import { describe, expect, it } from "vitest";
 import {
   dktContactSpecs,
   dktLadderRows,
-  dktPlotSpecs,
-  dktValidationRows,
-  dktValidationSource
+  dktPlotSpecs
 } from "./dkt";
 
 const DKT_DIR = resolve(process.cwd(), "public/benchmark-assets/dkt");
@@ -120,65 +118,6 @@ describe("dkt plot specs", () => {
   });
 });
 
-describe("dkt validation ledger", () => {
-  it("is generated from the curated datasheet, not hand-written", () => {
-    expect(dktValidationSource).toBe("scripts/source-data/dns/dns_validation_datasheet.csv");
-    expect(dktValidationRows.length).toBeGreaterThanOrEqual(5);
-  });
-
-  it("selects only DKT cases and uses the campaign verdict vocabulary", () => {
-    const allowed = new Set(["PASS", "RECORDED", "RESOLVED", "FAIL", "OPEN"]);
-    for (const row of dktValidationRows) {
-      const isDktCase = row.case.toLowerCase().startsWith("dkt") || row.case === "d23_result";
-      expect(isDktCase, row.case).toBe(true);
-      expect(allowed.has(row.verdict), `${row.case}: ${row.verdict}`).toBe(true);
-      expect(row.quantity.length, row.case).toBeGreaterThan(0);
-      expect(row.measured.length, row.case).toBeGreaterThan(0);
-    }
-  });
-
-  it("carries the corrected kissing time through the audit row that produced it", () => {
-    const audit = dktValidationRows.find(row => row.case === "dkt_tkiss_correction");
-    expect(audit?.verdict).toBe("RESOLVED");
-    expect(audit?.measured).toContain("18.04");
-    expect(audit?.measured).toContain("18.34");
-  });
-
-  it("carries the contact-model result as a row of its own", () => {
-    const result = dktValidationRows.find(row => row.case === "d23_result");
-    expect(result?.verdict).toBe("PASS");
-    // The figures the Introduction and Contact Model tabs state.
-    expect(result?.measured).toContain("16.2 deg at t = 25");
-    expect(result?.measured).toContain("21.7 deg at t = 25");
-    expect(result?.measured).toContain("107.2");
-    expect(result?.measured).toMatch(/does not suppress/);
-  });
-
-  it("drops datasheet cross-references to rows the page does not publish", () => {
-    // "(row d23_omegafix_rerun)" and friends would dangle: the reader cannot see
-    // the row being pointed at.
-    const published = new Set(dktValidationRows.map(row => row.case));
-    const blob = JSON.stringify(dktValidationRows);
-    for (const match of blob.match(/\brows?\s+[a-z][a-z0-9]*_[a-z0-9_]+/gi) ?? []) {
-      const referenced = match.replace(/^\brows?\s+/i, "");
-      expect(published.has(referenced), `dangling reference to ${referenced}`).toBe(true);
-    }
-  });
-
-  it("withholds the contact rows that later measurement superseded", () => {
-    const cases = dktValidationRows.map(row => row.case);
-    for (const superseded of ["dkt_offset", "dkt16_offset", "dkt_nofric", "dkt_nofric_long"]) {
-      expect(cases, superseded).not.toContain(superseded);
-    }
-    // The t_kiss audit is a result row and stays.
-    expect(cases).toContain("dkt_tkiss_correction");
-  });
-
-  it("strips internal scheduler job ids from published prose", () => {
-    const blob = JSON.stringify(dktValidationRows);
-    expect(blob).not.toMatch(/\bjobs?\s+\d+/i);
-  });
-});
 
 describe("dkt case definition", () => {
   it("publishes trajectories on the first rung and marks the other two", () => {

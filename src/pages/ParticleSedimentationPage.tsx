@@ -17,7 +17,6 @@ import {
   Section,
   Tabs,
   useTabParam,
-  ValidationLedger,
   VideoBlock
 } from "../components";
 import {
@@ -25,12 +24,16 @@ import {
   sedimentationDownloads,
   sedimentationLandedFraction,
   sedimentationLubricationCases,
-  sedimentationLubricationRows,
   sedimentationLubricationSpecs,
   sedimentationPhysicalRows,
   sedimentationPlaybackSpeeds,
+  sedimentationCases,
+  sedimentationHasRun,
+  sedimentationLevelPlotSpecs,
+  sedimentationLevels,
   sedimentationPlotSpecs,
   sedimentationReferenceRows,
+  sedimentationRuns,
   sedimentationReferences,
   sedimentationDecomposition,
   sedimentationDtLadder,
@@ -39,12 +42,12 @@ import {
   sedimentationFourColumnPosterAsset,
   sedimentationFourColumnVideoAsset,
   sedimentationSetupAsset,
-  sedimentationValidationRows,
   type SedimentationBrennerBand,
   type SedimentationDecompositionFit,
   type SedimentationDtRow,
   type SedimentationLubricationCase,
-  type SedimentationPhysicalRow
+  type SedimentationPhysicalRow,
+  type SedimentationRun
 } from "../data/sedimentation";
 
 function IntroductionTab() {
@@ -233,14 +236,194 @@ function CompositeVideoBlock() {
   );
 }
 
+const levelLabel = (id: string) => sedimentationLevels.find(level => level.id === id)?.label ?? id.toUpperCase();
+
+/** Cases that do not have every level yet, as "E1 is shown at L3 and L4." */
+function partialLadderNote() {
+  const notes = sedimentationCases
+    .map(testCase => ({
+      id: testCase.id,
+      levels: sedimentationLevels.filter(level => sedimentationHasRun(testCase.id, level.id)).map(level => level.label)
+    }))
+    .filter(entry => entry.levels.length < sedimentationLevels.length)
+    .map(entry => `${entry.id} is shown at ${entry.levels.join(" and ")}.`);
+  return notes.length ? ` ${notes.join(" ")}` : "";
+}
+
+/** ", all with a time step of 1 ms" when the runs share one step, from the run summary. */
+function runTimeStepNote() {
+  const steps = [...new Set(sedimentationRuns.map(run => run.dtS))];
+  return steps.length === 1 ? `, all with a time step of ${steps[0] * 1000} ms` : "";
+}
+
 function ResultsTab() {
   return (
     <Section style={{ paddingTop: 40, paddingBottom: 100 }}>
       <div className="stack" style={{ gap: 28 }}>
         <div style={{ maxWidth: 900 }}>
-          <h3>Live sedimentation curves</h3>
+          <h3>Mesh refinement, case by case</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-            Velocity and normalized position are rendered from converted Plotly traces. The L2/L3 switch changes the simulation curves only; PIV markers remain the same reference data for each case.
+            Each case was run on three meshes, from the coarsest, L2, to the finest, L4. Pick a case to see its three
+            curves on top of the PIV measurements, as settling velocity or as the height of the sphere above the
+            bottom. The curves draw together as the mesh is refined: going from L3 to L4 moves the settling peak less
+            than going from L2 to L3.{partialLadderNote()}
+          </p>
+        </div>
+        <ComparisonPanel specs={sedimentationLevelPlotSpecs} defaultMetric="velocity" />
+
+        <div style={{ maxWidth: 900 }}>
+          <h3>The runs behind the curves</h3>
+          <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
+            Every curve on this tab is one of these runs{runTimeStepNote()}. The peak is the fastest
+            settling speed the sphere reaches on its way down.
+          </p>
+          <DataTable<SedimentationRun>
+            columns={[
+              { id: "case", header: "Case", render: row => <span style={{ fontWeight: 500 }}>{row.case}</span> },
+              { id: "level", header: "Level", render: row => levelLabel(row.level) },
+              {
+                id: "steps",
+                header: "Steps",
+                align: "right",
+                render: row => <span style={{ fontFamily: "var(--font-mono)" }}>{row.steps.toLocaleString("en-US")}</span>
+              },
+              {
+                id: "time",
+                header: "Simulated [s]",
+                align: "right",
+                render: row => <span style={{ fontFamily: "var(--font-mono)" }}>{row.tEndS.toFixed(2)}</span>
+              },
+              {
+                id: "peak",
+                header: "Peak speed [mm/s]",
+                align: "right",
+                render: row => (
+                  <span style={{ fontFamily: "var(--font-mono)" }}>{(-row.peakVzMS * 1000).toFixed(2)}</span>
+                )
+              },
+              {
+                id: "tpeak",
+                header: "Peak at [s]",
+                align: "right",
+                render: row => <span style={{ fontFamily: "var(--font-mono)" }}>{row.tPeakS.toFixed(3)}</span>
+              }
+            ]}
+            rows={sedimentationRuns}
+            getRowKey={row => `${row.case}-${row.level}`}
+          />
+        </div>
+
+        <div className="stack" style={{ maxWidth: 900, gap: 20 }}>
+          <h3 style={{ margin: 0 }}>What convergence looks like on this benchmark</h3>
+          <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
+            The settling peak was measured across three mesh levels for all four cases. Refinement is not monotone:
+            coarse meshes overshoot the peak by three to four per cent, the finest meshes undershoot by around two, and
+            the intermediate level lands close to the reference partly because the two errors cancel. The practical
+            consequence is that agreement at one resolution is not evidence of convergence, and mesh resolution should
+            never be chosen to make a curve match.
+          </p>
+          <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
+            The step from the intermediate to the finest level shifts the peak by 2.1 to 2.4 percentage points, and it
+            does so almost identically for every case despite an eightfold range in Reynolds number. The dominant
+            spatial error therefore comes from how the sphere surface is represented on the mesh, not from the flow
+            regime — which is why the four cases' refinement curves lie nearly on top of one another.
+          </p>
+          <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
+            The lowest-Reynolds case is the hard one: it sits about three per cent below the experiment at the
+            intermediate level and moves further away under refinement. That gap is not specific to this solver. The
+            same discrepancy appears in the original paper, whose own lattice-Boltzmann result is about five per cent
+            below its own experiment for that case; our finest configurations agree with those published simulations
+            to within one per cent across all four cases. Agreement with the experiment to within two per cent is out
+            of reach for any simulation there, so for this case the paper&apos;s simulations are as much a reference as
+            its measurements.
+          </p>
+          <div
+            style={{
+              borderLeft: "3px solid var(--accent)",
+              background: "var(--surface-alt)",
+              borderRadius: 4,
+              padding: "16px 20px"
+            }}
+          >
+            <p style={{ margin: 0, color: "var(--fg1)", lineHeight: 1.65 }}>
+              For the two lowest-Reynolds cases, the velocity ratios printed in the paper&apos;s Table II are a better
+              reference than the digitised curves, whose peaks run three to four per cent fast. The time-step study
+              below is measured against Table II for that reason.
+            </p>
+          </div>
+          <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
+            The time-step study is stable at every step size tried, so the time step can be chosen against an error
+            budget rather than for stability. The remaining dependence on it is genuine but sub-linear:
+          </p>
+        </div>
+
+        <div style={{ display: "grid", gap: 32, gridTemplateColumns: "repeat(auto-fit, minmax(min(340px, 100%), 1fr))" }}>
+          <div>
+            <h4 style={{ margin: "0 0 12px" }}>Time-step study, Re = 31.9 at D/h = 23.9</h4>
+            <DataTable<SedimentationDtRow>
+              columns={[
+                { id: "dt", header: "dt [ms]", render: row => <span style={{ fontFamily: "var(--font-mono)" }}>{row.dtMs}</span> },
+                {
+                  id: "error",
+                  header: "Peak error vs Table II",
+                  align: "right",
+                  render: row => (
+                    <span style={{ fontFamily: "var(--font-mono)" }}>
+                      {row.errorPct > 0 ? "+" : ""}
+                      {row.errorPct.toFixed(2)}%
+                    </span>
+                  )
+                }
+              ]}
+              rows={sedimentationDtLadder}
+              getRowKey={row => `${row.level}-${row.dtMs}`}
+            />
+            <p style={{ color: "var(--fg2)", fontSize: 13, lineHeight: 1.6, marginTop: 12 }}>
+              Halving the step moves the peak by about half a percentage point each time, so the apparent order is
+              below one rather than the second order the time scheme would suggest on its own.
+            </p>
+          </div>
+
+          <div>
+            <h4 style={{ margin: "0 0 12px" }}>Fitted error split, Re = 31.9</h4>
+            <DataTable<SedimentationDecompositionFit>
+              columns={[
+                { id: "order", header: "Assumed order", render: row => <span style={{ fontFamily: "var(--font-mono)" }}>p = {row.order}</span> },
+                ...["L2", "L3", "L4"].map(level => ({
+                  id: level,
+                  header: `Spatial ${level}`,
+                  align: "right" as const,
+                  render: (row: SedimentationDecompositionFit) => (
+                    <span style={{ fontFamily: "var(--font-mono)" }}>
+                      {row.spatialPp[level] > 0 ? "+" : ""}
+                      {row.spatialPp[level]?.toFixed(2)}
+                    </span>
+                  )
+                })),
+                {
+                  id: "temporal",
+                  header: "Temporal at 1 ms",
+                  align: "right",
+                  render: row => <span style={{ fontFamily: "var(--font-mono)" }}>{row.temporalPpAt1ms.toFixed(2)}</span>
+                }
+              ]}
+              rows={sedimentationDecomposition.E4 ?? []}
+              getRowKey={row => `p${row.order}`}
+            />
+            <p style={{ color: "var(--fg2)", fontSize: 13, lineHeight: 1.6, marginTop: 12 }}>
+              Percentage points, from an additive fit to all mesh levels and time steps. The temporal order is not known precisely, so both
+              readings are shown; they agree on the structure. The spatial term reaches zero within its uncertainty at
+              the finest level, and the temporal term is negative while the coarse spatial terms are positive — which
+              is the cancellation that makes the intermediate mesh at 1 ms look better than it is.
+            </p>
+          </div>
+        </div>
+
+        <div style={{ maxWidth: 900 }}>
+          <h3>All four cases at one level</h3>
+          <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
+            The same runs, with the four cases side by side at a single mesh level. The level switch changes the
+            simulation curves only; the PIV markers are the same measurements at every level.
           </p>
         </div>
         <ComparisonPanel specs={sedimentationPlotSpecs} defaultMetric="velocity" />
@@ -323,10 +506,10 @@ function LubricationTab({ onOpenViscometer }: { onOpenViscometer: () => void }) 
       </div>
 
       <div style={{ marginTop: 44, maxWidth: 900 }}>
-        <h3>The lubricated rerun</h3>
+        <h3>With the model switched on</h3>
         <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-          The two lowest-Reynolds fixtures of this benchmark were rerun with the model in its production
-          configuration. The decks are identical to the published E1 and E2 runs; the single difference is that
+          The two lowest-Reynolds cases of this benchmark were run again with the model in its production
+          configuration. Everything else is the same as in the E1 and E2 runs; the single difference is that
           lubrication is switched on. The baselines are therefore the very curves on the Results tab, which makes the
           pair a controlled comparison rather than two similar simulations.
         </p>
@@ -468,21 +651,10 @@ function LubricationTab({ onOpenViscometer }: { onOpenViscometer: () => void }) 
               sphere&apos;s buoyant weight. The paper&apos;s method had no resolved film below one grid spacing at
               all and needed the full force. The digitised PIV cannot tell the two curves apart here either: the
               approach window holds about a dozen samples at velocities near the measurement floor, and the
-              simulation-to-experiment differences documented on the Validation tab are larger than the effect. What
-              certifies the model quantitatively is the wall-approach benchmark above; what this rerun certifies is
-              the qualitative behaviour and the absence of the landing pathology in the production configuration.
+              simulation-to-experiment differences shown on the Results tab are larger than the effect. The
+              wall-approach benchmark above is what tests the model quantitatively; these runs show its qualitative
+              behaviour, and that the sphere still comes to rest in the configuration used for production runs.
             </p>
-          </div>
-        </div>
-
-        <div>
-          <h3>Validation ledger</h3>
-          <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
-            The three campaign claims behind this tab: the wall-approach benchmark that scored the candidate model
-            forms, the implementation of the form it selected, and this rerun.
-          </p>
-          <div style={{ marginTop: 16 }}>
-            <ValidationLedger rows={sedimentationLubricationRows} />
           </div>
         </div>
 
@@ -490,137 +662,14 @@ function LubricationTab({ onOpenViscometer }: { onOpenViscometer: () => void }) 
           <h3>At suspension scale</h3>
           <p style={{ color: "var(--fg2)", lineHeight: 1.65 }}>
             What the same model does to the bulk viscosity of a sheared suspension, rather than to a single sphere
-            approaching a wall, belongs to the numerical viscometer: a concentration ladder there carries a
-            with-and-without pair at its densest rung.
+            approaching a wall, belongs to the numerical viscometer: its concentration series runs every
+            concentration with and without the model.
           </p>
           <Button variant="stroked" size="sm" onClick={onOpenViscometer} trailing={<Icon name="arrow_forward" size={14} />}>
             Numerical Viscometer
           </Button>
         </div>
       </div>
-    </Section>
-  );
-}
-
-function ValidationTab() {
-  return (
-    <Section style={{ paddingTop: 40, paddingBottom: 100 }}>
-      <div className="stack" style={{ maxWidth: 860, gap: 20, marginBottom: 32 }}>
-        <h3 style={{ margin: 0 }}>What convergence looks like on this benchmark</h3>
-        <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
-          The settling peak was measured across three mesh levels for all four cases. Refinement is not monotone:
-          coarse meshes overshoot the peak by three to four per cent, the finest meshes undershoot by around two, and
-          the intermediate level lands close to the reference partly because the two errors cancel. The practical
-          consequence is that agreement at one resolution is not evidence of convergence, and mesh resolution should
-          never be chosen to make a curve match.
-        </p>
-        <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
-          The step from the intermediate to the finest level shifts the peak by 2.1 to 2.4 percentage points, and it
-          does so almost identically for every case despite an eightfold range in Reynolds number. The dominant
-          spatial error therefore comes from how the sphere surface is represented on the mesh, not from the flow
-          regime — which is why the four ladders lie nearly on top of one another.
-        </p>
-        <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
-          The lowest-Reynolds case is the hard one: it sits about three per cent below the experiment at the
-          intermediate level and moves further away under refinement. That gap is not specific to this solver. The
-          same discrepancy appears in the original paper, whose own lattice-Boltzmann result is about five per cent
-          below its own experiment for that case; our finest configurations agree with those published simulations to
-          within one per cent across all four cases. A two-per-cent gate against the experiment is unreachable by
-          simulation there, so the reference band for the Stokes case has to include the paper's simulations as well
-          as its measurements.
-        </p>
-        <div
-          style={{
-            borderLeft: "3px solid var(--accent)",
-            background: "var(--surface-alt)",
-            borderRadius: 4,
-            padding: "16px 20px"
-          }}
-        >
-          <p style={{ margin: 0, color: "var(--fg1)", lineHeight: 1.65 }}>
-            Two configuration notes for anyone reproducing this case. The rigid-body solver integrates at its own
-            configured stepsize, so <span className="code-inline">stepsize_</span> must be set equal to the CFD time
-            step; a mismatch runs the coupling at the wrong rate and produces plausible-looking but wrong transients.
-            And when comparing against the two lowest-Reynolds cases, use the printed velocity ratios from the
-            paper's Table II rather than the digitised curves — the digitised peaks run three to four per cent fast.
-          </p>
-        </div>
-        <p style={{ color: "var(--fg2)", lineHeight: 1.65, margin: 0 }}>
-          With the stepsize synchronised, the timestep study is stable at every step size tried — an earlier reading
-          of these runs reported a stability floor, and that was the mismatch above rather than a property of the
-          method. Choose the timestep against your error budget, not against stability. The remaining dependence is
-          genuine but sub-linear:
-        </p>
-      </div>
-
-      <div style={{ display: "grid", gap: 32, gridTemplateColumns: "repeat(auto-fit, minmax(min(340px, 100%), 1fr))", marginBottom: 36 }}>
-        <div>
-          <h4 style={{ margin: "0 0 12px" }}>Timestep ladder, Re = 31.9 at D/h = 23.9</h4>
-          <DataTable<SedimentationDtRow>
-            columns={[
-              { id: "dt", header: "dt [ms]", render: row => <span style={{ fontFamily: "var(--font-mono)" }}>{row.dtMs}</span> },
-              {
-                id: "error",
-                header: "Peak error vs Table II",
-                align: "right",
-                render: row => (
-                  <span style={{ fontFamily: "var(--font-mono)" }}>
-                    {row.errorPct > 0 ? "+" : ""}
-                    {row.errorPct.toFixed(2)}%
-                  </span>
-                )
-              }
-            ]}
-            rows={sedimentationDtLadder}
-            getRowKey={row => `${row.level}-${row.dtMs}`}
-          />
-          <p style={{ color: "var(--fg2)", fontSize: 13, lineHeight: 1.6, marginTop: 12 }}>
-            Halving the step moves the peak by about half a percentage point each time, so the apparent order is
-            below one rather than the second order the time scheme would suggest on its own.
-          </p>
-        </div>
-
-        <div>
-          <h4 style={{ margin: "0 0 12px" }}>Fitted error split, Re = 31.9</h4>
-          <DataTable<SedimentationDecompositionFit>
-            columns={[
-              { id: "order", header: "Assumed order", render: row => <span style={{ fontFamily: "var(--font-mono)" }}>p = {row.order}</span> },
-              ...["L2", "L3", "L4"].map(level => ({
-                id: level,
-                header: `Spatial ${level}`,
-                align: "right" as const,
-                render: (row: SedimentationDecompositionFit) => (
-                  <span style={{ fontFamily: "var(--font-mono)" }}>
-                    {row.spatialPp[level] > 0 ? "+" : ""}
-                    {row.spatialPp[level]?.toFixed(2)}
-                  </span>
-                )
-              })),
-              {
-                id: "temporal",
-                header: "Temporal at 1 ms",
-                align: "right",
-                render: row => <span style={{ fontFamily: "var(--font-mono)" }}>{row.temporalPpAt1ms.toFixed(2)}</span>
-              }
-            ]}
-            rows={sedimentationDecomposition.E4 ?? []}
-            getRowKey={row => `p${row.order}`}
-          />
-          <p style={{ color: "var(--fg2)", fontSize: 13, lineHeight: 1.6, marginTop: 12 }}>
-            Percentage points, from an additive fit to the whole ladder. The temporal order is not pinned, so both
-            readings are shown; they agree on the structure. The spatial term reaches zero within its uncertainty at
-            the finest level, and the temporal term is negative while the coarse spatial terms are positive — which
-            is the cancellation that makes the intermediate mesh at 1 ms look better than it is.
-          </p>
-        </div>
-      </div>
-
-      <h3>Validation ledger</h3>
-      <p style={{ color: "var(--fg2)", lineHeight: 1.65, maxWidth: 860, marginBottom: 24 }}>
-        One row per quantitative claim, generated from the DNS campaign datasheet. Rows marked RECORDED were measured
-        and kept but not gated; RESOLVED rows record an issue that was investigated and closed.
-      </p>
-      <ValidationLedger rows={sedimentationValidationRows} />
     </Section>
   );
 }
@@ -633,7 +682,7 @@ function ReferenceDataTab() {
           {
             type: "paragraph",
             text:
-              "Every downloadable sedimentation source file is a two-column text file. The live position plot normalizes simulation height as (raw - 0.0075) / 0.015; PIV position files are already normalized as h/d_p and are copied without transformation."
+              "The simulation series and the PIV references are two-column text files without a header, one simulation row per 1 ms time step. The position plots show the gap height in sphere diameters, h/d_p = (z - 0.0075) / 0.015 from the sphere-centre height z in metres; the PIV position files are already given as h/d_p. campaign_runs.csv summarises each run: its case and level, the number of steps, the time step, the simulated time, and the peak settling velocity with the time at which it occurs."
           }
         ]}
       />
@@ -661,7 +710,6 @@ export function ParticleSedimentationPage() {
     { id: "definition", label: "Definition" },
     { id: "results", label: "Results" },
     { id: "lubrication", label: "Lubrication" },
-    { id: "validation", label: "Validation" },
     { id: "reference-data", label: "Reference Data" }
   ];
   const [tab, setTab] = useTabParam(tabs.map(item => item.id), "introduction");
@@ -690,13 +738,13 @@ export function ParticleSedimentationPage() {
                 Particle <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400, color: "var(--primary)" }}>Sedimentation</span>
               </h1>
               <p style={{ color: "var(--fg2)", fontSize: 15, margin: 0, maxWidth: 700, lineHeight: 1.55 }}>
-                A confined settling-sphere benchmark comparing FEM-FBM simulations at L2/L3 against PIV particle-motion measurements for four Reynolds-number regimes.
+                A confined settling-sphere benchmark comparing FEM-FBM simulations at three mesh levels, L2 to L4, against PIV particle-motion measurements for four Reynolds-number regimes.
               </p>
             </div>
             <div className="kpi-grid">
               <KpiBox label="Cases" value="4" />
               <KpiBox label="Re" value="1.5-31.9" />
-              <KpiBox label="Levels" value="2" />
+              <KpiBox label="Levels" value={String(sedimentationLevels.length)} />
               <KpiBox label="Metrics" value="2" />
               <KpiBox label="Particle" value="15 mm" />
               <KpiBox label="Tank" value="100x100x160" />
@@ -717,7 +765,6 @@ export function ParticleSedimentationPage() {
       {tab === "lubrication" && (
         <LubricationTab onOpenViscometer={() => navigate("/benchmarks/numerical-viscometer")} />
       )}
-      {tab === "validation" && <ValidationTab />}
       {tab === "reference-data" && <ReferenceDataTab />}
     </div>
   );

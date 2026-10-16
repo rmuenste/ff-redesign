@@ -4,23 +4,20 @@
 //   dkt/*.dat                        two-column series exported from the DNS
 //                                    rundirs by tools/dkt_export_series.py in the
 //                                    FeatFloWer repository
-//   dns/dns_validation_datasheet.csv the campaign's claim ledger
+//   dns/dns_validation_datasheet.csv the campaign datasheet (offered as a download)
 //
 // Outputs:
 //   public/benchmark-assets/dkt/     Plotly traces, downloads, manifest
-//   src/data/generated/dkt-validation.json  Validation-tab rows
 //
 // Run with: node scripts/convert-dkt-data.mjs
 import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, relative, resolve } from "node:path";
-import { buildLedger, readDatasheet } from "./lib/validation-ledger.mjs";
 import { resetGeneratedOutputs, writeManifest } from "./lib/output-dir.mjs";
 import { createStoredZip } from "./lib/zip.mjs";
 
 const root = resolve(import.meta.dirname, "..");
 const srcDir = resolve(root, "scripts/source-data/dkt");
 const outDir = resolve(root, "public/benchmark-assets/dkt");
-const generatedDir = resolve(root, "src/data/generated");
 
 // A "run" is a contact-model variant of one initial condition, all at D/h = 8.
 // `group` is the SeriesGroup it feeds.
@@ -174,47 +171,7 @@ entries.push({
 
 writeManifest(outDir, "dkt", entries, preserved);
 
-// ---- validation ledger ------------------------------------------------------
-// Generated from the datasheet, never hand-written. `dkt*` covers the case
-// family including the dt-floor prerequisite probes and the t_kiss audit.
-//
-// Selection policy
-// ----------------
-// The contact-model study was measured twice. The first pass ran on binaries that
-// did not integrate rigid-body rotation, so post-contact tilt was not a physical
-// measurement; both contact models were repeated once rotation was resolved. The
-// site publishes the current reading only — the campaign datasheet offered under
-// Reference Data carries every row, superseded ones included.
-//
-// Withheld: the pre-rotation contact rows, whose post-contact numbers no longer
-// match the curves this page plots. Their pre-contact content survives in
-// `dkt_tkiss_correction`, which carries the kissing times for both rungs. The
-// rerun rows are withheld too: they are written as corrections to the superseded
-// runs rather than as statements of the result.
-const SUPERSEDED = new Set([
-  "dkt_offset",
-  "dkt16_offset",
-  "dkt_nofric",
-  "dkt_nofric_long"
-]);
-
-// Published in addition to the `dkt*` family: D2.3 rows that state the contact
-// result outright rather than correcting an earlier reading. They are named after
-// the campaign task rather than the run, so the case-prefix rule alone misses them.
-const PUBLISHED_EXTRAS = new Set(["d23_result"]);
-
-const records = readDatasheet(resolve(root, datasheetSource));
-const ledger = buildLedger(records, record => {
-  const id = record.case.trim();
-  return PUBLISHED_EXTRAS.has(id) || (/^dkt/i.test(id) && !SUPERSEDED.has(id));
-});
-writeJson(resolve(generatedDir, "dkt-validation.json"), {
-  source: datasheetSource,
-  generatedBy: "scripts/convert-dkt-data.mjs",
-  rows: ledger
-});
-
 console.log(
   `Generated ${entries.length} dkt manifest entries in ${relative(root, outDir)} ` +
-    `and ${ledger.length} validation rows`
+    `and the campaign datasheet`
 );

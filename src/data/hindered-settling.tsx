@@ -1,7 +1,6 @@
-import type { DownloadItem, ValidationRow } from "../components";
+import type { DownloadItem } from "../components";
 import { benchmarkAssetPath } from "./assets";
 import generated from "./generated/hindered-settling.json";
-import generatedValidation from "./generated/hindered-settling-validation.json";
 import type { PlotSource, PlotSpec, SeriesGroup } from "./types";
 
 export type HinderedMetricId = "collapse" | "history";
@@ -236,16 +235,6 @@ export const hinderedRegimeRows: HinderedRegimeRow[] = [
   }
 ];
 
-/* ---------------- Validation ---------------- */
-
-/**
- * Generated from the DNS validation datasheet by
- * scripts/convert-hindered-settling-data.mjs. Never edit by hand — correct the
- * datasheet and re-run the converter.
- */
-export const hinderedValidationRows = generatedValidation.rows as ValidationRow[];
-export const hinderedValidationSource = generatedValidation.source;
-
 /* ---------------- References and downloads ---------------- */
 
 export const hinderedReferences = [
@@ -285,7 +274,7 @@ export const hinderedDownloads: DownloadItem[] = [
   {
     label: "dns_validation_datasheet.csv",
     href: benchmarkAssetPath("hindered-settling", "downloads/dns_validation_datasheet.csv"),
-    description: "Complete DNS campaign claim ledger, one row per quantitative claim"
+    description: "The DNS validation datasheet, one row per quantitative result"
   },
   ...[...tableFiles, ...historyFiles].map(file => ({
     label: file.name,

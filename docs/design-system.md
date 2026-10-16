@@ -398,6 +398,8 @@ literal verdict word, so colour is never the only status signal.
 ### `ValidationLedger`
 
 Table of validation claims: case, quantity, expected, measured, gate, verdict.
+Not rendered on any page since 2026-10-15, when the DNS pages dropped their
+Validation tabs; kept in the library for internal views.
 
 Rows are **generated** from a campaign datasheet by the benchmark's converter
 (`scripts/lib/validation-ledger.mjs`) and imported as JSON from

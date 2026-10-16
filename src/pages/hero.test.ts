@@ -55,5 +55,15 @@ describe("benchmark hero", () => {
       const h1 = /<h1 className="display display-md"[\s\S]*?<\/h1>/.exec(source)?.[0] ?? "";
       expect(h1.match(/color: "var\(--primary\)"/g)).toHaveLength(1);
     });
+
+    it(`${benchmark.id}: tab row matches the registry, with no Validation tab`, () => {
+      const block = /const tabs = \[([\s\S]*?)\];/.exec(source)?.[1] ?? "";
+      const labels = [...block.matchAll(/label: "([^"]+)"/g)].map(m => m[1]);
+      expect(labels).toEqual(benchmark.tabs);
+      // The campaign ledgers were internal records; they stay in the datasheet
+      // download and are not rendered on any page (removed 2026-10-15).
+      expect(labels).not.toContain("Validation");
+      expect(source).not.toMatch(/ValidationLedger|tab=validation|setTab\("validation"\)/);
+    });
   }
 });

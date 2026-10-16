@@ -17,7 +17,7 @@ const JEFFERY_DIR = resolve(process.cwd(), "public/benchmark-assets/jeffery-orbi
 const CANONICAL_METRICS = new Set(["sphericity", "mass", "size", "surface"]);
 const RB2_METRICS = new Set(["shape", "center-of-mass", "circularity", "rise-velocity", "mass"]);
 const RB2_CASES = new Set(["case-1", "case-2"]);
-const RB2_CODES = new Set(["tp2d", "freelife", "moonmd", "featflower"]);
+const RB2_CODES = new Set(["tp2d", "freelife", "moonmd", "featflower", "feat3"]);
 
 const manifest = JSON.parse(readFileSync(resolve(RB3_DIR, "manifest.json"), "utf-8")) as AssetManifest;
 const rb2Manifest = JSON.parse(readFileSync(resolve(RB2_DIR, "manifest.json"), "utf-8")) as AssetManifest;
@@ -173,7 +173,8 @@ describe("fsi asset manifest (public/benchmark-assets/fsi/manifest.json)", () =>
 describe("rb2 asset manifest (public/benchmark-assets/rb2/manifest.json)", () => {
   it("has canonical, curated entries and no video asset", () => {
     expect(rb2Manifest.benchmarkId).toBe("rb2");
-    expect(rb2Manifest.entries).toHaveLength(103);
+    // 103 migrated legacy entries plus 16 from scripts/convert-rb2-feat3-data.mjs.
+    expect(rb2Manifest.entries).toHaveLength(119);
     expect(rb2Manifest.entries.some(entry => /mp4|video|risingbubble/i.test(entry.newPath))).toBe(false);
   });
 

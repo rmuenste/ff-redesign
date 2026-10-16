@@ -160,6 +160,8 @@ export interface Rb2Feat3Level {
   maxRiseVelocity: number;
   maxRiseVelocityTime: number;
   centerOfMassEnd: number;
+  /** Bubble area at t = 3 in percent of the exact initial area pi * 0.25^2. */
+  massEnd: number;
 }
 
 export const rb2Feat3Levels = generatedFeat3.levels as Rb2Feat3Level[];

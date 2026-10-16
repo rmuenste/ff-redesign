@@ -1,14 +1,23 @@
 // Builds the FEAT3 contribution to Case 1 of the 2D rising-bubble (RB2) benchmark.
 //
 // Inputs (curated under scripts/source-data/rb2-feat3/, copied unchanged from the
-// FEAT3 run directories):
-//   runs.csv              one row per site level: FEAT3 level, run directory, cells,
+// FEAT3 run directories runs/conservative/L<2|3|4>_k2.5e-4, the runs with the
+// midpoint normal move and the area-conserving edge reconstruction of the
+// interface):
+//   runs.csv              one row per site level: FEAT3 level, run directory
+//                         (relative to the runs/ folder), cells,
 //                         Q2 nodes (both from the run's console.log), time step,
-//                         end time and the FEAT3 commit (the run's git_revision.txt)
+//                         end time and the FEAT3 commit (the runs were made from an
+//                         uncommitted tree, git_revision.txt
+//                         v3.2026.6-157-gcb2693438-dirty, committed unchanged as
+//                         6811f2c88)
 //   bench_l<n>.txt        the run's bench.txt: a header line
 //                         "# time area circularity y_c rise_velocity", then one row
 //                         per time step from t = 0 to t = 3, full resolution
-//   interface_l<n>.vtp    the run's interface.0012.vtp, the interface at t = 3: ASCII
+//   interface_l<n>.vtp    the run's final_vtk/interface.0000.vtp, the interface at
+//                         t = 3, written by a restart from the run's final checkpoint
+//                         (restarts are bit-identical; final_vtk/interface.pvd gives
+//                         t = 3); ASCII
 //                         VTK PolyData with one 5-point polyline per curved Q2
 //                         interface edge, ordered along the edge (end node, two
 //                         points on the quadratic curve around the midpoint node, end
@@ -27,8 +36,9 @@
 //   - the shape at t = 3 per level, every polyline split into consecutive point
 //     pairs, the segment-pair format the page's segmented-shape source reads;
 //   - the key values per level, from the full-resolution bench.txt: the minimum
-//     circularity and its time, the maximum rise velocity and its time, and the
-//     centre of mass at t = 3. src/data/rb2.test.ts pins them.
+//     circularity and its time, the maximum rise velocity and its time, the
+//     centre of mass at t = 3 and the area at t = 3 in percent of pi * r0^2.
+//     src/data/rb2.test.ts pins them.
 //
 // Outputs:
 //   public/benchmark-assets/rb2/plots/case-1/<metric>/feat3-<level>.json
@@ -165,6 +175,7 @@ function keyValues(rows) {
     maxRiseVelocity: maxRise[COL.rise_velocity],
     maxRiseVelocityTime: maxRise[COL.time],
     centerOfMassEnd: last[COL.y_c],
+    massEnd: (100 * last[COL.area]) / INITIAL_AREA,
     endTime: last[COL.time]
   };
 }
@@ -356,7 +367,8 @@ for (const run of runs) {
     minCircularityTime: values.minCircularityTime,
     maxRiseVelocity: values.maxRiseVelocity,
     maxRiseVelocityTime: values.maxRiseVelocityTime,
-    centerOfMassEnd: values.centerOfMassEnd
+    centerOfMassEnd: values.centerOfMassEnd,
+    massEnd: values.massEnd
   });
 }
 
@@ -388,7 +400,7 @@ for (const level of levels) {
     `${level.siteLevel} (FEAT3 L${level.feat3Level}, NDOF ${level.ndof}): ` +
       `min circularity ${level.minCircularity.toFixed(7)} at t = ${level.minCircularityTime.toFixed(4)}, ` +
       `max rise velocity ${level.maxRiseVelocity.toFixed(7)} at t = ${level.maxRiseVelocityTime.toFixed(4)}, ` +
-      `y_c(3) ${level.centerOfMassEnd.toFixed(7)}`
+      `y_c(3) ${level.centerOfMassEnd.toFixed(7)}, 100 A(3) / (pi / 16) ${level.massEnd.toFixed(5)}`
   );
 }
 console.log(`wrote ${entries.length} manifest entries and ${zipFiles.length} files in ${ZIP_PATH}`);

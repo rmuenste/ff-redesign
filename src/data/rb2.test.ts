@@ -109,9 +109,9 @@ describe("rb2 FEAT3 (Case 1)", () => {
     expect(
       rb2Feat3Levels.map(level => [level.siteLevel, level.feat3Level, level.runDir, level.cells, level.q2Nodes, level.ndof])
     ).toEqual([
-      ["l1", 2, "case1_L2_k2.5e-4", 1760, 7177, 19634],
-      ["l2", 3, "case1_L3_k2.5e-4", 7040, 28433, 77986],
-      ["l3", 4, "case1_L4_k2.5e-4_mg", 28160, 113185, 310850]
+      ["l1", 2, "conservative/L2_k2.5e-4", 1760, 7177, 19634],
+      ["l2", 3, "conservative/L3_k2.5e-4", 7040, 28433, 77986],
+      ["l3", 4, "conservative/L4_k2.5e-4", 28160, 113185, 310850]
     ]);
     // NDOF = 2 * (Q2 velocity nodes) + 3 * cells (P1dc pressure).
     for (const level of rb2Feat3Levels) expect(level.ndof).toBe(2 * level.q2Nodes + 3 * level.cells);
@@ -124,18 +124,26 @@ describe("rb2 FEAT3 (Case 1)", () => {
 
   it("reproduces the key values of the full-resolution bench.txt", () => {
     const expected = [
-      { minCircularity: 0.9014565, maxRiseVelocity: 0.2416228, centerOfMassEnd: 1.0817264 },
-      { minCircularity: 0.9013898, maxRiseVelocity: 0.2416253, centerOfMassEnd: 1.0817075 },
-      { minCircularity: 0.9013939, maxRiseVelocity: 0.2416260, centerOfMassEnd: 1.0817286 }
+      { minCircularity: 0.9015158, maxRiseVelocity: 0.2416227, centerOfMassEnd: 1.0818291, massEnd: 99.96769 },
+      { minCircularity: 0.9014113, maxRiseVelocity: 0.2416222, centerOfMassEnd: 1.0817485, massEnd: 99.99467 },
+      { minCircularity: 0.9013969, maxRiseVelocity: 0.2416221, centerOfMassEnd: 1.0817345, massEnd: 99.99923 }
     ];
     rb2Feat3Levels.forEach((level, index) => {
       expect(level.minCircularity, level.siteLevel).toBeCloseTo(expected[index].minCircularity, 7);
       expect(level.maxRiseVelocity, level.siteLevel).toBeCloseTo(expected[index].maxRiseVelocity, 7);
       expect(level.centerOfMassEnd, level.siteLevel).toBeCloseTo(expected[index].centerOfMassEnd, 7);
+      // The area in percent of pi * 0.25^2, to 7 significant digits.
+      expect(level.massEnd, level.siteLevel).toBeCloseTo(expected[index].massEnd, 5);
     });
     // The times of the extrema, on the k = 2.5e-4 grid.
-    [1.89925, 1.899, 1.89875].forEach((t, index) => expect(rb2Feat3Levels[index].minCircularityTime).toBeCloseTo(t, 9));
+    [1.89775, 1.8985, 1.89875].forEach((t, index) => expect(rb2Feat3Levels[index].minCircularityTime).toBeCloseTo(t, 9));
     for (const level of rb2Feat3Levels) expect(level.maxRiseVelocityTime).toBeCloseTo(0.922, 9);
+    // No global mass correction: the area loss shrinks with refinement, to below 1e-5 on l3.
+    const loss = rb2Feat3Levels.map(level => 100 - level.massEnd);
+    expect(loss[0]).toBeGreaterThan(loss[1]);
+    expect(loss[1]).toBeGreaterThan(loss[2]);
+    expect(loss[2]).toBeGreaterThan(0);
+    expect(loss[2]).toBeLessThan(1e-3);
   });
 
   it("plots every 4th step from t = 0 to t = 3", () => {

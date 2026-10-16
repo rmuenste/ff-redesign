@@ -149,12 +149,12 @@ function Feat3Section() {
           {
             type: "paragraph",
             text:
-              "FEAT3 (TU Dortmund) is a C++ port of the FeatFloWer front-tracking solver. It discretises the flow with isoparametric Q2/P1dc finite elements on quadrilaterals on a sharp, interface-fitted ALE mesh: the interface is made of curved Q2 edges, and its nodes move in a Lagrangian manner along the interface normal. The interior mesh follows by a Laplace smoothing of the node coordinates. Surface tension enters through the Laplace-Beltrami operator, treated semi-implicitly. Time stepping is Crank-Nicolson with one discrete pressure projection per step, which makes the scheme first order in k overall. There is no remeshing and no mass correction."
+              "FEAT3 (TU Dortmund) is a C++ port of the FeatFloWer front-tracking solver. It discretises the flow with isoparametric Q2/P1dc finite elements on quadrilaterals on a sharp, interface-fitted ALE mesh in which the interface is made of curved Q2 edges. The interface nodes move along the interface normal with a second-order midpoint step: normal and velocity are taken at the half-step position. The interior mesh follows by a Laplace smoothing of the node coordinates, which also slides the interface nodes along the interface; after every such projection, the midpoint node of each curved edge is placed so that the edge encloses exactly the area of the new interface curve between its two end nodes. This reconstruction is local, edge by edge. Surface tension enters through the Laplace-Beltrami operator, treated semi-implicitly. Time stepping is Crank-Nicolson with one discrete pressure projection per step, which makes the scheme first order in k overall. There is no remeshing and no global mass correction."
           },
           {
             type: "paragraph",
             text:
-              "The three levels are matched to TP2D's h = 1/40, 1/80 and 1/160 by the total number of degrees of freedom, NDOF = 2 × (Q2 nodes) + 3 × NEL. All three use the time step k = 2.5e-4 up to t = 3 (12,000 steps)."
+              "The three levels are matched to TP2D's h = 1/40, 1/80 and 1/160 by the total number of degrees of freedom, NDOF = 2 × (Q2 nodes) + 3 × NEL. All three use the time step k = 2.5e-4 up to t = 3 (12,000 steps). The remaining change of the bubble area comes from the recovered normals at the interface nodes; it does not depend on k and decreases with refinement (last column)."
           }
         ]}
       />
@@ -166,7 +166,8 @@ function Feat3Section() {
             { id: "nel", header: "NEL", align: "right", render: row => row.cells.toLocaleString("en-US") },
             { id: "ndof", header: "NDOF", align: "right", render: row => row.ndof.toLocaleString("en-US") },
             { id: "k", header: "k", align: "right", render: row => row.timeStep.toExponential(1) },
-            { id: "edges", header: "Interface edges", align: "right", render: row => row.interfaceEdges }
+            { id: "edges", header: "Interface edges", align: "right", render: row => row.interfaceEdges },
+            { id: "area", header: "Area at t = 3", align: "right", render: row => `${row.massEnd.toFixed(3)} %` }
           ]}
           rows={rb2Feat3Levels}
           getRowKey={row => row.siteLevel}

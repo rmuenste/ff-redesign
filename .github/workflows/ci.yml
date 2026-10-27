@@ -45,7 +45,7 @@ jobs:
   # Same as the mobile-layout job in pages.yml: every route and every
   # benchmark tab at 390px and 768px.
   mobile-layout:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04  # Playwright 1.56 has no Chromium for ubuntu-latest (26.04)
     steps:
       - name: Check out
         uses: actions/checkout@v7

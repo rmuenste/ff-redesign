@@ -77,7 +77,7 @@ jobs:
   # against a root-served build, in parallel with the Pages build, and gates
   # the deploy the same way the unit tests do.
   mobile-layout:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04  # Playwright 1.56 has no Chromium for ubuntu-latest (26.04)
     steps:
       - name: Check out
         uses: actions/checkout@v7

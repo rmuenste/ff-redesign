@@ -1,4 +1,4 @@
-import type { DownloadItem } from "../components";
+import type { DownloadItem, VideoSource } from "../components";
 import { benchmarkAssetPath } from "./assets";
 import type { PlotSpec, SeriesGroup, TraceVariantStrategy } from "./types";
 
@@ -69,7 +69,12 @@ export function rb3PlotPath(metric: Rb3MetricId, level: Rb3LevelId) {
 }
 
 export const rb3GeometryAsset = benchmarkAssetPath("rb3", "media/geometry-3d.png");
-export const rb3VideoAsset = benchmarkAssetPath("rb3", "media/rising-bubble.mp4");
+// Laboratory render of the FEAT3 run (Case 1, L1): AV1 WebM first, then the
+// H.264 MP4 of the same frames for browsers without AV1 (Safari).
+export const rb3VideoSources: VideoSource[] = [
+  { src: benchmarkAssetPath("rb3", "media/rising-bubble-lab.webm"), type: 'video/webm; codecs="av01.0.09M.08"' },
+  { src: benchmarkAssetPath("rb3", "media/rising-bubble-lab.mp4"), type: "video/mp4" }
+];
 
 // ---- Comparison plot specs (level axis; all real RB3 JSON) --------------------
 

@@ -36,20 +36,37 @@ export function Figure({
   );
 }
 
+/** One `<source>` of a video; `type` may carry a codecs parameter. */
+export interface VideoSource {
+  src: string;
+  type: string;
+}
+
+/**
+ * A titled video player. `src` is a single H.264 MP4. `sources` lists several
+ * encodings in order of preference instead, e.g. an AV1 WebM followed by an
+ * H.264 MP4 for browsers without AV1: the browser plays the first `type` it
+ * supports.
+ */
 export function VideoBlock({
   src,
+  sources,
   title,
   poster
 }: {
-  src: string;
+  src?: string;
+  sources?: VideoSource[];
   title?: ReactNode;
   poster?: string;
 }) {
+  const list = sources ?? (src ? [{ src, type: "video/mp4" }] : []);
   return (
     <div style={{ margin: "32px 0" }}>
       {title && <h3 style={{ fontSize: 20, fontWeight: 400 }}>{title}</h3>}
       <video controls poster={poster} style={{ width: "100%", maxWidth: 760, borderRadius: 4, border: "1px solid var(--divider)" }}>
-        <source src={src} type="video/mp4" />
+        {list.map(source => (
+          <source key={source.src} src={source.src} type={source.type} />
+        ))}
       </video>
     </div>
   );

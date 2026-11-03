@@ -1,6 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
+import { rb3VideoSources } from "./rb3";
 import { sedimentationRuns } from "./sedimentation";
 import type { AssetManifest } from "./types";
 
@@ -71,8 +72,8 @@ describe("rb3 asset manifest (public/benchmark-assets/rb3/manifest.json)", () =>
     expect(assetsSrc).not.toMatch(/rb3AssetManifest/);
   });
 
-  it("has 19 entries", () => {
-    expect(manifest.entries).toHaveLength(19);
+  it("has 20 entries", () => {
+    expect(manifest.entries).toHaveLength(20);
   });
 
   it("every manifest newPath exists on disk", () => {
@@ -92,6 +93,22 @@ describe("rb3 asset manifest (public/benchmark-assets/rb3/manifest.json)", () =>
     for (const entry of manifest.entries) {
       if (entry.metric) expect(CANONICAL_METRICS.has(entry.metric), entry.metric).toBe(true);
     }
+  });
+
+  it("plays the laboratory movie as AV1 WebM first, H.264 MP4 second, both mapped media", () => {
+    expect(rb3VideoSources.map(source => source.type)).toEqual([
+      'video/webm; codecs="av01.0.09M.08"',
+      "video/mp4"
+    ]);
+    const media = new Set(manifest.entries.filter(entry => entry.kind === "media").map(entry => entry.newPath));
+    expect(rb3VideoSources.map(source => source.src.split("/benchmark-assets/rb3/")[1])).toEqual([
+      "media/rising-bubble-lab.webm",
+      "media/rising-bubble-lab.mp4"
+    ]);
+    for (const source of rb3VideoSources) {
+      expect(media.has(source.src.split("/benchmark-assets/rb3/")[1]), source.src).toBe(true);
+    }
+    expect(existsSync(resolve(RB3_DIR, "media/rising-bubble.mp4"))).toBe(false);
   });
 });
 

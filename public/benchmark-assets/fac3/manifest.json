@@ -50,6 +50,12 @@
       "label": "Lift coefficient",
       "sourceShape": "single-trace",
       "derived": true
+    },
+    {
+      "oldPath": "generated from blender_viz/fac3d_movie/fac3d_showcase_final_web.mp4",
+      "newPath": "media/fac3d-showcase.mp4",
+      "kind": "media",
+      "label": "FAC start-up of the flow, Re = 20"
     }
   ]
 }

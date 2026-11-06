@@ -20,7 +20,7 @@ import {
   rb3MeshRows,
   rb3PhysicalRows,
   rb3PlotSpecs,
-  rb3VideoAsset
+  rb3VideoSources
 } from "../data/rb3";
 
 function IntroductionTab() {
@@ -58,7 +58,13 @@ function IntroductionTab() {
           getRowKey={row => String(row.lvl)}
         />
       </div>
-      <VideoBlock src={rb3VideoAsset} title="Video Rising Bubble 3D" />
+      <VideoBlock sources={rb3VideoSources} title="Rising bubble 3D in the laboratory" />
+      <p style={{ color: "var(--fg2)", fontSize: 13, lineHeight: 1.6, maxWidth: 760, marginTop: -20 }}>
+        A Blender render of the FEAT3 computation of Case 1 on level 1, with semi-implicit surface tension and a midpoint,
+        conservative interface update, from t = 0 to t = 3 played at half speed. The bubble rises in a glass tank, cut by
+        a slab coloured by the velocity magnitude; the monitors on the wall show the ALE mesh and the rise velocity and
+        sphericity curves up to the current time.
+      </p>
     </Section>
   );
 }

@@ -19,6 +19,7 @@
     { "oldPath": "files/bubble3/surface.json", "newPath": "downloads/surface.json" },
     { "oldPath": "downloads/*.json", "newPath": "downloads/rb3-reference-data.zip", "kind": "download", "label": "Reference data bundle (zip)" },
     { "oldPath": "geometry3D.png", "newPath": "media/geometry-3d.png" },
-    { "oldPath": "risingbubble2.mp4", "newPath": "media/rising-bubble.mp4" }
+    { "oldPath": "generated from blender_viz/rising_bubble3d_movie/rising_bubble3d_lab_iter07_x2_av1.webm", "newPath": "media/rising-bubble-lab.webm", "kind": "media", "label": "FEAT3 rising bubble 3D, Case 1, L1, laboratory render (AV1)" },
+    { "oldPath": "generated from blender_viz/rising_bubble3d_movie/rising_bubble3d_lab_iter07_x2.mp4", "newPath": "media/rising-bubble-lab.mp4", "kind": "media", "label": "FEAT3 rising bubble 3D, Case 1, L1, laboratory render (H.264 fallback)" }
   ]
 }

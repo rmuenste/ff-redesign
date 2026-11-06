@@ -59,6 +59,7 @@ export const fac3PlotSpecs: Record<Fac3MetricId, PlotSpec> = {
 export const fac3GeometryAsset = benchmarkAssetPath("fac3", "media/fac-geometry.png");
 export const fac3MeshAsset = benchmarkAssetPath("fac3", "media/base-mesh.png");
 export const fac3VideoAsset = benchmarkAssetPath("fac3", "media/fac3d.mp4");
+export const fac3ShowcaseVideoAsset = benchmarkAssetPath("fac3", "media/fac3d-showcase.mp4");
 
 export const fac3Downloads: DownloadItem[] = [
   {

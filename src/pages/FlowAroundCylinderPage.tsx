@@ -31,6 +31,7 @@ import {
   fac3OpenFoamSettings,
   fac3PlotSpecs,
   fac3ReferenceRows,
+  fac3ShowcaseVideoAsset,
   fac3SteadyComparisonRows,
   fac3VideoAsset,
   type Fac3Case,
@@ -149,6 +150,13 @@ function IntroductionTab() {
         </ul>
       </div>
       <VideoBlock src={fac3VideoAsset} title="Flow around a cylinder 3D" />
+      <VideoBlock src={fac3ShowcaseVideoAsset} title="Start-up of the flow" />
+      <p style={{ color: "var(--fg2)", fontSize: 13, lineHeight: 1.6, maxWidth: 760, marginTop: -20 }}>
+        The steady case at Re = 20, from the fluid at rest through the first 6 s of the start-up, played at half speed.
+        Colour on the mid-plane of the channel is the velocity magnitude, from blue (slow) to red (fast), with a faint
+        glow of the flow around it; the cylinder is seen end-on, and the two screens behind the channel trace its drag
+        and lift coefficients up to the current time, with the benchmark reference values as dashed lines.
+      </p>
     </Section>
   );
 }

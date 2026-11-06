@@ -67,7 +67,7 @@ export const benchmarks: BenchmarkMeta[] = [
     reynolds: "1.5-31.9",
     levels: 3,
     summary:
-      "A particulate-flow benchmark comparing the motion of a settling sphere and induced flow field against experimental data.",
+      "A particulate-flow benchmark comparing the motion of a settling sphere and induced flow field, computed with two codes at three mesh levels, against experimental data.",
     thumb: "sediment",
     tabs: ["Introduction", "Definition", "Results", "Lubrication", "Reference Data"],
     comparisonAxis: "code",
